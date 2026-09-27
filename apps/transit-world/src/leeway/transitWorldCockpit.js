@@ -1,5 +1,11 @@
 import * as Cesium from 'cesium';
 import { summarizeTruckRouteSafety } from './truckRoutePolicy.js';
+import {
+  buildStaticCockpit,
+  buildStaticFleet,
+  fetchStaticRoute,
+  isStaticPagesMode,
+} from './pagesFallback.js';
 
 const WORLD_LAYER_IDS = Object.freeze([
   'transit',
@@ -230,13 +236,23 @@ export async function mountLeeWayTransitWorld(application) {
   let routeEntity;
 
   async function refresh() {
-    [cockpit, fleet] = await Promise.all([
-      fetchJson('/api/leeway-transit/driver-cockpit'),
-      fetchJson('/api/leeway-transit/vehicles'),
-    ]);
+    const staticPagesMode = isStaticPagesMode();
+    if (staticPagesMode) {
+      cockpit = buildStaticCockpit();
+      fleet = buildStaticFleet();
+    } else {
+      [cockpit, fleet] = await Promise.all([
+        fetchJson('/api/leeway-transit/driver-cockpit'),
+        fetchJson('/api/leeway-transit/vehicles'),
+      ]);
+    }
     const safety = summarizeTruckRouteSafety(cockpit.truckProfile, []);
     const routeUrl = routeRequestUrl(cockpit.route);
-    const routePayload = routeUrl ? await fetchJson(routeUrl) : null;
+    const routePayload = staticPagesMode
+      ? await fetchStaticRoute(cockpit.route)
+      : routeUrl
+        ? await fetchJson(routeUrl)
+        : null;
     routeEntity = renderRoute(viewer, routePayload, cockpit);
 
     setText(root, 'mode', cockpit.mode);
@@ -294,7 +310,7 @@ export async function mountLeeWayTransitWorld(application) {
           results.push(id);
         } catch {}
       }
-      setText(root, 'world-status', `Requested: ${results.join(', ') || 'no layers'}`);
+      setText(root, 'world-status', `Requested: ${results.join(', ') || 'no layers'}${isStaticPagesMode() ? ' · GitHub Pages demo mode' : ''}`);
       return;
     }
     if (action === 'route-view' && routeEntity) {
