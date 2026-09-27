@@ -47,6 +47,8 @@ jobs:
           ./src/app/application.test.mjs
           ./src/data/infrastructure.test.mjs
           ./src/tooling/viteBuild.test.mjs
+          ./src/leeway/enterpriseStore.test.mjs
+          ./src/leeway/agentLeeTools.test.mjs
           ./src/leeway/truckRoutePolicy.test.mjs
           ./server/providers/leeway-driver-cockpit.test.mjs
           ./src/sources/leewayTransit.test.mjs
