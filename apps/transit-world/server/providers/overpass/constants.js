@@ -14,7 +14,7 @@ import path from 'node:path';
  * answer is less query volume, not a new name.
  */
 const OVERPASS_USER_AGENT =
-  'gods-eye-view/0.1 (+https://github.com/bilawalsidhu/gods-eye-view)';
+  'leeway-logistics-transit-world/0.1 (+https://github.com/4citeB4U/LEEWAY-LOGISTICS-)';
 
 /** Ordered list of Overpass API mirrors; tried sequentially on failure/rate-limit. */
 const OVERPASS_UPSTREAMS = [

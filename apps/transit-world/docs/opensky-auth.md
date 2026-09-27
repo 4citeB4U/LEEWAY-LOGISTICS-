@@ -1,4 +1,4 @@
-# OpenSky Auth Setup
+﻿# OpenSky Auth Setup
 
 God's Eye View uses explicit auth modes for `/api/opensky`:
 
@@ -64,3 +64,4 @@ Useful reasons:
 - `basic_invalid_credentials`: username/password rejected
 - `missing_basic_creds`: basic mode missing user/pass
 - `rate_limited`: OpenSky throttling
+

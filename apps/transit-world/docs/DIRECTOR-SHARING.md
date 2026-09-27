@@ -1,4 +1,4 @@
-# Director authoring and file sharing
+﻿# Director authoring and file sharing
 
 Open Scenes and select a scene and shot. Existing capture, update, playback and
 whole-project export controls remain available. Authored scene content, source
@@ -86,7 +86,7 @@ storage: **reimport the bundle after reloading the app**. Missing bundle bytes
 fail explicitly, with no network fallback. This is file sharing, not a storage
 service or an offline basemap.
 
-Portable helpers are exported through `gods-eye-view/director`: `parseSceneShare`,
+Portable helpers are exported through `@leeway/logistics-transit-world/director`: `parseSceneShare`,
 `readSceneShare`, `createSceneBundle`, `createBundleAssets`, `describeSceneShare`,
 `editSceneDetails` and `selectSceneDocument`. Loading and UI remain separate owners.
 `getSharingState()` reports copied dialog/asset counts for lifecycle diagnostics.
@@ -94,3 +94,4 @@ Portable helpers are exported through `gods-eye-view/director`: `parseSceneShare
 Run `node scripts/qa-director-sharing.mjs` against the local server for installed
 controls, cancellation, stale drafts, export/import round trips, resource cleanup
 and narrow-screen acceptance. Fixtures are synthetic and carry their own notices.
+

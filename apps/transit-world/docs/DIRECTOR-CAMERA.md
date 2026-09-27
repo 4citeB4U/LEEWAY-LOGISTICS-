@@ -1,4 +1,4 @@
-# Director camera directions
+﻿# Director camera directions
 
 Version 4 scene documents can name geographic anchors and describe an explicit
 camera move followed by a hold. Existing camera-pose shots still use the ordinary
@@ -47,10 +47,10 @@ The shot's `camera` is its destination. It can be an inline pose or an
 shape. References cannot also carry inline coordinates. They do not form chains.
 Heading, pitch and roll belong to each camera pose, so two shots can look in
 different directions from the same geographic anchor. Omitted orientation uses
-heading 0, pitch −35 and roll 0 degrees.
+heading 0, pitch âˆ’35 and roll 0 degrees.
 
 An explicit move requires `move.from`, `move.easing`, `durationSec` and `holdSec`.
-Its duration is 0.2–86,400 seconds; the hold is 0–86,400 seconds. The destination
+Its duration is 0.2â€“86,400 seconds; the hold is 0â€“86,400 seconds. The destination
 is not copied into another field. `linear` and `cubic-in-out` are the supported
 easings. A shot without `move` retains the existing ordinary flight, even in a
 version-4 file. Its destination may also reference an anchor.
@@ -98,7 +98,7 @@ hold, so the next shot cannot retake the camera. Camera claims still respect
 Cockpit's refusal. Already queued callbacks cannot move a replacement scene.
 The timing diagnostic includes the active authored camera animation.
 
-The renderer-independent `gods-eye-view/director` export provides
+The renderer-independent `@leeway/logistics-transit-world/director` export provides
 `resolveCameraPose(scene, camera)`, `resolveCameraMove(scene, shot)` and
 `sampleCameraMove(move, progress)`. These expect validated/normalized data.
 Rendering and frame ownership live in `src/scenes/cameraMotion.js`; the existing
@@ -108,3 +108,4 @@ Version-1/2/3 projects migrate to version 4 without converting their ordinary
 shots into explicit moves. IDs, positions, durations, visual settings, packs and
 source attribution survive. The bloom scale remains independent of the document
 version; version-3 bloom is never interpreted as the older inverted scale.
+

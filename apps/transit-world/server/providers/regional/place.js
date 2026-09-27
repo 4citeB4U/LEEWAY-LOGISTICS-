@@ -14,8 +14,8 @@ import {
  */
 const NOMINATIM_HEADERS = Object.freeze({
   'User-Agent':
-    'gods-eye-view/0.1 (+https://github.com/bilawalsidhu/gods-eye-view)',
-  Referer: 'https://github.com/bilawalsidhu/gods-eye-view',
+    'leeway-logistics-transit-world/0.1 (+https://github.com/4citeB4U/LEEWAY-LOGISTICS-)',
+  Referer: 'https://github.com/4citeB4U/LEEWAY-LOGISTICS-',
 });
 
 /**

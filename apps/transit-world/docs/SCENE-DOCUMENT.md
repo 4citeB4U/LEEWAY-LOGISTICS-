@@ -1,4 +1,4 @@
-# Scene document format
+﻿# Scene document format
 
 Scenes exports a UTF-8 JSON project. Version 5 adds [data packs](DIRECTOR-DATA-PACKS.md)
 and is the write format. Versions 1, 2, 3, 4 and unversioned legacy files migrate on
@@ -67,7 +67,7 @@ retains the existing registered-stack behavior.
 
 ## Validation limits
 
-`gods-eye-view/director` exports `parseSceneDocument(text)`,
+`@leeway/logistics-transit-world/director` exports `parseSceneDocument(text)`,
 `validateSceneDocument(project)`, `stringifySceneDocument(project)`,
 `SceneDocumentError`, `SCENE_DOCUMENT_VERSION` and `SCENE_DOCUMENT_LIMITS`.
 Validation is independent of the renderer, storage and recipes. Parsing checks
@@ -77,8 +77,8 @@ reading it. Migration/defaults live separately in `src/scenes/project.js`.
 Limits are 5 MiB, 256 scenes, 10,000 total shots, 10,000 entries per collection,
 24 levels of nesting, 200,000 visited values, 65,536 characters per JSON string,
 256 characters per field/ID, and 4,096 characters per title. Numeric values must
-be finite. Camera limits are latitude ±90, longitude ±180, altitude −12,000 to
-1 billion meters, heading/roll ±360 and pitch ±90; durations/holds are at most
+be finite. Camera limits are latitude Â±90, longitude Â±180, altitude âˆ’12,000 to
+1 billion meters, heading/roll Â±360 and pitch Â±90; durations/holds are at most
 86,400 seconds. Post-processing values are bounded and normalized to the existing
 slider ranges. Object prototype keys are refused at every depth.
 
@@ -103,3 +103,4 @@ change with this document boundary.
 Version 5 additionally accepts scene `dataPacks` and shot `dataPackIds`, as
 defined in [data packs](DIRECTOR-DATA-PACKS.md). Version-4 camera documents
 continue to import without adding any packs.
+

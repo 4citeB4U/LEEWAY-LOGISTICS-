@@ -1,7 +1,7 @@
-export const ACTION_DESCRIPTIONS = {
+﻿export const ACTION_DESCRIPTIONS = {
   fly_to_location: {
     description:
-      "Fly the God's Eye View camera to a known city, geocoded country/region/city/landmark, or explicit WGS84 coordinate. Countries/cities frame the whole place; landmarks/buildings use close framing.",
+      "Fly the LeeWay Transit World camera to a known city, geocoded country/region/city/landmark, or explicit WGS84 coordinate. Countries/cities frame the whole place; landmarks/buildings use close framing.",
     $position: 1,
     parameters: {
       properties: {
@@ -72,17 +72,17 @@ export const ACTION_DESCRIPTIONS = {
   },
   zoom_to_globe: {
     description:
-      'Pull the camera out to an ABSOLUTE full-Earth globe view (~18,000 km altitude, the whole planet in frame), keeping the current region centered. Use for "globe view", "whole earth", "see the planet", "zoom all the way out". Never use adjust_camera_zoom for these — its relative steps cannot reach the globe.',
+      'Pull the camera out to an ABSOLUTE full-Earth globe view (~18,000 km altitude, the whole planet in frame), keeping the current region centered. Use for "globe view", "whole earth", "see the planet", "zoom all the way out". Never use adjust_camera_zoom for these â€” its relative steps cannot reach the globe.',
     $position: 1,
   },
   set_layer_visibility: {
-    description: "Enable or disable one registered God's Eye View data layer.",
+    description: "Enable or disable one registered LeeWay Transit World data layer.",
     $position: 1,
     parameters: {
       properties: {
         layerId: {
           description:
-            'Common-name mapping for the non-obvious ids: space mission(s) → rocket-launches; fires/wildfires/active fires → local-firms (NASA FIRMS); ships/vessels/boats → ais-live-vessels; undersea/submarine cables → telegeography-submarine-cables; datacenters → local-datacenters; dams → local-dams; bikes/bike share → bikeshare; street traffic/congestion → traffic; traffic cameras → cctv; internet radio/stations → radio; ALPR/license plate readers/Flock cameras → alpr-cameras; local ADS-B/my receiver/my antenna (aircraft heard by a local RTL-SDR receiver) → local-adsb.',
+            'Common-name mapping for the non-obvious ids: space mission(s) â†’ rocket-launches; fires/wildfires/active fires â†’ local-firms (NASA FIRMS); ships/vessels/boats â†’ ais-live-vessels; undersea/submarine cables â†’ telegeography-submarine-cables; datacenters â†’ local-datacenters; dams â†’ local-dams; bikes/bike share â†’ bikeshare; street traffic/congestion â†’ traffic; traffic cameras â†’ cctv; internet radio/stations â†’ radio; ALPR/license plate readers/Flock cameras â†’ alpr-cameras; local ADS-B/my receiver/my antenna (aircraft heard by a local RTL-SDR receiver) â†’ local-adsb.',
           $position: 1,
         },
       },
@@ -143,7 +143,7 @@ export const ACTION_DESCRIPTIONS = {
     },
   },
   set_visual_style: {
-    description: "Set the active God's Eye View visual filter/style.",
+    description: "Set the active LeeWay Transit World visual filter/style.",
     $position: 1,
   },
   get_entity_context: {
@@ -189,19 +189,19 @@ export const ACTION_DESCRIPTIONS = {
     parameters: {
       properties: {
         enabled: { description: 'Explicitly turn sonar on or off.' },
-        rings: { description: 'Number of decorative sonar rings, 3–12.' },
+        rings: { description: 'Number of decorative sonar rings, 3â€“12.' },
         rangePct: {
           description:
-            'Visual ring range, 60–120 percent; not geographic distance.',
+            'Visual ring range, 60â€“120 percent; not geographic distance.',
         },
         intensityPct: {
-          description: 'Sonar Power slider, 0–100 percent. Zero is valid.',
+          description: 'Sonar Power slider, 0â€“100 percent. Zero is valid.',
         },
         opacityPct: {
           description:
-            'Contact opacity floor between passes, 35–100 percent; labels have a derived floor. Not whole-scene dimming.',
+            'Contact opacity floor between passes, 35â€“100 percent; labels have a derived floor. Not whole-scene dimming.',
         },
-        sectorDeg: { description: 'Sonar sweep sector width, 8–60 degrees.' },
+        sectorDeg: { description: 'Sonar sweep sector width, 8â€“60 degrees.' },
       },
     },
   },
@@ -237,7 +237,7 @@ export const ACTION_DESCRIPTIONS = {
       properties: {
         stack: {
           description:
-            'photoreal = Google 3D. Use bing-aerial only when the user explicitly says "Bing aerial" — "satellite(s)" never means a basemap; only the explicit phrase "Esri" / "Esri imagery" means esri-imagery.',
+            'photoreal = Google 3D. Use bing-aerial only when the user explicitly says "Bing aerial" â€” "satellite(s)" never means a basemap; only the explicit phrase "Esri" / "Esri imagery" means esri-imagery.',
           $position: 2,
         },
       },
@@ -301,7 +301,7 @@ export const ACTION_DESCRIPTIONS = {
   },
   control_radio: {
     description:
-      'Control Internet Radio playback without moving the map. Use select whenever the request includes a station category, name, country, coordinates, or nearby place—even when the user says play. Use play only for an unqualified "turn on/start the radio" request so the current or nearest station begins. Enable only reveals the Radio layer/markers without audio. Also supports disable, resume, pause, stop, next/previous, volume, and status.',
+      'Control Internet Radio playback without moving the map. Use select whenever the request includes a station category, name, country, coordinates, or nearby placeâ€”even when the user says play. Use play only for an unqualified "turn on/start the radio" request so the current or nearest station begins. Enable only reveals the Radio layer/markers without audio. Also supports disable, resume, pause, stop, next/previous, volume, and status.',
     $position: 1,
     parameters: {
       properties: {
@@ -381,7 +381,7 @@ export const ACTION_DESCRIPTIONS = {
   },
   annotate_map: {
     description:
-      'Draw annotations on the 3D map to visually point out what you are talking about — like sketching on a whiteboard over the world. Use this whenever you mention a specific place, building, campus, boundary, district, or a relationship between two places, so the user can SEE what you mean. Give place NAMES (preferred) or explicit lat/lng; the app resolves them to real-world positions and real building/area outlines — never guess pixel positions. Call this as you begin describing something, and you may mark several places in one call.',
+      'Draw annotations on the 3D map to visually point out what you are talking about â€” like sketching on a whiteboard over the world. Use this whenever you mention a specific place, building, campus, boundary, district, or a relationship between two places, so the user can SEE what you mean. Give place NAMES (preferred) or explicit lat/lng; the app resolves them to real-world positions and real building/area outlines â€” never guess pixel positions. Call this as you begin describing something, and you may mark several places in one call.',
     $position: 1,
     parameters: {
       properties: {
@@ -398,7 +398,7 @@ export const ACTION_DESCRIPTIONS = {
               },
               target: {
                 description:
-                  'Place name to resolve, e.g. "Palace of Fine Arts, San Francisco", "the Pentagon", "Presidio of San Francisco". Preferred over coordinates. For a specific monument/statue/feature that sits within a larger landmark, use its OWN name + city ("Tejano Monument, Austin", "Texas African American History Memorial, Austin") — do NOT phrase it as "X at the Texas State Capitol", which makes the geocoder collapse several of them onto the same centroid so they stack on one spot.',
+                  'Place name to resolve, e.g. "Palace of Fine Arts, San Francisco", "the Pentagon", "Presidio of San Francisco". Preferred over coordinates. For a specific monument/statue/feature that sits within a larger landmark, use its OWN name + city ("Tejano Monument, Austin", "Texas African American History Memorial, Austin") â€” do NOT phrase it as "X at the Texas State Capitol", which makes the geocoder collapse several of them onto the same centroid so they stack on one spot.',
                 $position: 2,
               },
               points: {
@@ -416,7 +416,7 @@ export const ACTION_DESCRIPTIONS = {
               },
               mode: {
                 description:
-                  'For type=route: travel mode for a real street-following route (the app returns distance + time). Pick from the verb the user used ("walk" → walking, "drive" → driving). Defaults to walking.',
+                  'For type=route: travel mode for a real street-following route (the app returns distance + time). Pick from the verb the user used ("walk" â†’ walking, "drive" â†’ driving). Defaults to walking.',
                 $position: 2,
               },
               latitude: {
@@ -445,12 +445,12 @@ export const ACTION_DESCRIPTIONS = {
               },
               intent: {
                 description:
-                  'For type=area: "the_thing" (default) outlines the place itself (its footprint/boundary); "around_the_thing" highlights a surrounding zone (a buffered radius around it). Infer from phrasing: "the Capitol"/"show me X" → the_thing; "around/near/by X" or "the area around X" → around_the_thing.',
+                  'For type=area: "the_thing" (default) outlines the place itself (its footprint/boundary); "around_the_thing" highlights a surrounding zone (a buffered radius around it). Infer from phrasing: "the Capitol"/"show me X" â†’ the_thing; "around/near/by X" or "the area around X" â†’ around_the_thing.',
                 $position: 2,
               },
               entityKind: {
                 description:
-                  'What KIND of thing the target IS — a fact, not a style choice: building = one structure; compound = campus/grounds/mall/park; district = neighborhood or area of a city; street = a named road/corridor; point_feature = monument/statue/memorial/plaque/fountain or other small point landmark. Set it whenever you know it — it routes the resolver to the right footprint source (point_feature anchors monuments as precise points instead of adopting a nearby building outline).',
+                  'What KIND of thing the target IS â€” a fact, not a style choice: building = one structure; compound = campus/grounds/mall/park; district = neighborhood or area of a city; street = a named road/corridor; point_feature = monument/statue/memorial/plaque/fountain or other small point landmark. Set it whenever you know it â€” it routes the resolver to the right footprint source (point_feature anchors monuments as precise points instead of adopting a nearby building outline).',
                 $position: 2,
               },
               screenX: {
@@ -478,7 +478,7 @@ export const ACTION_DESCRIPTIONS = {
         },
         flyTo: {
           description:
-            'Also move the camera to frame the first annotation. Default false — leave false if the user is already looking at the spot.',
+            'Also move the camera to frame the first annotation. Default false â€” leave false if the user is already looking at the spot.',
           $position: 1,
         },
         persist: {
@@ -491,12 +491,12 @@ export const ACTION_DESCRIPTIONS = {
   },
   clear_annotations: {
     description:
-      'Erase ALL map annotations previously drawn with annotate_map. Call this ONLY when the user EXPLICITLY asks to clear or reset the map. Annotations accumulate and persist across navigation and topic changes by design — never clear on your own initiative.',
+      'Erase ALL map annotations previously drawn with annotate_map. Call this ONLY when the user EXPLICITLY asks to clear or reset the map. Annotations accumulate and persist across navigation and topic changes by design â€” never clear on your own initiative.',
     $position: 1,
   },
   move_camera: {
     description:
-      'Direct the camera like a drone operator: orbit the current view target, pan, tilt, or rotate — one bounded nudge (mode=once) or continuous motion until stopped (mode=continuous). Continuous motion also stops on any manual camera input or when a navigation tool runs. Say the RESULTING state when confirming ("Orbiting slowly").',
+      'Direct the camera like a drone operator: orbit the current view target, pan, tilt, or rotate â€” one bounded nudge (mode=once) or continuous motion until stopped (mode=continuous). Continuous motion also stops on any manual camera input or when a navigation tool runs. Say the RESULTING state when confirming ("Orbiting slowly").',
     $position: 1,
     parameters: {
       properties: {
@@ -515,7 +515,7 @@ export const ACTION_DESCRIPTIONS = {
   },
   fly_route: {
     description:
-      'Cinematic dolly along an EXISTING route annotation (drawn earlier with annotate_map type=route) — flies the street-following path from start to end. Omit label for the newest route. If no route is drawn, this fails with guidance: draw the route first.',
+      'Cinematic dolly along an EXISTING route annotation (drawn earlier with annotate_map type=route) â€” flies the street-following path from start to end. Omit label for the newest route. If no route is drawn, this fails with guidance: draw the route first.',
     $position: 1,
     parameters: {
       properties: {
@@ -528,13 +528,13 @@ export const ACTION_DESCRIPTIONS = {
   },
   analyst_query: {
     description:
-      'Answer questions ABOUT the data currently loaded on the map — counts, lists, superlatives, and attribute filters over live layers (flights, military, ships, fires, earthquakes, satellites, datacenters, dams). Examples: "how many flights over Texas", "biggest fire near LA", "which ships are headed to Oakland", "anything above 40,000 feet", "fastest thing in view". For satellites and infrastructure, counts and ranks cover only bounded examined loaded records; omitted records can change nearest/count. Queries ONLY client-side data from ENABLED layers — if the needed layer is off, say so and offer to enable it. For a follow-up about the previous answer\'s set ("which of those is closest?"), set followUp=true and send only the new filters/sort.',
+      'Answer questions ABOUT the data currently loaded on the map â€” counts, lists, superlatives, and attribute filters over live layers (flights, military, ships, fires, earthquakes, satellites, datacenters, dams). Examples: "how many flights over Texas", "biggest fire near LA", "which ships are headed to Oakland", "anything above 40,000 feet", "fastest thing in view". For satellites and infrastructure, counts and ranks cover only bounded examined loaded records; omitted records can change nearest/count. Queries ONLY client-side data from ENABLED layers â€” if the needed layer is off, say so and offer to enable it. For a follow-up about the previous answer\'s set ("which of those is closest?"), set followUp=true and send only the new filters/sort.',
     $position: 1,
     parameters: {
       properties: {
         layers: {
           description:
-            'Layers to query. fires/wildfires → local-firms; ships/vessels → ais-live-vessels.',
+            'Layers to query. fires/wildfires â†’ local-firms; ships/vessels â†’ ais-live-vessels.',
           $position: 2,
         },
         scope: {
@@ -572,7 +572,7 @@ export const ACTION_DESCRIPTIONS = {
   },
   next_iss_pass: {
     description:
-      "When the user asks when the ISS / the space station will next fly over: returns the next geometric ISS pass with estimated visibility for the current camera location (or an explicit lat/lon) — rise time (ISO + minutes from now), rise compass direction, peak elevation, and duration. Requires the satellites layer to have loaded its catalog at least once this session; if it hasn't, tell the user to enable the satellites layer and try again.",
+      "When the user asks when the ISS / the space station will next fly over: returns the next geometric ISS pass with estimated visibility for the current camera location (or an explicit lat/lon) â€” rise time (ISO + minutes from now), rise compass direction, peak elevation, and duration. Requires the satellites layer to have loaded its catalog at least once this session; if it hasn't, tell the user to enable the satellites layer and try again.",
     $position: 1,
     parameters: {
       properties: {
@@ -600,3 +600,4 @@ export const ACTION_DESCRIPTIONS = {
     $position: 1,
   },
 };
+
