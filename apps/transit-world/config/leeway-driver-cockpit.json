@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "mode": "TRAINING_DEMO",
+  "driver": {
+    "name": "Training Driver",
+    "vehicleFleetNumber": "LW-1001",
+    "trailerNumber": "TRL-DEMO-01"
+  },
+  "truckProfile": {
+    "equipmentType": "53 ft Dry Van",
+    "heightM": 4.1148,
+    "widthM": 2.591,
+    "lengthM": 22.86,
+    "grossWeightKg": 36287,
+    "hazmat": false
+  },
+  "hos": {
+    "source": "TRAINING_FIXTURE",
+    "driveRemainingMinutes": 510,
+    "shiftRemainingMinutes": 720,
+    "cycleRemainingMinutes": 3300,
+    "nextBreakDueMinutes": 360,
+    "status": "AVAILABLE"
+  },
+  "activeLoad": {
+    "loadNumber": "LW-DEMO-0001",
+    "confirmationNumber": "CONF-DEMO-0001",
+    "carrierName": "LeeWay Training Carrier",
+    "brokerName": "Training Broker",
+    "rateUsd": 1450,
+    "freightDescription": "Training-only general commodities",
+    "weightLbs": 28000,
+    "equipmentType": "53 ft Dry Van",
+    "detentionTerms": "Training detention terms configured",
+    "pickup": {
+      "name": "LeeWay Milwaukee Training Terminal",
+      "address": "Milwaukee, WI",
+      "appointment": "08:00-10:00",
+      "referenceNumber": "PU-DEMO-1001",
+      "lat": 43.0389,
+      "lon": -87.9065
+    },
+    "delivery": {
+      "name": "LeeWay Chicago Training Consignee",
+      "address": "Chicago, IL",
+      "appointment": "13:00-15:00",
+      "referenceNumber": "PO-DEMO-2001",
+      "lat": 41.8781,
+      "lon": -87.6298
+    },
+    "specialInstructions": [
+      "Training route only — no live dispatch authority.",
+      "Verify truck restrictions before driver release.",
+      "Facility approach and dock geometry remain unverified."
+    ]
+  },
+  "documents": {
+    "bol": "READY_TRAINING",
+    "loadConfirmation": "READY_TRAINING",
+    "routeTripSheet": "READY_TRAINING",
+    "dvir": "PENDING_DRIVER_CONFIRMATION",
+    "hos": "TRAINING_FIXTURE",
+    "detentionReport": "AVAILABLE_IF_NEEDED"
+  },
+  "crm": {
+    "customer": "LeeWay Chicago Training Consignee",
+    "broker": "Training Broker",
+    "dispatcher": "LeeWay Dispatch",
+    "communicationLog": [],
+    "systemOfRecord": "CANDIDATE_SEAFILE_BRIDGE_NOT_BOUND"
+  },
+  "routeIntelligence": {
+    "visualRouteAuthority": "OSRM_CAR_BASE_ONLY",
+    "truckSafetyStatus": "UNVERIFIED",
+    "truckRestrictionScan": "PENDING",
+    "terrainAwareness": "WORLD_RENDER_AVAILABLE",
+    "buildingAwareness": "WORLD_RENDER_AVAILABLE",
+    "publicTransitCoordination": "WORLD_LAYER_AVAILABLE",
+    "formulaStatus": "PENDING_CANONICAL_FORMULA_BINDING"
+  }
+}

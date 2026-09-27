@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "mode": "TRAINING_DEMO",
+  "description": "Fictional spatial telemetry for the governed LW-1001 training vehicle. Not live GPS.",
+  "vehicles": [
+    {
+      "fleetNumber": "LW-1001",
+      "lat": 43.0389,
+      "lon": -87.9065,
+      "bearing": 315,
+      "speedMps": 0,
+      "routeId": "LEEWAY-DEMO-MKE",
+      "tripId": "TRAINING-001",
+      "status": "TRAINING_FIXTURE"
+    }
+  ]
+}

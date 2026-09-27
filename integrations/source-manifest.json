@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "product": "LeeWay Logistics",
+  "sources": [
+    {
+      "name": "LeeWay Enterprise Transit Hub",
+      "location": "apps/transit-hub",
+      "sourcePathObserved": "E:/Leeway-Ecosystem v2.1.4/LeeWay-Enterprise-Transit-Hub",
+      "role": "business-domain and transit authority",
+      "promotion": "copied source; original not mutated"
+    },
+    {
+      "name": "LeeWay Transit World",
+      "location": "apps/transit-world",
+      "upstream": "bilawalsidhu/gods-eye-view",
+      "upstreamCommit": "b210ab0fe4d71c7faa0268134e0aa5f3c53fc7fe",
+      "upstreamLicense": "MIT",
+      "role": "spatial runtime and world visualization",
+      "thirdPartyData": "separately licensed; bundled event/model assets excluded from promotion pending review"
+    },
+    {
+      "name": "TruckForms",
+      "repository": "4citeB4U/TruckForms",
+      "role": "driver/dispatcher/forms provenance",
+      "status": "reference authority; not bulk-vendored"
+    },
+    {
+      "name": "LeeWay Agents the World Within",
+      "repository": "4citeB4U/LeeWay-Agents-the-World-Within",
+      "role": "logistics skills and dispatch workflow provenance",
+      "status": "reference authority"
+    },
+    {
+      "name": "LeeWay Voice Scheduling Translator CRM",
+      "repository": "4citeB4U/LeeWay-Voice-Scheduling-Translator-CRM",
+      "role": "CRM and Seafile system-of-record provenance",
+      "status": "reference authority"
+    }
+  ]
+}
