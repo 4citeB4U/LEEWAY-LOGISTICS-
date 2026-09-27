@@ -2,6 +2,7 @@ import { createStandaloneApplication } from './standalone/application.js';
 import { describeError } from './standalone/errors.js';
 import { mountLeeWayTransitWorld } from './leeway/transitWorldCockpit.js';
 import { mountAgentLeeGemma } from './leeway/agentLeeGemma.js';
+import { mountEnterpriseShell } from './leeway/enterpriseShell.js';
 
 const application = createStandaloneApplication({
   googleApiKey: import.meta.env.GOOGLE_MAPS_API_KEY,
@@ -13,7 +14,8 @@ application
   .start()
   .then(async () => {
     await mountLeeWayTransitWorld(application);
-    mountAgentLeeGemma(application);
+    const enterpriseShell = mountEnterpriseShell(application);
+    mountAgentLeeGemma(application, enterpriseShell);
   })
   .catch((error) => {
     console.error('LeeWay Logistics Transit World initialization failed:', error);

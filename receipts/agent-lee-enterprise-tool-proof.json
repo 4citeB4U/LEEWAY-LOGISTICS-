@@ -1,0 +1,21 @@
+{
+  "receipt": "LEEWAY-AGENT-LEE-ENTERPRISE-TOOLS",
+  "timestampUtc": "2026-09-27T16:10:00Z",
+  "model": "gemma4:e4b",
+  "endpoint": "http://127.0.0.1:11435",
+  "origin": "https://4citeb4u.github.io",
+  "prompt": "Take me to the employee onboarding screen so I can onboard a new driver.",
+  "httpStatus": 200,
+  "toolCall": {
+    "name": "start_onboarding",
+    "arguments": {
+      "kind": "employee"
+    }
+  },
+  "contentBeforeToolExecution": "",
+  "status": "VERIFIED_TOOL_SELECTION",
+  "notes": [
+    "This receipt proves model-side tool selection, not full browser click execution.",
+    "Enterprise and spatial tool execution is separately gated by the LeeWay tool runtime."
+  ]
+}

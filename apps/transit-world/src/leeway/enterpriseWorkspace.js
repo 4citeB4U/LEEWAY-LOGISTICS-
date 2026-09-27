@@ -1,0 +1,336 @@
+import {
+  addAccount,
+  addDocumentMetadata,
+  addEquipment,
+  addPerson,
+  advanceOrganizationOnboarding,
+  markIntegration,
+  readEnterpriseState,
+  summarizeEnterpriseState,
+  updateOrganization,
+} from './enterpriseStore.js';
+
+const WORKSPACE_TABS = Object.freeze([
+  ['overview', 'Command'],
+  ['people', 'People'],
+  ['equipment', 'Equipment'],
+  ['crm', 'CRM'],
+  ['documents', 'Documents'],
+  ['integrations', 'Integrations'],
+]);
+
+function esc(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
+
+function statusClass(value) {
+  const text = String(value || '').toUpperCase();
+  if (text.includes('COMPLETE') || text.includes('ACTIVE') || text.includes('CONNECTED')) return 'good';
+  if (text.includes('REVIEW') || text.includes('PROGRESS') || text.includes('ONBOARD')) return 'warn';
+  return 'muted';
+}
+
+function formatBytes(bytes) {
+  const size = Number(bytes);
+  if (!Number.isFinite(size) || size <= 0) return '—';
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${(size / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function ensureStyles(documentRef) {
+  if (documentRef.getElementById('leeway-enterprise-workspace-styles')) return;
+  const style = documentRef.createElement('style');
+  style.id = 'leeway-enterprise-workspace-styles';
+  style.textContent = `
+    #leeway-enterprise-workspace {
+      position: fixed; inset: 68px 18px 18px 88px; z-index: 9850;
+      display: none; background: rgba(4,13,21,.97); color:#eafcff;
+      border:1px solid rgba(75,216,244,.34); border-radius:18px;
+      box-shadow:0 28px 90px rgba(0,0,0,.58); backdrop-filter:blur(18px);
+      overflow:hidden; font:13px/1.4 Inter,ui-sans-serif,system-ui,sans-serif;
+    }
+    #leeway-enterprise-workspace.open { display:grid; grid-template-columns:230px 1fr; }
+    #leeway-enterprise-workspace * { box-sizing:border-box; }
+    .lew-side { padding:22px 16px; background:rgba(3,11,18,.86); border-right:1px solid rgba(255,255,255,.07); }
+    .lew-brand { font-weight:800; letter-spacing:.12em; font-size:12px; }
+    .lew-sub { opacity:.55; font-size:10px; margin:4px 0 20px; letter-spacing:.08em; }
+    .lew-tabs { display:grid; gap:7px; }
+    .lew-tab { width:100%; text-align:left; border:0; border-radius:10px; padding:11px 12px; background:transparent; color:#cfe3ea; cursor:pointer; font:inherit; }
+    .lew-tab.active,.lew-tab:hover { background:rgba(58,211,239,.10); color:#72efff; }
+    .lew-side-actions { margin-top:22px; padding-top:18px; border-top:1px solid rgba(255,255,255,.07); display:grid; gap:8px; }
+    .lew-primary,.lew-secondary,.lew-ghost { border-radius:10px; padding:10px 12px; cursor:pointer; font:inherit; }
+    .lew-primary { border:1px solid #44e2f5; background:#1edff5; color:#001117; font-weight:800; }
+    .lew-secondary { border:1px solid rgba(68,226,245,.35); background:rgba(68,226,245,.08); color:#eaffff; }
+    .lew-ghost { border:1px solid rgba(255,255,255,.12); background:transparent; color:#cfe3ea; }
+    .lew-main { min-width:0; display:flex; flex-direction:column; }
+    .lew-top { min-height:72px; display:flex; align-items:center; justify-content:space-between; padding:14px 22px; border-bottom:1px solid rgba(255,255,255,.07); }
+    .lew-title h2 { margin:0; font-size:20px; } .lew-title p { margin:3px 0 0; opacity:.58; font-size:11px; }
+    .lew-close { width:38px; height:38px; border-radius:50%; border:1px solid rgba(255,255,255,.15); background:transparent; color:#fff; cursor:pointer; font-size:20px; }
+    .lew-content { padding:22px; overflow:auto; }
+    .lew-grid { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:14px; }
+    .lew-card { grid-column:span 4; background:rgba(10,25,36,.78); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:16px; }
+    .lew-card.wide { grid-column:span 8; } .lew-card.full { grid-column:1/-1; }
+    .lew-card h3 { margin:0 0 4px; font-size:13px; } .lew-card p { margin:0; opacity:.55; font-size:11px; }
+    .lew-metric { font-size:28px; font-weight:800; margin-top:10px; color:#7af4ff; }
+    .lew-progress { height:7px; margin-top:12px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+    .lew-progress span { display:block; height:100%; background:#36def2; border-radius:inherit; }
+    .lew-checklist { display:grid; gap:8px; margin-top:14px; }
+    .lew-check { display:flex; justify-content:space-between; gap:12px; padding:9px 10px; border-radius:9px; background:rgba(255,255,255,.035); }
+    .lew-status { font-size:9px; font-weight:800; letter-spacing:.08em; padding:3px 7px; border-radius:99px; border:1px solid rgba(255,255,255,.12); }
+    .lew-status.good { color:#62ffb1; border-color:rgba(98,255,177,.28); }
+    .lew-status.warn { color:#ffd36b; border-color:rgba(255,211,107,.28); }
+    .lew-status.muted { color:#9fb0ba; }
+    .lew-toolbar { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; }
+    .lew-toolbar h3 { margin:0; font-size:17px; }
+    .lew-table { width:100%; border-collapse:collapse; }
+    .lew-table th { text-align:left; font-size:9px; letter-spacing:.09em; text-transform:uppercase; opacity:.5; padding:10px; border-bottom:1px solid rgba(255,255,255,.08); }
+    .lew-table td { padding:12px 10px; border-bottom:1px solid rgba(255,255,255,.055); vertical-align:top; }
+    .lew-table tr:hover td { background:rgba(68,226,245,.035); }
+    .lew-drawer { position:absolute; inset:0 0 0 auto; width:min(520px,90vw); background:#06131d; border-left:1px solid rgba(71,222,241,.30); transform:translateX(102%); transition:transform .22s ease; z-index:3; overflow:auto; padding:20px; }
+    .lew-drawer.open { transform:translateX(0); }
+    .lew-drawer-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:18px; }
+    .lew-drawer h3 { margin:0; font-size:19px; }
+    .lew-stepper { display:flex; gap:5px; margin:14px 0 20px; }
+    .lew-stepper span { flex:1; height:5px; background:rgba(255,255,255,.09); border-radius:99px; }
+    .lew-stepper span.done,.lew-stepper span.active { background:#34dfef; }
+    .lew-form { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .lew-field { display:grid; gap:5px; } .lew-field.full { grid-column:1/-1; }
+    .lew-field label { font-size:10px; opacity:.6; }
+    .lew-field input,.lew-field select,.lew-field textarea { width:100%; border-radius:9px; border:1px solid rgba(255,255,255,.12); background:#091924; color:#efffff; padding:10px; font:inherit; }
+    .lew-drop { grid-column:1/-1; min-height:128px; border:1px dashed rgba(88,226,245,.42); border-radius:12px; display:grid; place-items:center; text-align:center; padding:16px; cursor:pointer; background:rgba(58,211,239,.035); }
+    .lew-drop input { display:none; }
+    .lew-drop strong { display:block; color:#76ecfa; margin-bottom:4px; }
+    .lew-note { opacity:.55; font-size:10px; margin-top:7px; }
+    .lew-form-actions { grid-column:1/-1; display:flex; justify-content:flex-end; gap:8px; margin-top:6px; }
+    .lew-integrations { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .lew-integration { border:1px solid rgba(255,255,255,.08); background:rgba(10,25,36,.7); border-radius:12px; padding:14px; }
+    .lew-integration h4 { margin:0 0 4px; } .lew-integration p { opacity:.5; margin:0 0 12px; font-size:10px; }
+    .lew-banner { grid-column:1/-1; border:1px solid rgba(255,211,107,.22); background:rgba(255,211,107,.05); color:#ffe7a5; border-radius:12px; padding:11px 13px; font-size:11px; }
+    @media(max-width:900px){#leeway-enterprise-workspace.open{grid-template-columns:1fr;inset:62px 8px 8px}.lew-side{display:none}.lew-card,.lew-card.wide{grid-column:1/-1}.lew-integrations{grid-template-columns:1fr}.lew-form{grid-template-columns:1fr}}
+  `;
+  documentRef.head.appendChild(style);
+}
+
+function overview(state) {
+  const summary = summarizeEnterpriseState();
+  const onboarding = state.onboardingCases.find((row) => row.type === 'ORGANIZATION');
+  const pct = onboarding ? Math.round(((onboarding.step - 1) / onboarding.totalSteps) * 100) : 0;
+  return `
+    <div class="lew-grid">
+      <div class="lew-banner">LOCAL CANDIDATE MODE · CRM records persist in this browser. Uploaded document bytes and financial credentials are not stored in GitHub Pages. Connect a governed backend before production use.</div>
+      <section class="lew-card wide">
+        <h3>Company onboarding</h3><p>${esc(state.organization.legalName)} · ${esc(state.organization.companyType)}</p>
+        <div class="lew-metric">${onboarding?.step || 1} / ${onboarding?.totalSteps || 7}</div>
+        <div class="lew-progress"><span style="width:${pct}%"></span></div>
+        <div class="lew-checklist">
+          ${(onboarding?.checklist || []).map((row)=>`<div class="lew-check"><span>${esc(row.label)}</span><span class="lew-status ${statusClass(row.status)}">${esc(row.status)}</span></div>`).join('')}
+        </div>
+      </section>
+      <section class="lew-card"><h3>Employees</h3><p>Active workforce</p><div class="lew-metric">${summary.employeeCount}</div><button class="lew-secondary" data-action="open-tab" data-tab="people">View people</button></section>
+      <section class="lew-card"><h3>Onboarding</h3><p>People in process</p><div class="lew-metric">${summary.onboardingPeople}</div><button class="lew-secondary" data-action="onboard-person">Onboard employee</button></section>
+      <section class="lew-card"><h3>Equipment</h3><p>Vehicles / trailers / assets</p><div class="lew-metric">${summary.equipmentCount}</div><button class="lew-secondary" data-action="open-tab" data-tab="equipment">View equipment</button></section>
+      <section class="lew-card"><h3>CRM accounts</h3><p>Customers / brokers / facilities</p><div class="lew-metric">${summary.crmAccountCount}</div><button class="lew-secondary" data-action="open-tab" data-tab="crm">Open CRM</button></section>
+      <section class="lew-card"><h3>Evidence</h3><p>Documents received</p><div class="lew-metric">${summary.documentCount}</div><button class="lew-secondary" data-action="open-tab" data-tab="documents">View documents</button></section>
+      <section class="lew-card"><h3>Integrations</h3><p>Connected systems</p><div class="lew-metric">${summary.integrationsConnected}</div><button class="lew-secondary" data-action="open-tab" data-tab="integrations">Connect systems</button></section>
+    </div>`;
+}
+
+function people(state) {
+  return `
+    <div class="lew-toolbar"><div><h3>People</h3><div class="lew-note">Employees, candidates, drivers, dispatch, maintenance, operations, and HR records.</div></div><button class="lew-primary" data-action="onboard-person">+ Onboard employee</button></div>
+    <section class="lew-card full"><table class="lew-table"><thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Onboarding</th><th>Location</th><th>Evidence</th></tr></thead><tbody>
+    ${state.people.map((row)=>`<tr><td><strong>${esc(row.name)}</strong></td><td>${esc(row.role)}</td><td><span class="lew-status ${statusClass(row.status)}">${esc(row.status)}</span></td><td>${esc(row.onboarding)}</td><td>${esc(row.location)}</td><td>${esc((row.evidence||[]).join(' · '))}</td></tr>`).join('')}
+    </tbody></table></section>`;
+}
+
+function equipment(state) {
+  return `
+    <div class="lew-toolbar"><div><h3>Equipment</h3><div class="lew-note">Onboard tractors, trailers, buses, vans, service vehicles, rail equipment, and other governed assets.</div></div><button class="lew-primary" data-action="onboard-equipment">+ Add equipment</button></div>
+    <section class="lew-card full"><table class="lew-table"><thead><tr><th>Unit</th><th>Type</th><th>Configuration</th><th>Status</th><th>Assignment</th><th>Evidence</th></tr></thead><tbody>
+    ${state.equipment.map((row)=>`<tr><td><strong>${esc(row.unit)}</strong></td><td>${esc(row.type)}</td><td>${esc(row.subtype)}</td><td><span class="lew-status ${statusClass(row.status)}">${esc(row.status)}</span></td><td>${esc(row.assignment)}</td><td>${esc((row.evidence||[]).join(' · '))}</td></tr>`).join('')}
+    </tbody></table></section>`;
+}
+
+function crm(state) {
+  return `
+    <div class="lew-toolbar"><div><h3>Logistics CRM</h3><div class="lew-note">Connected accounts: customers, brokers, shippers, consignees, terminals, repair hubs, and facilities.</div></div><button class="lew-primary" data-action="new-account">+ New account</button></div>
+    <section class="lew-card full"><table class="lew-table"><thead><tr><th>Account</th><th>Type</th><th>Status</th><th>Location</th><th>World link</th></tr></thead><tbody>
+    ${state.crm.accounts.map((row)=>`<tr><td><strong>${esc(row.name)}</strong></td><td>${esc(row.type)}</td><td><span class="lew-status ${statusClass(row.status)}">${esc(row.status)}</span></td><td>${esc(row.location)}</td><td><button class="lew-ghost" data-action="locate-account" data-location="${esc(row.location)}" data-name="${esc(row.name)}">Show on map</button></td></tr>`).join('')}
+    </tbody></table></section>`;
+}
+
+function documents(state) {
+  return `
+    <div class="lew-toolbar"><div><h3>Documents & evidence</h3><div class="lew-note">Intake metadata is stored locally in this candidate. Production document bytes require a governed backend/evidence vault.</div></div></div>
+    <label class="lew-drop"><input type="file" multiple data-action="upload-files"><div><strong>Drop or choose files</strong>Applications, licenses, insurance, inspections, policies, contracts, rate confirmations, onboarding evidence.</div></label>
+    <section class="lew-card full" style="margin-top:14px"><table class="lew-table"><thead><tr><th>Document</th><th>Category</th><th>Owner</th><th>Status</th><th>Size</th><th>Received</th></tr></thead><tbody>
+    ${state.documents.map((row)=>`<tr><td><strong>${esc(row.name)}</strong></td><td>${esc(row.category)}</td><td>${esc(row.ownerType)} · ${esc(row.ownerId)}</td><td><span class="lew-status ${statusClass(row.status)}">${esc(row.status)}</span></td><td>${formatBytes(row.size)}</td><td>${esc(row.uploadedAt || '—')}</td></tr>`).join('')}
+    </tbody></table></section>`;
+}
+
+function integrations(state) {
+  return `
+    <div class="lew-toolbar"><div><h3>Integrations</h3><div class="lew-note">Connect the systems a real operator already uses. No credential is collected by this Pages candidate.</div></div></div>
+    <div class="lew-integrations">
+      ${state.integrations.map((row)=>`<div class="lew-integration"><h4>${esc(row.name)}</h4><p>Governed connector boundary</p><span class="lew-status ${statusClass(row.status)}">${esc(row.status)}</span><div style="margin-top:12px"><button class="lew-secondary" data-action="connect-integration" data-id="${esc(row.id)}">Connect</button></div></div>`).join('')}
+    </div>`;
+}
+
+function employeeDrawer(step = 1) {
+  return `<div class="lew-drawer-head"><div><div class="lew-note">GUIDED ONBOARDING · STEP ${step} OF 4</div><h3>Onboard employee</h3><p class="lew-note">Agent Lee can guide this process. Required documents should be configured by role, jurisdiction, and company policy.</p></div><button class="lew-close" data-action="close-drawer">×</button></div>
+  <div class="lew-stepper">${[1,2,3,4].map((n)=>`<span class="${n<step?'done':n===step?'active':''}"></span>`).join('')}</div>
+  <form class="lew-form" data-form="employee">
+    <div class="lew-field"><label>Full name</label><input name="name" required placeholder="Employee name"></div>
+    <div class="lew-field"><label>Role</label><select name="role"><option>Driver</option><option>Dispatcher</option><option>Fleet Manager</option><option>Maintenance</option><option>Transit Operator</option><option>HR / Recruiting</option><option>Operations</option></select></div>
+    <div class="lew-field"><label>Email</label><input name="email" type="email" placeholder="name@company.com"></div>
+    <div class="lew-field"><label>Phone</label><input name="phone" placeholder="Phone"></div>
+    <div class="lew-field full"><label>Primary work location</label><input name="location" placeholder="City, state or facility"></div>
+    <label class="lew-drop"><input type="file" multiple name="files"><div><strong>Drop onboarding documents</strong>Application, identity/work authorization, licenses, medical/safety credentials where applicable, policies, payroll/tax forms.</div></label>
+    <div class="lew-note full">This candidate does not claim legal/compliance completeness. Production templates must be configured for employer, role, jurisdiction, union/contract rules, and applicable transportation regulations.</div>
+    <div class="lew-form-actions"><button type="button" class="lew-ghost" data-action="close-drawer">Cancel</button><button type="submit" class="lew-primary">Create onboarding case</button></div>
+  </form>`;
+}
+
+function equipmentDrawer() {
+  return `<div class="lew-drawer-head"><div><div class="lew-note">ASSET INTAKE</div><h3>Onboard equipment</h3><p class="lew-note">Create the asset first; attach telematics/maintenance evidence when available.</p></div><button class="lew-close" data-action="close-drawer">×</button></div>
+  <form class="lew-form" data-form="equipment">
+    <div class="lew-field"><label>Unit number</label><input name="unit" required placeholder="LW-1004"></div>
+    <div class="lew-field"><label>Asset type</label><select name="type"><option>Tractor</option><option>Trailer</option><option>Box Truck</option><option>Bus</option><option>Van</option><option>Service Vehicle</option><option>Rail Equipment</option><option>Other</option></select></div>
+    <div class="lew-field full"><label>Configuration</label><input name="subtype" placeholder="53 ft Dry Van, Class 8, 40 ft Bus..."></div>
+    <div class="lew-field full"><label>Assignment</label><input name="assignment" placeholder="Driver, terminal, route, tractor..."></div>
+    <label class="lew-drop"><input type="file" multiple name="files"><div><strong>Drop equipment evidence</strong>Registration, insurance, inspection, title/lease, maintenance records, photos, manuals.</div></label>
+    <div class="lew-form-actions"><button type="button" class="lew-ghost" data-action="close-drawer">Cancel</button><button type="submit" class="lew-primary">Add equipment</button></div>
+  </form>`;
+}
+
+function accountDrawer() {
+  return `<div class="lew-drawer-head"><div><div class="lew-note">CRM RECORD</div><h3>New account</h3><p class="lew-note">One connected record can appear in boards, activity, routes, documents, and the world map.</p></div><button class="lew-close" data-action="close-drawer">×</button></div>
+  <form class="lew-form" data-form="account">
+    <div class="lew-field full"><label>Account name</label><input name="name" required placeholder="Customer, broker, terminal, repair hub..."></div>
+    <div class="lew-field"><label>Type</label><select name="type"><option>Customer</option><option>Broker</option><option>Shipper</option><option>Consignee</option><option>Terminal</option><option>Warehouse</option><option>Repair Hub</option><option>Port / Intermodal</option></select></div>
+    <div class="lew-field"><label>Status</label><select name="status"><option>ACTIVE</option><option>PROSPECT</option><option>ONBOARDING</option><option>INACTIVE</option></select></div>
+    <div class="lew-field full"><label>Location</label><input name="location" placeholder="Address, city, terminal, or facility"></div>
+    <div class="lew-form-actions"><button type="button" class="lew-ghost" data-action="close-drawer">Cancel</button><button type="submit" class="lew-primary">Create account</button></div>
+  </form>`;
+}
+
+export function mountEnterpriseWorkspace({ onLocate } = {}) {
+  ensureStyles(document);
+  const root = document.createElement('section');
+  root.id = 'leeway-enterprise-workspace';
+  root.innerHTML = `
+    <aside class="lew-side">
+      <div class="lew-brand">LEEWAY LOGISTICS</div><div class="lew-sub">ENTERPRISE WORKSPACE</div>
+      <nav class="lew-tabs">${WORKSPACE_TABS.map(([id,label],i)=>`<button class="lew-tab ${i===0?'active':''}" data-tab="${id}">${label}</button>`).join('')}</nav>
+      <div class="lew-side-actions"><button class="lew-primary" data-action="company-onboarding">Continue company onboarding</button><button class="lew-secondary" data-action="onboard-person">Onboard employee</button><button class="lew-secondary" data-action="onboard-equipment">Add equipment</button></div>
+    </aside>
+    <main class="lew-main">
+      <header class="lew-top"><div class="lew-title"><h2 data-title>Command</h2><p data-subtitle>Connected logistics CRM, people, equipment, documents, and onboarding.</p></div><button class="lew-close" data-action="close-workspace">×</button></header>
+      <div class="lew-content" data-content></div>
+      <aside class="lew-drawer" data-drawer></aside>
+    </main>`;
+  document.body.appendChild(root);
+
+  const content = root.querySelector('[data-content]');
+  const drawer = root.querySelector('[data-drawer]');
+  const title = root.querySelector('[data-title]');
+  let activeTab = 'overview';
+
+  function render() {
+    const state = readEnterpriseState();
+    const views = { overview, people, equipment, crm, documents, integrations };
+    content.innerHTML = views[activeTab]?.(state) || overview(state);
+    title.textContent = Object.fromEntries(WORKSPACE_TABS)[activeTab] || 'Command';
+    root.querySelectorAll('[data-tab]').forEach((button) => button.classList.toggle('active', button.dataset.tab === activeTab));
+    bindFileInputs();
+  }
+
+  function bindFileInputs() {
+    content.querySelectorAll('input[type="file"][data-action="upload-files"]').forEach((input) => {
+      input.addEventListener('change', () => {
+        for (const file of input.files || []) addDocumentMetadata({ file, category: 'General Intake' });
+        render();
+      });
+    });
+  }
+
+  function openDrawer(markup) {
+    drawer.innerHTML = markup;
+    drawer.classList.add('open');
+    const employeeForm = drawer.querySelector('[data-form="employee"]');
+    employeeForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(employeeForm);
+      addPerson(Object.fromEntries(data.entries()));
+      for (const file of employeeForm.elements.files?.files || []) addDocumentMetadata({ ownerType:'person', ownerId:'new-person', category:'Employee Onboarding', file });
+      drawer.classList.remove('open');
+      activeTab='people'; render();
+    });
+    const equipmentForm = drawer.querySelector('[data-form="equipment"]');
+    equipmentForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(equipmentForm);
+      addEquipment(Object.fromEntries(data.entries()));
+      for (const file of equipmentForm.elements.files?.files || []) addDocumentMetadata({ ownerType:'equipment', ownerId:'new-equipment', category:'Equipment Intake', file });
+      drawer.classList.remove('open');
+      activeTab='equipment'; render();
+    });
+    const accountForm = drawer.querySelector('[data-form="account"]');
+    accountForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      addAccount(Object.fromEntries(new FormData(accountForm).entries()));
+      drawer.classList.remove('open');
+      activeTab='crm'; render();
+    });
+  }
+
+  root.addEventListener('click', (event) => {
+    const tabButton = event.target.closest('[data-tab]');
+    if (tabButton) { activeTab=tabButton.dataset.tab; render(); return; }
+    const button = event.target.closest('[data-action]');
+    if (!button) return;
+    const action = button.dataset.action;
+    if (action === 'close-workspace') { root.classList.remove('open'); return; }
+    if (action === 'close-drawer') { drawer.classList.remove('open'); return; }
+    if (action === 'open-tab') { activeTab=button.dataset.tab || 'overview'; render(); return; }
+    if (action === 'onboard-person') { openDrawer(employeeDrawer()); return; }
+    if (action === 'onboard-equipment') { openDrawer(equipmentDrawer()); return; }
+    if (action === 'new-account') { openDrawer(accountDrawer()); return; }
+    if (action === 'company-onboarding') {
+      const state=readEnterpriseState(); const current=state.organization.onboardingStep || 1;
+      advanceOrganizationOnboarding(Math.min(7,current+1)); render(); return;
+    }
+    if (action === 'connect-integration') {
+      markIntegration(button.dataset.id, 'CONNECTOR_NOT_BOUND');
+      button.textContent='Connector required'; render(); return;
+    }
+    if (action === 'locate-account') {
+      root.classList.remove('open');
+      onLocate?.({ query: button.dataset.location, name: button.dataset.name });
+    }
+  });
+
+  render();
+
+  return {
+    root,
+    open(tab='overview') { activeTab=tab; root.classList.add('open'); render(); },
+    close() { root.classList.remove('open'); drawer.classList.remove('open'); },
+    isOpen() { return root.classList.contains('open'); },
+    openPeople() { this.open('people'); },
+    openEquipment() { this.open('equipment'); },
+    openCrm() { this.open('crm'); },
+    openDocuments() { this.open('documents'); },
+    openIntegrations() { this.open('integrations'); },
+    startEmployeeOnboarding() { this.open('people'); openDrawer(employeeDrawer()); },
+    startEquipmentOnboarding() { this.open('equipment'); openDrawer(equipmentDrawer()); },
+    startAccountIntake() { this.open('crm'); openDrawer(accountDrawer()); },
+    getSummary: summarizeEnterpriseState,
+    destroy() { root.remove(); },
+  };
+}

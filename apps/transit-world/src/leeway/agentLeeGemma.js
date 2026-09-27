@@ -1,4 +1,5 @@
 import * as Cesium from 'cesium';
+import { createAgentLeeToolRuntime } from './agentLeeTools.js';
 
 const DEFAULT_MODEL = 'gemma4:e4b';
 const DEFAULT_ENDPOINT = 'http://127.0.0.1:11435';
@@ -41,7 +42,11 @@ function systemPrompt(context) {
     'LeeWay context funnel: HUMAN, DEVICE/SYSTEM, AGENT, INTENT, ENVIRONMENT, PLATFORM, CAPABILITY, AUTHORITY, PERMISSION, STATE, HISTORY, RISK, CONNECTIVITY, EVIDENCE, RECOVERY, ADAPTATION.',
     'LeeWay execution discipline: Investigate → Diagnose → Plan → Implement → Test → Validate → Repair → Retest → Verify → Evidence. First success is not completion.',
     'Do not claim the canonical LeeWay Formula executed unless a verified Formula receipt is present.',
-    'Your role is to assist drivers, dispatchers, fleet managers, HR teams, maintenance teams, and logistics operators.',
+    'Your role is to act as a logistics super-expert for drivers, dispatchers, fleet managers, transportation agencies, brokers, shippers, HR teams, maintenance teams, terminals, warehouses, rail, marine/intermodal operations, and executive operators.',
+    'For action requests, use the available LeeWay tools before answering. Never claim a map, layer, CRM workspace, onboarding flow, tracking action, camera movement, route, or record opened unless the tool result says ok=true.',
+    'For questions about what the operator is looking at, use get_entity_context or get_current_view_state before explaining the scene. For analytical counts or nearest/fastest/highest questions over loaded world data, use analyst_query.',
+    'Use open_enterprise_workspace and start_onboarding for CRM, HR, employee, equipment, document, integration, and company onboarding requests. Use locate_enterprise_record when the operator names an employee, unit, customer, broker, terminal, or facility.',
+    'Preserve source/provenance state when discussing live layers. Never turn stale, fallback, training, or unavailable data into a live-data claim.',
     'Never claim a route is truck-safe unless verified truck restriction evidence is present.',
     'Treat OSRM car routes as visual/base routes only.',
     'Treat TRAINING_DEMO data as demonstration data, never live GPS or production records.',
@@ -69,27 +74,76 @@ async function probeOllama({ endpoint, model }) {
   };
 }
 
-async function callOllama({ endpoint, model, messages, context }) {
+async function callOllama({
+  endpoint,
+  model,
+  messages,
+  context,
+  toolRuntime,
+}) {
   const base = endpoint.replace(/\/$/, '');
-  const response = await fetch(`${base}/api/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      stream: false,
-      messages: [
-        { role: 'system', content: systemPrompt(context) },
-        ...messages,
-      ],
-    }),
-  });
-  if (!response.ok) {
-    throw new Error(`Ollama HTTP ${response.status}`);
+  const conversation = [
+    { role: 'system', content: systemPrompt(context) },
+    ...messages,
+  ];
+  const toolResults = [];
+
+  for (let round = 0; round < 6; round += 1) {
+    const response = await fetch(`${base}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model,
+        stream: false,
+        messages: conversation,
+        tools: toolRuntime?.tools || [],
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Ollama HTTP ${response.status}`);
+    }
+
+    const body = await response.json();
+    const message = body?.message || {};
+    const calls = Array.isArray(message.tool_calls) ? message.tool_calls : [];
+    conversation.push(message);
+
+    if (!calls.length) {
+      const content = String(message.content || '').trim();
+      if (!content) throw new Error('Gemma returned no message content');
+      return { content, toolResults };
+    }
+
+    for (const call of calls) {
+      const name = call?.function?.name;
+      const args =
+        call?.function?.arguments && typeof call.function.arguments === 'object'
+          ? call.function.arguments
+          : {};
+      if (!name || !toolRuntime) {
+        throw new Error('Gemma requested a tool but no LeeWay tool runtime is available');
+      }
+
+      let result;
+      try {
+        result = await toolRuntime.execute(name, args);
+      } catch (error) {
+        result = {
+          ok: false,
+          action: name,
+          error: String(error?.message || error),
+        };
+      }
+      toolResults.push({ name, arguments: args, result });
+      conversation.push({
+        role: 'tool',
+        tool_name: name,
+        content: JSON.stringify(result),
+      });
+    }
   }
-  const body = await response.json();
-  const content = body?.message?.content;
-  if (!content) throw new Error('Gemma returned no message content');
-  return content;
+
+  throw new Error('Agent Lee tool loop exceeded the six-round safety limit');
 }
 
 function ensureStyles(documentRef) {
@@ -163,9 +217,10 @@ function appendEntry(log, role, content) {
   log.scrollTop = log.scrollHeight;
 }
 
-export function mountAgentLeeGemma(application) {
+export function mountAgentLeeGemma(application, shell = null) {
   if (document.getElementById('leeway-agent-lee')) return null;
   ensureStyles(document);
+  const toolRuntime = shell ? createAgentLeeToolRuntime(application, shell) : null;
 
   const root = document.createElement('section');
   root.id = 'leeway-agent-lee';
@@ -177,7 +232,7 @@ export function mountAgentLeeGemma(application) {
     </div>
     <div class="lal-body">
       <div class="lal-log">
-        <div class="lal-entry"><strong>AGENT LEE</strong>\nGemma 4 is the local reasoning engine for this LeeWay product. Connect Ollama on this device to activate live assistance.</div>
+        <div class="lal-entry"><strong>AGENT LEE</strong>\nI can operate Transit World, inspect map context, control layers and CCTV, locate records, and guide CRM, employee, equipment, and company onboarding. Local Gemma 4 provides the reasoning engine.</div>
       </div>
       <div class="lal-row">
         <input class="lal-input" aria-label="Ask Agent Lee" placeholder="Ask about a load, route, driver, facility, maintenance, CRM, or fleet..." />
@@ -216,7 +271,7 @@ export function mountAgentLeeGemma(application) {
       const state = await probeOllama({ endpoint, model });
       if (state.modelInstalled) {
         status.dataset.state = 'connected';
-        status.textContent = `READY · ${model}`;
+        status.textContent = `READY · ${model}${toolRuntime ? ` · ${toolRuntime.tools.length} TOOLS` : ''}`;
       } else {
         status.dataset.state = 'disconnected';
         status.textContent = `MODEL MISSING · ${model}`;
@@ -244,14 +299,18 @@ export function mountAgentLeeGemma(application) {
     const context = sceneContext(application);
 
     try {
-      const answer = await callOllama({
+      const response = await callOllama({
         endpoint,
         model,
         messages: [...history, { role: 'user', content }],
         context,
+        toolRuntime,
       });
-      history.push({ role: 'user', content }, { role: 'assistant', content: answer });
-      appendEntry(log, 'assistant', answer);
+      history.push(
+        { role: 'user', content },
+        { role: 'assistant', content: response.content },
+      );
+      appendEntry(log, 'assistant', response.content);
       status.dataset.state = 'connected';
       status.textContent = `CONNECTED · ${model}`;
     } catch (error) {
