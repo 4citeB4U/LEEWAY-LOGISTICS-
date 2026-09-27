@@ -82,12 +82,18 @@ function ensureStyles(documentRef) {
     .lws-layer-row.unavailable { opacity:.38; cursor:default; }
     .lws-layer-group { margin:10px 6px 4px; font-size:8px; letter-spacing:.14em; color:#69e9f7; opacity:.72; }
     .lws-layer-id { display:block; margin-top:2px; font-size:7px; opacity:.38; }
-    body.leeway-enterprise-shell #leeway-transit-world { top:76px; right:12px; width:min(425px,calc(100vw - 106px)); max-height:calc(100vh - 94px); border-radius:15px; z-index:9780; }
+    body.leeway-enterprise-shell #leeway-transit-world { top:76px; right:12px; width:min(425px,calc(100vw - 106px)); max-height:calc(100vh - 94px); border-radius:15px; z-index:9780; display:none; }
+    body.leeway-enterprise-shell.leeway-right-ops-open #leeway-transit-world { display:block; }
+    .lws-right-tabs { pointer-events:auto; position:absolute; top:132px; right:0; z-index:9810; display:grid; gap:7px; }
+    .lws-right-tab { width:42px; min-height:78px; padding:7px 4px; border:1px solid rgba(71,225,242,.30); border-right:0; border-radius:11px 0 0 11px; background:rgba(3,15,24,.96); color:#dffcff; cursor:pointer; font:700 8px/1.2 Inter,ui-sans-serif,sans-serif; letter-spacing:.10em; writing-mode:vertical-rl; transform:rotate(180deg); }
+    .lws-right-tab.active { color:#07131b; background:#42e5f2; border-color:#70f2ff; }
+    .lws-right-tab:hover { box-shadow:0 0 18px rgba(66,229,242,.22); }
     body.leeway-enterprise-shell #leeway-transit-world .ltw-title { font-size:15px; }
     body.leeway-enterprise-shell #leeway-transit-world .ltw-section { padding:11px 14px; }
     body.leeway-enterprise-shell #leeway-transit-world .ltw-section h3 { font-size:9px; }
     body.leeway-enterprise-shell #leeway-transit-world [data-action="world-awareness"] { display:none; }
     body.leeway-enterprise-shell.leeway-cctv-inspecting #leeway-transit-world { display:none !important; }
+    body.leeway-enterprise-shell:not(.leeway-right-cctv-open) .lws-context-inspector { display:none !important; }
     .lws-context-inspector { pointer-events:auto; position:absolute; top:76px; right:12px; width:min(425px,calc(100vw - 106px)); max-height:calc(100vh - 94px); display:none; z-index:9790; }
     .lws-context-inspector.open { display:block; }
     .lws-context-inspector #cctv-panel { position:relative !important; inset:auto !important; top:auto !important; left:auto !important; right:auto !important; bottom:auto !important; width:100% !important; max-height:calc(100vh - 94px) !important; z-index:auto !important; margin:0 !important; transform:none !important; }
@@ -195,6 +201,10 @@ export function mountEnterpriseShell(application) {
       ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D'],['locate','Locate']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
     </nav>
     <aside class="lws-context-inspector" data-context-inspector></aside>
+    <div class="lws-right-tabs" aria-label="Right-side information panels">
+      <button class="lws-right-tab" data-action="right-ops" type="button">OPS</button>
+      <button class="lws-right-tab" data-action="right-cctv" type="button">CCTV</button>
+    </div>
     <button class="lws-inspector-toggle" data-action="collapse-inspector" type="button" aria-label="Collapse inspector">‹</button>
     <div class="lws-toast" role="status" aria-live="polite"></div>
   `;
@@ -214,6 +224,29 @@ export function mountEnterpriseShell(application) {
   const cctvOriginalNextSibling = cctvPanel?.nextSibling || null;
   let cctvObserver = null;
   let toastTimer;
+  let activeRightPanel = null;
+  let recenteringDistantGlobe = false;
+  const rightOpsTab = shell.querySelector('[data-action="right-ops"]');
+  const rightCctvTab = shell.querySelector('[data-action="right-cctv"]');
+
+  function syncRightTabs() {
+    document.body.classList.toggle('leeway-right-ops-open', activeRightPanel === 'ops');
+    document.body.classList.toggle('leeway-right-cctv-open', activeRightPanel === 'cctv');
+    rightOpsTab?.classList.toggle('active', activeRightPanel === 'ops');
+    rightCctvTab?.classList.toggle('active', activeRightPanel === 'cctv');
+  }
+
+  function setRightPanel(panel = null) {
+    const next = panel === activeRightPanel ? null : panel;
+    activeRightPanel = next;
+    if (next === 'cctv') {
+      cctvPanel?.classList.remove('collapsed');
+    } else if (cctvPanel && !cctvPanel.classList.contains('collapsed')) {
+      cctvPanel.classList.add('collapsed');
+    }
+    contextInspector.classList.remove('minimized');
+    syncRightTabs();
+  }
 
   function syncCctvInspector() {
     const open = Boolean(
@@ -221,7 +254,14 @@ export function mountEnterpriseShell(application) {
     );
     contextInspector.classList.toggle('open', open);
     if (!open) contextInspector.classList.remove('minimized');
-    document.body.classList.toggle('leeway-cctv-inspecting', open);
+    if (open) {
+      activeRightPanel = 'cctv';
+      syncRightTabs();
+    }
+    document.body.classList.toggle(
+      'leeway-cctv-inspecting',
+      open && activeRightPanel === 'cctv',
+    );
   }
 
   if (cctvPanel) {
@@ -393,11 +433,13 @@ export function mountEnterpriseShell(application) {
       const row = stacks.find((stack) => stack.id === id);
       return Boolean(row && row.available !== false);
     };
-    const preferred = available('bing-labels')
-      ? 'bing-labels'
-      : available('osm')
-        ? 'osm'
-        : null;
+    const preferred = available('esri-labeled')
+      ? 'esri-labeled'
+      : available('bing-labels')
+        ? 'bing-labels'
+        : available('osm')
+          ? 'osm'
+          : null;
     if (!preferred) {
       if (announce) say('Labeled basemap is unavailable');
       return false;
@@ -408,9 +450,11 @@ export function mountEnterpriseShell(application) {
       labeledWorldStackRequested = true;
       if (announce) {
         say(
-          preferred === 'bing-labels'
-            ? 'Aerial map labels enabled'
-            : 'OpenStreetMap labels enabled',
+          preferred === 'esri-labeled'
+            ? 'Satellite map labels enabled'
+            : preferred === 'bing-labels'
+              ? 'Aerial map labels enabled'
+              : 'OpenStreetMap labels enabled',
         );
       }
       return true;
@@ -426,19 +470,51 @@ export function mountEnterpriseShell(application) {
     toggleRoutePlanner(false);
     toggleLayerMenu(false);
     try {
-      if (typeof viewer?.camera?.flyHome === 'function') {
-        viewer.camera.flyHome(1.4);
-      } else {
-        viewer?.camera?.flyTo?.({
-          destination: Cesium.Cartesian3.fromDegrees(0, 18, 20_000_000),
-          duration: 1.4,
-        });
-      }
+      viewer?.camera?.flyTo?.({
+        destination: Cesium.Cartesian3.fromDegrees(0, 18, 22_000_000),
+        orientation: {
+          heading: 0,
+          pitch: -Cesium.Math.PI_OVER_TWO,
+          roll: 0,
+        },
+        duration: 1.4,
+      });
       say('World view');
     } catch {
       say('World view is unavailable');
     }
   }
+
+  function recenterDistantGlobe() {
+    if (!viewer?.camera || recenteringDistantGlobe) return;
+    const activeStack = mapStackController?.getActiveId?.();
+    if (activeStack === 'photoreal') return;
+    const carto = viewer.camera.positionCartographic;
+    if (!carto || !Number.isFinite(carto.height) || carto.height < 9_000_000) return;
+    const pitchError = Math.abs(viewer.camera.pitch + Cesium.Math.PI_OVER_TWO);
+    if (pitchError < Cesium.Math.toRadians(2)) return;
+    recenteringDistantGlobe = true;
+    try {
+      viewer.camera.setView({
+        destination: Cesium.Cartesian3.fromRadians(
+          carto.longitude,
+          carto.latitude,
+          carto.height,
+        ),
+        orientation: {
+          heading: viewer.camera.heading || 0,
+          pitch: -Cesium.Math.PI_OVER_TWO,
+          roll: 0,
+        },
+      });
+      viewer.scene.requestRender?.();
+    } finally {
+      recenteringDistantGlobe = false;
+    }
+  }
+
+  const removeWorldCentering =
+    viewer?.camera?.moveEnd?.addEventListener?.(recenterDistantGlobe) || null;
 
   async function locate(query) {
     if (!query || !viewer || !operations?.searchAndFlyTo) return false;
@@ -543,6 +619,14 @@ export function mountEnterpriseShell(application) {
     if (action === 'close-route') { toggleRoutePlanner(false); return; }
     if (action === 'swap-route') { const hold = routeFrom.value; routeFrom.value = routeTo.value; routeTo.value = hold; return; }
     if (action === 'generate-route') { await generateAddressRoute(); return; }
+    if (action === 'right-ops') { setRightPanel('ops'); return; }
+    if (action === 'right-cctv') {
+      if (dataManager?.layers?.has('cctv') && !dataManager.isEnabled?.('cctv')) {
+        await dataManager.setEnabled('cctv', true, { origin: 'user' });
+      }
+      setRightPanel('cctv');
+      return;
+    }
     if (action === 'collapse-inspector') {
       const minimized = contextInspector.classList.toggle('minimized');
       const button = shell.querySelector('[data-action="collapse-inspector"]');
@@ -582,6 +666,8 @@ export function mountEnterpriseShell(application) {
      layers remain independent and continue to follow the camera globally. */
   queueMicrotask(() => {
     if (!labeledWorldStackRequested) void ensureLabeledWorldStack();
+    syncRightTabs();
+    recenterDistantGlobe();
   });
 
   return {
@@ -595,6 +681,7 @@ export function mountEnterpriseShell(application) {
     destroy() {
       cctvObserver?.disconnect();
       cctvObserver = null;
+      removeWorldCentering?.();
       if (cctvPanel && cctvOriginalParent) {
         if (
           cctvOriginalNextSibling &&
@@ -608,6 +695,8 @@ export function mountEnterpriseShell(application) {
       document.body.classList.remove(
         'leeway-enterprise-shell',
         'leeway-cctv-inspecting',
+        'leeway-right-ops-open',
+        'leeway-right-cctv-open',
       );
       workspace.destroy();
       shell.remove();
