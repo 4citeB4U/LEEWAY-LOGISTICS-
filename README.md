@@ -55,3 +55,25 @@ Principle: AI should increase human capability, not replace human responsibility
 Execution discipline: Investigate -> Diagnose -> Plan -> Implement -> Test -> Validate -> Repair -> Retest -> Verify -> Evidence.
 
 No claim of LIVE, SAFE, VERIFIED, READY, or COMPLETE is valid without evidence.
+
+## Agent Lee / Gemma 4
+
+LeeWay Logistics uses **Agent Lee** as the product assistant.
+
+Default local model:
+
+```text
+gemma4:e4b
+```
+
+The public Transit World UI connects to a local Ollama runtime when available. GitHub Pages does not host the model and does not silently substitute a cloud model.
+
+Agent Lee is governed by LeeWay Standards and must preserve human authority, distinguish training/demo data from live records, and never promote an unverified visual road route into a truck-safe claim.
+
+See `docs/AGENT-LEE-GEMMA4.md`.
+
+## Spatial engine appreciation
+
+LeeWay Transit World includes MIT-licensed spatial-engine lineage from **God's Eye View** by **Bilawal Sidhu**. That contribution is credited in the licensing/provenance documentation and inside Transit World.
+
+The product identity, logistics workflows, Transit Hub, CRM architecture, Driver Cockpit, Agent Lee integration, governance, and product roadmap are LeeWay components.
