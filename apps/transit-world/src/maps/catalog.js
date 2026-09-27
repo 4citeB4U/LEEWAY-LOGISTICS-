@@ -31,6 +31,13 @@ export const MAP_STACKS = [
     requiresIon: false,
   },
   {
+    id: 'esri-labeled',
+    label: 'Satellite + Labels',
+    shortLabel: 'LABELS',
+    kind: 'esri-labeled',
+    requiresIon: false,
+  },
+  {
     id: 'osm',
     label: 'OSM',
     shortLabel: 'OSM',
