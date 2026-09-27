@@ -196,6 +196,9 @@ export function addPerson(input = {}) {
       email: String(input.email || '').trim(),
       phone: String(input.phone || '').trim(),
       evidence: Array.isArray(input.evidence) ? [...input.evidence] : [],
+      requiredEvidence: Array.isArray(input.requiredEvidence)
+        ? [...input.requiredEvidence]
+        : [],
       createdAt: new Date().toISOString(),
     });
   });

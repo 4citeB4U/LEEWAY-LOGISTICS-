@@ -17,10 +17,13 @@ test('Agent Lee exposes spatial control and enterprise onboarding tools', () => 
     'start_onboarding',
     'list_enterprise_records',
     'locate_enterprise_record',
+    'get_logistics_knowledge',
   ]) {
     assert.equal(names.has(name), true, name);
   }
 
   assert.ok(tools.every((tool) => tool.type === 'function'));
   assert.ok(tools.every((tool) => tool.function.parameters?.type === 'object'));
+  const onboarding = tools.find((tool) => tool.function.name === 'start_onboarding');
+  assert.ok(onboarding.function.parameters.properties.kind.enum.includes('company'));
 });

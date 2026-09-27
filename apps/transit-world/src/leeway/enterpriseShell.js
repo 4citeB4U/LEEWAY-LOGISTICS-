@@ -11,7 +11,8 @@ function ensureStyles(documentRef) {
     body.leeway-enterprise-shell #style-indicator,
     body.leeway-enterprise-shell #top-center-actions,
     body.leeway-enterprise-shell #command-dock,
-    body.leeway-enterprise-shell #left-panel-stack { display:none !important; }
+    body.leeway-enterprise-shell #left-panel-stack,
+    body.leeway-enterprise-shell #first-run-launcher { display:none !important; }
     body.leeway-enterprise-shell #leeway-agent-lee { display:none; }
     body.leeway-enterprise-shell #leeway-agent-lee.leeway-open { display:block; left:98px; bottom:92px; width:min(430px,calc(100vw - 120px)); }
     #leeway-world-shell { position:fixed; inset:0; z-index:9700; pointer-events:none; color:#edfaff; font:12px/1.35 Inter,ui-sans-serif,system-ui,sans-serif; }

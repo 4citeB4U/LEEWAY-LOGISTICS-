@@ -9,6 +9,10 @@ import {
   summarizeEnterpriseState,
   updateOrganization,
 } from './enterpriseStore.js';
+import {
+  ORGANIZATION_ONBOARDING_STEPS,
+  onboardingProfile,
+} from './onboardingRequirements.js';
 
 const WORKSPACE_TABS = Object.freeze([
   ['overview', 'Command'],
@@ -144,7 +148,7 @@ function people(state) {
   return `
     <div class="lew-toolbar"><div><h3>People</h3><div class="lew-note">Employees, candidates, drivers, dispatch, maintenance, operations, and HR records.</div></div><button class="lew-primary" data-action="onboard-person">+ Onboard employee</button></div>
     <section class="lew-card full"><table class="lew-table"><thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Onboarding</th><th>Location</th><th>Evidence</th></tr></thead><tbody>
-    ${state.people.map((row)=>`<tr><td><strong>${esc(row.name)}</strong></td><td>${esc(row.role)}</td><td><span class="lew-status ${statusClass(row.status)}">${esc(row.status)}</span></td><td>${esc(row.onboarding)}</td><td>${esc(row.location)}</td><td>${esc((row.evidence||[]).join(' · '))}</td></tr>`).join('')}
+    ${state.people.map((row)=>`<tr><td><strong>${esc(row.name)}</strong></td><td>${esc(row.role)}</td><td><span class="lew-status ${statusClass(row.status)}">${esc(row.status)}</span></td><td>${esc(row.onboarding)}</td><td>${esc(row.location)}</td><td>${Array.isArray(row.requiredEvidence)&&row.requiredEvidence.length ? `${(row.evidence||[]).length}/${row.requiredEvidence.length} received` : esc((row.evidence||[]).join(' · ') || '—')}</td></tr>`).join('')}
     </tbody></table></section>`;
 }
 
@@ -181,19 +185,107 @@ function integrations(state) {
     </div>`;
 }
 
-function employeeDrawer(step = 1) {
-  return `<div class="lew-drawer-head"><div><div class="lew-note">GUIDED ONBOARDING · STEP ${step} OF 4</div><h3>Onboard employee</h3><p class="lew-note">Agent Lee can guide this process. Required documents should be configured by role, jurisdiction, and company policy.</p></div><button class="lew-close" data-action="close-drawer">×</button></div>
-  <div class="lew-stepper">${[1,2,3,4].map((n)=>`<span class="${n<step?'done':n===step?'active':''}"></span>`).join('')}</div>
-  <form class="lew-form" data-form="employee">
-    <div class="lew-field"><label>Full name</label><input name="name" required placeholder="Employee name"></div>
-    <div class="lew-field"><label>Role</label><select name="role"><option>Driver</option><option>Dispatcher</option><option>Fleet Manager</option><option>Maintenance</option><option>Transit Operator</option><option>HR / Recruiting</option><option>Operations</option></select></div>
-    <div class="lew-field"><label>Email</label><input name="email" type="email" placeholder="name@company.com"></div>
-    <div class="lew-field"><label>Phone</label><input name="phone" placeholder="Phone"></div>
-    <div class="lew-field full"><label>Primary work location</label><input name="location" placeholder="City, state or facility"></div>
-    <label class="lew-drop"><input type="file" multiple name="files"><div><strong>Drop onboarding documents</strong>Application, identity/work authorization, licenses, medical/safety credentials where applicable, policies, payroll/tax forms.</div></label>
-    <div class="lew-note full">This candidate does not claim legal/compliance completeness. Production templates must be configured for employer, role, jurisdiction, union/contract rules, and applicable transportation regulations.</div>
-    <div class="lew-form-actions"><button type="button" class="lew-ghost" data-action="close-drawer">Cancel</button><button type="submit" class="lew-primary">Create onboarding case</button></div>
+function employeeWizardMarkup({ step = 1, draft = {}, files = [] } = {}) {
+  const role = draft.role || 'Driver';
+  const profile = onboardingProfile(role);
+  const steps = ['Identity', 'Role', 'Evidence', 'Review'];
+  const header = `<div class="lew-drawer-head"><div><div class="lew-note">GUIDED ONBOARDING · STEP ${step} OF 4</div><h3>Onboard employee</h3><p class="lew-note">Agent Lee can guide this process one question group at a time.</p></div><button class="lew-close" data-action="close-drawer">×</button></div>
+  <div class="lew-stepper">${steps.map((_,index)=>`<span class="${index+1<step?'done':index+1===step?'active':''}"></span>`).join('')}</div>`;
+
+  if (step === 1) {
+    return header + `<form class="lew-form" data-wizard-form="employee">
+      <div class="lew-field full"><label>Full legal name</label><input name="name" required value="${esc(draft.name || '')}" placeholder="Employee name"></div>
+      <div class="lew-field"><label>Email</label><input name="email" type="email" value="${esc(draft.email || '')}" placeholder="name@company.com"></div>
+      <div class="lew-field"><label>Phone</label><input name="phone" value="${esc(draft.phone || '')}" placeholder="Phone"></div>
+      <div class="lew-note full">Collect only information your organization is authorized to collect. Sensitive payroll, identity, and eligibility data should be handled by the production governed backend—not GitHub Pages/localStorage.</div>
+      <div class="lew-form-actions"><button type="button" class="lew-ghost" data-action="close-drawer">Cancel</button><button type="button" class="lew-primary" data-wizard-next="employee">Continue</button></div>
+    </form>`;
+  }
+
+  if (step === 2) {
+    return header + `<form class="lew-form" data-wizard-form="employee">
+      <div class="lew-field"><label>Role</label><select name="role">${['Driver','Dispatcher','Fleet Manager','Maintenance','Transit Operator','HR / Recruiting','Operations'].map((item)=>`<option ${item===role?'selected':''}>${item}</option>`).join('')}</select></div>
+      <div class="lew-field"><label>Employment status</label><select name="status"><option>ONBOARDING</option><option>CANDIDATE</option><option>ACTIVE</option></select></div>
+      <div class="lew-field full"><label>Primary work location</label><input name="location" value="${esc(draft.location || '')}" placeholder="City, state, terminal, facility, or route base"></div>
+      <div class="lew-field full"><label>Role-based onboarding sections</label><div class="lew-checklist">${profile.sections.map((item)=>`<div class="lew-check"><span>${esc(item)}</span><span class="lew-status muted">REQUIRED PROFILE</span></div>`).join('')}</div></div>
+      ${profile.note ? `<div class="lew-note full">${esc(profile.note)}</div>` : ''}
+      <div class="lew-form-actions"><button type="button" class="lew-ghost" data-wizard-back="employee">Back</button><button type="button" class="lew-primary" data-wizard-next="employee">Continue</button></div>
+    </form>`;
+  }
+
+  if (step === 3) {
+    return header + `<form class="lew-form" data-wizard-form="employee">
+      <div class="lew-field full"><label>Expected evidence for this role</label><div class="lew-checklist">${profile.evidence.map((item)=>`<div class="lew-check"><span>${esc(item)}</span><span class="lew-status muted">PENDING</span></div>`).join('')}</div></div>
+      <label class="lew-drop"><input type="file" multiple name="files"><div><strong>Drop onboarding documents</strong>${files.length ? `${files.length} file(s) currently selected for this intake` : 'Application, eligibility/tax forms, licenses, qualifications, policies, and role evidence.'}</div></label>
+      <div class="lew-note full">LeeWay stores file metadata only in this public candidate. Production file bytes belong in the governed document/evidence backend.</div>
+      <div class="lew-form-actions"><button type="button" class="lew-ghost" data-wizard-back="employee">Back</button><button type="button" class="lew-primary" data-wizard-next="employee">Review</button></div>
+    </form>`;
+  }
+
+  return header + `<div class="lew-grid">
+    <section class="lew-card full"><h3>Review employee onboarding</h3><p>Confirm the connected record before creating the case.</p>
+      <div class="lew-checklist">
+        <div class="lew-check"><span>Name</span><strong>${esc(draft.name || '—')}</strong></div>
+        <div class="lew-check"><span>Role</span><strong>${esc(role)}</strong></div>
+        <div class="lew-check"><span>Location</span><strong>${esc(draft.location || '—')}</strong></div>
+        <div class="lew-check"><span>Documents selected</span><strong>${files.length}</strong></div>
+        <div class="lew-check"><span>Onboarding status</span><span class="lew-status warn">READY TO CREATE</span></div>
+      </div>
+    </section>
+    <div class="lew-banner">I‑9, tax, driver qualification, medical/safety, and other requirements must be configured for the employer, job, operation, jurisdiction, and current law. LeeWay is organizing the workflow and evidence—not replacing employer/compliance responsibility.</div>
+    <div class="lew-form-actions"><button type="button" class="lew-ghost" data-wizard-back="employee">Back</button><button type="button" class="lew-primary" data-wizard-finish="employee">Create onboarding case</button></div>
+  </div>`;
+}
+
+function companyWizardMarkup({ step = 1, draft = {}, files = [] } = {}) {
+  const labels = ORGANIZATION_ONBOARDING_STEPS.map((item) => item.label);
+  const header = `<div class="lew-drawer-head"><div><div class="lew-note">COMPANY ONBOARDING · STEP ${step} OF ${labels.length}</div><h3>Onboard organization</h3><p class="lew-note">A simple guided setup for the company, people, fleet, evidence, and integrations.</p></div><button class="lew-close" data-action="close-drawer">×</button></div>
+  <div class="lew-stepper">${labels.map((_,index)=>`<span class="${index+1<step?'done':index+1===step?'active':''}"></span>`).join('')}</div>`;
+
+  if (step === 1) return header + `<form class="lew-form" data-wizard-form="company">
+    <div class="lew-field full"><label>Legal company name</label><input name="legalName" required value="${esc(draft.legalName || '')}" placeholder="Legal entity"></div>
+    <div class="lew-field"><label>DBA / operating name</label><input name="dba" value="${esc(draft.dba || '')}" placeholder="Operating name"></div>
+    <div class="lew-field"><label>Company type</label><select name="companyType"><option>Motor Carrier / Logistics</option><option>Municipal Transit</option><option>Private Fleet</option><option>Brokerage</option><option>Warehouse / Distribution</option><option>Rail / Intermodal</option><option>Port / Marine Logistics</option><option>Mixed Transportation</option></select></div>
+    <div class="lew-form-actions"><button type="button" class="lew-ghost" data-action="close-drawer">Cancel</button><button type="button" class="lew-primary" data-wizard-next="company">Continue</button></div>
   </form>`;
+
+  if (step === 2) return header + `<form class="lew-form" data-wizard-form="company">
+    <div class="lew-field full"><label>Primary operating location</label><input name="primaryLocation" value="${esc(draft.primaryLocation || '')}" placeholder="HQ, city, terminal, or operating base"></div>
+    <div class="lew-field full"><label>Transportation modes</label><input name="modes" value="${esc(draft.modes || '')}" placeholder="Trucking, transit, rail, delivery, marine/intermodal..."></div>
+    <div class="lew-field full"><label>What do you operate?</label><textarea name="operations" rows="4" placeholder="Fleet size, service area, transit routes, terminals, freight network, municipal operation...">${esc(draft.operations || '')}</textarea></div>
+    <div class="lew-form-actions"><button type="button" class="lew-ghost" data-wizard-back="company">Back</button><button type="button" class="lew-primary" data-wizard-next="company">Continue</button></div>
+  </form>`;
+
+  if (step === 3) return header + `<form class="lew-form" data-wizard-form="company">
+    <div class="lew-field full"><label>Primary administrator</label><input name="adminName" value="${esc(draft.adminName || '')}" placeholder="Administrator name"></div>
+    <div class="lew-field full"><label>Administrator email</label><input name="adminEmail" type="email" value="${esc(draft.adminEmail || '')}" placeholder="admin@company.com"></div>
+    <div class="lew-note full">After company activation, additional employees and roles are added through the People workspace with role-based onboarding.</div>
+    <div class="lew-form-actions"><button type="button" class="lew-ghost" data-wizard-back="company">Back</button><button type="button" class="lew-primary" data-wizard-next="company">Continue</button></div>
+  </form>`;
+
+  if (step === 4) {
+    const count = readEnterpriseState().equipment.length;
+    return header + `<div class="lew-grid"><section class="lew-card full"><h3>Equipment and fleet</h3><p>Existing local equipment records</p><div class="lew-metric">${count}</div><div class="lew-note">You can continue company setup now and onboard vehicles, trailers, buses, service assets, and other equipment immediately afterward.</div></section><div class="lew-form-actions"><button type="button" class="lew-ghost" data-wizard-back="company">Back</button><button type="button" class="lew-primary" data-wizard-next="company">Continue</button></div></div>`;
+  }
+
+  if (step === 5) return header + `<form class="lew-form" data-wizard-form="company">
+    <label class="lew-drop"><input type="file" multiple name="files"><div><strong>Drop company documents</strong>${files.length ? `${files.length} file(s) selected` : 'Operating authority, insurance, permits, policies, contracts, safety programs, facility documents, or other evidence.'}</div></label>
+    <div class="lew-note full">The Pages candidate stores file metadata only. Production files must go to the governed evidence/document backend.</div>
+    <div class="lew-form-actions"><button type="button" class="lew-ghost" data-wizard-back="company">Back</button><button type="button" class="lew-primary" data-wizard-next="company">Continue</button></div>
+  </form>`;
+
+  if (step === 6) {
+    const state = readEnterpriseState();
+    return header + `<div class="lew-grid"><section class="lew-card full"><h3>Choose integrations</h3><p>These are connector boundaries only until a real provider is bound.</p><div class="lew-integrations" style="margin-top:14px">${state.integrations.map((row)=>`<div class="lew-integration"><h4>${esc(row.name)}</h4><p>${esc(row.status)}</p><span class="lew-status muted">CONNECT AFTER SETUP</span></div>`).join('')}</div></section><div class="lew-form-actions"><button type="button" class="lew-ghost" data-wizard-back="company">Back</button><button type="button" class="lew-primary" data-wizard-next="company">Review</button></div></div>`;
+  }
+
+  return header + `<div class="lew-grid"><section class="lew-card full"><h3>Review organization</h3><p>LeeWay will create the connected company workspace and keep unbound integrations clearly marked.</p><div class="lew-checklist">
+    <div class="lew-check"><span>Legal name</span><strong>${esc(draft.legalName || '—')}</strong></div>
+    <div class="lew-check"><span>Operating name</span><strong>${esc(draft.dba || '—')}</strong></div>
+    <div class="lew-check"><span>Company type</span><strong>${esc(draft.companyType || '—')}</strong></div>
+    <div class="lew-check"><span>Primary location</span><strong>${esc(draft.primaryLocation || '—')}</strong></div>
+    <div class="lew-check"><span>Documents selected</span><strong>${files.length}</strong></div>
+  </div></section><div class="lew-form-actions"><button type="button" class="lew-ghost" data-wizard-back="company">Back</button><button type="button" class="lew-primary" data-wizard-finish="company">Create company workspace</button></div></div>`;
 }
 
 function equipmentDrawer() {
@@ -240,6 +332,8 @@ export function mountEnterpriseWorkspace({ onLocate } = {}) {
   const drawer = root.querySelector('[data-drawer]');
   const title = root.querySelector('[data-title]');
   let activeTab = 'overview';
+  let employeeWizard = { step: 1, draft: {}, files: [] };
+  let companyWizard = { step: 1, draft: {}, files: [] };
 
   function render() {
     const state = readEnterpriseState();
@@ -257,6 +351,107 @@ export function mountEnterpriseWorkspace({ onLocate } = {}) {
         render();
       });
     });
+  }
+
+  function mergeWizardForm(target, form) {
+    if (!form) return;
+    const data = new FormData(form);
+    for (const [key, value] of data.entries()) {
+      if (value instanceof File) continue;
+      target.draft[key] = String(value);
+    }
+    const fileInput = form.querySelector('input[type="file"]');
+    if (fileInput?.files?.length) {
+      target.files = [...target.files, ...fileInput.files];
+    }
+  }
+
+  function renderEmployeeWizard() {
+    drawer.innerHTML = employeeWizardMarkup(employeeWizard);
+    drawer.classList.add('open');
+  }
+
+  function renderCompanyWizard() {
+    drawer.innerHTML = companyWizardMarkup(companyWizard);
+    drawer.classList.add('open');
+  }
+
+  function resetEmployeeWizard() {
+    employeeWizard = { step: 1, draft: {}, files: [] };
+  }
+
+  function resetCompanyWizard() {
+    const org = readEnterpriseState().organization || {};
+    companyWizard = {
+      step: Math.max(1, Math.min(7, Number(org.onboardingStep) || 1)),
+      draft: {
+        legalName: org.legalName || '',
+        dba: org.dba || '',
+        companyType: org.companyType || '',
+        primaryLocation: org.primaryLocation || '',
+        modes: Array.isArray(org.modes) ? org.modes.join(', ') : String(org.modes || ''),
+      },
+      files: [],
+    };
+  }
+
+  function finishEmployeeWizard() {
+    const role = employeeWizard.draft.role || 'Driver';
+    const profile = onboardingProfile(role);
+    addPerson({
+      ...employeeWizard.draft,
+      role,
+      status: 'ONBOARDING',
+      onboarding: 'DOCUMENT_REVIEW',
+      evidence: employeeWizard.files.map((file) => file.name),
+      requiredEvidence: [...profile.evidence],
+    });
+    for (const file of employeeWizard.files) {
+      addDocumentMetadata({
+        ownerType: 'person',
+        ownerId: employeeWizard.draft.name || 'new-person',
+        category: 'Employee Onboarding',
+        file,
+      });
+    }
+    resetEmployeeWizard();
+    drawer.classList.remove('open');
+    activeTab = 'people';
+    render();
+  }
+
+  function finishCompanyWizard() {
+    const draft = companyWizard.draft;
+    updateOrganization({
+      legalName: draft.legalName || readEnterpriseState().organization.legalName,
+      dba: draft.dba || '',
+      companyType: draft.companyType || 'Motor Carrier / Logistics',
+      primaryLocation: draft.primaryLocation || '',
+      modes: String(draft.modes || '')
+        .split(',')
+        .map((value) => value.trim())
+        .filter(Boolean),
+      onboardingStep: 7,
+      status: 'READY_FOR_REVIEW',
+      operations: draft.operations || '',
+      primaryAdmin: {
+        name: draft.adminName || '',
+        email: draft.adminEmail || '',
+      },
+    });
+    for (const file of companyWizard.files) {
+      addDocumentMetadata({
+        ownerType: 'organization',
+        ownerId: 'org-demo',
+        category: 'Organization Onboarding',
+        file,
+      });
+    }
+    advanceOrganizationOnboarding(7);
+    companyWizard = { step: 7, draft: { ...draft }, files: [] };
+    drawer.classList.remove('open');
+    activeTab = 'overview';
+    render();
   }
 
   function openDrawer(markup) {
@@ -292,18 +487,70 @@ export function mountEnterpriseWorkspace({ onLocate } = {}) {
   root.addEventListener('click', (event) => {
     const tabButton = event.target.closest('[data-tab]');
     if (tabButton) { activeTab=tabButton.dataset.tab; render(); return; }
+
+    const employeeNext = event.target.closest('[data-wizard-next="employee"]');
+    if (employeeNext) {
+      const form = drawer.querySelector('[data-wizard-form="employee"]');
+      if (form && !form.reportValidity()) return;
+      mergeWizardForm(employeeWizard, form);
+      employeeWizard.step = Math.min(4, employeeWizard.step + 1);
+      renderEmployeeWizard();
+      return;
+    }
+    const employeeBack = event.target.closest('[data-wizard-back="employee"]');
+    if (employeeBack) {
+      mergeWizardForm(employeeWizard, drawer.querySelector('[data-wizard-form="employee"]'));
+      employeeWizard.step = Math.max(1, employeeWizard.step - 1);
+      renderEmployeeWizard();
+      return;
+    }
+    if (event.target.closest('[data-wizard-finish="employee"]')) {
+      finishEmployeeWizard();
+      return;
+    }
+
+    const companyNext = event.target.closest('[data-wizard-next="company"]');
+    if (companyNext) {
+      const form = drawer.querySelector('[data-wizard-form="company"]');
+      if (form && !form.reportValidity()) return;
+      mergeWizardForm(companyWizard, form);
+      companyWizard.step = Math.min(7, companyWizard.step + 1);
+      advanceOrganizationOnboarding(companyWizard.step);
+      renderCompanyWizard();
+      render();
+      return;
+    }
+    const companyBack = event.target.closest('[data-wizard-back="company"]');
+    if (companyBack) {
+      mergeWizardForm(companyWizard, drawer.querySelector('[data-wizard-form="company"]'));
+      companyWizard.step = Math.max(1, companyWizard.step - 1);
+      advanceOrganizationOnboarding(companyWizard.step);
+      renderCompanyWizard();
+      render();
+      return;
+    }
+    if (event.target.closest('[data-wizard-finish="company"]')) {
+      finishCompanyWizard();
+      return;
+    }
+
     const button = event.target.closest('[data-action]');
     if (!button) return;
     const action = button.dataset.action;
     if (action === 'close-workspace') { root.classList.remove('open'); return; }
     if (action === 'close-drawer') { drawer.classList.remove('open'); return; }
     if (action === 'open-tab') { activeTab=button.dataset.tab || 'overview'; render(); return; }
-    if (action === 'onboard-person') { openDrawer(employeeDrawer()); return; }
+    if (action === 'onboard-person') {
+      resetEmployeeWizard();
+      renderEmployeeWizard();
+      return;
+    }
     if (action === 'onboard-equipment') { openDrawer(equipmentDrawer()); return; }
     if (action === 'new-account') { openDrawer(accountDrawer()); return; }
     if (action === 'company-onboarding') {
-      const state=readEnterpriseState(); const current=state.organization.onboardingStep || 1;
-      advanceOrganizationOnboarding(Math.min(7,current+1)); render(); return;
+      resetCompanyWizard();
+      renderCompanyWizard();
+      return;
     }
     if (action === 'connect-integration') {
       markIntegration(button.dataset.id, 'CONNECTOR_NOT_BOUND');
@@ -327,7 +574,8 @@ export function mountEnterpriseWorkspace({ onLocate } = {}) {
     openCrm() { this.open('crm'); },
     openDocuments() { this.open('documents'); },
     openIntegrations() { this.open('integrations'); },
-    startEmployeeOnboarding() { this.open('people'); openDrawer(employeeDrawer()); },
+    startEmployeeOnboarding() { this.open('people'); resetEmployeeWizard(); renderEmployeeWizard(); },
+    startCompanyOnboarding() { this.open('overview'); resetCompanyWizard(); renderCompanyWizard(); },
     startEquipmentOnboarding() { this.open('equipment'); openDrawer(equipmentDrawer()); },
     startAccountIntake() { this.open('crm'); openDrawer(accountDrawer()); },
     getSummary: summarizeEnterpriseState,

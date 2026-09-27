@@ -1,6 +1,10 @@
 import { createGevActionRunner } from '../voice/gevActions.js';
 import { GEV_ACTION_SCHEMAS } from '../voice/actionSchemas.js';
 import { readEnterpriseState, summarizeEnterpriseState } from './enterpriseStore.js';
+import {
+  LOGISTICS_KNOWLEDGE_TOPICS,
+  logisticsKnowledge,
+} from './logisticsKnowledge.js';
 
 const SPATIAL_TOOL_NAMES = Object.freeze([
   'fly_to_location',
@@ -60,12 +64,12 @@ const enterpriseSchemas = Object.freeze([
   },
   {
     name: 'start_onboarding',
-    description: 'Start a guided LeeWay onboarding flow for an employee, equipment asset, or CRM account.',
+    description: 'Start a guided LeeWay onboarding flow for a company, employee, equipment asset, or CRM account.',
     parameters: {
       type: 'object',
       additionalProperties: false,
       properties: {
-        kind: { type: 'string', enum: ['employee', 'equipment', 'account'] },
+        kind: { type: 'string', enum: ['company', 'employee', 'equipment', 'account'] },
       },
       required: ['kind'],
     },
@@ -92,6 +96,21 @@ const enterpriseSchemas = Object.freeze([
         query: { type: 'string', minLength: 1, maxLength: 160 },
       },
       required: ['query'],
+    },
+  },
+  {
+    name: 'get_logistics_knowledge',
+    description: 'Retrieve focused LeeWay logistics domain knowledge, operating questions, evidence rules, and authoritative references for the requested topic.',
+    parameters: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        topic: {
+          type: 'string',
+          enum: [...LOGISTICS_KNOWLEDGE_TOPICS],
+        },
+      },
+      required: ['topic'],
     },
   },
 ]);
@@ -159,7 +178,8 @@ export function createAgentLeeToolRuntime(application, shell) {
     }
 
     if (name === 'start_onboarding') {
-      if (args.kind === 'employee') shell.workspace.startEmployeeOnboarding();
+      if (args.kind === 'company') shell.workspace.startCompanyOnboarding();
+      else if (args.kind === 'employee') shell.workspace.startEmployeeOnboarding();
       else if (args.kind === 'equipment') shell.workspace.startEquipmentOnboarding();
       else shell.workspace.startAccountIntake();
       return { ok: true, action: name, kind: args.kind };
@@ -168,6 +188,17 @@ export function createAgentLeeToolRuntime(application, shell) {
     if (name === 'list_enterprise_records') {
       const records = enterpriseRecords(args.domain);
       return { ok: true, action: name, domain: args.domain, records };
+    }
+
+    if (name === 'get_logistics_knowledge') {
+      const knowledge = logisticsKnowledge(args.topic);
+      return {
+        ok: Boolean(knowledge),
+        action: name,
+        topic: args.topic,
+        knowledge,
+        error: knowledge ? null : 'Unknown logistics knowledge topic',
+      };
     }
 
     if (name === 'locate_enterprise_record') {

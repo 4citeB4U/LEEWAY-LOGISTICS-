@@ -1,0 +1,21 @@
+{
+  "receipt": "LEEWAY-AGENT-LEE-LOGISTICS-KNOWLEDGE",
+  "timestampUtc": "2026-09-27T17:20:00Z",
+  "model": "gemma4:e4b",
+  "endpoint": "http://127.0.0.1:11435",
+  "origin": "https://4citeb4u.github.io",
+  "prompt": "What should a professional truck-driver onboarding workflow collect and verify?",
+  "httpStatus": 200,
+  "toolCall": {
+    "name": "get_logistics_knowledge",
+    "arguments": {
+      "topic": "driver_qualification"
+    }
+  },
+  "contentBeforeToolExecution": "",
+  "status": "VERIFIED_KNOWLEDGE_TOOL_SELECTION",
+  "notes": [
+    "This proves model-side selection of the focused LeeWay logistics knowledge tool.",
+    "Detailed guidance is returned only after the tool result is supplied back to the model."
+  ]
+}
