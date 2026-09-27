@@ -1,6 +1,6 @@
 # Security
 
-God's Eye View is a local-first client for **public** data. It is built for exploration, demos, and learning — not as a hardened production service. This document explains the security model so you can run it safely and report issues responsibly.
+LeeWay Logistics Transit World is a local-first spatial client for public and governed LeeWay logistics data. It is built for exploration, demos, and learning — not as a hardened production service. This document explains the security model so you can run it safely and report issues responsibly.
 
 ## Reporting a vulnerability
 
