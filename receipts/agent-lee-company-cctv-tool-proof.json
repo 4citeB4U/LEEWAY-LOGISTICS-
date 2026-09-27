@@ -1,0 +1,45 @@
+{
+  "receipt": "LEEWAY-AGENT-LEE-COMPANY-CCTV-TOOLS",
+  "timestampUtc": "2026-09-27T18:05:00Z",
+  "model": "gemma4:e4b",
+  "endpoint": "http://127.0.0.1:11435",
+  "origin": "https://4citeb4u.github.io",
+  "probes": [
+    {
+      "prompt": "Start onboarding my company.",
+      "httpStatus": 200,
+      "toolCalls": [
+        {
+          "name": "start_onboarding",
+          "arguments": {
+            "kind": "company"
+          }
+        }
+      ]
+    },
+    {
+      "prompt": "Turn on CCTV and show me the nearest camera.",
+      "httpStatus": 200,
+      "toolCalls": [
+        {
+          "name": "control_cctv",
+          "arguments": {
+            "action": "enable",
+            "enabled": true
+          }
+        },
+        {
+          "name": "control_cctv",
+          "arguments": {
+            "action": "nearest"
+          }
+        }
+      ]
+    }
+  ],
+  "status": "VERIFIED_TOOL_SELECTION",
+  "notes": [
+    "This proves model-side tool selection against the LeeWay tool schema.",
+    "Full browser tool execution remains subject to runtime layer availability, authority, and returned tool results."
+  ]
+}

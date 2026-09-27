@@ -45,6 +45,15 @@ function ensureStyles(documentRef) {
     .lws-ai strong { font-size:10px; } .lws-ai span { font-size:8px; color:#7feeff; }
     .lws-live { position:absolute; left:98px; bottom:22px; pointer-events:none; display:flex; gap:8px; align-items:center; padding:9px 12px; border:1px solid rgba(255,255,255,.10); border-radius:12px; background:rgba(3,15,24,.86); }
     .lws-live b { color:#57f1a9; font-size:9px; } .lws-live span { opacity:.56; font-size:9px; }
+    .lws-layer-menu { pointer-events:auto; position:absolute; top:76px; left:94px; width:260px; padding:12px; border-radius:14px; background:rgba(3,15,24,.96); border:1px solid rgba(68,221,241,.22); box-shadow:0 18px 55px rgba(0,0,0,.35); backdrop-filter:blur(16px); display:none; }
+    .lws-layer-menu.open { display:block; }
+    .lws-layer-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .lws-layer-head strong { font-size:11px; letter-spacing:.12em; }
+    .lws-layer-row { width:100%; border:0; background:transparent; color:#d7e8ed; padding:9px 8px; border-radius:9px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; font:inherit; }
+    .lws-layer-row:hover { background:rgba(66,225,242,.07); }
+    .lws-layer-state { font-size:8px; letter-spacing:.08em; opacity:.58; }
+    .lws-layer-row.on .lws-layer-state { color:#54efae; opacity:1; }
+    .lws-layer-row.unavailable { opacity:.38; cursor:default; }
     body.leeway-enterprise-shell #leeway-transit-world { top:76px; right:12px; width:min(425px,calc(100vw - 106px)); max-height:calc(100vh - 94px); border-radius:15px; z-index:9780; }
     body.leeway-enterprise-shell #leeway-transit-world .ltw-title { font-size:15px; }
     body.leeway-enterprise-shell #leeway-transit-world .ltw-section { padding:11px 14px; }
@@ -72,6 +81,18 @@ export function mountEnterpriseShell(application) {
   const mapStackController = components.scene?.mapStackController;
   const operations = components.scene?.operations;
   const agentPanel = () => document.getElementById('leeway-agent-lee');
+  const layerOptions = [
+    ['traffic', 'Traffic'],
+    ['transit', 'Public Transit'],
+    ['cctv', 'CCTV'],
+    ['ais-live-vessels', 'Vessels / AIS'],
+    ['flights', 'Aircraft'],
+    ['satellites', 'Satellites'],
+    ['weather-radar', 'Weather Radar'],
+    ['weather-lightning', 'Lightning'],
+    ['earthquakes', 'Earthquakes'],
+    ['local-firms', 'Active Fires'],
+  ];
 
   const shell = document.createElement('div');
   shell.id = 'leeway-world-shell';
@@ -91,6 +112,10 @@ export function mountEnterpriseShell(application) {
       <div class="lws-spacer"></div>
       <button class="lws-nav" data-action="collapse"><span class="i">«</span><span>Collapse</span></button>
     </nav>
+    <aside class="lws-layer-menu" data-layer-menu>
+      <div class="lws-layer-head"><strong>WORLD LAYERS</strong><button class="lws-chip" data-action="close-layers">×</button></div>
+      <div data-layer-list></div>
+    </aside>
     <div class="lws-live"><b>● LIVE</b><span>World data · source-aware</span></div>
     <nav class="lws-dock">
       ${[['layers','Layers'],['traffic','Traffic'],['weather','Weather']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
@@ -102,7 +127,33 @@ export function mountEnterpriseShell(application) {
   document.body.appendChild(shell);
 
   const toast = shell.querySelector('.lws-toast');
+  const layerMenu = shell.querySelector('[data-layer-menu]');
+  const layerList = shell.querySelector('[data-layer-list]');
   let toastTimer;
+
+  function renderLayerMenu() {
+    const current = new Map(
+      (dataManager?.getAll?.() || []).map((row) => [row.id, row]),
+    );
+    layerList.innerHTML = layerOptions
+      .map(([id, label]) => {
+        const row = current.get(id);
+        const available = Boolean(row);
+        const enabled = Boolean(row?.enabled);
+        return `<button class="lws-layer-row ${enabled ? 'on' : ''} ${available ? '' : 'unavailable'}" data-shell-layer="${id}" ${available ? '' : 'disabled'}>
+          <span>${label}</span>
+          <span class="lws-layer-state">${available ? (enabled ? 'ON' : 'OFF') : 'UNAVAILABLE'}</span>
+        </button>`;
+      })
+      .join('');
+  }
+
+  function toggleLayerMenu(open = null) {
+    const next = open == null ? !layerMenu.classList.contains('open') : open;
+    if (next) renderLayerMenu();
+    layerMenu.classList.toggle('open', next);
+  }
+
   function say(message) {
     clearTimeout(toastTimer);
     toast.textContent = message;
@@ -140,10 +191,15 @@ export function mountEnterpriseShell(application) {
   }
 
   async function toggleLayer(id) {
-    if (!dataManager?.layers?.has(id)) { say(`${id} layer is not available in this build`); return; }
+    if (!dataManager?.layers?.has(id)) {
+      say(`${id} layer is not available in this build`);
+      return;
+    }
     const layer = dataManager.getAll().find((row) => row.id === id);
-    await dataManager.setEnabled(id, !layer?.enabled, { origin: 'tool' });
-    say(`${layer?.name || id}: ${!layer?.enabled ? 'on' : 'off'}`);
+    const nextEnabled = !layer?.enabled;
+    await dataManager.setEnabled(id, nextEnabled, { origin: 'tool' });
+    renderLayerMenu();
+    say(`${layer?.name || id}: ${nextEnabled ? 'on' : 'off'}`);
   }
 
   async function handleSearch(value) {
@@ -173,6 +229,12 @@ export function mountEnterpriseShell(application) {
     const nav = event.target.closest('[data-nav]');
     const action = event.target.closest('[data-action]')?.dataset.action;
     const dock = event.target.closest('[data-dock]')?.dataset.dock;
+    const layerButton = event.target.closest('[data-shell-layer]');
+
+    if (layerButton) {
+      await toggleLayer(layerButton.dataset.shellLayer);
+      return;
+    }
 
     if (nav) {
       const id = nav.dataset.nav; setNav(id);
@@ -183,17 +245,18 @@ export function mountEnterpriseShell(application) {
       if (id === 'loads') { workspace.open('overview'); say('Load board domain opened from enterprise command'); return; }
       if (id === 'transit') { workspace.close(); await toggleLayer('transit'); return; }
       if (id === 'rail') { workspace.close(); say('Rail operating view ready for rail provider binding'); return; }
-      if (id === 'intel') { workspace.close(); document.querySelector('#data-panel .panel-collapse-btn')?.click(); return; }
+      if (id === 'intel') { workspace.close(); toggleLayerMenu(true); return; }
       if (id === 'ai') { workspace.close(); toggleAgent(true); return; }
     }
 
     if (action === 'ai') { toggleAgent(); return; }
     if (action === 'map') { workspace.close(); setNav('map'); return; }
     if (action === 'workspace') { workspace.open(); return; }
-    if (action === 'layers') { document.querySelector('#data-panel .panel-collapse-btn')?.click(); return; }
+    if (action === 'layers') { toggleLayerMenu(); return; }
+    if (action === 'close-layers') { toggleLayerMenu(false); return; }
     if (action === 'collapse') { shell.querySelector('.lws-rail').classList.toggle('compact'); return; }
 
-    if (dock === 'layers') { document.querySelector('#data-panel .panel-collapse-btn')?.click(); return; }
+    if (dock === 'layers') { toggleLayerMenu(); return; }
     if (dock === 'traffic') { await toggleLayer('traffic'); return; }
     if (dock === 'weather') {
       for (const id of ['weather-radar','weather-satellite','weather-lightning']) if (dataManager?.layers?.has(id)) await dataManager.setEnabled(id, true, { origin:'tool' });
