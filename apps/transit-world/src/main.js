@@ -1,6 +1,7 @@
 import { createStandaloneApplication } from './standalone/application.js';
 import { describeError } from './standalone/errors.js';
 import { mountLeeWayTransitWorld } from './leeway/transitWorldCockpit.js';
+import { mountAgentLeeGemma } from './leeway/agentLeeGemma.js';
 
 const application = createStandaloneApplication({
   googleApiKey: import.meta.env.GOOGLE_MAPS_API_KEY,
@@ -10,9 +11,12 @@ const application = createStandaloneApplication({
 
 application
   .start()
-  .then(() => mountLeeWayTransitWorld(application))
+  .then(async () => {
+    await mountLeeWayTransitWorld(application);
+    mountAgentLeeGemma(application);
+  })
   .catch((error) => {
-    console.error("God's Eye View initialization failed:", error);
+    console.error('LeeWay Logistics Transit World initialization failed:', error);
     const loaderStatus = document.querySelector('#loading-screen .loader-status');
     if (loaderStatus) {
       loaderStatus.textContent = `Error: ${describeError(error)}`;
