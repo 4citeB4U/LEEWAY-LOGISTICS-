@@ -667,8 +667,8 @@ export function mountEnterpriseShell(application) {
     await dataManager.setEnabled('directions', true, { origin: 'user' });
     directions.placeEndpoint('a', a);
     directions.placeEndpoint('b', b);
-    toggleRoutePlanner(false);
-    say(`Routing ${from} → ${to}`);
+    say(`Routing ${from} → ${to} · checking truck restrictions`);
+    void inspectTruckRestrictions(a, b);
     return true;
   }
 
@@ -764,6 +764,8 @@ export function mountEnterpriseShell(application) {
 
   const removeWorldCentering =
     viewer?.camera?.moveEnd?.addEventListener?.(recenterDistantGlobe) || null;
+  const removeLocationBadgeListener =
+    viewer?.camera?.moveEnd?.addEventListener?.(() => void updateLocationBadge()) || null;
 
   async function locate(query) {
     if (!query || !viewer || !operations?.searchAndFlyTo) return false;
@@ -864,7 +866,11 @@ export function mountEnterpriseShell(application) {
     if (action === 'map') { workspace.close(); setNav('map'); return; }
     if (action === 'world') { showWorld(); setNav('map'); return; }
     if (action === 'route') { toggleRoutePlanner(); return; }
+    if (action === 'view-map') { await switchMapMode('map'); return; }
+    if (action === 'view-satellite') { await switchMapMode('satellite'); return; }
     if (action === 'labels') { await ensureLabeledWorldStack({ announce: true }); return; }
+    if (action === 'map-only') { document.body.classList.add('leeway-map-only'); return; }
+    if (action === 'restore-ui') { document.body.classList.remove('leeway-map-only'); return; }
     if (action === 'close-route') { toggleRoutePlanner(false); return; }
     if (action === 'swap-route') { const hold = routeFrom.value; routeFrom.value = routeTo.value; routeTo.value = hold; return; }
     if (action === 'generate-route') { await generateAddressRoute(); return; }
@@ -874,6 +880,15 @@ export function mountEnterpriseShell(application) {
         await dataManager.setEnabled('cctv', true, { origin: 'user' });
       }
       setRightPanel('cctv');
+      return;
+    }
+    if (action === 'right-weather') {
+      for (const id of ['wind','weather-radar','weather-satellite','weather-lightning','weather-cyclones']) {
+        if (dataManager?.layers?.has(id)) {
+          await dataManager.setEnabled(id, true, { origin: 'user' });
+        }
+      }
+      setRightPanel('weather');
       return;
     }
     if (action === 'collapse-inspector') {
@@ -890,14 +905,18 @@ export function mountEnterpriseShell(application) {
     if (dock === 'layers') { toggleLayerMenu(); return; }
     if (dock === 'traffic') { await toggleLayer('traffic'); return; }
     if (dock === 'weather') {
-      for (const id of ['weather-radar','weather-satellite','weather-lightning']) if (dataManager?.layers?.has(id)) await dataManager.setEnabled(id, true, { origin:'tool' });
-      say('Weather awareness requested'); return;
+      for (const id of ['wind','weather-radar','weather-satellite','weather-lightning','weather-cyclones']) {
+        if (dataManager?.layers?.has(id)) await dataManager.setEnabled(id, true, { origin:'tool' });
+      }
+      setRightPanel('weather');
+      say('Weather map opened · radar · satellite · lightning · wind · cyclones');
+      return;
     }
     if (dock === 'transit') { await toggleLayer('transit'); return; }
     if (dock === 'freight') { workspace.open('overview'); say('Freight command workspace opened'); return; }
     if (dock === 'rail') { say('Rail provider binding is not yet verified'); return; }
     if (dock === 'three') {
-      try { await mapStackController?.setStack?.('photoreal'); say('3D map stack requested'); } catch { say('3D map stack unavailable'); }
+      try { await switchMapMode('3d'); } catch { say('3D map stack unavailable'); }
       return;
     }
     if (dock === 'locate') {
@@ -909,14 +928,13 @@ export function mountEnterpriseShell(application) {
     }
   });
 
-  /* Geographic identity is on by default. Prefer the aerial-with-labels
-     stack for cities, roads, airports and place names, then fall back to OSM
-     labels when the token-backed aerial source is unavailable. Live world
-     layers remain independent and continue to follow the camera globally. */
+  /* Preserve the application's real 3D startup when available. Geographic
+     identity is independent through the location badge, while Map and
+     Satellite are explicit operator-selectable labeled views. */
   queueMicrotask(() => {
-    if (!labeledWorldStackRequested) void ensureLabeledWorldStack();
     syncRightTabs();
     recenterDistantGlobe();
+    void updateLocationBadge();
   });
 
   return {
@@ -931,6 +949,7 @@ export function mountEnterpriseShell(application) {
       cctvObserver?.disconnect();
       cctvObserver = null;
       removeWorldCentering?.();
+      removeLocationBadgeListener?.();
       if (cctvPanel && cctvOriginalParent) {
         if (
           cctvOriginalNextSibling &&
@@ -946,6 +965,8 @@ export function mountEnterpriseShell(application) {
         'leeway-cctv-inspecting',
         'leeway-right-ops-open',
         'leeway-right-cctv-open',
+        'leeway-right-weather-open',
+        'leeway-map-only',
       );
       workspace.destroy();
       shell.remove();
