@@ -4,6 +4,8 @@ import { keySetupRequirement } from '../keySetupCore.mjs';
 import {
   createOsmImagery,
   createEsriImagery,
+  createEsriReferenceLabelsImagery,
+  createEsriTransportationReferenceImagery,
   createIonImagery,
   ESRI_ATTRIBUTION_HTML,
 } from './imagery.js';
@@ -50,11 +52,19 @@ export function createDefaultMapSources({
           : descriptor.id === 'osm'
             ? createOsmImagery
             : createEsriImagery;
+      const referenceImagery =
+        descriptor.id === 'esri-labeled'
+          ? [
+              createEsriReferenceLabelsImagery,
+              createEsriTransportationReferenceImagery,
+            ]
+          : null;
       return {
         ...common,
         imagery,
+        referenceImagery,
         terrain,
-        ...(descriptor.id === 'esri-imagery'
+        ...(['esri-imagery', 'esri-labeled'].includes(descriptor.id)
           ? {
               credit: ESRI_ATTRIBUTION_HTML,
               constructionFallback: {
