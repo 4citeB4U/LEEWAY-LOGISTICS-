@@ -127,6 +127,20 @@ export const ILLINOIS_GATEWAY_IMAGE_ORIGIN =
 export const DEFAULT_ILLINOIS_GATEWAY_MAX_SOURCES = 500;
 export const CHICAGO_CENTER = { lat: 41.8781, lon: -87.6298 };
 
+/** Wisconsin 511 official cameras. The catalog API requires a free developer key. */
+export const WISCONSIN_511_CAMERAS_URL = 'https://511wi.gov/api/v2/get/cameras';
+export const WISCONSIN_511_IMAGE_ORIGIN = 'https://511wi.gov/map/Cctv/';
+export const WISCONSIN_511_VIDEO_HOST = 'cctv1.dot.wi.gov';
+export const DEFAULT_WISCONSIN_511_MAX_SOURCES = 800;
+export const WISCONSIN_511_ANCHORS = [
+  { lat: 43.0389, lon: -87.9065 }, // Milwaukee
+  { lat: 43.0731, lon: -89.4012 }, // Madison
+  { lat: 44.5133, lon: -88.0133 }, // Green Bay
+  { lat: 44.2619, lon: -88.4154 }, // Appleton
+  { lat: 42.5847, lon: -87.8212 }, // Kenosha
+  { lat: 42.7261, lon: -87.7829 }, // Racine
+];
+
 /** NYC DOT Traffic Management Center: public current-frame cameras across all five boroughs. */
 export const NYC_DOT_CAMERAS_URL = 'https://webcams.nyctmc.org/api/cameras/';
 export const NYC_DOT_IMAGE_ORIGIN = 'https://webcams.nyctmc.org/api/cameras/';
