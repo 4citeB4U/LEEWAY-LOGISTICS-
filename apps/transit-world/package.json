@@ -2,17 +2,17 @@
   "name": "gods-eye-view",
   "private": true,
   "version": "0.1.1",
-  "description": "A real-time intelligence console for planet Earth — photorealistic 3D globe, live aircraft/ships/satellites/earthquakes/CCTV, and hands-free voice control. Runs in a browser.",
+  "description": "LeeWay Logistics Transit World — a world-first spatial logistics, trucking, transit, fleet, dispatch, CRM, and Agent Lee operating surface.",
   "type": "module",
   "license": "MIT",
-  "author": "Bilawal Sidhu",
-  "homepage": "https://github.com/bilawalsidhu/gods-eye-view#readme",
+  "author": "LeeWay Industries",
+  "homepage": "https://4citeb4u.github.io/LEEWAY-LOGISTICS-/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bilawalsidhu/gods-eye-view.git"
+    "url": "https://github.com/4citeB4U/LEEWAY-LOGISTICS-.git"
   },
   "bugs": {
-    "url": "https://github.com/bilawalsidhu/gods-eye-view/issues"
+    "url": "https://github.com/4citeB4U/LEEWAY-LOGISTICS-/issues"
   },
   "engines": {
     "node": ">=24.14.0 <25 || >=26 <27"
@@ -249,5 +249,16 @@
     "./layers/transit/source": "./src/layers/transit/source.js",
     "./sources/transit-service": "./src/sources/transitService.js",
     "./sources/map-features": "./src/sources/overpassFeatures.js"
+  },
+  "leeway": {
+    "product": "LeeWay Logistics — Transit World",
+    "assistant": "Agent Lee",
+    "defaultLocalModel": "gemma4:e4b",
+    "upstreamSpatialLineage": {
+      "project": "God's Eye View",
+      "author": "Bilawal Sidhu",
+      "license": "MIT",
+      "commit": "b210ab0fe4d71c7faa0268134e0aa5f3c53fc7fe"
+    }
   }
 }
