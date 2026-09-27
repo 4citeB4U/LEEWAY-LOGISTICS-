@@ -14,6 +14,14 @@ function ensureStyles(documentRef) {
     body.leeway-enterprise-shell #left-panel-stack,
     body.leeway-enterprise-shell #first-run-launcher { display:none !important; }
     body.leeway-enterprise-shell #leeway-agent-lee { display:none; }
+    /* LeeWay Logistics is a full-screen world map. The inherited optical keyhole,
+       tactical coordinate HUD and celestial ring belong to the legacy God’s-eye
+       presentation and must never crop or print over the enterprise map. */
+    body.leeway-enterprise-shell #scope-mask,
+    body.leeway-enterprise-shell #intel-hud,
+    body.leeway-enterprise-shell #cockpit-cloud-effects,
+    body.leeway-enterprise-shell .celestial-ring-overlay { display:none !important; }
+    body.leeway-enterprise-shell #cesiumContainer { inset:0 !important; width:100vw !important; height:100vh !important; clip-path:none !important; border-radius:0 !important; }
     body.leeway-enterprise-shell #leeway-agent-lee.leeway-open { display:block; left:98px; bottom:92px; width:min(430px,calc(100vw - 120px)); }
     #leeway-world-shell { position:fixed; inset:0; z-index:9700; pointer-events:none; color:#edfaff; font:12px/1.35 Inter,ui-sans-serif,system-ui,sans-serif; }
     #leeway-world-shell * { box-sizing:border-box; }
@@ -37,6 +45,24 @@ function ensureStyles(documentRef) {
     .lws-nav .i { font-size:19px; line-height:1; }
     .lws-nav:hover,.lws-nav.active { color:#70f2ff; background:rgba(52,219,239,.10); box-shadow:inset 3px 0 0 #2ce3f3; }
     .lws-spacer { flex:1; }
+    .lws-rail.compact { width:48px; padding-inline:5px; }
+    .lws-rail.compact .lws-nav span:not(.i) { display:none; }
+    .lws-rail.compact .lws-nav { min-height:48px; padding:6px 2px; }
+    .lws-route-planner { pointer-events:auto; position:absolute; top:76px; left:94px; width:min(468px,calc(100vw - 120px)); padding:14px; border-radius:15px; background:rgba(3,15,24,.97); border:1px solid rgba(68,221,241,.24); box-shadow:0 18px 55px rgba(0,0,0,.40); backdrop-filter:blur(16px); display:none; }
+    .lws-route-planner.open { display:block; }
+    .lws-route-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .lws-route-head strong { font-size:12px; letter-spacing:.12em; }
+    .lws-route-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+    .lws-route-grid label { display:grid; gap:5px; font-size:8px; letter-spacing:.12em; opacity:.72; }
+    .lws-route-grid input { min-width:0; height:39px; padding:0 10px; border-radius:9px; border:1px solid rgba(119,210,229,.24); background:#071722; color:#edffff; font:inherit; outline:none; }
+    .lws-route-grid input:focus { border-color:#47e5f4; }
+    .lws-route-actions { display:flex; gap:8px; margin-top:10px; }
+    .lws-route-actions button { flex:1; }
+    .lws-primary { background:#28dff0 !important; color:#031018 !important; font-weight:800 !important; border-color:#4eeeff !important; }
+    .lws-inspector-toggle { pointer-events:auto; position:absolute; top:82px; right:20px; z-index:9805; display:none; min-width:34px; height:30px; border-radius:9px; border:1px solid rgba(71,225,242,.35); background:rgba(3,15,24,.96); color:#dffcff; cursor:pointer; }
+    .lws-context-inspector.open + .lws-inspector-toggle { display:block; }
+    .lws-context-inspector.minimized { width:54px; height:54px; overflow:hidden; }
+    .lws-context-inspector.minimized > * { visibility:hidden; pointer-events:none; }
     .lws-dock { pointer-events:auto; position:absolute; left:50%; bottom:18px; transform:translateX(-50%); min-height:66px; display:flex; align-items:center; gap:3px; padding:7px 10px; border-radius:23px; background:rgba(3,15,24,.94); border:1px solid rgba(74,215,236,.20); backdrop-filter:blur(16px); box-shadow:0 18px 55px rgba(0,0,0,.35); }
     .lws-dock-btn { min-width:70px; border:0; background:transparent; color:#d7e8ed; padding:8px 8px; border-radius:12px; cursor:pointer; font:inherit; font-size:9px; }
     .lws-dock-btn .i { display:block; color:#7feeff; font-size:18px; margin-bottom:4px; }
@@ -133,6 +159,8 @@ export function mountEnterpriseShell(application) {
       <div class="lws-search"><input aria-label="Global search" placeholder="Search locations, loads, drivers, equipment, facilities..." /><kbd>⌘ K</kbd></div>
       <div class="lws-top-actions">
         <button class="lws-chip" data-action="map">◎ Transit World⌄</button>
+        <button class="lws-chip" data-action="world">◉ World</button>
+        <button class="lws-chip" data-action="route">↗ Plan Route</button>
         <button class="lws-chip hide-sm" data-action="layers">▱ Layers⌄</button>
         <button class="lws-chip hide-sm" data-action="workspace">CRM</button>
         <div class="lws-avatar">AL</div><div class="lws-agent-status">Agent Lee<br>LOCAL AI</div>
@@ -147,6 +175,17 @@ export function mountEnterpriseShell(application) {
       <div class="lws-layer-head"><strong>WORLD LAYERS</strong><button class="lws-chip" data-action="close-layers">×</button></div>
       <div data-layer-list></div>
     </aside>
+    <section class="lws-route-planner" data-route-planner>
+      <div class="lws-route-head"><strong>PLAN A ROUTE</strong><button class="lws-chip" data-action="close-route">×</button></div>
+      <div class="lws-route-grid">
+        <label>FROM<input data-route-from placeholder="Starting address, city, terminal..." /></label>
+        <label>TO<input data-route-to placeholder="Destination address, city, terminal..." /></label>
+      </div>
+      <div class="lws-route-actions">
+        <button class="lws-chip" data-action="swap-route">⇄ Swap</button>
+        <button class="lws-chip lws-primary" data-action="generate-route">Generate Route</button>
+      </div>
+    </section>
     <button class="lws-live" data-action="connect-world" type="button"><b data-world-led>● CHECK</b><span data-world-status>Connect live world data</span></button>
     <nav class="lws-dock">
       ${[['layers','Layers'],['traffic','Traffic'],['weather','Weather']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
@@ -154,6 +193,7 @@ export function mountEnterpriseShell(application) {
       ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D'],['locate','Locate']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
     </nav>
     <aside class="lws-context-inspector" data-context-inspector></aside>
+    <button class="lws-inspector-toggle" data-action="collapse-inspector" type="button" aria-label="Collapse inspector">‹</button>
     <div class="lws-toast" role="status" aria-live="polite"></div>
   `;
   document.body.appendChild(shell);
@@ -161,6 +201,9 @@ export function mountEnterpriseShell(application) {
   const toast = shell.querySelector('.lws-toast');
   const layerMenu = shell.querySelector('[data-layer-menu]');
   const layerList = shell.querySelector('[data-layer-list]');
+  const routePlanner = shell.querySelector('[data-route-planner]');
+  const routeFrom = shell.querySelector('[data-route-from]');
+  const routeTo = shell.querySelector('[data-route-to]');
   const worldLed = shell.querySelector('[data-world-led]');
   const worldStatus = shell.querySelector('[data-world-status]');
   const contextInspector = shell.querySelector('[data-context-inspector]');
@@ -175,6 +218,7 @@ export function mountEnterpriseShell(application) {
       cctvPanel && !cctvPanel.classList.contains('collapsed'),
     );
     contextInspector.classList.toggle('open', open);
+    if (!open) contextInspector.classList.remove('minimized');
     document.body.classList.toggle('leeway-cctv-inspecting', open);
   }
 
@@ -281,6 +325,82 @@ export function mountEnterpriseShell(application) {
     return false;
   }
 
+  function toggleRoutePlanner(open = null) {
+    const next = open == null ? !routePlanner.classList.contains('open') : open;
+    routePlanner.classList.toggle('open', next);
+    if (next) {
+      toggleLayerMenu(false);
+      routeFrom.focus();
+    }
+  }
+
+  async function geocodeAddress(query) {
+    const q = String(query || '').trim();
+    if (!q) return null;
+    const bridge = globalThis.__leewayWorldApiBridge;
+    const url = `/api/geocode?q=${encodeURIComponent(q)}`;
+    let response;
+    try {
+      response = bridge?.installed && typeof bridge.fetch === 'function'
+        ? await bridge.fetch(url, { headers: { Accept: 'application/json' } })
+        : await fetch(url, { headers: { Accept: 'application/json' } });
+    } catch {
+      return null;
+    }
+    if (!response?.ok) return null;
+    const payload = await response.json();
+    const location = payload?.results?.[0]?.geometry?.location;
+    const lat = Number(location?.lat);
+    const lon = Number(location?.lng);
+    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon } : null;
+  }
+
+  async function generateAddressRoute() {
+    const from = routeFrom.value.trim();
+    const to = routeTo.value.trim();
+    if (!from || !to) {
+      say('Enter both a starting point and destination');
+      return false;
+    }
+    const directions = dataManager?.layers?.get('directions')?.module;
+    if (!directions?.placeEndpoint) {
+      say('Directions layer is not available in this build');
+      return false;
+    }
+    say('Resolving route endpoints…');
+    const [a, b] = await Promise.all([geocodeAddress(from), geocodeAddress(to)]);
+    if (!a || !b) {
+      say(!a ? `Could not resolve ${from}` : `Could not resolve ${to}`);
+      return false;
+    }
+    await dataManager.setEnabled('directions', true, { origin: 'user' });
+    directions.placeEndpoint('a', a);
+    directions.placeEndpoint('b', b);
+    toggleRoutePlanner(false);
+    say(`Routing ${from} → ${to}`);
+    return true;
+  }
+
+  function showWorld() {
+    workspace.close();
+    toggleAgent(false);
+    toggleRoutePlanner(false);
+    toggleLayerMenu(false);
+    try {
+      if (typeof viewer?.camera?.flyHome === 'function') {
+        viewer.camera.flyHome(1.4);
+      } else {
+        viewer?.camera?.flyTo?.({
+          destination: Cesium.Cartesian3.fromDegrees(0, 18, 20_000_000),
+          duration: 1.4,
+        });
+      }
+      say('World view');
+    } catch {
+      say('World view is unavailable');
+    }
+  }
+
   async function locate(query) {
     if (!query || !viewer || !operations?.searchAndFlyTo) return false;
     try {
@@ -332,12 +452,18 @@ export function mountEnterpriseShell(application) {
     if (equipment) { workspace.openEquipment(); say(`Opened equipment ${equipment.unit}`); return; }
     const account = state.crm.accounts.find((row) => row.name.toLowerCase().includes(q.toLowerCase()));
     if (account) { workspace.openCrm(); say(`Opened ${account.name} in CRM`); return; }
+    toggleRoutePlanner(false);
     await locate(q);
   }
 
   shell.querySelector('.lws-search input').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') { void handleSearch(event.currentTarget.value); event.currentTarget.select(); }
   });
+  for (const field of [routeFrom, routeTo]) {
+    field.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') void generateAddressRoute();
+    });
+  }
 
   document.addEventListener('keydown', (event) => {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -372,6 +498,17 @@ export function mountEnterpriseShell(application) {
     if (action === 'ai') { toggleAgent(); return; }
     if (action === 'connect-world') { await probeWorldProvider({ explain: true }); return; }
     if (action === 'map') { workspace.close(); setNav('map'); return; }
+    if (action === 'world') { showWorld(); setNav('map'); return; }
+    if (action === 'route') { toggleRoutePlanner(); return; }
+    if (action === 'close-route') { toggleRoutePlanner(false); return; }
+    if (action === 'swap-route') { const hold = routeFrom.value; routeFrom.value = routeTo.value; routeTo.value = hold; return; }
+    if (action === 'generate-route') { await generateAddressRoute(); return; }
+    if (action === 'collapse-inspector') {
+      const minimized = contextInspector.classList.toggle('minimized');
+      const button = shell.querySelector('[data-action="collapse-inspector"]');
+      if (button) button.textContent = minimized ? '›' : '‹';
+      return;
+    }
     if (action === 'workspace') { workspace.open(); return; }
     if (action === 'layers') { toggleLayerMenu(); return; }
     if (action === 'close-layers') { toggleLayerMenu(false); return; }
