@@ -1,6 +1,6 @@
-# Contributing to God's Eye View
+# Contributing to LeeWay Logistics Transit World
 
-Thanks for being here. God's Eye View is an open foundation for live spatial intelligence in the browser, and it gets better when more people run it, break it, and extend it.
+LeeWay Logistics Transit World is the spatial operating surface for LeeWay logistics, fleet, dispatch, transit, CRM, and Agent Lee workflows. The spatial engine retains MIT-licensed upstream lineage documented in this repository.
 
 ## Getting set up
 
