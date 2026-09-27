@@ -883,12 +883,16 @@ export function mountEnterpriseShell(application) {
       return;
     }
     if (action === 'right-weather') {
+      const enabled = [];
       for (const id of ['wind','weather-radar','weather-satellite','weather-lightning','weather-cyclones']) {
-        if (dataManager?.layers?.has(id)) {
+        if (!dataManager?.layers?.has(id)) continue;
+        try {
           await dataManager.setEnabled(id, true, { origin: 'user' });
-        }
+          enabled.push(id);
+        } catch {}
       }
       setRightPanel('weather');
+      say(`Weather map opened · ${enabled.length} layers active`);
       return;
     }
     if (action === 'collapse-inspector') {
@@ -905,11 +909,16 @@ export function mountEnterpriseShell(application) {
     if (dock === 'layers') { toggleLayerMenu(); return; }
     if (dock === 'traffic') { await toggleLayer('traffic'); return; }
     if (dock === 'weather') {
+      const enabled = [];
       for (const id of ['wind','weather-radar','weather-satellite','weather-lightning','weather-cyclones']) {
-        if (dataManager?.layers?.has(id)) await dataManager.setEnabled(id, true, { origin:'tool' });
+        if (!dataManager?.layers?.has(id)) continue;
+        try {
+          await dataManager.setEnabled(id, true, { origin:'tool' });
+          enabled.push(id);
+        } catch {}
       }
       setRightPanel('weather');
-      say('Weather map opened · radar · satellite · lightning · wind · cyclones');
+      say(`Weather map opened · ${enabled.length} layers active`);
       return;
     }
     if (dock === 'transit') { await toggleLayer('transit'); return; }
