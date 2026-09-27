@@ -16,6 +16,11 @@ import {
   ILLINOIS_GATEWAY_IMAGE_ORIGIN,
   DEFAULT_ILLINOIS_GATEWAY_MAX_SOURCES,
   CHICAGO_CENTER,
+  WISCONSIN_511_CAMERAS_URL,
+  WISCONSIN_511_IMAGE_ORIGIN,
+  WISCONSIN_511_VIDEO_HOST,
+  DEFAULT_WISCONSIN_511_MAX_SOURCES,
+  WISCONSIN_511_ANCHORS,
   NYC_DOT_CAMERAS_URL,
   NYC_DOT_IMAGE_ORIGIN,
   DEFAULT_NYC_DOT_MAX_SOURCES,
@@ -511,6 +516,129 @@ export async function loadIllinoisGatewaySourcesFromOpenData() {
   }
 }
 
+
+
+function wisconsin511City(row = {}) {
+  const county = String(row.County || '').trim().toLowerCase();
+  if (county === 'milwaukee') return { city: 'Milwaukee, WI', cityId: 'milwaukee-wi' };
+  if (county === 'dane') return { city: 'Madison, WI', cityId: 'madison-wi' };
+  if (county === 'brown') return { city: 'Green Bay, WI', cityId: 'green-bay-wi' };
+  if (county === 'outagamie') return { city: 'Appleton, WI', cityId: 'appleton-wi' };
+  if (county === 'kenosha') return { city: 'Kenosha, WI', cityId: 'kenosha-wi' };
+  if (county === 'racine') return { city: 'Racine, WI', cityId: 'racine-wi' };
+  const label = String(row.County || row.Region || 'Wisconsin').trim();
+  return {
+    city: label ? `${label}, WI` : 'Wisconsin',
+    cityId: `wisconsin-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'statewide'}`,
+  };
+}
+
+/**
+ * Fetch official Wisconsin 511 cameras. The agency requires a developer key
+ * for the catalog API; image and HLS URLs returned by that catalog are then
+ * pinned to the documented Wisconsin hosts before entering LeeWay.
+ */
+export async function loadWisconsin511SourcesFromOpenData() {
+  const key = String(
+    process.env.CCTV_WISCONSIN_511_KEY ||
+      process.env.WI511_API_KEY ||
+      process.env.WISDOT_API_KEY ||
+      '',
+  ).trim();
+  if (!key) {
+    console.warn('[CCTV] Wisconsin 511 catalog unavailable: developer key not configured');
+    return [];
+  }
+  try {
+    const endpoint = new URL(WISCONSIN_511_CAMERAS_URL);
+    endpoint.searchParams.set('key', key);
+    endpoint.searchParams.set('format', 'json');
+    const resp = await fetch(endpoint, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(CCTV_SOURCE_FETCH_TIMEOUT_MS),
+    });
+    if (!resp.ok) {
+      console.warn('[CCTV] Wisconsin 511 camera download failed:', resp.status);
+      return [];
+    }
+    const rows = await resp.json();
+    if (!Array.isArray(rows)) return [];
+    const cameras = [];
+    for (const row of rows) {
+      const lat = toFiniteNumber(row?.Latitude);
+      const lon = toFiniteNumber(row?.Longitude);
+      if (!isPlausibleLatLon(lat, lon)) continue;
+      if (lat < 42.45 || lat > 47.35 || lon < -92.95 || lon > -86.2) continue;
+      const views = Array.isArray(row?.Views) ? row.Views : [];
+      const view = views.find((item) =>
+        String(item?.Status || '').toLowerCase() === 'enabled',
+      ) || views[0];
+      if (!view) continue;
+      const stable = String(view.Id ?? row.Id ?? '').trim();
+      if (!stable) continue;
+      const snapshotUrl = String(view.Url || '').trim();
+      let videoUrl = String(view.VideoUrl || '').trim();
+      let videoOk = false;
+      try {
+        const parsed = new URL(videoUrl);
+        videoOk =
+          parsed.hostname === WISCONSIN_511_VIDEO_HOST &&
+          /^https:$/.test(parsed.protocol) &&
+          /\.m3u8(?:$|\?)/i.test(parsed.pathname + parsed.search);
+      } catch {
+        videoOk = false;
+      }
+      const snapshotOk = snapshotUrl.startsWith(WISCONSIN_511_IMAGE_ORIGIN);
+      if (!snapshotOk && !videoOk) continue;
+      if (!videoOk) videoUrl = '';
+      const cameraId = `wi511-${stable.replace(/[^A-Za-z0-9_.-]+/g, '-').toLowerCase()}`;
+      const { city, cityId } = wisconsin511City(row);
+      const direction = String(row.Direction || '').trim();
+      const heading = directionToHeading(direction, true);
+      const hasHeading = Number.isFinite(heading);
+      cameras.push({
+        id: cameraId,
+        name: String(row.Location || row.Roadway || `Wisconsin 511 Camera ${stable}`),
+        city,
+        cityId,
+        provider: 'Wisconsin Department of Transportation / 511 Wisconsin',
+        lat,
+        lon,
+        headingDeg: hasHeading ? heading : fallbackHeadingFromId(cameraId),
+        headingConfidence: hasHeading ? 'high' : 'low',
+        pitchDeg: hasHeading ? -22 : -18,
+        fovDeg: hasHeading ? 55 : 44,
+        rangeM: hasHeading ? 200 : 145,
+        mountHeightM: 9,
+        groundElevationM: 220,
+        feedType: videoOk ? 'hls' : 'image',
+        url: videoOk ? videoUrl : snapshotUrl,
+        snapshotUrl: snapshotOk ? snapshotUrl : '',
+        sourceKind: 'wisconsin-511-official',
+        license: '511 Wisconsin developer API and traveler-information terms apply',
+        credit: 'Wisconsin Department of Transportation / 511 Wisconsin',
+        code: String(row.Roadway || row.SourceId || stable).trim(),
+        frameRefreshMs: snapshotOk ? 15 * 1000 : undefined,
+      });
+    }
+    const unique = Array.from(new Map(cameras.map((camera) => [camera.id, camera])).values());
+    const maxRaw = Number(
+      process.env.CCTV_WISCONSIN_511_MAX_SOURCES ||
+        DEFAULT_WISCONSIN_511_MAX_SOURCES,
+    );
+    const maxCount = Number.isFinite(maxRaw)
+      ? Math.max(8, Math.min(1000, Math.floor(maxRaw)))
+      : DEFAULT_WISCONSIN_511_MAX_SOURCES;
+    const prioritized = prioritizeSources(unique, maxCount, WISCONSIN_511_ANCHORS);
+    console.log(
+      `[CCTV] Loaded Wisconsin 511 sources: ${unique.length} cameras (using nearest ${prioritized.length})`,
+    );
+    return prioritized;
+  } catch (error) {
+    console.warn('[CCTV] Wisconsin 511 camera download error:', error?.message || error);
+    return [];
+  }
+}
 
 /**
  * Fetch NYC DOT Traffic Management Center cameras.
