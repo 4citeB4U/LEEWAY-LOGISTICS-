@@ -1,0 +1,65 @@
+{
+  "_leewayHeader": {
+    "file": "full-foundation-20260724-171209.json",
+    "path": "governance/receipts/full-foundation-20260724-171209.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Governance / Receipt",
+    "purpose": "Record factual evidence for the single-script full foundation build.",
+    "inputs": [
+      "embedded payload hashes",
+      "solution creation",
+      "restore",
+      "build",
+      "tests",
+      "runtime endpoints",
+      "governance verification"
+    ],
+    "outputs": [
+      "full foundation PASS receipt"
+    ],
+    "mutationScope": "Receipt only.",
+    "dependencies": [
+      "LeeWay.EnterpriseTransitHub.sln",
+      "file-registry.json",
+      "runtime evidence"
+    ],
+    "tests": [
+      "payload PASS",
+      "restore PASS",
+      "build PASS",
+      "test PASS",
+      "runtime PASS",
+      "governance PASS"
+    ],
+    "securityImpact": "Contains no credentials.",
+    "databaseImpact": "Database scripts created; no database server was mutated.",
+    "sovereignCycle": [
+      "Veritas",
+      "Echo",
+      "Synthesis"
+    ],
+    "status": "PASS",
+    "humanComprehension": "PENDING_LESSON_01",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "1.0.4"
+  },
+  "receiptId": "7cfb7182-1934-490b-acae-bc78e8ce6695",
+  "recordedUtc": "2026-07-24T22:12:31.7809822+00:00",
+  "canonicalRoot": "D:\\Leeway-Ecosystem v2.1.4\\LeeWay-Enterprise-Transit-Hub",
+  "actualRoot": "D:\\Leeway-Ecosystem v2.1.4\\LeeWay-Enterprise-Transit-Hub",
+  "payloadSha256": "95FF99FB689B6CE61DA77652ED07FB814D4374EE11B92E679345E6DB7A3F4C1A",
+  "tarSha256": "6AF25DEA6AA3B8A7C74BC7D37CDCE8FF8B6EFBBBCAE3E35FC737FF1030AA2E00",
+  "powershell": "7.6.3",
+  "dotnetSdk": "10.0.302",
+  "projectCount": 15,
+  "restore": "PASS",
+  "build": "PASS",
+  "tests": "PASS",
+  "runtimeEndpoints": "PASS",
+  "governance": "PASS",
+  "databaseMutation": "NONE",
+  "dockerMutation": "NONE",
+  "oracleMutation": "NONE",
+  "dynamicsMutation": "NONE",
+  "nextGate": "Open the solution and complete Lesson 01."
+}

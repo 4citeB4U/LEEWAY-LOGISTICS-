@@ -1,0 +1,94 @@
+{
+  "_leewayHeader": {
+    "file": "permissions.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/permissions.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "LeeWay / Permission Contract",
+    "purpose": "Classify Agent Lee capabilities by risk, tenant scope, approval, and evidence requirements.",
+    "inputs": "Tool catalog, security policy, and business authority.",
+    "outputs": "Least-privilege action matrix.",
+    "mutationScope": "Permission metadata only.",
+    "dependencies": "Capability manifest and future identity system.",
+    "tests": "Policy review, negative authorization tests, and tenant-isolation tests.",
+    "securityImpact": "Primary authority for agent action restrictions.",
+    "databaseImpact": "Database mutation remains explicitly approval-bound.",
+    "sovereignCycle": [
+      "Origin",
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "4.0.0"
+  },
+  "riskClasses": [
+    {
+      "id": "READ_ONLY",
+      "agentAuthority": "ALLOW_WITH_TENANT_SCOPE",
+      "humanApproval": false
+    },
+    {
+      "id": "LOW_REVERSIBLE",
+      "agentAuthority": "ALLOW_BY_POLICY",
+      "humanApproval": "CONDITIONAL"
+    },
+    {
+      "id": "CONFIGURATION",
+      "agentAuthority": "PROPOSE_ONLY",
+      "humanApproval": true
+    },
+    {
+      "id": "DATABASE_MUTATION",
+      "agentAuthority": "PROPOSE_AND_EXECUTE_AFTER_EXPLICIT_APPROVAL",
+      "humanApproval": true
+    },
+    {
+      "id": "CUSTOMER_DATA_MUTATION",
+      "agentAuthority": "BUSINESS_AUTHORIZATION_REQUIRED",
+      "humanApproval": true
+    },
+    {
+      "id": "SAFETY_CRITICAL",
+      "agentAuthority": "HUMAN_FINAL_AUTHORITY",
+      "humanApproval": true
+    },
+    {
+      "id": "DESTRUCTIVE_INFRASTRUCTURE",
+      "agentAuthority": "PROHIBITED_WITHOUT_EXCEPTIONAL_APPROVAL",
+      "humanApproval": true
+    }
+  ],
+  "globalRules": [
+    "Authenticate service identity",
+    "Resolve tenant",
+    "Verify role and tool scope",
+    "Validate resource ownership",
+    "Require approval when classified",
+    "Execute deterministic validation",
+    "Write receipt",
+    "Preserve rollback evidence"
+  ],
+  "identityAndAuthorization": {
+    "productionIdentityBound": false,
+    "developmentScheme": "LeeWayDevelopmentHeaders",
+    "canonicalRoles": [
+      "PlatformOwner",
+      "TenantOwner",
+      "TenantAdministrator",
+      "FleetManager",
+      "Dispatcher",
+      "SafetyManager",
+      "Mechanic",
+      "Driver",
+      "Viewer",
+      "AgentService"
+    ],
+    "agentServicePolicy": "TransitHub.AgentToolExecute",
+    "agentServiceCapability": "leeway.enterprise-transit-hub",
+    "tenantMatchRequired": true,
+    "platformAdministrationDeniedToAgentService": true
+  }
+}

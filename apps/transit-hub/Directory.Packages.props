@@ -1,0 +1,35 @@
+<!--
+  LEEWAY ENTERPRISE FILE HEADER
+  File: Directory.Packages.props
+  Path: Directory.Packages.props
+  Project: LeeWay Enterprise Transit Hub
+  Layer: Package Governance
+  Purpose: Centrally govern test, EF Core, SQL Server, and health-check package versions.
+  Inputs: Approved package versions.
+  Outputs: Consistent package resolution.
+  Mutation Scope: Package version declarations only.
+  Dependencies: NuGet, .NET SDK, EF Core 10.0.10, and SQL Server provider packages.
+  Tests: dotnet restore and package audit.
+  Security Impact: Central package control supports supply-chain review.
+  Database Impact: None.
+  Sovereign Cycle: Structure -> Execution -> Veritas
+  Status: ACTIVE / GOVERNED
+  Human Comprehension: REQUIRED
+  Owner: Leonard Lee / Leeway Industries
+  Version: 5.0.0
+-->
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+  </ItemGroup>
+</Project>

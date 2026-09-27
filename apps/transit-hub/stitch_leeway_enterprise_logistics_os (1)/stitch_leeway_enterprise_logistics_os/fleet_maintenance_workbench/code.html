@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fleet Maintenance Workbench</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-variant": "#333539",
+            "primary-container": "#30363d",
+            "on-primary-fixed-variant": "#41474f",
+            "surface": "#111318",
+            "on-error": "#690005",
+            "error-container": "#93000a",
+            "surface-container-low": "#1a1c20",
+            "on-primary-fixed": "#161c23",
+            "tertiary-container": "#32353d",
+            "secondary-fixed-dim": "#c2c7d0",
+            "on-tertiary-fixed": "#191c23",
+            "on-secondary-container": "#b1b5bf",
+            "on-primary": "#2b3138",
+            "tertiary-fixed-dim": "#c4c6d0",
+            "on-background": "#e2e2e8",
+            "surface-container-high": "#282a2e",
+            "inverse-on-surface": "#2f3035",
+            "secondary-fixed": "#dee2ec",
+            "inverse-primary": "#595f67",
+            "inverse-surface": "#e2e2e8",
+            "on-secondary": "#2c3138",
+            "error": "#ffb4ab",
+            "secondary": "#c2c7d0",
+            "primary-fixed": "#dde3ec",
+            "on-secondary-fixed": "#171c23",
+            "on-surface": "#e2e2e8",
+            "on-tertiary-fixed-variant": "#44474f",
+            "on-tertiary-container": "#9b9da7",
+            "on-secondary-fixed-variant": "#42474f",
+            "surface-container-lowest": "#0c0e12",
+            "surface-container": "#1e2024",
+            "primary-fixed-dim": "#c1c7d0",
+            "on-error-container": "#ffdad6",
+            "on-primary-container": "#999fa7",
+            "surface-tint": "#c1c7d0",
+            "on-tertiary": "#2d3038",
+            "tertiary": "#c4c6d0",
+            "on-surface-variant": "#c5c6cb",
+            "surface-container-highest": "#333539",
+            "background": "#111318",
+            "outline-variant": "#44474b",
+            "surface-dim": "#111318",
+            "primary": "#c1c7d0",
+            "tertiary-fixed": "#e0e2ec",
+            "surface-bright": "#37393e",
+            "secondary-container": "#42474f",
+            "outline": "#8f9195"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "stack-lg": "20px",
+            "stack-md": "12px",
+            "gutter": "8px",
+            "container-padding": "12px",
+            "unit": "4px",
+            "stack-sm": "4px"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"],
+            "label-caps": ["Inter"],
+            "headline-md": ["Inter"],
+            "data-mono": ["JetBrains Mono"],
+            "headline-lg": ["Inter"],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+            "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+            "headline-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "data-mono": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+            "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #111318;
+      color: #e2e2e8;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .status-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .5; }
+    }
+    .scroll-hide::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md select-none">
+<!-- TOP APP BAR -->
+<header class="fixed top-0 w-full bg-surface-dim flex items-center justify-between px-gutter h-12 z-50 border-b border-outline-variant">
+<div class="flex items-center gap-stack-sm">
+<span class="material-symbols-outlined text-primary" data-icon="terminal">terminal</span>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-on-surface">LOGISTICS OS</h1>
+</div>
+<div class="flex items-center gap-stack-md">
+<span class="material-symbols-outlined text-primary" data-icon="sensors">sensors</span>
+</div>
+</header>
+<!-- MAIN CONTENT CANVAS -->
+<main class="pt-12 pb-16 min-h-screen px-container-padding flex flex-col gap-stack-lg">
+<!-- DASHBOARD HUD: Active Work Order -->
+<section class="mt-stack-md">
+<div class="bg-surface-container-low border border-outline-variant p-stack-md rounded-DEFAULT">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">ACTIVE WORK ORDER</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">WO-9842-X</h2>
+</div>
+<div class="bg-error-container text-on-error-container px-unit py-0.5 rounded text-[10px] font-bold tracking-wider uppercase">Critical</div>
+</div>
+<div class="grid grid-cols-2 gap-stack-sm mt-stack-md">
+<div class="bg-surface-container border border-outline-variant p-stack-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">VEHICLE ID</span>
+<p class="font-data-mono text-data-mono text-primary">T-4522_NORTH</p>
+</div>
+<div class="bg-surface-container border border-outline-variant p-stack-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">BAY ASSIGNMENT</span>
+<p class="font-data-mono text-data-mono text-primary">STATION_04</p>
+</div>
+</div>
+</div>
+</section>
+<!-- REAL-TIME TELEMETRY STREAM (BENTO COMPONENT) -->
+<section class="grid grid-cols-1 gap-stack-md">
+<div class="bg-surface-container-low border border-outline-variant overflow-hidden">
+<div class="bg-primary-container/20 border-b border-outline-variant px-stack-md py-stack-sm flex justify-between items-center">
+<div class="flex items-center gap-stack-sm">
+<span class="material-symbols-outlined text-[14px] text-primary status-pulse" data-icon="settings_input_component">settings_input_component</span>
+<span class="font-label-caps text-label-caps text-on-surface">CAN-BUS TELEMETRY</span>
+</div>
+<span class="font-data-mono text-[10px] text-primary">STREAMING_LIVE</span>
+</div>
+<div class="p-stack-md space-y-stack-sm">
+<div class="flex justify-between items-end">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Engine Load</span>
+<div class="flex items-baseline gap-unit">
+<span class="font-data-mono text-headline-lg text-on-surface">74.2</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">%</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-highest h-1">
+<div class="bg-primary h-full" style="width: 74%"></div>
+</div>
+<div class="grid grid-cols-2 gap-stack-md pt-stack-sm">
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">COOLANT TEMP</span>
+<p class="font-data-mono text-body-md text-on-surface">192°F</p>
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">FUEL PRESSURE</span>
+<p class="font-data-mono text-body-md text-on-surface">58.4 PSI</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- DTC LOOKUP & DIAGNOSTICS -->
+<section class="bg-surface-container-low border border-outline-variant">
+<div class="p-stack-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-stack-sm block">DIAGNOSTIC TROUBLE CODES</span>
+<div class="flex gap-stack-sm mb-stack-md">
+<input class="bg-surface-container-lowest border border-outline-variant px-stack-md py-2 w-full font-data-mono text-on-surface placeholder:text-outline focus:outline-none focus:border-primary transition-colors" placeholder="ENTER P-CODE..." type="text"/>
+<button class="bg-primary-container text-on-primary-container px-stack-md flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+<div class="space-y-stack-sm">
+<div class="bg-surface-container-highest border border-outline-variant p-stack-sm flex items-start gap-stack-md">
+<div class="text-error font-data-mono text-body-md shrink-0">P0300</div>
+<div class="flex-1">
+<p class="font-body-sm text-body-sm text-on-surface leading-tight">Random or Multiple Cylinder Misfire Detected</p>
+<p class="text-[10px] text-on-surface-variant mt-1 uppercase font-semibold">Active Fault • 12 occurrences</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- PARTS & INVENTORY INTEGRATION -->
+<section>
+<div class="bg-surface-container-low border border-outline-variant">
+<div class="p-stack-md border-b border-outline-variant flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface">REQUIRED PARTS</span>
+<span class="font-label-caps text-label-caps text-primary">3 ITEMS</span>
+</div>
+<div class="divide-y divide-outline-variant">
+<div class="p-stack-md flex justify-between items-center">
+<div>
+<p class="font-body-md text-body-md text-on-surface">Injector Assembly - X2</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant">PN: 984522-AA</p>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="check_circle">check_circle</span>
+</div>
+<div class="p-stack-md flex justify-between items-center">
+<div>
+<p class="font-body-md text-body-md text-on-surface">High-Pressure Seal Kit</p>
+<p class="font-data-mono text-[10px] text-on-surface-variant">PN: 12-SK-09</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="pending">pending</span>
+</div>
+</div>
+</div>
+</section>
+<!-- EVIDENCE-BOUND REPAIR CONFIRMATION -->
+<section class="bg-surface-container-low border border-outline-variant p-stack-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-stack-md block">EVIDENCE-BOUND CONFIRMATION</span>
+<div class="grid grid-cols-2 gap-stack-md">
+<div class="aspect-square border border-dashed border-outline-variant flex flex-col items-center justify-center gap-stack-sm bg-surface-container cursor-pointer hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-outline" data-icon="add_a_photo">add_a_photo</span>
+<span class="font-label-caps text-[9px] text-outline text-center">ATTACH REPAIR<br/>EVIDENCE</span>
+</div>
+<div class="aspect-square border border-outline-variant bg-surface-container overflow-hidden group relative">
+<img class="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 transition-all duration-300" data-alt="A professional close-up photograph of a diesel engine component with a newly installed fuel injector. The metal surfaces are clean, with sharp focus on the serial number. The lighting is high-contrast, industrial warehouse style with cool blue and grey tones, emphasizing a technical maintenance workflow environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQJzExARznuC1Qdqin_xOUE4ghhJl1NaL0ocMSgBbb8jkzzYgQ9kbjqaOiJuwtOP70PBhsH1lcD7UG0haW9BrjGXelfJf-4jYiuBw_QXaZQgCgO82GYMMfQMlPLkBIOrtXkfjfDkDUC39Ce5xoh1ZCyCw0Lac_vbaJ4p_eGFjYTOcaZqXTPJz21GQ3w-WzfmfTN69DwzMkejmtQEoyW3wbwRrAzr3aZuOeLrnvt9KUpwcRIjw0smwZQRM1wBPPGdKkyfRd23r61Yk2"/>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40">
+<span class="material-symbols-outlined text-white" data-icon="zoom_in">zoom_in</span>
+</div>
+</div>
+</div>
+<div class="mt-stack-md border border-outline-variant bg-surface-container-lowest p-stack-sm h-24 flex items-center justify-center relative">
+<span class="font-label-caps text-[9px] text-outline/30 absolute">SIGNATURE FIELD</span>
+<canvas class="w-full h-full" id="signature-canvas"></canvas>
+</div>
+<button class="w-full bg-on-surface text-surface font-bold py-stack-md mt-stack-md rounded-DEFAULT uppercase tracking-widest text-[11px] active:scale-[0.98] transition-transform">
+        COMMIT REPAIR TO BLOCKCHAIN
+      </button>
+</section>
+<!-- MAINTENANCE SCHEDULE INTEGRATION (SNEAK PEEK) -->
+<section class="bg-surface-container-low border border-outline-variant p-stack-md mb-8">
+<div class="flex items-center gap-stack-sm mb-stack-md">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="calendar_month">calendar_month</span>
+<span class="font-label-caps text-label-caps text-on-surface">UPCOMING SERVICES</span>
+</div>
+<div class="space-y-stack-sm">
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant">B-Service Inspection</span>
+<span class="font-data-mono text-primary text-[11px]">OCT 24 (12h)</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant">Tire Rotation / Alignment</span>
+<span class="font-data-mono text-on-surface-variant text-[11px]">OCT 28 (4d)</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BOTTOM NAVIGATION BAR -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container border-t border-outline-variant flex justify-around items-center h-16 px-container-padding">
+<!-- Maintenance Tab (Active) -->
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-lg p-unit scale-95 duration-75">
+<span class="material-symbols-outlined" data-icon="settings_suggest">settings_suggest</span>
+<span class="font-label-caps text-label-caps mt-1">Maintenance</span>
+</div>
+<!-- Fleet Tab -->
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label-caps text-label-caps mt-1">Fleet</span>
+</div>
+<!-- Insights Tab -->
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-label-caps text-label-caps mt-1">Insights</span>
+</div>
+<!-- Settings Tab -->
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+<span class="font-label-caps text-label-caps mt-1">Settings</span>
+</div>
+</nav>
+<script>
+    // Micro-interaction for the signature pad
+    const canvas = document.getElementById('signature-canvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+
+      const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top
+        };
+      };
+
+      const start = (e) => {
+        drawing = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        ctx.strokeStyle = '#c1c7d0';
+        ctx.lineWidth = 2;
+        e.preventDefault();
+      };
+
+      const move = (e) => {
+        if (!drawing) return;
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        e.preventDefault();
+      };
+
+      const stop = () => {
+        drawing = false;
+      };
+
+      canvas.addEventListener('mousedown', start);
+      canvas.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', stop);
+
+      canvas.addEventListener('touchstart', start);
+      canvas.addEventListener('touchmove', move);
+      window.addEventListener('touchend', stop);
+
+      // Simple resize handler for canvas internal resolution
+      const resize = () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      };
+      window.addEventListener('resize', resize);
+      resize();
+    }
+
+    // Telemetry randomization for atmosphere
+    setInterval(() => {
+      const engineLoad = document.querySelector('.text-headline-lg');
+      if (engineLoad) {
+        const base = 74.2;
+        const drift = (Math.random() - 0.5) * 0.4;
+        engineLoad.textContent = (base + drift).toFixed(1);
+      }
+    }, 1500);
+  </script>
+</body></html>

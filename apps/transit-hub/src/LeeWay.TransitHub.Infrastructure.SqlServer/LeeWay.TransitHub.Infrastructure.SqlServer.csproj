@@ -1,0 +1,38 @@
+<!--
+  LEEWAY ENTERPRISE FILE HEADER
+  File: LeeWay.TransitHub.Infrastructure.SqlServer.csproj
+  Path: src/LeeWay.TransitHub.Infrastructure.SqlServer/LeeWay.TransitHub.Infrastructure.SqlServer.csproj
+  Project: LeeWay Enterprise Transit Hub
+  Layer: MSBuild Project Definition
+  Purpose: Compile the tenant-aware EF Core SQL Server persistence adapter, migrations, health checks, and repositories.
+  Inputs: Source files, project references, and centrally governed package references.
+  Outputs: LeeWay.TransitHub.Infrastructure.SqlServer assembly.
+  Mutation Scope: Build metadata only.
+  Dependencies: Domain, Application, Governance, EF Core SQL Server 10.0.10, Design 10.0.10, and DbContext health checks 10.0.10.
+  Tests: Restore, build, migration, SQL integration, architecture, and runtime health checks.
+  Security Impact: SQL provider and migration packages are centrally versioned and evidence-recorded.
+  Database Impact: Defines SQL Server persistence and migration dependencies.
+  Sovereign Cycle: Structure -> Execution -> Veritas
+  Status: ACTIVE / GOVERNED
+  Human Comprehension: REQUIRED
+  Owner: Leonard Lee / Leeway Industries
+  Version: 6.0.0
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>LeeWay.TransitHub.Infrastructure.SqlServer</RootNamespace>
+    <AssemblyName>LeeWay.TransitHub.Infrastructure.SqlServer</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LeeWay.TransitHub.Domain\LeeWay.TransitHub.Domain.csproj" />
+    <ProjectReference Include="..\LeeWay.TransitHub.Application\LeeWay.TransitHub.Application.csproj" />
+    <ProjectReference Include="..\LeeWay.TransitHub.Governance\LeeWay.TransitHub.Governance.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+  </ItemGroup>
+</Project>

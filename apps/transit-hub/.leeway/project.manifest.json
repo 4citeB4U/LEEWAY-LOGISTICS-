@@ -1,0 +1,123 @@
+{
+  "_leewayHeader": {
+    "file": "project.manifest.json",
+    "path": ".leeway/project.manifest.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Project Governance",
+    "purpose": "Define machine-readable project identity, boundaries, and LeeWay rules.",
+    "inputs": "LeeWay Standards and enterprise transit objective.",
+    "outputs": "Project identity and governance state.",
+    "mutationScope": "Governance metadata only.",
+    "dependencies": "LeeWay governance policies.",
+    "tests": "JSON parse and governance scan.",
+    "securityImpact": "Defines secret and mutation boundaries.",
+    "databaseImpact": "Database execution remains separately gated.",
+    "sovereignCycle": [
+      "Origin",
+      "Structure",
+      "Veritas"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "4.0.0"
+  },
+  "projectId": "leeway.enterprise-transit-hub",
+  "displayName": "LeeWay Enterprise Transit Hub",
+  "canonicalRoot": "D:\\Leeway-Ecosystem v2.1.4\\LeeWay-Enterprise-Transit-Hub",
+  "solution": "LeeWay.EnterpriseTransitHub.sln",
+  "targetFramework": "net10.0",
+  "learningMode": "HUMAN_COMPREHENSION_REQUIRED",
+  "generatorScriptPersisted": false,
+  "databaseExecution": "DEFERRED_UNTIL_EXPLICITLY_APPROVED",
+  "dynamicsExecution": "DEFERRED_UNTIL_EXPLICITLY_APPROVED",
+  "sovereignCycle": [
+    "Perception",
+    "Origin",
+    "Structure",
+    "Execution",
+    "Veritas",
+    "Echo",
+    "Synthesis",
+    "Lee Prime"
+  ],
+  "headerPolicy": {
+    "inlineWhenSupported": true,
+    "embeddedMetadataForJson": true,
+    "sidecarForNativeFormats": true,
+    "generatedExclusions": [
+      "bin",
+      "obj",
+      ".git",
+      "_evidence",
+      "TestResults"
+    ]
+  },
+  "packageVersion": "0.2.0",
+  "foundationCorrection": "All five xUnit test projects now import the Xunit namespace through MSBuild Using items; solution registration is single-pass.",
+  "generatorMode": "SELF_CONTAINED_DIRECT_POWERSHELL_PASTE",
+  "evidenceBaseline": {
+    "powershell": "7.6.3+",
+    "dotnetSdk": "10.0.302",
+    "dockerDesktop": "4.83.0",
+    "githubCi": true,
+    "huggingFace": "NOT_APPLICABLE_UNTIL_MODEL_ADDED"
+  },
+  "currentPhase": "03_TRAINING_MANUAL_AND_PERSONAL_LEARNING_FOUNDATION",
+  "commercialProduct": {
+    "mode": "INTERVIEW_DEFENSIBLE_AND_COMMERCIAL_B2B_SAAS",
+    "isLeeWayProduct": true,
+    "tenantDefinition": "One transportation organization",
+    "deploymentProfiles": [
+      "Shared SaaS",
+      "Isolated data",
+      "Dedicated enterprise"
+    ],
+    "supportedVerticals": [
+      "Trucking and freight",
+      "School transportation",
+      "Passenger transit",
+      "Shuttle and paratransit",
+      "Delivery and service fleets"
+    ],
+    "tenantIsolationStatus": "FOUNDATION_ONLY_PERSISTENCE_ENFORCEMENT_DEFERRED"
+  },
+  "agentLee": {
+    "integrationMode": "EXTERNAL_LEEWAY_ORCHESTRATOR",
+    "embedded": false,
+    "role": "Assigned LeeWay employee, orchestrator, instructor, proctor, diagnostician, and approval-bound operator",
+    "capabilityPackage": "leeway/capabilities/enterprise-transit-hub",
+    "coreOperationsAvailableWithoutAgentLee": true
+  },
+  "trainingSystem": {
+    "manualTargetPages": 300,
+    "manualStatus": "FOUNDATION_ONLY_NOT_A_COMPLETED_300_PAGE_MANUAL",
+    "proctor": "Agent Lee Prime",
+    "releaseGateRequired": true,
+    "manualManifest": "docs/training-manual/manual.manifest.json"
+  },
+  "sourceEvidence": {
+    "leeWayStandardsRepository": "4citeB4U/LeeWay-Standards",
+    "leeWayStandardsReadmeBlobSha": "4ab58ac6683b6107ad79fb5aba6d483e85561b1f",
+    "powershellBaseline": "7.6.3+",
+    "dotnetSdkBaseline": "10.0.302",
+    "dockerDesktopBaseline": "4.83.0",
+    "huggingFace": "NOT_APPLICABLE_NO_MODEL_BOUND_IN_PHASE_02"
+  },
+  "trainingManual": {
+    "targetPages": 300,
+    "chapterSources": 24,
+    "status": "INITIAL_DRAFT_IN_PROGRESS",
+    "builder": "operations/powershell/Build-LeeWayTrainingManual.ps1",
+    "privateLearningExcluded": true
+  },
+  "privateLearning": {
+    "owner": "Leonard Lee",
+    "commercialReleaseIncluded": false,
+    "familyTeachingSupported": true,
+    "agentLeeAccess": "EXPLICIT_PRIVATE_VISIBILITY_REQUIRED"
+  },
+  "phase": "PHASE_04_IDENTITY_AUTHORIZATION_CONTINUOUS_LEARNING",
+  "version": "0.4.0",
+  "continuousLearningGate": "REQUIRED_EVERY_PHASE"
+}

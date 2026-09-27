@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Logistics OS | Empire Economics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-container": "#999fa7",
+                    "surface-container-low": "#1a1c20",
+                    "on-tertiary": "#2d3038",
+                    "on-primary-fixed": "#161c23",
+                    "primary-fixed-dim": "#c1c7d0",
+                    "on-tertiary-fixed-variant": "#44474f",
+                    "on-secondary-container": "#b1b5bf",
+                    "secondary": "#c2c7d0",
+                    "tertiary-fixed-dim": "#c4c6d0",
+                    "secondary-fixed": "#dee2ec",
+                    "primary-fixed": "#dde3ec",
+                    "surface-tint": "#c1c7d0",
+                    "tertiary": "#c4c6d0",
+                    "surface": "#111318",
+                    "inverse-surface": "#e2e2e8",
+                    "primary": "#c1c7d0",
+                    "on-surface": "#e2e2e8",
+                    "tertiary-fixed": "#e0e2ec",
+                    "surface-container-highest": "#333539",
+                    "on-secondary-fixed-variant": "#42474f",
+                    "on-background": "#e2e2e8",
+                    "surface-container-high": "#282a2e",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "on-secondary-fixed": "#171c23",
+                    "on-secondary": "#2c3138",
+                    "on-primary": "#2b3138",
+                    "tertiary-container": "#32353d",
+                    "outline": "#8f9195",
+                    "secondary-container": "#42474f",
+                    "background": "#111318",
+                    "on-tertiary-container": "#9b9da7",
+                    "error": "#ffb4ab",
+                    "secondary-fixed-dim": "#c2c7d0",
+                    "on-primary-fixed-variant": "#41474f",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#111318",
+                    "primary-container": "#30363d",
+                    "surface-container-lowest": "#0c0e12",
+                    "outline-variant": "#44474b",
+                    "on-surface-variant": "#c5c6cb",
+                    "inverse-primary": "#595f67",
+                    "surface-variant": "#333539",
+                    "surface-bright": "#37393e",
+                    "on-tertiary-fixed": "#191c23",
+                    "inverse-on-surface": "#2f3035",
+                    "surface-container": "#1e2024"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-sm": "4px",
+                    "unit": "4px",
+                    "container-padding": "12px",
+                    "stack-md": "12px",
+                    "stack-lg": "20px",
+                    "gutter": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "data-mono": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "headline-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "data-mono": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.02em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #111318;
+            color: #e2e2e8;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1a1c20;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #44474b;
+        }
+        .zebra-row:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex min-h-screen">
+<!-- Navigation Drawer (Shared Component) -->
+<aside class="fixed inset-y-0 left-0 w-64 bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant flex flex-col h-full py-stack-lg z-50 hidden md:flex">
+<div class="px-container-padding mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">LOGISTICS OS</h1>
+<div class="mt-stack-lg flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+</div>
+<div>
+<div class="font-body-md text-body-md font-semibold text-on-surface">Agent Lee Command</div>
+<div class="text-body-sm text-on-surface-variant">Fleet Commander</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1 px-2">
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined mr-3">analytics</span>
+<span class="font-body-md text-body-md">Operations</span>
+</a>
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined mr-3">map</span>
+<span class="font-body-md text-body-md">Logistics Map</span>
+</a>
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined mr-3">settings_suggest</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</a>
+<a class="flex items-center px-3 py-2 text-on-surface-variant hover:bg-surface-container-high transition-all rounded" href="#">
+<span class="material-symbols-outlined mr-3">verified_user</span>
+<span class="font-body-md text-body-md">DOT Compliance</span>
+</a>
+<a class="flex items-center px-3 py-2 bg-secondary-container text-on-secondary-container font-semibold transition-all rounded" href="#">
+<span class="material-symbols-outlined mr-3">monitoring</span>
+<span class="font-body-md text-body-md">Investor Relations</span>
+</a>
+</nav>
+<div class="px-container-padding mt-auto">
+<div class="text-label-caps font-label-caps text-on-surface-variant opacity-50">SYSTEM VERSION</div>
+<div class="text-data-mono font-data-mono text-primary">V.4.2</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 pb-20 md:pb-0">
+<!-- TopAppBar (Shared Component) -->
+<header class="fixed top-0 right-0 left-0 md:left-64 bg-surface-dim dark:bg-surface-dim border-b border-outline-variant flex items-center justify-between px-gutter h-12 z-40">
+<div class="flex items-center gap-2 px-container-padding">
+<span class="material-symbols-outlined text-primary">terminal</span>
+<h2 class="font-headline-md text-headline-md font-bold tracking-tighter text-on-surface">EMPIRE ECONOMICS</h2>
+</div>
+<div class="flex items-center gap-4 px-container-padding">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-on-surface cursor-pointer">sensors</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-on-surface cursor-pointer">search</span>
+</div>
+</header>
+<div class="mt-12 p-container-padding space-y-stack-lg">
+<!-- Agent Lee Intelligence HUD -->
+<section class="bg-primary-container/90 border border-primary/30 p-stack-md relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary animate-pulse" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<div class="space-y-1">
+<div class="text-label-caps font-label-caps text-primary tracking-widest uppercase">Agent Lee Strategic Insight</div>
+<p class="font-body-md text-body-md text-on-primary-container leading-relaxed">
+                            Pallet ID-402 in Bay 4 is exceeding ROI threshold by <span class="text-on-surface font-bold">14.2%</span>; recommend liquidation or transfer to Secondary Hub. Stock aging metrics indicate localized market saturation for SKU-7728.
+                        </p>
+</div>
+</div>
+</section>
+<!-- ROI Executive Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-gutter">
+<!-- Fleet ROI -->
+<div class="bg-surface-container border border-outline-variant p-stack-md flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Fleet ROI</span>
+<span class="material-symbols-outlined text-primary text-[18px]">trending_up</span>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface">24.8%</div>
+<div class="text-label-caps font-label-caps text-primary">+1.2% vs Prev Qtr</div>
+</div>
+</div>
+<!-- Cost Per Mile -->
+<div class="bg-surface-container border border-outline-variant p-stack-md flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Cost per Mile</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">payments</span>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface">$2.41</div>
+<div class="text-label-caps font-label-caps text-error">-0.08 Target Gap</div>
+</div>
+</div>
+<!-- Warehouse Aging -->
+<div class="bg-surface-container border border-outline-variant p-stack-md flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Warehouse Aging</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">history</span>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface">18.4 Days</div>
+<div class="text-label-caps font-label-caps text-on-surface-variant">System Average</div>
+</div>
+</div>
+<!-- Asset Utilization -->
+<div class="bg-surface-container border border-outline-variant p-stack-md flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<span class="text-label-caps font-label-caps text-on-surface-variant uppercase">Asset Util.</span>
+<span class="material-symbols-outlined text-primary text-[18px]">precision_manufacturing</span>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface">92.1%</div>
+<div class="text-label-caps font-label-caps text-primary">Peak Efficiency</div>
+</div>
+</div>
+</section>
+<!-- Economic Ledger & Visualization -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Financial Trajectory Chart Placeholder -->
+<div class="lg:col-span-2 bg-surface-container border border-outline-variant p-stack-md h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-stack-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">show_chart</span>
+<span class="text-headline-md font-headline-md uppercase text-on-surface tracking-tight">Economic Trajectory (Q3-Q4)</span>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface-container-high border border-outline-variant px-2 py-1 text-label-caps font-label-caps hover:bg-outline-variant">WEEKLY</button>
+<button class="bg-primary-container border border-primary/20 px-2 py-1 text-label-caps font-label-caps text-on-surface">MONTHLY</button>
+</div>
+</div>
+<div class="flex-1 relative flex items-end justify-between gap-1 pb-4 pt-10">
+<!-- Chart Mockup with divs -->
+<div class="flex-1 flex flex-col justify-end group">
+<div class="bg-primary/20 h-[60%] w-full relative transition-all group-hover:bg-primary/40">
+<div class="absolute -top-6 left-0 text-data-mono text-[10px] opacity-0 group-hover:opacity-100">$84M</div>
+</div>
+<div class="text-[8px] font-label-caps text-on-surface-variant mt-2 text-center">JUL</div>
+</div>
+<div class="flex-1 flex flex-col justify-end group">
+<div class="bg-primary/20 h-[45%] w-full relative transition-all group-hover:bg-primary/40">
+<div class="absolute -top-6 left-0 text-data-mono text-[10px] opacity-0 group-hover:opacity-100">$72M</div>
+</div>
+<div class="text-[8px] font-label-caps text-on-surface-variant mt-2 text-center">AUG</div>
+</div>
+<div class="flex-1 flex flex-col justify-end group">
+<div class="bg-primary/20 h-[75%] w-full relative transition-all group-hover:bg-primary/40">
+<div class="absolute -top-6 left-0 text-data-mono text-[10px] opacity-0 group-hover:opacity-100">$98M</div>
+</div>
+<div class="text-[8px] font-label-caps text-on-surface-variant mt-2 text-center">SEP</div>
+</div>
+<div class="flex-1 flex flex-col justify-end group">
+<div class="bg-primary/20 h-[85%] w-full relative transition-all group-hover:bg-primary/40">
+<div class="absolute -top-6 left-0 text-data-mono text-[10px] opacity-0 group-hover:opacity-100">$112M</div>
+</div>
+<div class="text-[8px] font-label-caps text-on-surface-variant mt-2 text-center">OCT</div>
+</div>
+<div class="flex-1 flex flex-col justify-end group">
+<div class="bg-primary/20 h-[70%] w-full relative transition-all group-hover:bg-primary/40 border-t-2 border-primary">
+<div class="absolute -top-6 left-0 text-data-mono text-[10px] opacity-0 group-hover:opacity-100">$91M</div>
+</div>
+<div class="text-[8px] font-label-caps text-on-surface-variant mt-2 text-center">NOV</div>
+</div>
+<div class="flex-1 flex flex-col justify-end group">
+<div class="bg-primary h-[95%] w-full relative transition-all group-hover:brightness-110">
+<div class="absolute -top-6 left-0 text-data-mono text-[10px] font-bold text-primary">$124M</div>
+</div>
+<div class="text-[8px] font-label-caps text-on-surface-variant mt-2 text-center">DEC</div>
+</div>
+</div>
+</div>
+<!-- Evidence Ledger: Stock Aging -->
+<div class="bg-surface-container border border-outline-variant p-stack-md flex flex-col">
+<div class="flex items-center gap-2 mb-stack-md">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+<span class="text-headline-md font-headline-md uppercase text-on-surface tracking-tight">Stock Aging Report</span>
+</div>
+<div class="flex-1 overflow-auto custom-scrollbar">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-outline-variant">
+<th class="py-2 text-label-caps font-label-caps text-on-surface-variant uppercase">Asset ID</th>
+<th class="py-2 text-label-caps font-label-caps text-on-surface-variant uppercase">Days</th>
+<th class="py-2 text-label-caps font-label-caps text-on-surface-variant uppercase">Value</th>
+<th class="py-2 text-label-caps font-label-caps text-on-surface-variant uppercase">ROI %</th>
+</tr>
+</thead>
+<tbody class="text-data-mono">
+<tr class="zebra-row border-b border-outline-variant/30 text-error">
+<td class="py-3">P-402</td>
+<td class="py-3">142</td>
+<td class="py-3">$12.4K</td>
+<td class="py-3">-4.2%</td>
+</tr>
+<tr class="zebra-row border-b border-outline-variant/30">
+<td class="py-3">P-118</td>
+<td class="py-3">45</td>
+<td class="py-3">$8.1K</td>
+<td class="py-3">18.2%</td>
+</tr>
+<tr class="zebra-row border-b border-outline-variant/30">
+<td class="py-3">P-772</td>
+<td class="py-3">89</td>
+<td class="py-3">$24.5K</td>
+<td class="py-3">2.1%</td>
+</tr>
+<tr class="zebra-row border-b border-outline-variant/30">
+<td class="py-3">P-009</td>
+<td class="py-3">12</td>
+<td class="py-3">$5.2K</td>
+<td class="py-3">29.4%</td>
+</tr>
+<tr class="zebra-row border-b border-outline-variant/30">
+<td class="py-3">P-332</td>
+<td class="py-3">67</td>
+<td class="py-3">$11.0K</td>
+<td class="py-3">12.5%</td>
+</tr>
+<tr class="zebra-row border-b border-outline-variant/30">
+<td class="py-3">P-405</td>
+<td class="py-3">94</td>
+<td class="py-3">$4.1K</td>
+<td class="py-3">-0.4%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<button class="mt-4 w-full bg-secondary-container text-on-secondary-container py-2 text-label-caps font-label-caps hover:bg-outline-variant transition-colors">EXPORT FULL LEDGER</button>
+</div>
+</section>
+<!-- Economic Ledger: Asset Value Matrix -->
+<section class="bg-surface-container border border-outline-variant p-stack-md overflow-hidden">
+<div class="flex items-center justify-between mb-stack-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+<span class="text-headline-md font-headline-md uppercase text-on-surface tracking-tight">Economic Ledger: Global Assets</span>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary"></div>
+<span class="text-[10px] font-label-caps text-on-surface-variant uppercase">Fixed Assets</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-secondary-container"></div>
+<span class="text-[10px] font-label-caps text-on-surface-variant uppercase">Operational Cost</span>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full min-w-[800px]">
+<thead>
+<tr class="text-left border-b border-outline-variant bg-surface-container-high/50">
+<th class="px-4 py-2 text-label-caps font-label-caps text-on-surface-variant uppercase">Regional Hub</th>
+<th class="px-4 py-2 text-label-caps font-label-caps text-on-surface-variant uppercase">Asset Value</th>
+<th class="px-4 py-2 text-label-caps font-label-caps text-on-surface-variant uppercase">Daily Op-Ex</th>
+<th class="px-4 py-2 text-label-caps font-label-caps text-on-surface-variant uppercase">Efficiency Delta</th>
+<th class="px-4 py-2 text-label-caps font-label-caps text-on-surface-variant uppercase">Status</th>
+</tr>
+</thead>
+<tbody class="text-data-mono">
+<tr class="zebra-row border-b border-outline-variant/30">
+<td class="px-4 py-3 font-bold text-on-surface">NORTH-ATL-01</td>
+<td class="px-4 py-3">$4.2M</td>
+<td class="px-4 py-3">$18.4K</td>
+<td class="px-4 py-3 text-primary">+4.22%</td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-bold border border-primary/50">OPTIMIZED</span>
+</td>
+</tr>
+<tr class="zebra-row border-b border-outline-variant/30">
+<td class="px-4 py-3 font-bold text-on-surface">WEST-SFO-04</td>
+<td class="px-4 py-3">$2.8M</td>
+<td class="px-4 py-3">$21.1K</td>
+<td class="px-4 py-3 text-error">-1.45%</td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 bg-error-container text-on-error-container text-[10px] font-bold border border-error/50">INVESTIGATE</span>
+</td>
+</tr>
+<tr class="zebra-row border-b border-outline-variant/30">
+<td class="px-4 py-3 font-bold text-on-surface">MID-CHI-02</td>
+<td class="px-4 py-3">$7.1M</td>
+<td class="px-4 py-3">$12.2K</td>
+<td class="px-4 py-3 text-primary">+12.80%</td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-bold border border-primary/50">ELITE</span>
+</td>
+</tr>
+<tr class="zebra-row border-b border-outline-variant/30">
+<td class="px-4 py-3 font-bold text-on-surface">SOUTH-HOU-09</td>
+<td class="px-4 py-3">$1.9M</td>
+<td class="px-4 py-3">$15.7K</td>
+<td class="px-4 py-3 text-on-surface-variant">+0.04%</td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 bg-surface-container-highest text-on-surface-variant text-[10px] font-bold border border-outline-variant">NEUTRAL</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- Spacer for Bottom Nav on Mobile -->
+<div class="h-20 md:hidden"></div>
+</main>
+<!-- BottomNavBar (Shared Component) - Mobile Only -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface-container dark:bg-surface-container border-t border-outline-variant flex justify-around items-center h-16 px-container-padding">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-caps text-label-caps">Fleet</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-caps text-label-caps">Insights</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface" href="#">
+<span class="material-symbols-outlined">report_problem</span>
+<span class="font-label-caps text-label-caps">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-lg p-unit" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">monitoring</span>
+<span class="font-label-caps text-label-caps">Reports</span>
+</a>
+</nav>
+<!-- Micro-interaction JS -->
+<script>
+        // Simple interactive effect for ledger rows
+        document.querySelectorAll('.zebra-row').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.backgroundColor = 'rgba(193, 199, 208, 0.05)';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.backgroundColor = '';
+            });
+        });
+    </script>
+</body></html>

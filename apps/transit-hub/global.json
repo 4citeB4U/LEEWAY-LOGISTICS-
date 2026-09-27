@@ -1,0 +1,30 @@
+{
+  "_leewayHeader": {
+    "file": "global.json",
+    "path": "global.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Build Configuration",
+    "purpose": "Pin the project to the installed .NET 10 SDK feature band.",
+    "inputs": "Installed .NET SDK inventory.",
+    "outputs": "Deterministic SDK selection.",
+    "mutationScope": "SDK selection only.",
+    "dependencies": ".NET SDK 10.0.302 or compatible feature band.",
+    "tests": "dotnet --version and dotnet build.",
+    "securityImpact": "None.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Structure",
+      "Execution",
+      "Veritas"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "1.0.0"
+  },
+  "sdk": {
+    "version": "10.0.302",
+    "rollForward": "latestFeature",
+    "allowPrerelease": false
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "_leewayHeader": {
+    "file": "manual-progress.json",
+    "path": "docs/training-manual/manual-progress.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Training / Progress Evidence",
+    "purpose": "Record measurable progress toward the controlled 300-page commercial manual.",
+    "inputs": "Generated master manual and chapter sources.",
+    "outputs": "Chapter count, word count, estimated pages, and completion classification.",
+    "mutationScope": "Training progress metadata only.",
+    "dependencies": "manual.manifest.json and MASTER-TRAINING-MANUAL.md.",
+    "tests": "JSON parse, chapter count, word count, and page-estimate verification.",
+    "securityImpact": "Excludes private-learning content.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Execution",
+      "Veritas",
+      "Echo",
+      "Synthesis"
+    ],
+    "status": "PASS",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "4.0.0"
+  },
+  "generatedUtc": "2026-07-26T06:57:17.2788763+00:00",
+  "targetPages": 300,
+  "chapterCount": 36,
+  "wordCount": 62864,
+  "wordsPerEstimatedPage": 350,
+  "estimatedDraftPages": 180,
+  "estimatedCompletionPercent": 60.0,
+  "formattedCommercialPagesVerified": 0,
+  "completionStatus": "INITIAL_DRAFT_IN_PROGRESS_NOT_FINAL_300_PAGE_RELEASE",
+  "privateLearningIncluded": false,
+  "truthStatement": "Estimated pages are a planning metric. Final formatted page count, screenshots, labs, accessibility, and release review remain pending."
+}

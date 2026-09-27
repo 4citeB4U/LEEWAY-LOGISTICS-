@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fleet Management Board - Logistics OS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111318;
+            color: #e2e2e8;
+        }
+        .pulse-indicator {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .5; transform: scale(1.2); }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1a1c20;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 2px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary": "#c4c6d0",
+                      "on-error": "#690005",
+                      "on-secondary-fixed-variant": "#42474f",
+                      "inverse-primary": "#595f67",
+                      "surface-dim": "#111318",
+                      "on-primary": "#2b3138",
+                      "secondary-fixed": "#dee2ec",
+                      "secondary-fixed-dim": "#c2c7d0",
+                      "surface-container-highest": "#333539",
+                      "background": "#111318",
+                      "on-tertiary-container": "#9b9da7",
+                      "on-error-container": "#ffdad6",
+                      "on-secondary": "#2c3138",
+                      "outline": "#8f9195",
+                      "secondary": "#c2c7d0",
+                      "inverse-on-surface": "#2f3035",
+                      "surface-container-high": "#282a2e",
+                      "tertiary-fixed-dim": "#c4c6d0",
+                      "primary-fixed-dim": "#c1c7d0",
+                      "surface-container": "#1e2024",
+                      "surface-tint": "#c1c7d0",
+                      "on-tertiary-fixed-variant": "#44474f",
+                      "on-background": "#e2e2e8",
+                      "on-secondary-container": "#b1b5bf",
+                      "surface-container-low": "#1a1c20",
+                      "inverse-surface": "#e2e2e8",
+                      "surface": "#111318",
+                      "on-tertiary-fixed": "#191c23",
+                      "on-primary-fixed-variant": "#41474f",
+                      "error": "#ffb4ab",
+                      "on-primary-fixed": "#161c23",
+                      "primary-container": "#30363d",
+                      "surface-container-lowest": "#0c0e12",
+                      "primary": "#c1c7d0",
+                      "tertiary-fixed": "#e0e2ec",
+                      "on-secondary-fixed": "#171c23",
+                      "tertiary-container": "#32353d",
+                      "outline-variant": "#44474b",
+                      "on-surface-variant": "#c5c6cb",
+                      "on-surface": "#e2e2e8",
+                      "on-primary-container": "#999fa7",
+                      "primary-fixed": "#dde3ec",
+                      "surface-bright": "#37393e",
+                      "error-container": "#93000a",
+                      "surface-variant": "#333539",
+                      "secondary-container": "#42474f",
+                      "on-tertiary": "#2d3038"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "8px",
+                      "stack-md": "12px",
+                      "stack-sm": "4px",
+                      "container-padding": "12px",
+                      "unit": "4px",
+                      "stack-lg": "20px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "data-mono": ["JetBrains Mono"],
+                      "label-caps": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                      "data-mono": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                      "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-dim overflow-hidden flex flex-col h-screen">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full bg-surface-dim border-b border-outline-variant flex items-center justify-between px-gutter h-12 z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">terminal</span>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-on-surface">LOGISTICS OS</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">sensors</span>
+</div>
+</header>
+<!-- Agent Lee Intelligence Plane (HUD) -->
+<section class="mt-12 bg-primary-container/90 border-b border-primary/20 px-container-padding py-stack-sm flex items-center justify-between backdrop-blur-sm">
+<div class="flex items-center gap-3">
+<div class="relative flex items-center justify-center">
+<div class="w-2.5 h-2.5 bg-primary rounded-full pulse-indicator"></div>
+<div class="absolute w-4 h-4 border border-primary/40 rounded-full animate-ping"></div>
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-on-primary-container block">AGENT LEE PRIME INTELLIGENCE</span>
+<span class="font-body-sm text-body-sm text-on-surface">Active &amp; Monitoring Fleet Transactions</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary text-[18px]">psychology</span>
+</section>
+<!-- Main Navigation Layout (SideNav for Desktop / Content Canvas) -->
+<main class="flex-1 overflow-hidden flex">
+<!-- Sidebar Shell (Desktop only) -->
+<aside class="hidden md:flex flex-col h-full w-64 bg-surface-container-low border-r border-outline-variant py-stack-lg transition-all">
+<div class="px-container-padding mb-stack-lg">
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Fleet Commander</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Agent Lee Command • V.4.2</p>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="flex items-center gap-3 px-container-padding py-stack-md bg-secondary-container text-on-secondary-container font-semibold active:scale-[0.98] transition-all cursor-pointer">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-md text-body-md">Operations</span>
+</div>
+<div class="flex items-center gap-3 px-container-padding py-stack-md text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer">
+<span class="material-symbols-outlined">map</span>
+<span class="font-body-md text-body-md">Logistics Map</span>
+</div>
+<div class="flex items-center gap-3 px-container-padding py-stack-md text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer">
+<span class="material-symbols-outlined">settings_suggest</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</div>
+<div class="flex items-center gap-3 px-container-padding py-stack-md text-on-surface-variant hover:bg-surface-container-high transition-all cursor-pointer">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-body-md text-body-md">DOT Compliance</span>
+</div>
+</nav>
+</aside>
+<!-- Content Canvas -->
+<div class="flex-1 flex flex-col overflow-hidden">
+<!-- Fleet List Section -->
+<section class="flex-1 overflow-y-auto custom-scrollbar px-container-padding py-stack-md space-y-stack-md pb-40">
+<!-- Fleet Card 1 -->
+<div class="bg-surface-container border border-outline-variant rounded-lg p-stack-md">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<span class="font-data-mono text-data-mono text-primary font-bold">ASSET-105-TX</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Mark Rodriguez</h3>
+</div>
+<span class="font-label-caps text-label-caps px-2 py-0.5 bg-error-container text-on-error-container rounded">WARNING</span>
+</div>
+<div class="grid grid-cols-2 gap-stack-md mb-stack-md">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant">CURRENT ROUTE</span>
+<span class="font-body-sm text-body-sm">AUSTIN-HUB → DALLAS-INTL</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ETA</span>
+<span class="font-body-sm text-body-sm">14:45 CST</span>
+</div>
+</div>
+<!-- Fuel/Load Progress -->
+<div class="space-y-stack-sm">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">FUEL LEVEL / LOAD CAPACITY</span>
+<span class="font-data-mono text-[10px] text-on-surface">84% / 92%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-primary" style="width: 84%"></div>
+</div>
+</div>
+</div>
+<!-- Fleet Card 2 -->
+<div class="bg-surface-container border border-outline-variant rounded-lg p-stack-md">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<span class="font-data-mono text-data-mono text-primary font-bold">ASSET-229-AZ</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Sarah Chen</h3>
+</div>
+<span class="font-label-caps text-label-caps px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded">IN SERVICE</span>
+</div>
+<div class="grid grid-cols-2 gap-stack-md mb-stack-md">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant">CURRENT ROUTE</span>
+<span class="font-body-sm text-body-sm">PHOENIX-STATION → LAX-4</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ETA</span>
+<span class="font-body-sm text-body-sm">09:15 PST</span>
+</div>
+</div>
+<div class="space-y-stack-sm">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">FUEL LEVEL / LOAD CAPACITY</span>
+<span class="font-data-mono text-[10px] text-on-surface">32% / 100%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-error" style="width: 32%"></div>
+</div>
+</div>
+</div>
+<!-- Fleet Card 3 -->
+<div class="bg-surface-container border border-outline-variant rounded-lg p-stack-md">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<span class="font-data-mono text-data-mono text-primary font-bold">BUS-105-MAINT</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Unit Terminal</h3>
+</div>
+<span class="font-label-caps text-label-caps px-2 py-0.5 bg-outline-variant text-on-surface-variant rounded">OUT OF SERVICE</span>
+</div>
+<div class="grid grid-cols-2 gap-stack-md mb-stack-md">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant">CURRENT STATUS</span>
+<span class="font-body-sm text-body-sm">MAINTENANCE DEPOT B</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-caps text-label-caps text-on-surface-variant">WORK ORDER</span>
+<span class="font-body-sm text-body-sm">#WO-9921</span>
+</div>
+</div>
+<div class="space-y-stack-sm">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">REPAIR PROGRESS</span>
+<span class="font-data-mono text-[10px] text-on-surface">12%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-tertiary" style="width: 12%"></div>
+</div>
+</div>
+</div>
+<!-- Fleet Card 4 -->
+<div class="bg-surface-container border border-outline-variant rounded-lg p-stack-md">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<span class="font-data-mono text-data-mono text-primary font-bold">ASSET-441-NY</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">James Wilson</h3>
+</div>
+<span class="font-label-caps text-label-caps px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded">IN SERVICE</span>
+</div>
+<div class="grid grid-cols-2 gap-stack-md mb-stack-md">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant">CURRENT ROUTE</span>
+<span class="font-body-sm text-body-sm">JFK-TERM → ALBANY-DIST</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-caps text-label-caps text-on-surface-variant">ETA</span>
+<span class="font-body-sm text-body-sm">22:00 EST</span>
+</div>
+</div>
+<div class="space-y-stack-sm">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant">FUEL LEVEL / LOAD CAPACITY</span>
+<span class="font-data-mono text-[10px] text-on-surface">65% / 40%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-primary" style="width: 65%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Diagnostic Workstation (HUD Overlay) -->
+<section class="fixed bottom-16 md:bottom-0 left-0 right-0 md:left-64 bg-[#30363d] border-t border-primary/30 p-container-padding z-40 backdrop-blur-md">
+<div class="max-w-screen-xl mx-auto space-y-stack-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">build</span>
+<h4 class="font-label-caps text-label-caps text-on-surface">DIAGNOSTIC WORKSTATION</h4>
+</div>
+<span class="font-data-mono text-[10px] text-primary">SESSION: 0x88F2A</span>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-3 gap-unit">
+<div class="bg-surface-dim border border-outline-variant p-2">
+<p class="font-label-caps text-[9px] text-on-surface-variant">ENGINE TEMP</p>
+<p class="font-data-mono text-data-mono text-on-surface">88°C</p>
+</div>
+<div class="bg-surface-dim border border-outline-variant p-2">
+<p class="font-label-caps text-[9px] text-on-surface-variant">BRAKE WEAR</p>
+<p class="font-data-mono text-data-mono text-error">12%</p>
+</div>
+<div class="bg-surface-dim border border-outline-variant p-2">
+<p class="font-label-caps text-[9px] text-on-surface-variant">LATENCY</p>
+<p class="font-data-mono text-data-mono text-on-surface">14ms</p>
+</div>
+</div>
+<!-- AI Recommendation Box -->
+<div class="bg-surface-container-lowest border border-primary/20 p-stack-sm flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[16px] mt-0.5" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<div>
+<p class="font-label-caps text-[10px] text-primary">AGENT LEE RECOMMENDATION</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant italic">Schedule maintenance for BUS-105-MAINT. Engine telemetry suggests premature gasket failure within 48 operational hours.</p>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="w-full bg-[#e2e2e8] text-[#111318] py-2.5 rounded font-headline-md text-headline-md font-bold uppercase tracking-wider hover:bg-white transition-colors">
+                        Approve Maintenance Order
+                    </button>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar Shell (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 bg-surface-container border-t border-outline-variant flex justify-around items-center h-16 px-container-padding">
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-lg p-unit scale-95 duration-75 cursor-pointer">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-caps text-label-caps uppercase">Fleet</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface transition-colors cursor-pointer">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-caps text-label-caps uppercase">Insights</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface transition-colors cursor-pointer">
+<span class="material-symbols-outlined">report_problem</span>
+<span class="font-label-caps text-label-caps uppercase">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface transition-colors cursor-pointer">
+<span class="material-symbols-outlined">tune</span>
+<span class="font-label-caps text-label-caps uppercase">Settings</span>
+</div>
+</nav>
+<script>
+        // Micro-interaction: Update diagnostic metrics periodically for high-fidelity feel
+        setInterval(() => {
+            const metrics = document.querySelectorAll('.font-data-mono');
+            metrics.forEach(metric => {
+                if(metric.textContent.includes('°C')) {
+                    const temp = 85 + Math.floor(Math.random() * 5);
+                    metric.textContent = `${temp}°C`;
+                }
+                if(metric.textContent.includes('ms')) {
+                    const lat = 12 + Math.floor(Math.random() * 8);
+                    metric.textContent = `${lat}ms`;
+                }
+            });
+        }, 3000);
+    </script>
+</body></html>

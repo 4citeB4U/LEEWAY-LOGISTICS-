@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Logistics OS | Dispatch Terminal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111318;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #44474b;
+            border-radius: 2px;
+        }
+        .evidence-stripe {
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(48, 54, 61, 0.1),
+                rgba(48, 54, 61, 0.1) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#111318",
+                        "inverse-surface": "#e2e2e8",
+                        "error-container": "#93000a",
+                        "on-secondary": "#2c3138",
+                        "on-primary-container": "#999fa7",
+                        "outline-variant": "#44474b",
+                        "surface-container-highest": "#333539",
+                        "on-tertiary-container": "#9b9da7",
+                        "on-surface": "#e2e2e8",
+                        "primary": "#c1c7d0",
+                        "outline": "#8f9195",
+                        "tertiary": "#c4c6d0",
+                        "on-primary": "#2b3138",
+                        "on-primary-fixed": "#161c23",
+                        "on-background": "#e2e2e8",
+                        "on-surface-variant": "#c5c6cb",
+                        "on-secondary-fixed-variant": "#42474f",
+                        "tertiary-fixed-dim": "#c4c6d0",
+                        "tertiary-container": "#32353d",
+                        "on-secondary-fixed": "#171c23",
+                        "surface-tint": "#c1c7d0",
+                        "surface-variant": "#333539",
+                        "surface": "#111318",
+                        "secondary-container": "#42474f",
+                        "secondary-fixed": "#dee2ec",
+                        "surface-container-low": "#1a1c20",
+                        "surface-container": "#1e2024",
+                        "secondary": "#c2c7d0",
+                        "surface-container-lowest": "#0c0e12",
+                        "on-tertiary-fixed": "#191c23",
+                        "on-secondary-container": "#b1b5bf",
+                        "on-tertiary": "#2d3038",
+                        "tertiary-fixed": "#e0e2ec",
+                        "primary-fixed": "#dde3ec",
+                        "primary-container": "#30363d",
+                        "on-primary-fixed-variant": "#41474f",
+                        "inverse-on-surface": "#2f3035",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#c1c7d0",
+                        "error": "#ffb4ab",
+                        "inverse-primary": "#595f67",
+                        "surface-container-high": "#282a2e",
+                        "secondary-fixed-dim": "#c2c7d0",
+                        "background": "#111318",
+                        "on-tertiary-fixed-variant": "#44474f",
+                        "surface-bright": "#37393e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "12px",
+                        "gutter": "8px",
+                        "container-padding": "12px",
+                        "stack-lg": "20px",
+                        "unit": "4px",
+                        "stack-sm": "4px"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["JetBrains Mono"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                        "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary/30 overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between px-container-padding h-14 w-full z-50 bg-surface border-b border-outline-variant sticky top-0">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer">menu</span>
+<h1 class="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface">Logistics OS</h1>
+<div class="ml-8 flex gap-stack-lg h-full">
+<button class="font-label-caps text-label-caps text-primary border-b-2 border-primary px-2 h-14 flex items-center">DISPATCH TERMINAL</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors px-2 h-14 flex items-center">EVIDENCE LEDGER</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors px-2 h-14 flex items-center">COMMS HUB</button>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end">
+<span class="font-label-caps text-label-caps text-secondary">AUTHORITY TIER III</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Agent Lee AI System Active</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">AL</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="flex flex-col h-full py-stack-lg bg-surface-container-low border-r border-outline-variant w-72 transition-all duration-150">
+<div class="px-6 mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Operational Modules</h2>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<div class="flex items-center gap-3 px-3 py-2 bg-secondary-container text-on-secondary-container font-semibold rounded-lg cursor-pointer transition-all duration-150">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-md text-body-md">Fleet Management</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-highest rounded-lg cursor-pointer transition-all duration-150">
+<span class="material-symbols-outlined">map</span>
+<span class="font-body-md text-body-md">Mapping</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-highest rounded-lg cursor-pointer transition-all duration-150">
+<span class="material-symbols-outlined">build</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-highest rounded-lg cursor-pointer transition-all duration-150">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-body-md text-body-md">Compliance</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-highest rounded-lg cursor-pointer transition-all duration-150">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">ROI Analysis</span>
+</div>
+</nav>
+<!-- Authority Indicator -->
+<div class="m-4 p-stack-md bg-surface-container rounded-lg border border-outline-variant">
+<div class="flex justify-between items-center mb-stack-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">LEVEL ACCESS</span>
+<span class="material-symbols-outlined text-primary text-sm">shield</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full">
+<div class="h-full w-3/4 bg-primary rounded-full"></div>
+</div>
+<p class="mt-2 font-body-sm text-body-sm text-on-primary-container">Role: Executive Dispatch</p>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-hidden flex flex-col bg-surface-dim">
+<!-- View Level Switcher -->
+<div class="h-10 flex items-center px-4 bg-surface-container-low border-b border-outline-variant gap-6">
+<button class="font-label-caps text-label-caps text-primary border-b-2 border-primary h-10 flex items-center px-2">GLOBAL FLEET</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors h-10 flex items-center px-2">SECTOR VIEW</button>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface transition-colors h-10 flex items-center px-2">INDIVIDUAL DRIVER</button>
+</div>
+<div class="flex-1 p-stack-md overflow-y-auto custom-scrollbar">
+<!-- Bento Grid Interface -->
+<div class="grid grid-cols-12 gap-gutter h-full">
+<!-- Communication Command Center (Main Column) -->
+<div class="col-span-8 flex flex-col gap-gutter">
+<!-- Intelligence HUD -->
+<div class="bg-primary-container/20 border border-primary/30 p-stack-md rounded-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2 opacity-10">
+<span class="material-symbols-outlined text-6xl">psychology</span>
+</div>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-sm">auto_awesome</span>
+<span class="font-label-caps text-label-caps text-primary">AGENT LEE INTELLIGENCE OVERLAY</span>
+</div>
+<div class="grid grid-cols-3 gap-stack-md">
+<div class="bg-surface-container-high/50 p-stack-sm rounded border border-outline-variant">
+<p class="font-label-caps text-label-caps text-on-surface-variant">PREDICTIVE DELAY</p>
+<p class="font-data-mono text-data-mono text-error">14.2% SECTOR 7</p>
+</div>
+<div class="bg-surface-container-high/50 p-stack-sm rounded border border-outline-variant">
+<p class="font-label-caps text-label-caps text-on-surface-variant">ACTIVE CALL LOAD</p>
+<p class="font-data-mono text-data-mono text-primary">HIGH (28/MIN)</p>
+</div>
+<div class="bg-surface-container-high/50 p-stack-sm rounded border border-outline-variant">
+<p class="font-label-caps text-label-caps text-on-surface-variant">EVIDENCE UPTIME</p>
+<p class="font-data-mono text-data-mono text-on-surface">99.998% SECURE</p>
+</div>
+</div>
+</div>
+<!-- Communication List (The Monday.com Style Grid) -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg flex flex-col overflow-hidden">
+<div class="px-container-padding py-2 border-b border-outline-variant flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md text-on-surface">Active Communication Lines</h3>
+<div class="flex gap-2">
+<button class="bg-surface-container-highest p-1 rounded hover:bg-outline-variant transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+</button>
+<button class="bg-surface-container-highest p-1 rounded hover:bg-outline-variant transition-colors">
+<span class="material-symbols-outlined text-sm">search</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead class="bg-surface-container border-b border-outline-variant">
+<tr class="text-left font-label-caps text-label-caps text-on-surface-variant">
+<th class="px-4 py-2 border-r border-outline-variant w-10">#</th>
+<th class="px-4 py-2 border-r border-outline-variant w-40">TIMESTAMP</th>
+<th class="px-4 py-2 border-r border-outline-variant w-48">COMM CHANNEL</th>
+<th class="px-4 py-2 border-r border-outline-variant">SUBJECT / DRIVER ID</th>
+<th class="px-4 py-2 border-r border-outline-variant w-32">STATUS</th>
+<th class="px-4 py-2">EVIDENCE PIN</th>
+</tr>
+</thead>
+<tbody class="font-data-mono text-data-mono divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-4 py-stack-sm text-on-primary-container border-r border-outline-variant">01</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">14:22:08.4</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">call</span>
+<span>VOICE_ENCRYPT_88</span>
+</div>
+</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">TRUCK_UNIT_442 (R. VANCE)</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">
+<span class="px-2 py-0.5 rounded-full bg-error/10 text-error border border-error/20 text-[10px] font-bold">URGENT</span>
+</td>
+<td class="px-4 py-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-on-tertiary-container text-sm">inventory_2</span>
+<span class="text-xs">EV-9921-X</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-high transition-colors group bg-surface-container/30">
+<td class="px-4 py-stack-sm text-on-primary-container border-r border-outline-variant">02</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">14:21:45.9</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">sms</span>
+<span>MSG_GATEWAY_3</span>
+</div>
+</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">HUB_ALPHA (DISPATCH)</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold">PENDING</span>
+</td>
+<td class="px-4 py-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-on-tertiary-container text-sm">inventory_2</span>
+<span class="text-xs">EV-9920-A</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-high transition-colors group">
+<td class="px-4 py-stack-sm text-on-primary-container border-r border-outline-variant">03</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">14:19:12.1</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">videocam</span>
+<span>DASH_LIVESTREAM</span>
+</div>
+</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">TRUCK_UNIT_209 (J. DOE)</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container border border-outline-variant text-[10px] font-bold uppercase">Streaming</span>
+</td>
+<td class="px-4 py-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-on-tertiary-container text-sm">inventory_2</span>
+<span class="text-xs">EV-9918-B</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-high transition-colors group bg-surface-container/30">
+<td class="px-4 py-stack-sm text-on-primary-container border-r border-outline-variant">04</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">14:15:30.0</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">call</span>
+<span>VOICE_ENCRYPT_22</span>
+</div>
+</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">CLIENT_SECURE_EXT</td>
+<td class="px-4 py-stack-sm border-r border-outline-variant">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant border border-outline-variant text-[10px] font-bold">COMPLETED</span>
+</td>
+<td class="px-4 py-stack-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-on-tertiary-container text-sm">inventory_2</span>
+<span class="text-xs">EV-9915-C</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Map / Visual Grid Section -->
+<div class="grid grid-cols-2 gap-gutter flex-1 min-h-[300px]">
+<div class="bg-surface-container rounded-lg border border-outline-variant relative overflow-hidden">
+<div class="absolute top-2 left-2 z-10 flex gap-2">
+<span class="px-2 py-1 bg-surface/80 backdrop-blur font-label-caps text-[9px] border border-outline-variant rounded">SECTOR 7 - HIGH DENSITY</span>
+</div>
+<div class="w-full h-full bg-cover bg-center grayscale opacity-60" data-alt="A professional high-density logistics GIS map showing a metropolitan grid at night. Complex paths are drawn in slate blue and silver across a dark midnight background. Glowing data nodes represent truck units. The aesthetic is industrial, tactical, and executive neutral, devoid of any unnecessary decorative elements, looking like a mission control screen." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAlm5_YPWHrzK_hN2OllOFaQhXf7wOabNohYRH_MOqiyKWClppOMCSxs6FCXh2_NeKxQM3u7gvMUF-TUHuQ90MCJlGlQ1BEEqylYNatiHF4ceYuGWxADhXTeXwwEwO__F3oQQD3Au4fyEk6ZwNRw9MIYN-ecDfVRsJ2STEzjFluHn7zkpFXoC407efnkseWO-awlNDxSuxU1iTRWQTXOVn9USnHOspu99BsQmqWR_ROD0Vny6fvSoEJw9i0fAC7WarqtqbxrfoveilP')"></div>
+<div class="absolute inset-0 evidence-stripe pointer-events-none opacity-20"></div>
+</div>
+<div class="bg-surface-container rounded-lg border border-outline-variant p-stack-md flex flex-col">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-4 flex justify-between">
+                                    EVIDENCE INTEGRITY LOG
+                                    <span class="text-primary">LIVE REPLICATION</span>
+</h4>
+<div class="space-y-3 font-data-mono text-[11px] overflow-y-auto custom-scrollbar flex-1">
+<div class="flex gap-4 border-l-2 border-primary pl-3 py-1">
+<span class="text-on-primary-container">[14:22:10]</span>
+<span class="text-on-surface">TRUCK_UNIT_442 VOICE BUFFER SEALED (SHA-256)</span>
+</div>
+<div class="flex gap-4 border-l-2 border-outline pl-3 py-1">
+<span class="text-on-primary-container">[14:21:48]</span>
+<span class="text-on-surface-variant">MSG_GATEWAY_3 OUTBOUND VALIDATED BY AGENT_LEE</span>
+</div>
+<div class="flex gap-4 border-l-2 border-outline pl-3 py-1">
+<span class="text-on-primary-container">[14:19:15]</span>
+<span class="text-on-surface-variant">DASH_STREAM LATENCY CORRECTED (+12ms)</span>
+</div>
+<div class="flex gap-4 border-l-2 border-primary pl-3 py-1">
+<span class="text-on-primary-container">[14:15:35]</span>
+<span class="text-on-surface">EV-9915-C ARCHIVED TO COLD STORAGE CLUSTER B</span>
+</div>
+<div class="flex gap-4 border-l-2 border-outline pl-3 py-1">
+<span class="text-on-primary-container">[14:12:01]</span>
+<span class="text-on-surface-variant">SYSTEM CHECK: ALL RECIPIENTS AUTHENTICATED</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Controls / Fleet Stats (Secondary Column) -->
+<div class="col-span-4 flex flex-col gap-gutter">
+<!-- Driver Focus Card -->
+<div class="bg-surface-container-high border border-outline-variant p-stack-md rounded-lg">
+<div class="flex items-center gap-3 mb-stack-lg border-b border-outline-variant pb-stack-md">
+<img class="w-12 h-12 rounded bg-surface-container object-cover grayscale" data-alt="A professional headshot of a middle-aged male logistics driver with a stern, neutral expression. He is wearing a dark grey tactical uniform. The lighting is crisp and cool, set against a blurred industrial background of a truck interior. The style is a corporate headshot with high detail and realistic textures, fitting an executive neutral design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz9__XQLsDm6iORQ6v99xWZdsnG5HwV5UwiaakhKKHTQhNwh4E3KqUxkPqddiNKz478euKlpW2F6Z5uxoTN0M5hiDhkXXU7WMbUDYVzu9H7J4kg4LW7PVlSyTvi0VQ_hPEBaCvGicsjGW-k2F0bTPKi0DO3VzgQHH2cue8OcWflexoYphtpu5HTAIsHla2SLNpCTe1xWwrTlwMMtD_pcvj3uiwzCaH3lPvcEBwDq-uaPZbWhAtdxYbsk42uamXQNWoEUG84uMBIlOR"/>
+<div class="flex-1">
+<h4 class="font-headline-md text-headline-md leading-none">Richard Vance</h4>
+<p class="font-label-caps text-[10px] text-primary mt-1">SENIOR LOGISTICS OPERATOR</p>
+</div>
+<span class="material-symbols-outlined text-primary cursor-pointer">open_in_new</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Active Route</span>
+<span class="font-data-mono text-data-mono text-on-surface">R-109-ALPHA</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Unit Stability</span>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-data-mono text-data-mono text-on-surface">98.4%</span>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Comm Priority</span>
+<span class="font-label-caps text-label-caps bg-error/20 text-error px-2 py-0.5 rounded border border-error/30">LEVEL 1</span>
+</div>
+</div>
+<button class="w-full mt-stack-lg bg-primary-container text-on-primary-container py-2 font-label-caps text-label-caps rounded hover:bg-outline-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">emergency_share</span>
+                                INTERCEPT LINE
+                            </button>
+</div>
+<!-- Fleet Wide Analytics -->
+<div class="bg-surface-container rounded-lg border border-outline-variant p-stack-md flex-1">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-md">OPERATIONAL VELOCITY</h4>
+<div class="h-32 w-full bg-surface-container-low border border-outline-variant rounded flex items-end p-2 gap-1 mb-stack-lg">
+<div class="bg-primary/20 hover:bg-primary/40 transition-colors w-full h-2/3 border-t-2 border-primary"></div>
+<div class="bg-primary/20 hover:bg-primary/40 transition-colors w-full h-3/4 border-t-2 border-primary"></div>
+<div class="bg-primary/20 hover:bg-primary/40 transition-colors w-full h-1/2 border-t-2 border-primary"></div>
+<div class="bg-primary/20 hover:bg-primary/40 transition-colors w-full h-5/6 border-t-2 border-primary"></div>
+<div class="bg-primary/20 hover:bg-primary/40 transition-colors w-full h-2/3 border-t-2 border-primary"></div>
+<div class="bg-primary/20 hover:bg-primary/40 transition-colors w-full h-4/5 border-t-2 border-primary"></div>
+<div class="bg-error/20 hover:bg-error/40 transition-colors w-full h-1/4 border-t-2 border-error"></div>
+</div>
+<div class="space-y-stack-md">
+<div class="p-stack-sm bg-surface-container-high rounded border border-outline-variant">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-[9px] text-on-surface-variant">SECTOR UTILIZATION</span>
+<span class="font-data-mono text-data-mono text-primary">82%</span>
+</div>
+<div class="mt-2 h-1 bg-surface-container-lowest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[82%]"></div>
+</div>
+</div>
+<div class="p-stack-sm bg-surface-container-high rounded border border-outline-variant">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-[9px] text-on-surface-variant">RISK INDEX</span>
+<span class="font-data-mono text-data-mono text-error">0.04</span>
+</div>
+<div class="mt-2 h-1 bg-surface-container-lowest rounded-full overflow-hidden">
+<div class="h-full bg-error w-[15%]"></div>
+</div>
+</div>
+</div>
+<!-- Historical Evidence Mini-Ledger -->
+<div class="mt-stack-lg">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-stack-md">RECENT EVIDENCE BINDS</h4>
+<div class="space-y-1">
+<div class="flex items-center gap-2 p-1 hover:bg-surface-container-highest cursor-pointer group">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-container group-hover:text-primary transition-colors">history_edu</span>
+<div class="flex-1 overflow-hidden">
+<p class="font-data-mono text-[10px] truncate text-on-surface">SESSION_772_FINAL.MP3</p>
+<p class="font-label-caps text-[8px] text-on-surface-variant">14:02:00 | AGENT_55</p>
+</div>
+</div>
+<div class="flex items-center gap-2 p-1 hover:bg-surface-container-highest cursor-pointer group">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-container group-hover:text-primary transition-colors">history_edu</span>
+<div class="flex-1 overflow-hidden">
+<p class="font-data-mono text-[10px] truncate text-on-surface">DASH_CAP_991.HEVC</p>
+<p class="font-label-caps text-[8px] text-on-surface-variant">13:55:12 | SYSTEM_AI</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Bottom Status Bar -->
+<footer class="h-16 flex justify-around items-center px-4 bg-surface-container border-t border-outline-variant fixed bottom-0 left-0 w-full z-50">
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl py-1 px-4 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps mt-1">DIAGNOSTICS</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps mt-1">ACTIVE FLEET</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps mt-1">SCHEDULE</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-caps text-label-caps mt-1">INSIGHTS</span>
+</button>
+</footer>
+<!-- FAB for Emergency Comms -->
+<div class="fixed bottom-20 right-6 z-50">
+<button class="bg-error text-on-error w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">emergency</span>
+</button>
+</div>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Flash the selection
+                row.classList.add('bg-primary/20');
+                setTimeout(() => {
+                    row.classList.remove('bg-primary/20');
+                }, 300);
+            });
+        });
+
+        // Intelligence HUD "breathing" effect
+        const hud = document.querySelector('.bg-primary-container\\/20');
+        if (hud) {
+            setInterval(() => {
+                hud.style.borderColor = 'rgba(193, 199, 208, ' + (0.3 + Math.sin(Date.now()/1000) * 0.1) + ')';
+            }, 50);
+        }
+    </script>
+</body></html>

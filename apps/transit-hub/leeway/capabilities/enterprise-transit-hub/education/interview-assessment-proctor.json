@@ -1,0 +1,54 @@
+{
+  "_leewayHeader": {
+    "file": "interview-assessment-proctor.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/education/interview-assessment-proctor.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Agent Lee Capability / Private Interview Proctor",
+    "purpose": "Control answer withholding, scoring, remediation, and receipt behavior for private interview assessments.",
+    "inputs": "Authenticated learner, assessment manifest, submitted answers, private answer key, and scoring rubric.",
+    "outputs": "Score, category feedback, remediation, and private receipt.",
+    "mutationScope": "Private learning records only.",
+    "dependencies": "private-learning-access.json, assessment-manifest.json, and answer-key.json.",
+    "tests": "JSON parse, default deny, answer withholding, and architecture tests.",
+    "securityImpact": "Prevents answer-key leakage to commercial or unauthorized learners.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Perception",
+      "Origin",
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo",
+      "Synthesis",
+      "Lee Prime"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "5.0.6"
+  },
+  "defaultDecision": "DENY",
+  "allowedLearners": [
+    "leonard-lee",
+    "explicit-owner-approved-family-delegate"
+  ],
+  "assessmentMode": {
+    "retrieveLearnerQuiz": true,
+    "retrieveAnswerKeyBeforeSubmission": false,
+    "collectAttempt": true,
+    "scoreAfterSubmission": true,
+    "discloseModelAnswerAfterScoring": true,
+    "ownerDirectInstructionOverride": true
+  },
+  "scoringCategories": {
+    "technicalAccuracy": 4,
+    "sourceAndFlowEvidence": 2,
+    "securityAndTenantAwareness": 2,
+    "professionalExplanation": 2
+  },
+  "passPercent": 85,
+  "interviewReadyPercent": 90,
+  "practicalEvidenceRequired": true,
+  "receiptRequired": true,
+  "commercialTenantAccess": false
+}

@@ -1,0 +1,37 @@
+<!--
+  LEEWAY ENTERPRISE FILE HEADER
+  File: LeeWay.TransitHub.Api.csproj
+  Path: src/LeeWay.TransitHub.Api/LeeWay.TransitHub.Api.csproj
+  Project: LeeWay Enterprise Transit Hub
+  Layer: MSBuild Project Definition
+  Purpose: Declare compilation, dependencies, and project identity.
+  Inputs: Source files, project references, and package references.
+  Outputs: Compiled .NET assembly.
+  Mutation Scope: Build metadata only.
+  Dependencies: Directory.Build.props and referenced projects.
+  Tests: dotnet restore and build.
+  Security Impact: References affect supply-chain trust.
+  Database Impact: Supports SignalR, SQL Server connection secrets through development Secret Manager, and no committed password.
+  Sovereign Cycle: Structure -> Execution -> Veritas
+  Status: ACTIVE / GOVERNED
+  Human Comprehension: REQUIRED
+  Owner: Leonard Lee / Leeway Industries
+  Version: 6.0.0
+-->
+
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>LeeWay.TransitHub.Api</RootNamespace>
+    <AssemblyName>LeeWay.TransitHub.Api</AssemblyName>
+    <UserSecretsId>leeway-enterprise-transit-hub-development-5-0</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LeeWay.TransitHub.Domain\LeeWay.TransitHub.Domain.csproj" />
+    <ProjectReference Include="..\LeeWay.TransitHub.Application\LeeWay.TransitHub.Application.csproj" />
+    <ProjectReference Include="..\LeeWay.TransitHub.Governance\LeeWay.TransitHub.Governance.csproj" />
+    <ProjectReference Include="..\LeeWay.TransitHub.Infrastructure.InMemory\LeeWay.TransitHub.Infrastructure.InMemory.csproj" />
+    <ProjectReference Include="..\LeeWay.TransitHub.Infrastructure.SqlServer\LeeWay.TransitHub.Infrastructure.SqlServer.csproj" />
+    <ProjectReference Include="..\LeeWay.TransitHub.Infrastructure.Oracle\LeeWay.TransitHub.Infrastructure.Oracle.csproj" />
+    <ProjectReference Include="..\LeeWay.TransitHub.Integration.Dataverse\LeeWay.TransitHub.Integration.Dataverse.csproj" />
+  </ItemGroup>
+</Project>

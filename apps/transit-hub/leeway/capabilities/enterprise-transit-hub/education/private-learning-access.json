@@ -1,0 +1,45 @@
+{
+  "_leewayHeader": {
+    "file": "private-learning-access.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/education/private-learning-access.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Agent Lee Capability / Education Security",
+    "purpose": "Define Agent Lee access boundaries for Leonard Lee private learning, interview quizzes, answer keys, instructor grading, and family delegation.",
+    "inputs": "Authenticated learner identity, delegation, and requested content class.",
+    "outputs": "ALLOW, DENY, or REQUIRE_OWNER_APPROVAL.",
+    "mutationScope": "Authorization metadata only.",
+    "dependencies": "Private-learning policy and identity system roadmap.",
+    "tests": "JSON parse and policy review.",
+    "securityImpact": "Prevents commercial or cross-user disclosure of private questions, answers, and progress.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Origin",
+      "Structure",
+      "Veritas"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "5.0.6"
+  },
+  "defaultDecision": "DENY",
+  "ownerLearnerId": "leonard-lee",
+  "allowedContentForOwner": [
+    "questions",
+    "workbooks",
+    "rubrics",
+    "progress",
+    "family teaching plans",
+    "interview quizzes",
+    "practice exams",
+    "answer keys",
+    "instructor grading sheets",
+    "assessment receipts"
+  ],
+  "familyDelegateRule": "EXPLICIT_OWNER_DELEGATION_REQUIRED",
+  "commercialTenantUsersAllowed": false,
+  "childIdentityStorage": "PROHIBITED_IN_COMMERCIAL_OR_PUBLIC_ARTIFACTS",
+  "answerRubricRule": "HIDE_ANSWER_KEYS_UNTIL_ATTEMPT_IS_SUBMITTED_AND_SCORED_UNLESS_OWNER_REQUESTS_DIRECT_INSTRUCTION",
+  "commercialPackagingRule": "EXCLUDE_ALL_docs/private-learning_CONTENT",
+  "instructorAccessRule": "OWNER_APPROVED_INSTRUCTOR_OR_AGENT_LEE_PRIVATE_PROCTOR_ONLY"
+}

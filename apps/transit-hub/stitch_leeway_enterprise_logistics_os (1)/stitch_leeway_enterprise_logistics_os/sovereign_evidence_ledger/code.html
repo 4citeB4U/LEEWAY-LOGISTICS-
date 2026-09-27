@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sovereign View | Logistics OS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        /* Custom scrollbar for industrial look */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #111318; }
+        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #44474b; }
+
+        /* HUD Glow for Agent Lee Intelligence Overlay */
+        .hud-border {
+            border: 1px solid rgba(193, 199, 208, 0.3);
+            box-shadow: inset 0 0 15px rgba(193, 199, 208, 0.05);
+        }
+        
+        .zebra-row:nth-child(even) {
+            background-color: rgba(26, 28, 32, 0.5);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#111318",
+                        "inverse-surface": "#e2e2e8",
+                        "error-container": "#93000a",
+                        "on-secondary": "#2c3138",
+                        "on-primary-container": "#999fa7",
+                        "outline-variant": "#44474b",
+                        "surface-container-highest": "#333539",
+                        "on-tertiary-container": "#9b9da7",
+                        "on-surface": "#e2e2e8",
+                        "primary": "#c1c7d0",
+                        "outline": "#8f9195",
+                        "tertiary": "#c4c6d0",
+                        "on-primary": "#2b3138",
+                        "on-primary-fixed": "#161c23",
+                        "on-background": "#e2e2e8",
+                        "on-surface-variant": "#c5c6cb",
+                        "on-secondary-fixed-variant": "#42474f",
+                        "tertiary-fixed-dim": "#c4c6d0",
+                        "tertiary-container": "#32353d",
+                        "on-secondary-fixed": "#171c23",
+                        "surface-tint": "#c1c7d0",
+                        "surface-variant": "#333539",
+                        "surface": "#111318",
+                        "secondary-container": "#42474f",
+                        "secondary-fixed": "#dee2ec",
+                        "surface-container-low": "#1a1c20",
+                        "surface-container": "#1e2024",
+                        "secondary": "#c2c7d0",
+                        "surface-container-lowest": "#0c0e12",
+                        "on-tertiary-fixed": "#191c23",
+                        "on-secondary-container": "#b1b5bf",
+                        "on-tertiary": "#2d3038",
+                        "tertiary-fixed": "#e0e2ec",
+                        "primary-fixed": "#dde3ec",
+                        "primary-container": "#30363d",
+                        "on-primary-fixed-variant": "#41474f",
+                        "inverse-on-surface": "#2f3035",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#c1c7d0",
+                        "error": "#ffb4ab",
+                        "inverse-primary": "#595f67",
+                        "surface-container-high": "#282a2e",
+                        "secondary-fixed-dim": "#c2c7d0",
+                        "background": "#111318",
+                        "on-tertiary-fixed-variant": "#44474f",
+                        "surface-bright": "#37393e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-md": "12px",
+                        "gutter": "8px",
+                        "container-padding": "12px",
+                        "stack-lg": "20px",
+                        "unit": "4px",
+                        "stack-sm": "4px"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["JetBrains Mono"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                        "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "headline-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-x-hidden selection:bg-primary selection:text-on-primary">
+<!-- Top Navigation -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface border-b border-outline-variant z-50 flex items-center justify-between px-container-padding h-14">
+<div class="flex items-center gap-stack-md">
+<span class="material-symbols-outlined text-primary cursor-pointer active:opacity-80">menu</span>
+<h1 class="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface">Logistics OS</h1>
+</div>
+<div class="flex items-center gap-stack-lg">
+<div class="flex flex-col items-end hidden md:flex">
+<span class="font-label-caps text-label-caps text-on-surface-variant">System Status</span>
+<span class="font-data-mono text-data-mono text-primary">ENCRYPTED_LINK_ACTIVE</span>
+</div>
+<div class="flex items-center gap-stack-md bg-surface-container-high px-stack-md py-1 rounded border border-outline-variant cursor-pointer hover:bg-surface-container-highest transition-colors">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Agent Lee AI</span>
+<div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center border border-primary/30">
+<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100vh-3.5rem)]">
+<!-- Sidebar -->
+<aside class="hidden md:flex flex-col h-auto w-72 bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant py-stack-lg sticky top-14">
+<div class="px-container-padding mb-stack-lg">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Operational Modules</span>
+</div>
+<nav class="flex flex-col gap-unit">
+<div class="flex items-center gap-stack-md px-container-padding py-2 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150 cursor-pointer">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-md text-body-md">Fleet Management</span>
+</div>
+<div class="flex items-center gap-stack-md px-container-padding py-2 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150 cursor-pointer">
+<span class="material-symbols-outlined">map</span>
+<span class="font-body-md text-body-md">Mapping</span>
+</div>
+<div class="flex items-center gap-stack-md px-container-padding py-2 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150 cursor-pointer">
+<span class="material-symbols-outlined">build</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</div>
+<div class="flex items-center gap-stack-md px-container-padding py-2 bg-secondary-container text-on-secondary-container font-semibold transition-all duration-150 cursor-pointer">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-body-md text-body-md">Compliance</span>
+</div>
+<div class="flex items-center gap-stack-md px-container-padding py-2 text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150 cursor-pointer">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">ROI Analysis</span>
+</div>
+</nav>
+<div class="mt-auto px-container-padding pt-stack-lg border-t border-outline-variant/30">
+<div class="hud-border bg-surface-container-low p-stack-md rounded">
+<div class="flex items-center gap-stack-sm mb-stack-sm">
+<span class="material-symbols-outlined text-[16px] text-primary">security</span>
+<span class="font-label-caps text-label-caps text-primary">SOVEREIGN_ACCESS</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight">Admin Level: 4 (Omni-Audit)<br/>Session expires in 04:12:00</p>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-container-padding md:p-stack-lg overflow-x-auto">
+<!-- Breadcrumbs & Actions -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-stack-lg gap-stack-md">
+<div>
+<div class="flex items-center gap-unit mb-unit">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Sovereign View</span>
+<span class="material-symbols-outlined text-[12px] text-outline">chevron_right</span>
+<span class="font-label-caps text-label-caps text-primary uppercase">Multi-Level Audit</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Evidence Aggregation Engine</h2>
+</div>
+<div class="flex gap-stack-md">
+<button class="bg-primary-container text-on-primary-container px-stack-md py-2 rounded flex items-center gap-stack-sm border border-outline hover:bg-surface-container-highest transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="font-label-caps text-label-caps">Export Chain of Custody</span>
+</button>
+<button class="bg-on-surface text-surface px-stack-md py-2 rounded flex items-center gap-stack-sm hover:opacity-90 transition-opacity active:scale-95">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span class="font-label-caps text-label-caps">Seal Logs</span>
+</button>
+</div>
+</div>
+<!-- Stats Overview - Mini Bento -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-stack-lg">
+<div class="bg-surface-container border border-outline-variant p-stack-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Active Audits</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">1,204</span>
+</div>
+<div class="bg-surface-container border border-outline-variant p-stack-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Evidence Matches</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">99.8%</span>
+</div>
+<div class="bg-surface-container border border-outline-variant p-stack-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Cross-Tier Conflicts</span>
+<span class="font-headline-md text-headline-md text-error font-bold">0</span>
+</div>
+<div class="bg-surface-container border border-outline-variant p-stack-md flex flex-col justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Biometric Verified</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">842k</span>
+</div>
+</div>
+<!-- Main Data Board (Monday.com Style) -->
+<div class="bg-surface-container-low border border-outline-variant rounded shadow-sm overflow-hidden mb-stack-lg">
+<!-- Board Header -->
+<div class="bg-surface-container-high px-stack-md py-2 flex items-center border-b border-outline-variant">
+<div class="w-8 flex justify-center"><span class="material-symbols-outlined text-[16px] text-outline">expand_more</span></div>
+<div class="flex-1 font-label-caps text-label-caps text-on-surface font-bold">Active Custody Chains (Shipment T-9082)</div>
+</div>
+<!-- Table View -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[800px]">
+<thead>
+<tr class="border-b border-outline-variant bg-surface-container-low">
+<th class="w-12 px-stack-md py-2 border-r border-outline-variant"></th>
+<th class="px-stack-md py-2 font-label-caps text-label-caps text-on-surface-variant uppercase border-r border-outline-variant">Timestamp</th>
+<th class="px-stack-md py-2 font-label-caps text-label-caps text-on-surface-variant uppercase border-r border-outline-variant">Entity</th>
+<th class="px-stack-md py-2 font-label-caps text-label-caps text-on-surface-variant uppercase border-r border-outline-variant">Action Event</th>
+<th class="px-stack-md py-2 font-label-caps text-label-caps text-on-surface-variant uppercase border-r border-outline-variant">Biometric Lock</th>
+<th class="px-stack-md py-2 font-label-caps text-label-caps text-on-surface-variant uppercase border-r border-outline-variant">GPS Breadcrumb</th>
+<th class="px-stack-md py-2 font-label-caps text-label-caps text-on-surface-variant uppercase">Audit Status</th>
+</tr>
+</thead>
+<tbody>
+<!-- Row 1 -->
+<tr class="zebra-row border-b border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer group">
+<td class="px-stack-md py-3 text-center border-r border-outline-variant">
+<span class="material-symbols-outlined text-[18px] text-outline group-hover:text-primary">unfold_more</span>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<span class="font-data-mono text-data-mono">2023-11-24 08:42:01</span>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<div class="flex items-center gap-stack-sm">
+<div class="w-6 h-6 rounded-full bg-secondary-container flex items-center justify-center font-label-caps text-[8px] text-on-secondary-container">D1</div>
+<span class="font-body-sm text-body-sm">Driver: Kowalski</span>
+</div>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<span class="font-body-sm text-body-sm">Handoff Initiated (Zone B)</span>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<span class="px-2 py-0.5 bg-green-900/30 text-green-400 border border-green-700/50 rounded font-label-caps text-[10px]">VERIFIED (Iris)</span>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<span class="font-data-mono text-data-mono text-on-surface-variant">40.7128° N, 74.0060° W</span>
+</td>
+<td class="px-stack-md py-3">
+<div class="w-full bg-surface-container-highest h-1 rounded overflow-hidden">
+<div class="bg-primary w-full h-full"></div>
+</div>
+<span class="font-label-caps text-[9px] text-on-surface-variant mt-1 block">SECURED</span>
+</td>
+</tr>
+<!-- Expanded Detail Simulation (Inline) -->
+<tr class="bg-surface-container-lowest border-b border-outline-variant">
+<td class="p-0" colspan="7">
+<div class="p-stack-lg flex gap-stack-lg border-l-4 border-primary">
+<div class="flex-1 space-y-stack-md">
+<div class="flex items-center gap-stack-sm border-b border-outline-variant pb-stack-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">forum</span>
+<h4 class="font-label-caps text-label-caps text-on-surface">Comms Record Evidence</h4>
+</div>
+<div class="font-data-mono text-data-mono bg-surface-dim p-stack-md border border-outline-variant rounded">
+<div class="text-on-surface-variant mb-1">[08:41:55] DISPATCH: Confirming Zone B arrival. Secure seal 4A?</div>
+<div class="text-primary mb-1">[08:41:59] DRIVER: Confirmed. Biometric engage. Handing over to Logistics Agent.</div>
+<div class="text-on-surface-variant">[08:42:01] SYSTEM: Seal 4A Authenticated. Biometric Signature Match.</div>
+</div>
+</div>
+<div class="w-1/3">
+<div class="flex items-center gap-stack-sm border-b border-outline-variant pb-stack-sm mb-stack-md">
+<span class="material-symbols-outlined text-primary text-[18px]">history</span>
+<h4 class="font-label-caps text-label-caps text-on-surface">GPS Breadcrumb Map</h4>
+</div>
+<div class="h-24 bg-surface-container border border-outline-variant rounded relative flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#30363d 1px, transparent 1px); background-size: 8px 8px;"></div>
+<span class="font-label-caps text-[9px] text-outline z-10">MAP_TELEMETRY_FEED</span>
+<!-- Mock Map Line -->
+<svg class="absolute inset-0 w-full h-full stroke-primary/30 fill-none" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M0,80 L30,40 L60,60 L100,20" stroke-width="1"></path>
+<circle cx="60" cy="60" fill="#c1c7d0" r="2"></circle>
+</svg>
+</div>
+</div>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="zebra-row border-b border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer group">
+<td class="px-stack-md py-3 text-center border-r border-outline-variant">
+<span class="material-symbols-outlined text-[18px] text-outline group-hover:text-primary">unfold_more</span>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<span class="font-data-mono text-data-mono">2023-11-24 09:12:15</span>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<div class="flex items-center gap-stack-sm">
+<div class="w-6 h-6 rounded-full bg-tertiary-container flex items-center justify-center font-label-caps text-[8px] text-on-tertiary-container">L7</div>
+<span class="font-body-sm text-body-sm">Dispatcher: Mercer</span>
+</div>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<span class="font-body-sm text-body-sm">Manifest Re-routing (Weather)</span>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<span class="px-2 py-0.5 bg-surface-container-highest text-on-surface-variant border border-outline-variant rounded font-label-caps text-[10px]">N/A (Remote Cmd)</span>
+</td>
+<td class="px-stack-md py-3 border-r border-outline-variant">
+<span class="font-data-mono text-data-mono text-on-surface-variant">CENTRAL_HQ_NODE</span>
+</td>
+<td class="px-stack-md py-3">
+<div class="w-full bg-surface-container-highest h-1 rounded overflow-hidden">
+<div class="bg-primary w-2/3 h-full"></div>
+</div>
+<span class="font-label-caps text-[9px] text-on-surface-variant mt-1 block">IN_REVIEW</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Permissions Matrix & AI Insights Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-lg">
+<!-- Tiered Permissions Matrix -->
+<div class="lg:col-span-2 bg-surface-container border border-outline-variant rounded p-stack-lg">
+<div class="flex items-center justify-between mb-stack-lg">
+<div class="flex items-center gap-stack-sm">
+<span class="material-symbols-outlined text-primary">key</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Tiered Authority Matrix</h3>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Ecosystem-Wide Permissions</span>
+</div>
+<div class="grid grid-cols-5 gap-unit">
+<!-- Header -->
+<div class="col-span-1"></div>
+<div class="text-center font-label-caps text-[9px] text-on-surface-variant p-2 border border-outline-variant bg-surface-container-high">Driver</div>
+<div class="text-center font-label-caps text-[9px] text-on-surface-variant p-2 border border-outline-variant bg-surface-container-high">Dispatcher</div>
+<div class="text-center font-label-caps text-[9px] text-on-surface-variant p-2 border border-outline-variant bg-surface-container-high">Ops Manager</div>
+<div class="text-center font-label-caps text-[9px] text-on-surface-variant p-2 border border-outline-variant bg-surface-container-high">Sovereign</div>
+<!-- Row: Read Evidence -->
+<div class="font-body-sm text-body-sm p-2 flex items-center border border-outline-variant">Read Evidence</div>
+<div class="flex justify-center items-center border border-outline-variant bg-green-900/10"><span class="material-symbols-outlined text-[16px] text-green-500">check</span></div>
+<div class="flex justify-center items-center border border-outline-variant bg-green-900/10"><span class="material-symbols-outlined text-[16px] text-green-500">check</span></div>
+<div class="flex justify-center items-center border border-outline-variant bg-green-900/10"><span class="material-symbols-outlined text-[16px] text-green-500">check</span></div>
+<div class="flex justify-center items-center border border-outline-variant bg-green-900/10"><span class="material-symbols-outlined text-[16px] text-green-500">check</span></div>
+<!-- Row: Seal Log -->
+<div class="font-body-sm text-body-sm p-2 flex items-center border border-outline-variant">Seal Log</div>
+<div class="flex justify-center items-center border border-outline-variant"><span class="material-symbols-outlined text-[16px] text-outline">close</span></div>
+<div class="flex justify-center items-center border border-outline-variant"><span class="material-symbols-outlined text-[16px] text-outline">close</span></div>
+<div class="flex justify-center items-center border border-outline-variant bg-green-900/10"><span class="material-symbols-outlined text-[16px] text-green-500">check</span></div>
+<div class="flex justify-center items-center border border-outline-variant bg-green-900/10"><span class="material-symbols-outlined text-[16px] text-green-500">check</span></div>
+<!-- Row: Overwrite Auth -->
+<div class="font-body-sm text-body-sm p-2 flex items-center border border-outline-variant">Overwrite Auth</div>
+<div class="flex justify-center items-center border border-outline-variant"><span class="material-symbols-outlined text-[16px] text-outline">close</span></div>
+<div class="flex justify-center items-center border border-outline-variant"><span class="material-symbols-outlined text-[16px] text-outline">close</span></div>
+<div class="flex justify-center items-center border border-outline-variant"><span class="material-symbols-outlined text-[16px] text-outline">close</span></div>
+<div class="flex justify-center items-center border border-outline-variant bg-green-900/10"><span class="material-symbols-outlined text-[16px] text-green-500" style="font-variation-settings: 'FILL' 1;">stars</span></div>
+</div>
+</div>
+<!-- AI Overlay / Insights -->
+<div class="hud-border bg-slate-800/40 p-stack-lg rounded flex flex-col gap-stack-md relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none">
+
+</div>
+<div class="flex items-center gap-stack-sm">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<h3 class="font-label-caps text-label-caps text-primary">AGENT LEE INTELLIGENCE</h3>
+</div>
+<div class="space-y-stack-md relative z-10">
+<div class="bg-surface-dim/80 p-stack-md border border-primary/20 rounded">
+<span class="font-label-caps text-[9px] text-on-surface-variant block mb-1">ANOMALY DETECTION</span>
+<p class="font-body-sm text-body-sm text-on-surface">No multi-level discrepancies detected in the last 24,000 handoffs. System trust remains at 1.000.</p>
+</div>
+<div class="bg-surface-dim/80 p-stack-md border border-primary/20 rounded">
+<span class="font-label-caps text-[9px] text-on-surface-variant block mb-1">PREDICTIVE AUDIT</span>
+<p class="font-body-sm text-body-sm text-on-surface">Sector 9 manifest requires Sovereign Seal by EOD to prevent operational bottlenecks.</p>
+</div>
+</div>
+<button class="mt-auto w-full py-2 bg-primary/10 border border-primary/30 text-primary font-label-caps text-label-caps hover:bg-primary/20 transition-all rounded">
+                        Full Anomaly Report
+                    </button>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Bottom Navigation -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 bg-surface-container border-t border-outline-variant flex justify-around items-center px-4 z-50">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90 cursor-pointer">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps">Diagnostics</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90 cursor-pointer">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps">Active Fleet</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90 cursor-pointer">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps">Schedule</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl py-1 px-4 transition-transform scale-95 active:scale-90 cursor-pointer">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-caps text-label-caps">Insights</span>
+</div>
+</nav>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('tr.zebra-row').forEach(row => {
+            row.addEventListener('click', () => {
+                const icon = row.querySelector('.material-symbols-outlined');
+                if (icon.innerText === 'unfold_more') {
+                    icon.innerText = 'unfold_less';
+                    icon.style.color = '#c1c7d0';
+                } else {
+                    icon.innerText = 'unfold_more';
+                    icon.style.color = '';
+                }
+            });
+        });
+    </script>
+</body></html>

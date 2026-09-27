@@ -1,0 +1,33 @@
+/*
+ * LEEWAY ENTERPRISE FILE HEADER
+ * File: styles.css
+ * Path: src/LeeWay.TransitHub.Web/wwwroot/styles.css
+ * Project: LeeWay Enterprise Transit Hub
+ * Layer: Web / Styling
+ * Purpose: Define readable responsive dashboard styling.
+ * Inputs: HTML classes and browser viewport.
+ * Outputs: Visual dashboard layout.
+ * Mutation Scope: Browser rendering only.
+ * Dependencies: index.html.
+ * Tests: Manual visual review.
+ * Security Impact: None.
+ * Database Impact: None.
+ * Sovereign Cycle: Structure -> Synthesis
+ * Status: ACTIVE / GOVERNED
+ * Human Comprehension: REQUIRED
+ * Owner: Leonard Lee / Leeway Industries
+ * Version: 1.0.0
+ */
+
+:root { font-family: Arial, sans-serif; background: #f4f6f8; color: #1f2933; }
+body { margin: 0; }
+header { padding: 2rem; background: #111827; color: white; }
+main { padding: 1.5rem; max-width: 1200px; margin: auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1rem 0 2rem; }
+.card, table { background: white; border: 1px solid #d8dee6; border-radius: 8px; }
+.card { padding: 1rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: .75rem; border-bottom: 1px solid #e5e7eb; }
+.status { margin-bottom: 1rem; }
+.ok { color: #087f23; }
+.error { color: #b00020; }

@@ -1,0 +1,2294 @@
+{
+  "_leewayHeader": {
+    "file": "file-registry.json",
+    "path": "governance/registries/file-registry.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Governance / Registry",
+    "purpose": "Record governed file identity, size, and SHA-256 integrity.",
+    "inputs": "Project file scan and SHA-256.",
+    "outputs": "Auditable file registry.",
+    "mutationScope": "Registry output only.",
+    "dependencies": "Project tree and header policy.",
+    "tests": "Governance verification and hash generation.",
+    "securityImpact": "Provides integrity evidence.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Structure",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "PASS",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "1.0.2"
+  },
+  "generatedUtc": "2026-07-26T06:58:01.2337182+00:00",
+  "fileCount": 453,
+  "files": [
+    {
+      "path": "_DIRECTORY.leeway.md",
+      "sha256": "C3E66EEED864989C82E81992203B7DBD15192DEDFE9759F670B00606EA6B6C58",
+      "sizeBytes": 1608
+    },
+    {
+      "path": ".editorconfig",
+      "sha256": "1481F7DEC2BD564D49503D780A714F667B85E7EEC1ADDBEFFF77260D51B7EA79",
+      "sizeBytes": 980
+    },
+    {
+      "path": ".github/_DIRECTORY.leeway.md",
+      "sha256": "5750AA11FC9926826D2D49E70791D7A9C1E0EF8F7DDCBBFCB3317E98A562B6A1",
+      "sizeBytes": 791
+    },
+    {
+      "path": ".github/workflows/_DIRECTORY.leeway.md",
+      "sha256": "8B10D8A3D19A1CB3C6014366B274CB791BA3ADFA0A9B0E37D055C351BBF671E4",
+      "sizeBytes": 874
+    },
+    {
+      "path": ".github/workflows/dotnet-ci.yml",
+      "sha256": "C13890ABABC7BD383C564417353DA8369F234B41C71842AE37F31FC7ABC6B555",
+      "sizeBytes": 2344
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "3B3B8E9AB3E4548379FFECCFDC5A9B3E57C434DDF4D67CFA6BEA141A4F5D23F0",
+      "sizeBytes": 1023
+    },
+    {
+      "path": ".leeway/_DIRECTORY.leeway.md",
+      "sha256": "EF31A312AD8A3E3EFED573B19CBB75BED876CB775231FA7DF32DDE7F0A8B94CF",
+      "sizeBytes": 1548
+    },
+    {
+      "path": ".leeway/project.manifest.json",
+      "sha256": "949EFFC94556ED52BD37DD7B37918A33D9361F5514715032F2AF6BB5EBA404CD",
+      "sizeBytes": 4361
+    },
+    {
+      "path": "database/_DIRECTORY.leeway.md",
+      "sha256": "D9B9AA6EEF0935F088685AFE55BB379868343B4A41EDB806C16DA6ADFC5E77DF",
+      "sizeBytes": 1583
+    },
+    {
+      "path": "database/oracle/_DIRECTORY.leeway.md",
+      "sha256": "ECC3C4640BF381F454CDB1CD99D9A522D3EAA4267074A437EDEBA9CBC2A2602B",
+      "sizeBytes": 1604
+    },
+    {
+      "path": "database/oracle/001-create-schema.sql",
+      "sha256": "91027CDF262C8C43AFF08AFCFB28B82559855EB6FDEE1EC00CCD10A62737376A",
+      "sizeBytes": 904
+    },
+    {
+      "path": "database/oracle/002-create-tables.sql",
+      "sha256": "A454490A98A8C4F7B6CF1F2B18CA18A476B4B03E6A845F4A08900A2AE0EFF7CE",
+      "sizeBytes": 1213
+    },
+    {
+      "path": "database/oracle/003-create-package.sql",
+      "sha256": "97F34559F467D1C4B2090D7D62A793EEBE675899A904D7237B848D7AF3876646",
+      "sizeBytes": 1621
+    },
+    {
+      "path": "database/oracle/004-seed-training-data.sql",
+      "sha256": "C25247CB6D750B9B88DFB2257FA556F1F84CFDE6C35702AE945AE67249F4F00C",
+      "sizeBytes": 1352
+    },
+    {
+      "path": "database/oracle/005-verification.sql",
+      "sha256": "801AEA8405147CB901CF06EE75680296DCBD9C392FD31202183DB8ACAEE5D6F4",
+      "sizeBytes": 1017
+    },
+    {
+      "path": "database/sqlserver/_DIRECTORY.leeway.md",
+      "sha256": "BD86D12912264EE9C6CE43F7CB20C700213E90714BDA703A438DE56FEC265E8E",
+      "sizeBytes": 1613
+    },
+    {
+      "path": "database/sqlserver/001-create-schema.sql",
+      "sha256": "226D50595000110BE9C56A91DB51138FDA934FDAF502A0ACAA911BBA4FD01A2A",
+      "sizeBytes": 881
+    },
+    {
+      "path": "database/sqlserver/002-create-tables.sql",
+      "sha256": "1B752D279E7031A6F388E26B0F4C70275785392720FC14E50E01407477ACCEFA",
+      "sizeBytes": 2213
+    },
+    {
+      "path": "database/sqlserver/003-create-procedures.sql",
+      "sha256": "3AB8212BD98CD7594631775018C617D6FC54477BDA891C9547E1EC7A6F2F3EF8",
+      "sizeBytes": 1746
+    },
+    {
+      "path": "database/sqlserver/004-seed-training-data.sql",
+      "sha256": "AE5E6DDAD1BA42F577A413FFF0CB22D04A243D55321493A4B30C0D3D71FB0EA3",
+      "sizeBytes": 1032
+    },
+    {
+      "path": "database/sqlserver/005-verification.sql",
+      "sha256": "BC93C6BA56EAE0B19651C64AFDF9FF5ED427B61AEF1ED290E8375CE0A51E9EA9",
+      "sizeBytes": 1139
+    },
+    {
+      "path": "database/sqlserver/backup/_DIRECTORY.leeway.md",
+      "sha256": "5BACB00C35AAEBD0CB978C8DB69B5EFB505E74425B9E76CFA96A3B2320EB3D2D",
+      "sizeBytes": 1306
+    },
+    {
+      "path": "database/sqlserver/backup/BACKUP-AND-RESTORE-RUNBOOK.md",
+      "sha256": "18F2A7AB1E03D3374D7D87270B57055C18F9B693F6FE9FBD201431EDB2487B91",
+      "sizeBytes": 1681
+    },
+    {
+      "path": "database/sqlserver/migrations/_DIRECTORY.leeway.md",
+      "sha256": "102D459C5750BEE1CC21EA5C4686C436C1C4815F62E53E8ECD76E990DC6ADC8A",
+      "sizeBytes": 1292
+    },
+    {
+      "path": "database/sqlserver/migrations/001-initial-tenant-schema.sql",
+      "sha256": "B2B8EDBA50E94F130398CC20AC86674133626ECB00C8C9457FD2321A7951BA53",
+      "sizeBytes": 2142
+    },
+    {
+      "path": "database/sqlserver/migrations/002-operations-events-and-realtime.sql",
+      "sha256": "D6D5FEA6841571D5ECDEF31D6D6B2C2A0753F06956A1BCAA553E76FAF6037E33",
+      "sizeBytes": 2178
+    },
+    {
+      "path": "database/sqlserver/procedures/_DIRECTORY.leeway.md",
+      "sha256": "0A7D402BB462B170CC87CF478F3846F96BF9724CE97EBE284E5A29B8509CDAEB",
+      "sizeBytes": 1310
+    },
+    {
+      "path": "database/sqlserver/procedures/020-vehicle-and-work-order-procedures.sql",
+      "sha256": "2D4BE2B62F2A56AA92D3F554DF660546E98A1357CD3FD459DCFDD509D8A381A4",
+      "sizeBytes": 1917
+    },
+    {
+      "path": "database/sqlserver/security/_DIRECTORY.leeway.md",
+      "sha256": "44D1E27E05FFED51D707CD86687799C4B9C2F76C3E37F51F29EED427ABA33654",
+      "sizeBytes": 1302
+    },
+    {
+      "path": "database/sqlserver/security/010-tenant-row-level-security.sql",
+      "sha256": "255A00333E3D0DBCE492C87E0E640D681967DC35409E2F6AEDF98C91F2256351",
+      "sizeBytes": 1848
+    },
+    {
+      "path": "Directory.Build.props",
+      "sha256": "56E0FF6C9B61067900EB1E38CBF6D5BDA0524EA570B098DD2E8B39DB09A0D786",
+      "sizeBytes": 1062
+    },
+    {
+      "path": "Directory.Packages.props",
+      "sha256": "16D1A2BD2AEBA5CA5685B05B4148D9FB930A143A01E9D5FFD0E231161B69C57A",
+      "sizeBytes": 1524
+    },
+    {
+      "path": "docs/_DIRECTORY.leeway.md",
+      "sha256": "500822D7CF375BFB26652E6DBCE5CC7C6621BB07A6B3D9376B9387CE1088FC62",
+      "sizeBytes": 1618
+    },
+    {
+      "path": "docs/architecture/_DIRECTORY.leeway.md",
+      "sha256": "A4AD6D9BBDE73EF14E89660ADAAEBC80F49132080C2123CFE1AD7F349F8B9E5C",
+      "sizeBytes": 1657
+    },
+    {
+      "path": "docs/architecture/ADR-0001-LAYERED-ENTERPRISE-ARCHITECTURE.md",
+      "sha256": "27A7A7F8377643961BD85882141EA252F6B62C7CA45259867F4183321467164D",
+      "sizeBytes": 1561
+    },
+    {
+      "path": "docs/architecture/ADR-0002-MULTITENANT-SAAS-ARCHITECTURE.md",
+      "sha256": "12EE9FF27A35BBA662A38256768691ADDF735F81FB98C0F9D5DE380A5DB8EFA1",
+      "sizeBytes": 1803
+    },
+    {
+      "path": "docs/architecture/ADR-0003-AGENT-LEE-EXTERNAL-ORCHESTRATOR.md",
+      "sha256": "D021C2036FC309F55224C7844F49ED8B9B477B415E015CEF39D2C728E0049A03",
+      "sizeBytes": 1798
+    },
+    {
+      "path": "docs/architecture/ADR-0004-MODULAR-MONOLITH-FIRST.md",
+      "sha256": "4467DECE3CE786F031077A4FA0C76AD44C2EFE44661E764D0AB275A8C81D84E8",
+      "sizeBytes": 1683
+    },
+    {
+      "path": "docs/architecture/ADR-0005-DOCUMENTATION-AS-PRODUCT-AND-PRIVATE-LEARNING-SEPARATION.md",
+      "sha256": "DCF15915A7EC62FE61261F8EAB21E8D3858873EDC8818F25A07114F50709808F",
+      "sizeBytes": 2280
+    },
+    {
+      "path": "docs/architecture/ADR-0006-IDENTITY-PROVIDER-NEUTRAL-AUTHORIZATION.md",
+      "sha256": "5A70A8D4D2ED88F9B44551A0C988253BC7C96FEA33371E05570474028F6754B1",
+      "sizeBytes": 2384
+    },
+    {
+      "path": "docs/architecture/ADR-0007-SQL-SERVER-TENANT-PERSISTENCE.md",
+      "sha256": "B8EA81C90D48BD858308925455104123DAD65993805EFB33330DEF0D44756673",
+      "sizeBytes": 2113
+    },
+    {
+      "path": "docs/architecture/ADR-0008-SECRET-SAFE-AUTOMATION-AND-TENANT-REALTIME-EVENTS.md",
+      "sha256": "A702894CE850378EB6A8C164CF6ECB2443D9E7FD14E5E0BC804ED594331B3FCD",
+      "sizeBytes": 1939
+    },
+    {
+      "path": "docs/architecture/SYSTEM-CONTEXT.md",
+      "sha256": "EC9A238DE09DB5075B911770016F2F391168D5BFB9E96675081CA6FD5923B6E5",
+      "sizeBytes": 1218
+    },
+    {
+      "path": "docs/data-dictionary/_DIRECTORY.leeway.md",
+      "sha256": "A97EF9BD176C8EC196400C1EDBDB45DAF4758C9002817B4B49CD057F7F185839",
+      "sizeBytes": 1666
+    },
+    {
+      "path": "docs/data-dictionary/FOUNDATION-DATA-DICTIONARY.md",
+      "sha256": "3E76374BF033FD3AFA231A875E8A8732612CB255D3014A03B7E6E57C0F3E5B4D",
+      "sizeBytes": 1323
+    },
+    {
+      "path": "docs/evidence/_DIRECTORY.leeway.md",
+      "sha256": "7A86A9AAC1357B1D160DD15B0B6E98962619FF4D996891A9F8504B863A6465DA",
+      "sizeBytes": 789
+    },
+    {
+      "path": "docs/evidence/PHASE-02-SOURCE-AND-COMPATIBILITY-EVIDENCE.md",
+      "sha256": "608C5B92DD428E183E67DD95272AFD6CA26132FADC1641791B00A9D791D3166D",
+      "sizeBytes": 2019
+    },
+    {
+      "path": "docs/evidence/PHASE-03-DOCUMENTATION-AND-LEARNING-SOURCE-EVIDENCE.md",
+      "sha256": "4DEA4C6C5FE72AA1D7DBFE73EBE60BCF45CDF253312F2584383D40A066E022AC",
+      "sizeBytes": 2724
+    },
+    {
+      "path": "docs/evidence/PHASE-04-IDENTITY-AUTHORIZATION-AND-LEARNING-SOURCE-EVIDENCE.md",
+      "sha256": "32918BE1A4A139E907CE8C3CDA06FD08A09BC3B07CDD6EC14B42F078A629E87A",
+      "sizeBytes": 2817
+    },
+    {
+      "path": "docs/evidence/PHASE-05-INTERVIEW-ASSESSMENT-SOURCE-AUTHORITY.md",
+      "sha256": "28EDF5658B506A53379C0E00667E8A2B5E0966CCD1AD8CA3EFEDA519B904035F",
+      "sizeBytes": 2147
+    },
+    {
+      "path": "docs/evidence/PHASE-05-SOURCE-AUTHORITY.md",
+      "sha256": "EFA9D3E87BE0BBCDF4153E6BF34BA2B77BAFE1ADFF9B8B538929DF8D1CA8E1BA",
+      "sizeBytes": 2156
+    },
+    {
+      "path": "docs/evidence/PHASE-06-SOURCE-AUTHORITY.md",
+      "sha256": "CFC9B8EB38A474F1B65E7044FF8322E222EDBD3B31620994E9F4E5A7EA33EFDE",
+      "sizeBytes": 3636
+    },
+    {
+      "path": "docs/evidence/SOURCE-AND-VERSION-BASELINE.md",
+      "sha256": "6187D5FED56D70847ED6C5108F2E0E138550695901EB2C6908A603670A9496D9",
+      "sizeBytes": 1287
+    },
+    {
+      "path": "docs/learning/_DIRECTORY.leeway.md",
+      "sha256": "6CD5C4022C8D57F91346D4097B549B4EFB26F15CCCA7E95E7BD2E60DF1933834",
+      "sizeBytes": 1645
+    },
+    {
+      "path": "docs/learning/learning-phase-registry.json",
+      "sha256": "F88DA49C26F3DDF21EFD70963343624807D7CDF7F618CC68691CB5EE68089AE0",
+      "sizeBytes": 4979
+    },
+    {
+      "path": "docs/learning/LESSON-00-AGENTIC-DEVELOPER-RESPONSIBILITY.md",
+      "sha256": "467C65EB6F4C17F563040495C36A260EDC129EC4AEB61A46D1F32C785A4DCA6A",
+      "sizeBytes": 1305
+    },
+    {
+      "path": "docs/learning/LESSON-01-REQUEST-PATH.md",
+      "sha256": "C8A0BCB1E5E5B181D23DABA144B3CAA817A292BBDEA682F0A5739FBF4DC3F7E8",
+      "sizeBytes": 1747
+    },
+    {
+      "path": "docs/learning/LESSON-02-SAAS-TENANCY-TRAINING-AND-AGENT-BOUNDARIES.md",
+      "sha256": "F60175773C3679A6B0D1241CE1BE568549DD7375FEDD28183B52A4A23B8CAC79",
+      "sizeBytes": 3253
+    },
+    {
+      "path": "docs/learning/LESSON-03-DOCUMENTATION-PROCTORING-AND-FAMILY-TEACHING.md",
+      "sha256": "4FDF2EDC250DA0B595C209C9C065304D9072F44CA0F9B3CA8AE7CE6B5C8FEDD3",
+      "sizeBytes": 2727
+    },
+    {
+      "path": "docs/learning/LESSON-04-IDENTITY-ROLES-AUTHORIZATION-AND-CONTINUOUS-LEARNING.md",
+      "sha256": "37BD7ABB71FC7321C745D2EC372C9FF4C3D435A427D6E14C9B62FDB65C6D390A",
+      "sizeBytes": 5494
+    },
+    {
+      "path": "docs/learning/LESSON-05-SQL-SERVER-TENANT-PERSISTENCE.md",
+      "sha256": "E0FA2E5EFA3F4865839DAEB0128067A86CE40D6327DA63F571F99A3CFEE53A0E",
+      "sizeBytes": 3011
+    },
+    {
+      "path": "docs/learning/LESSON-06-CREDENTIAL-ROTATION-SECRET-REDACTION-AND-REALTIME-OPERATIONS.md",
+      "sha256": "944DC9F8C952C12E9F2D8F1B662B1BE3311BAF35ACBC7589DA618B76767F0C47",
+      "sizeBytes": 15290
+    },
+    {
+      "path": "docs/operations/_DIRECTORY.leeway.md",
+      "sha256": "1F0D73A4A8364A6AA03D36B07CBD1D74BCB2675E988E7C907EBABCC8ACB7578D",
+      "sizeBytes": 1651
+    },
+    {
+      "path": "docs/operations/DEVELOPMENT-RUNBOOK.md",
+      "sha256": "D201DC5917F0BCB33343B69A389B9DD06F4361880B38D67184BC7EBF691FA32C",
+      "sizeBytes": 1206
+    },
+    {
+      "path": "docs/private-learning/_DIRECTORY.leeway.md",
+      "sha256": "86CCDA35C00F9E91E2D677CB0313414135A249D9BBDD3C3A4F01B0751E833939",
+      "sizeBytes": 2069
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/_DIRECTORY.leeway.md",
+      "sha256": "FA3993282252B7B476A4D57ADAD4F09CB857B5A01C031E693B6B71F1B371507A",
+      "sizeBytes": 2017
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/_DIRECTORY.leeway.md",
+      "sha256": "8168CF5462046DB68735CD0DD1D749BDA1D0F3D91E77FB3318DA6F4AB9907DD8",
+      "sizeBytes": 2099
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/FAMILY-TEACHING-GUIDE.md",
+      "sha256": "F286BF83A616C06B0E710E65AA63433FEB4284A2AEDB86766324F1CAA495EBDD",
+      "sizeBytes": 2111
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/LESSON-04-FAMILY-TEACHING-PLAN.md",
+      "sha256": "0B9A56C86ACE528869008062392111BBD98102672A5541218E76F7543D1FDA81",
+      "sizeBytes": 1955
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/LESSON-05-FAMILY-TEACHING-PLAN.md",
+      "sha256": "01A1F1765448316C0CD84DA66B140BFE47D80D30E24DA680BF9FDE2751583457",
+      "sizeBytes": 1424
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/LESSON-06-FAMILY-TEACHING-PLAN.md",
+      "sha256": "E924931D4C49B5BAC76E5766B05FFC5155B7B614BC618A72FE7C7EF7B33148FE",
+      "sizeBytes": 1433
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/instructor/_DIRECTORY.leeway.md",
+      "sha256": "831DB6BBBD5DCCDA883771643E3818EF92F04EC7C2BBF88C861CC4DC6EEF8363",
+      "sizeBytes": 2056
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/instructor/ANSWER-RUBRICS.md",
+      "sha256": "6731F7A9F8E41BA143F0D1B30688E1F75F11B3BF3E91E9D05056DD4E8CC9B006",
+      "sizeBytes": 19406
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/_DIRECTORY.leeway.md",
+      "sha256": "4DA6D1CFEF3E9DCCDB2769DC8236A923C76237C28A548E736F65921C36C70841",
+      "sizeBytes": 1693
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/assessment-manifest.json",
+      "sha256": "A1EAB843AE9610622BC7F83F271C3C8897D4081ACFCAD08D485C9D6546CC3C68",
+      "sizeBytes": 55056
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/_DIRECTORY.leeway.md",
+      "sha256": "F8B0C37A73A8AF8C1480B9C76BF462A98B7AC60373B004DD3A6883AEAEEB35B7",
+      "sizeBytes": 1724
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/answer-key.json",
+      "sha256": "A855708E9F0ACCD71C2E744F582BCB6B79C42CA8AC20E7044A237074ED5F9F77",
+      "sizeBytes": 108421
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/INSTRUCTOR-COMPARISON-SHEET.md",
+      "sha256": "BC6AF4D7E3CFCDEE7AA224160216694BAD9F2A1A65EE63B94317BE8E7AFBF83E",
+      "sizeBytes": 2820
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/INSTRUCTOR-GRADING-GUIDE.md",
+      "sha256": "BB255F5870CEDC7F6AA0B690EE5670C40F6E82C0C365758A7BFBE061986746F5",
+      "sizeBytes": 2306
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/MASTER-ANSWER-KEY.md",
+      "sha256": "B96B0DD0B4D7F934BF21B687C293CE601787279C42B088241DEDCF066C11F1BA",
+      "sizeBytes": 31336
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/SCORING-RUBRIC.md",
+      "sha256": "5A042F0841C396ECCF4F2482EA2AC6F099DB071551B51E183CF83E6A13D5DCC6",
+      "sizeBytes": 2071
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/_DIRECTORY.leeway.md",
+      "sha256": "39F027CB00FE73400724985C07990A0A9ACAA9306FA028BFD73386E0D6D57EB0",
+      "sizeBytes": 1697
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/INTERVIEW-ASSESSMENT-INDEX.md",
+      "sha256": "955B679C1B19C0BC3E593A5B143EEC7D84B349A1583ED5640C0F9355C21365BE",
+      "sizeBytes": 1942
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/INTERVIEW-PRACTICE-EXAM.md",
+      "sha256": "AFAA765EB71E6773B43001DF721039AD9730E241063DF71C973B7705E95A364A",
+      "sizeBytes": 4261
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-01-QUIZ.md",
+      "sha256": "ADA3BE13059AE60FAA52DA118BC786F2FF963879E91E77183A91FBC06D7C4455",
+      "sizeBytes": 3282
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-02-QUIZ.md",
+      "sha256": "A997DF2814AD73B6488CF1E977D42A17DD5B88002CEC69AB8A9E2642FB2D36DC",
+      "sizeBytes": 3592
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-04-QUIZ.md",
+      "sha256": "3934139A56E6B93BC1159EB65A40D28468082FFE6D902A4864A8537CA53C87EA",
+      "sizeBytes": 3494
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-05-QUIZ.md",
+      "sha256": "97F38CC29C4B1FAA247C1C5669DFFCD72CF3D7D11815D871973BA64197D5929E",
+      "sizeBytes": 3644
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-06-QUIZ.md",
+      "sha256": "48CEC305FA50AADC80C4C78182DF42C4BC2333B9196191D163FB9E6A924E90D9",
+      "sizeBytes": 2843
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/STUDENT-RESPONSE-SHEET.md",
+      "sha256": "091023E33A163A63935AE3159C81FF4CE13D287837933F5A2553570E3AD81F3A",
+      "sizeBytes": 2288
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/MASTER-INTERVIEW-QUIZ.md",
+      "sha256": "C2185CCE92BBE63D1BC53B1395780DF4CEB3FB095462033777F591A702BBA27F",
+      "sizeBytes": 6256
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/PRACTICAL-INTERVIEW-LABS.md",
+      "sha256": "51EF4B72BD4B8280DAD6A7F7AF3BD2D83F634018C0CEC9ABF3954DFB352D1AD0",
+      "sizeBytes": 3915
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/README.md",
+      "sha256": "8FC58A89712885D33C58CD5CB2A60802D463DF6A8ED3BC578827DB30B1DBA1E0",
+      "sizeBytes": 2513
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/INTERVIEW-DEFENSE-WORKBOOK.md",
+      "sha256": "29D68B77F6CF61C53D5F935944778A882068A1E0776F414924B9E579A6D4A826",
+      "sizeBytes": 1977
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/learning-profile.json",
+      "sha256": "5D09F4F59F18618E98D7E5720C64818224B1D6F06D28CCCA0C0C12CE7F53DB93",
+      "sizeBytes": 1394
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-01-WORKBOOK.md",
+      "sha256": "B873FDB6FD3F8EDACBD3E10B3BEE4C5185A48274A74C059A124BC324BA5D349D",
+      "sizeBytes": 4262
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-02-WORKBOOK.md",
+      "sha256": "40D3E5226115FD1672772C57EFF79275D5F2A1448BA3484908A3690DFE006685",
+      "sizeBytes": 4864
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-04-WORKBOOK.md",
+      "sha256": "0EFEAE6AB549BD5311E5FE0541C160DBF2573E4DEDC46B85D242D01E56AF8B56",
+      "sizeBytes": 6395
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-05-WORKBOOK.md",
+      "sha256": "3AC81D1002C6B9D46AA26711E37C620BE2849B26C7D90363B5FFB2FCE8EFE5B9",
+      "sizeBytes": 2584
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-06-WORKBOOK.md",
+      "sha256": "528FFA9B8FF4BCE0BEEE29824527D4D2C53462EDF728CA9C042B92F8AF04EF6E",
+      "sizeBytes": 7747
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/MASTER-QUESTION-BANK.md",
+      "sha256": "45A35593069475B039EFF2883CB9DAD67E6BE53A3C3644DED8BD7619052D9FA1",
+      "sizeBytes": 6327
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/progress-tracker.json",
+      "sha256": "D9D176495F777D32A5609724D54B96FF18C27054A1BF54C39B6062A79D1E5A31",
+      "sizeBytes": 3272
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/question-bank.json",
+      "sha256": "26CCFF583E2A858091FF810FE06A114F60400AD6264A01FF67E007C52EBECD89",
+      "sizeBytes": 74061
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/README.md",
+      "sha256": "703227D9FADB10B1CEFAA11B36CEA0EE053EE734EE089F4A9F205188B9B515DC",
+      "sizeBytes": 1782
+    },
+    {
+      "path": "docs/product/_DIRECTORY.leeway.md",
+      "sha256": "F3861FBF3FFB061F706B46B9921773764CB7C98FB17D75107BE2B4B0D08CA05D",
+      "sizeBytes": 1637
+    },
+    {
+      "path": "docs/product/PRODUCT-CHARTER.md",
+      "sha256": "1493169B13027A7574F89DA529BCA7A008EC641740F25E4BA08836C24324D64C",
+      "sizeBytes": 3085
+    },
+    {
+      "path": "docs/product/SAAS-CAPABILITY-MAP.md",
+      "sha256": "C83F0945A61BE2CAD22AB1E7530E451A3334BC4AB2D4D55A7CE886EBD669946F",
+      "sizeBytes": 2183
+    },
+    {
+      "path": "docs/product/TRANSPORTATION-VERTICALS.md",
+      "sha256": "F31989F1EDEC332531FDB87F27FF9267CF9AB9315E218EB667E912E9D8B34A8F",
+      "sizeBytes": 2167
+    },
+    {
+      "path": "docs/requirements/_DIRECTORY.leeway.md",
+      "sha256": "3585ACD4F215CAAB26C36F480097F9DA9BBABE6CBECBBEDB3FFBC9613BF7329E",
+      "sizeBytes": 1657
+    },
+    {
+      "path": "docs/requirements/REQ-0001-ENTERPRISE-TRANSIT-FOUNDATION.md",
+      "sha256": "A5C1733A8413E5515903CAA48069FFB63BE038F2C432C342449470159D4C5E93",
+      "sizeBytes": 1380
+    },
+    {
+      "path": "docs/requirements/REQ-0002-SAAS-TENANCY-TRAINING-AND-AGENT-CAPABILITY.md",
+      "sha256": "8B48C05F46F10BADA2E9834DF2C2A8C927834D1EA2376935C3757DFA73F72712",
+      "sizeBytes": 2239
+    },
+    {
+      "path": "docs/requirements/REQ-0003-TRAINING-MANUAL-PERSONAL-LEARNING-AND-AGENT-PROCTORING.md",
+      "sha256": "F3F5A85730D6F6BDEFF749BA5BF092276BA3E46231456D77A72521466F160540",
+      "sizeBytes": 1979
+    },
+    {
+      "path": "docs/requirements/REQ-0004-IDENTITY-AUTHORIZATION-AND-CONTINUOUS-LEARNING.md",
+      "sha256": "A7335895AD0C361082549D1C383DF0F80F24A1BB44AAA9CC8B409A9375916A90",
+      "sizeBytes": 2514
+    },
+    {
+      "path": "docs/requirements/REQ-0005-SQL-SERVER-TENANT-PERSISTENCE-AND-LEARNING.md",
+      "sha256": "18378F47C66ABE8065A9FC084E0D86C93C3F44CF23644694165976A1AC73AABA",
+      "sizeBytes": 1639
+    },
+    {
+      "path": "docs/requirements/REQ-0006-SECRET-ROTATION-REALTIME-OPERATIONS-AND-LEARNING.md",
+      "sha256": "C69EA29794631249CF61B1C0D4DC4AE1755A40F551DFEE75B50AAE135F2169A6",
+      "sizeBytes": 1725
+    },
+    {
+      "path": "docs/roadmap/_DIRECTORY.leeway.md",
+      "sha256": "A305F70DDCEECDDED02BF04F19E0C49BD610B5AF004B1157414CDE2E7F0C352D",
+      "sizeBytes": 1647
+    },
+    {
+      "path": "docs/roadmap/COMMERCIAL-PRODUCT-ROADMAP.md",
+      "sha256": "AF440EB0E9CBFA5EFD0505FDAB9B07CEEB87D1473B813647B8EBEEC14054D8AB",
+      "sizeBytes": 2339
+    },
+    {
+      "path": "docs/roadmap/TRAINING-MANUAL-CONTENT-ROADMAP.md",
+      "sha256": "0D428227208DD37FED770DED72124BA0CBC29FBF54E034F23384574DB09B1645",
+      "sizeBytes": 2435
+    },
+    {
+      "path": "docs/testing/_DIRECTORY.leeway.md",
+      "sha256": "53D928DBF8E59C76F24477C10476E555C0ED35B488FDEF2DBE7D2F800B81A7C9",
+      "sizeBytes": 1642
+    },
+    {
+      "path": "docs/testing/TEST-STRATEGY.md",
+      "sha256": "538BDC35BE7D8D35C79180B7579FA40912F4DFAF656FC80FFBF27D6D30E2AE7A",
+      "sizeBytes": 1212
+    },
+    {
+      "path": "docs/training-manual/_DIRECTORY.leeway.md",
+      "sha256": "51EDFEE9BE28D7476DB4CC3CCD53A1A8E7862A7DA2F9AA22D5DB4E0DECD37092",
+      "sizeBytes": 1755
+    },
+    {
+      "path": "docs/training-manual/00-front-matter/_DIRECTORY.leeway.md",
+      "sha256": "FFFC670FA548BD7189E8DC0F2FB269E5978AF802CA55619D0F79795ABF332804",
+      "sizeBytes": 2026
+    },
+    {
+      "path": "docs/training-manual/00-front-matter/TITLE-PAGE-AND-HOW-TO-USE-THIS-MANUAL.md",
+      "sha256": "92CBE798F56EE844E3C063A405FF8DB6EBBC409ECC80BBAC2733184B3D5BBD41",
+      "sizeBytes": 2953
+    },
+    {
+      "path": "docs/training-manual/01-product-orientation/_DIRECTORY.leeway.md",
+      "sha256": "776768724826BF30C001903DF3092DB54945ADF5D8A53E815CD9B31C3B18BFCF",
+      "sizeBytes": 1792
+    },
+    {
+      "path": "docs/training-manual/01-product-orientation/CHAPTER-01-PRODUCT-MISSION-AND-AUDIENCE.md",
+      "sha256": "C2B93A2C459F2D0E46475B0B45325420B9633136CD350D02B8AAFAE29020DADA",
+      "sizeBytes": 12058
+    },
+    {
+      "path": "docs/training-manual/01-product-orientation/CHAPTER-02-TRANSPORTATION-OPERATING-MODELS.md",
+      "sha256": "A85380DD1A45EF7842EC9BD5E1B0C232C965D3FD39EA3D28FEDA409422A3CCBD",
+      "sizeBytes": 11607
+    },
+    {
+      "path": "docs/training-manual/01-product-orientation/PART-OVERVIEW.md",
+      "sha256": "AE12B79559AA66B1169D921265219A80EEDE941AF6736B97DCB6D109E258CA0D",
+      "sizeBytes": 2114
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/_DIRECTORY.leeway.md",
+      "sha256": "8B32E8E68ECEB24EBDCDC78E558EE6781D60E5DC76A6B4F419DB03A4D7A6A8D0",
+      "sizeBytes": 1780
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/CHAPTER-03-ROLES-RESPONSIBILITIES-AND-SEPARATION-OF-DUTIES.md",
+      "sha256": "B1E457FF1AAB85FF2F342D1D5F26691A0E115FD19D3B73FE2126CDAAB584AC01",
+      "sizeBytes": 11430
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/CHAPTER-04-END-TO-END-OPERATING-DAY.md",
+      "sha256": "C2CE5093662CAF46FE54B6B8F8B18429623769BBB20C11DD186BAAEB6276C20D",
+      "sizeBytes": 11444
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/CHAPTER-25-AUTHENTICATION-IDENTITY-AND-CLAIMS.md",
+      "sha256": "AA2E51ECB836028A8B8149BE270C9EABDAAEAEDC6D1C0F856DA7D385C3732768",
+      "sizeBytes": 9481
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/CHAPTER-26-ROLES-PERMISSIONS-AND-POLICIES.md",
+      "sha256": "B2EF05776CF6056D5DB7C942792C68B0BB98973296C630440F1EF6269BC62BA7",
+      "sizeBytes": 8298
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/PART-OVERVIEW.md",
+      "sha256": "1E5C51206A7BD8181ED5000253DE041AF593FA7C7E57DF6C87162C2BFAB01C89",
+      "sizeBytes": 2064
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/_DIRECTORY.leeway.md",
+      "sha256": "BC30CF251759FB805BBCB999C79F24AEBF31C9CC340D3C983F904323D2272D8F",
+      "sizeBytes": 1796
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-05-TENANTS-ORGANIZATION-UNITS-AND-OWNERSHIP.md",
+      "sha256": "D054F49BC2A9AA292D151FC3395A1C891F48522C34C06815624B1A10AB638E40",
+      "sizeBytes": 11600
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-06-SAAS-DEPLOYMENT-PROFILES-AND-ENTITLEMENTS.md",
+      "sha256": "D7C282E63C653A006FF8728CE99D0BB9AF74A8ABF4D77225A207A562975673C2",
+      "sizeBytes": 11557
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-27-TENANT-AWARE-AUTHORIZATION-AND-FAIL-CLOSED-ACCESS.md",
+      "sha256": "96C632578A4A3DD62769DECBF62B45E1460E36B351A0ACD7400346969B59877A",
+      "sizeBytes": 7907
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-29-SQL-SERVER-TENANT-PERSISTENCE.md",
+      "sha256": "C87929D9A422302EB0F68C736B549CE524D6DABF5FBA73C65CF18CC76B9897E9",
+      "sizeBytes": 9944
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-35-TENANT-SCOPED-OPERATIONS-EVENTS.md",
+      "sha256": "6A215749EE280B4A4439414C284A1CC2432EA7032726A079A91B90275FC416A5",
+      "sizeBytes": 31881
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/PART-OVERVIEW.md",
+      "sha256": "FDF5A189B400B0B29AE69FA5C6745D43275C8CC7814F5F9F68FFB58D38C3AA6C",
+      "sizeBytes": 2094
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/_DIRECTORY.leeway.md",
+      "sha256": "1CCA512CD6E0DD7BF03CEA9D0A1324E9CC0CB0FB17C0A71DDB01F43E4C0B305E",
+      "sizeBytes": 1764
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/CHAPTER-07-VEHICLE-DOMAIN-AND-BUSINESS-INVARIANTS.md",
+      "sha256": "9E5D9A8CA9FFDF9BD3CCF1A093184895869F262E3B2C104C362A30E5DC7BD4FD",
+      "sizeBytes": 11455
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/CHAPTER-08-VEHICLE-REQUEST-PATH-LAB.md",
+      "sha256": "16BB81772BB760D6B5E486B6DB99B69E274CC3E8448596429A8061661CD306CD",
+      "sizeBytes": 11441
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/CHAPTER-30-VEHICLE-AND-WORK-ORDER-PERSISTENCE.md",
+      "sha256": "60E6134FFEF2E19072FFFF6EB8C5E0566C40968A4BB4404AD4180ADD40028F6A",
+      "sizeBytes": 10007
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/PART-OVERVIEW.md",
+      "sha256": "8120A76E50CEB6A66E7BE7226006857BE899DA6DD5E590F6752849DA8B93FC3E",
+      "sizeBytes": 2024
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/_DIRECTORY.leeway.md",
+      "sha256": "596D874C6B8E8B28072BE49307DE501A249453F7E4D1AAA946D004D89E35B458",
+      "sizeBytes": 1788
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/CHAPTER-09-DISPATCH-ROUTES-TRIPS-AND-ASSIGNMENTS.md",
+      "sha256": "0A07E576A98AD4F4F20FDD4D6707CCF437905FEB8894B75708C24C3EE78D29D8",
+      "sizeBytes": 11291
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/CHAPTER-10-EXCEPTION-AND-COMMUNICATION-WORKFLOWS.md",
+      "sha256": "8A43CCEE1CD5F6BDC09EB5B0FE9A2F0114EFDAA515CD6C8508F08F226FF9A877",
+      "sizeBytes": 11394
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/CHAPTER-34-REALTIME-OPERATIONS-AND-SIGNALR.md",
+      "sha256": "3F118B2BB435197C44E05383EC615179B68D4F0F43621C8C0E77DE50B427982D",
+      "sizeBytes": 33400
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/PART-OVERVIEW.md",
+      "sha256": "0B813D6492344BFAD83CDC655787513EC8BB3AC06BD25F2BAC6217DED0D4BF4F",
+      "sizeBytes": 2080
+    },
+    {
+      "path": "docs/training-manual/06-maintenance-and-inspections/_DIRECTORY.leeway.md",
+      "sha256": "18761773310C49D065103D04BFF361A3EAD6B2399345715CF86CFF0C388681F0",
+      "sizeBytes": 1810
+    },
+    {
+      "path": "docs/training-manual/06-maintenance-and-inspections/CHAPTER-11-WORK-ORDERS-MAINTENANCE-AND-INSPECTIONS.md",
+      "sha256": "986DA1A126945F069938D40ABC9C614A78E39035BD0A0256707CE7F9ABA5CE11",
+      "sizeBytes": 11444
+    },
+    {
+      "path": "docs/training-manual/06-maintenance-and-inspections/CHAPTER-12-MAINTENANCE-EVIDENCE-LAB.md",
+      "sha256": "ECAABB37EE520C3047BB8AC8F87646C6D3329E8AE86F5F86A7DC2E0E46809AF2",
+      "sizeBytes": 11408
+    },
+    {
+      "path": "docs/training-manual/06-maintenance-and-inspections/PART-OVERVIEW.md",
+      "sha256": "334D921F1439E8514F9AF3DAF5B1D039AD68B682CDAAA77997CAE416A4856F4A",
+      "sizeBytes": 2084
+    },
+    {
+      "path": "docs/training-manual/07-safety-and-compliance/_DIRECTORY.leeway.md",
+      "sha256": "24722DDD3CECB261D120BCD2354F601CF7A85B2ADD64187F818436EAB4F781FD",
+      "sizeBytes": 1794
+    },
+    {
+      "path": "docs/training-manual/07-safety-and-compliance/CHAPTER-13-SAFETY-TENANT-AND-AUDIT-BOUNDARIES.md",
+      "sha256": "EEF381CB89B43ED690A8068E18BCF746737D42060D96A19161FA67F093D69342",
+      "sizeBytes": 11380
+    },
+    {
+      "path": "docs/training-manual/07-safety-and-compliance/CHAPTER-14-INCIDENT-COMPLIANCE-AND-RECORD-RETENTION.md",
+      "sha256": "E2E9A050710A2562A5A61EC59B560B30052CBF3CAE40C148EFBAD2DFA2E6F0A3",
+      "sizeBytes": 11397
+    },
+    {
+      "path": "docs/training-manual/07-safety-and-compliance/PART-OVERVIEW.md",
+      "sha256": "98957E583A9528658E6729BD6F38A05B6EFFB7AC86360A961640B62CFF4F3059",
+      "sizeBytes": 2083
+    },
+    {
+      "path": "docs/training-manual/08-driver-voice-and-vision/_DIRECTORY.leeway.md",
+      "sha256": "9FAEE2113AFE0C89F2E3C7504EC25618F1873753B31DA1CDA3C3B9809405E00A",
+      "sizeBytes": 1800
+    },
+    {
+      "path": "docs/training-manual/08-driver-voice-and-vision/CHAPTER-15-DRIVER-MOBILE-VOICE-AND-VISION-BOUNDARIES.md",
+      "sha256": "01450A6AEBE3C4E4DD43D4B0F8F7A4264C2E725D24D279E61AFE6383EFEA05F6",
+      "sizeBytes": 11531
+    },
+    {
+      "path": "docs/training-manual/08-driver-voice-and-vision/CHAPTER-16-GOVERNED-PERCEPTION-AND-HUMAN-APPROVAL.md",
+      "sha256": "5AE1A7CC308611290E81BAD315B32AACC6EED9C881CA2F56E8F981F39EB1F227",
+      "sizeBytes": 11328
+    },
+    {
+      "path": "docs/training-manual/08-driver-voice-and-vision/PART-OVERVIEW.md",
+      "sha256": "4E264500D2E8F60E7939845534A41C5AF7A1EB2D7978584D27E4D947AED9AA18",
+      "sizeBytes": 2103
+    },
+    {
+      "path": "docs/training-manual/09-reporting-and-integrations/_DIRECTORY.leeway.md",
+      "sha256": "F05AFDC5F9F1CA199FE37C96298112AF06B9B1CC57AC61B5EAACD57AC21BE79E",
+      "sizeBytes": 1808
+    },
+    {
+      "path": "docs/training-manual/09-reporting-and-integrations/CHAPTER-17-REPORTING-DATA-EXCHANGE-AND-LINEAGE.md",
+      "sha256": "9FF6966D7EC74E47584730DDB79E5114592016A1F866D7EC395FFCD5B9DE197C",
+      "sizeBytes": 11347
+    },
+    {
+      "path": "docs/training-manual/09-reporting-and-integrations/CHAPTER-18-INTEGRATION-CONTRACTS-AND-FAILURE-HANDLING.md",
+      "sha256": "6A673F80564277B198B6C064D43D4EAECCE658FEE2305A61C3C9B9C8811A28D1",
+      "sizeBytes": 11357
+    },
+    {
+      "path": "docs/training-manual/09-reporting-and-integrations/PART-OVERVIEW.md",
+      "sha256": "57D112BEFCEEF24A7AA9B7146C59F6571DE43AF5414F412355BD1370F733378B",
+      "sizeBytes": 2100
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/_DIRECTORY.leeway.md",
+      "sha256": "3E304C70280CE3123D88501525F316F13AA12F1CD1CC3D4E17AD75D0D16C6F4B",
+      "sizeBytes": 1763
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/CHAPTER-19-AGENT-LEE-AS-EXTERNAL-LEEWAY-EMPLOYEE.md",
+      "sha256": "91DCDBEF67AA4B4EF1859497953721E222A5A1B956643576405F7145B98404C2",
+      "sizeBytes": 11469
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/CHAPTER-20-AGENT-LEE-TRAINER-PROCTOR-AND-REPAIR-ORCHESTRATOR.md",
+      "sha256": "79370CF4FD47A58A6BD1F4B7155F96E5B7E7D4687CFBD4CF5665B5B9B6814D7E",
+      "sizeBytes": 11510
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/CHAPTER-28-AGENT-LEE-SERVICE-IDENTITY-AND-CONTINUOUS-LEARNING.md",
+      "sha256": "0D58F3ADBFE9D5E581ABFA2394C01E9A049EF0D1CC2AC260D9E3FF2A2F09E7D7",
+      "sizeBytes": 8223
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/CHAPTER-36-AGENT-LEE-REALTIME-OBSERVATION-BOUNDARIES.md",
+      "sha256": "6DF154E0401571C93742B3BFEA7171F033170F3535EF65BD8B75D8ACB58D0D9E",
+      "sizeBytes": 31914
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/PART-OVERVIEW.md",
+      "sha256": "C5F5F8D15D21774AA1BA816BFC1C3413C2E1AA9B297850156D2D5F09FFA85E9A",
+      "sizeBytes": 2095
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/_DIRECTORY.leeway.md",
+      "sha256": "DE15CB15098CF94AD3244CA1B01386BF5B27F000847E1E2E3786BE0CDFD36926",
+      "sizeBytes": 1810
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/CHAPTER-21-BUILD-TEST-EVIDENCE-AND-RELEASE-GATES.md",
+      "sha256": "E48E60579635C80D96CAC01CB8F4933A6E6A2E9C5861975EE527F842C0CF3AFD",
+      "sizeBytes": 11434
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/CHAPTER-22-SECURITY-CONFIGURATION-AND-DEGRADED-MODE.md",
+      "sha256": "51DB32CC88EDC073D6C2DCF77ACF86F6084A49EB5187B2354AD74A0DD22EF178",
+      "sizeBytes": 11408
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/CHAPTER-31-DOCKER-SQL-SERVER-OPERATIONS-AND-BACKUP.md",
+      "sha256": "3CEED1428060D08E04F723637696387806E126874C4A79088A6F71FF78D2325C",
+      "sizeBytes": 10673
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/CHAPTER-33-CREDENTIAL-ROTATION-AND-SECRET-SAFE-AUTOMATION.md",
+      "sha256": "96CB2D47F0F93276E798FB6B642B314EA6E81B55BD33038525656730395638B5",
+      "sizeBytes": 36657
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/PART-OVERVIEW.md",
+      "sha256": "5CAA7508E67C0FD23AA204D929FD65EDFB6009C82F6019DFA60F285FB66478A4",
+      "sizeBytes": 2112
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/_DIRECTORY.leeway.md",
+      "sha256": "A4CD8E372B0B431CCA1DE57DBD2750AB72DB1C8298758927074AAB3E059A445C",
+      "sizeBytes": 1813
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/CHAPTER-23-TROUBLESHOOTING-WITH-EVIDENCE.md",
+      "sha256": "B8058EC182ACE2F623C94CE52ECB93F928EEB57D954AEB938B5A13695821333C",
+      "sizeBytes": 11384
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/CHAPTER-24-GLOSSARY-INTERVIEW-AND-CUSTOMER-DEFENSE.md",
+      "sha256": "C55F810E82B8CAEC1FBFB60AFD7915BB7EEA47ADAC445AE3CFAAD009E0E9F6E1",
+      "sizeBytes": 11369
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/CHAPTER-32-DATABASE-ISOLATION-HEALTH-AND-RECOVERY.md",
+      "sha256": "489CD93FA3F8E9679190ABF31B3CE41E8FBEBE834B43E291C46286FCFFDD3AC3",
+      "sizeBytes": 11861
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/PART-OVERVIEW.md",
+      "sha256": "5BF42BFAFEA4ED501E00E9CE5B25DCFFE33ECD6D9993852A32B5893E6C4C6E3E",
+      "sizeBytes": 2106
+    },
+    {
+      "path": "docs/training-manual/assessment-schema.json",
+      "sha256": "79641425E90D38B93E247BEBF64DECA2A8D28BA26B2BF7A853C5580734B33688",
+      "sizeBytes": 1882
+    },
+    {
+      "path": "docs/training-manual/curriculum-registry.json",
+      "sha256": "68CE5A4C3818D3ABEB880DBF1B5D0B14555B87BFEF65539E13E0110EAE0F949B",
+      "sizeBytes": 2986
+    },
+    {
+      "path": "docs/training-manual/instructor/_DIRECTORY.leeway.md",
+      "sha256": "62889CE33CA82FE80AE80E3AA901944D90DFE65F50694C458415C47BEC7711DE",
+      "sizeBytes": 2014
+    },
+    {
+      "path": "docs/training-manual/instructor/INSTRUCTOR-GUIDE.md",
+      "sha256": "D2F6B71B373E961689D15838F97DF33469F5BDE55FDA32BA39B60A8C56862C61",
+      "sizeBytes": 2122
+    },
+    {
+      "path": "docs/training-manual/manual-progress.json",
+      "sha256": "8D0E5EEB9E6358566F89DB030C08BFC95EBAB0DDC6F57AB2D840E94427E38386",
+      "sizeBytes": 1577
+    },
+    {
+      "path": "docs/training-manual/manual.manifest.json",
+      "sha256": "B806C479E06AD90F40EDF0946BA2D35C2F3E3568A2EC08CA8E7FD974D5F630BE",
+      "sizeBytes": 6304
+    },
+    {
+      "path": "docs/training-manual/MASTER-TRAINING-MANUAL.md",
+      "sha256": "69525E7A9F0EB75A47D8C17A0439A7EFCB29C78EEC83B038A3324FB1C1BEF0B3",
+      "sizeBytes": 448684
+    },
+    {
+      "path": "docs/training-manual/README.md",
+      "sha256": "8236F4924C1C8E98344389ADC2C3A715C7DDF72DAA74A057E8BFF1A41FE68554",
+      "sizeBytes": 1905
+    },
+    {
+      "path": "docs/training-manual/workbooks/_DIRECTORY.leeway.md",
+      "sha256": "9874DF7B6839D74C39B93206E399B616ECDFCEDF7FE4F826A2A35D6F3B4C9777",
+      "sizeBytes": 1950
+    },
+    {
+      "path": "docs/training-manual/workbooks/COMMERCIAL-LEARNER-WORKBOOK.md",
+      "sha256": "566E84E90AAF89045E7ACB351BEC64115C28DA82110EAE7015FE57263709E59D",
+      "sizeBytes": 1706
+    },
+    {
+      "path": "global.json",
+      "sha256": "1BD4B61B6B67BD3A3571D8E89FEDB293C3CEF6840BE8CBB666EEF4317291EC25",
+      "sizeBytes": 899
+    },
+    {
+      "path": "governance/_DIRECTORY.leeway.md",
+      "sha256": "E66A750577B6B2C7ECACE813BA71B4EE328B26B177208679439591C29CD0E5FF",
+      "sizeBytes": 1552
+    },
+    {
+      "path": "governance/headers/_DIRECTORY.leeway.md",
+      "sha256": "89B3538ECF03079211699DFB8AF51C8EA6646F0127B178842FEB1145A07061CD",
+      "sizeBytes": 1576
+    },
+    {
+      "path": "governance/headers/LEEWAY-ENTERPRISE-HEADER-SPEC.md",
+      "sha256": "CD4D4D72AD37173F88B82013346C8FBB8C8CA536E0A088EB7A0DD1A8F9893993",
+      "sizeBytes": 1487
+    },
+    {
+      "path": "governance/policies/_DIRECTORY.leeway.md",
+      "sha256": "2BD2384A9A1CF53AEFAE69D6B01278E676BC5FA80D730F3AE13A7E799491C675",
+      "sizeBytes": 1579
+    },
+    {
+      "path": "governance/policies/AGENTIC-DEVELOPMENT-POLICY.md",
+      "sha256": "8C4E984E4AB44E55E710B51CD4496A792CA467950A246AA0E696D9AB832515D1",
+      "sizeBytes": 1184
+    },
+    {
+      "path": "governance/policies/CONTINUOUS-LEARNING-RELEASE-GATE.md",
+      "sha256": "4C1E38FE134F77713B0BDC9132FA9DF12B709DC8DC69A88733486CA86AD9C73E",
+      "sizeBytes": 2239
+    },
+    {
+      "path": "governance/policies/FILE-DIRECTORY-EVIDENCE-AND-COMPREHENSION-POLICY.md",
+      "sha256": "CF144A4383F81211D98200461F958788B08E942979DE317FEF3EDAD099F5C2B4",
+      "sizeBytes": 1650
+    },
+    {
+      "path": "governance/policies/PRIVATE-LEARNING-AND-FAMILY-TEACHING-POLICY.md",
+      "sha256": "F84FA9D524A518BE36D86825D8A0C8D69E5E6D41CDEF3AF0C231CA9A4B225776",
+      "sizeBytes": 1933
+    },
+    {
+      "path": "governance/receipts/_DIRECTORY.leeway.md",
+      "sha256": "F310BC7922F88D2269662E0B0A3C8BB3BE724784B9D8F0D9A962ABD6FF62CFF9",
+      "sizeBytes": 1579
+    },
+    {
+      "path": "governance/receipts/full-foundation-20260724-171209.json",
+      "sha256": "E297E9ED486537D8168F40F85BC23B2137BF2C9BA592B7101F60205698865E5D",
+      "sizeBytes": 2105
+    },
+    {
+      "path": "governance/receipts/package-generation-receipt.json",
+      "sha256": "EFB1E1954DD52B5253891A5FD3AF9CC0C342C5A4BD8E630A7E3EC96E84A1310F",
+      "sizeBytes": 1680
+    },
+    {
+      "path": "governance/receipts/phase-02-saas-tenancy-training-agent-capability-20260724-181854.json",
+      "sha256": "4C78184B2A996CC803BA4AC56FDE8CF2E7C37C1A3010A5AC800E4CAE79C3385F",
+      "sizeBytes": 2812
+    },
+    {
+      "path": "governance/receipts/phase-03-training-manual-personal-learning-20260725-154012.json",
+      "sha256": "3E701A5EA38845B28A95B5D2F928A2C76804B9BBA2D94A614E36A6FF8C4E00BE",
+      "sizeBytes": 2798
+    },
+    {
+      "path": "governance/receipts/phase-04-identity-authorization-learning-20260725-202107.json",
+      "sha256": "604AEF01E914511921BC4EBFD067DC54B0B70C760FF387694C203AEBF62A2F0A",
+      "sizeBytes": 3404
+    },
+    {
+      "path": "governance/registries/_DIRECTORY.leeway.md",
+      "sha256": "E35E6CC5186CBCE332E37836A456153099F624D5DF71AF2766A343C926A2728C",
+      "sizeBytes": 1585
+    },
+    {
+      "path": "governance/registries/phase-02-artifact-manifest.json",
+      "sha256": "1AC022E8B1FCA91415DC62D71F1C7462B7EA3B91196F220F4867E8DDE4164434",
+      "sizeBytes": 16710
+    },
+    {
+      "path": "governance/registries/phase-03-artifact-manifest.json",
+      "sha256": "3D5F31DCEB635879F42349C8DF3CADE7D6FA9023FA811AD601783CCF4F46FFEC",
+      "sizeBytes": 13672
+    },
+    {
+      "path": "governance/registries/phase-04-artifact-manifest.json",
+      "sha256": "23C06AAA1CB96DCFF0A599EB8705A5FF644CFC42A4A09C243BF97EB4FDA4865E",
+      "sizeBytes": 11252
+    },
+    {
+      "path": "governance/registries/phase-05-artifact-manifest.json",
+      "sha256": "A0633CB56EDC4C08EC2839ACE942FADD8EDB3801B1FAA88F15B1CE945C03E70A",
+      "sizeBytes": 19851
+    },
+    {
+      "path": "governance/registries/phase-06-artifact-manifest.json",
+      "sha256": "8FFF82F9D4282312905097A44650C5414C1B2BCA4FADEB74160872639C6751D2",
+      "sizeBytes": 15192
+    },
+    {
+      "path": "integrations/_DIRECTORY.leeway.md",
+      "sha256": "6998C60A159396CB60C35EEF5E6290FBE16C8E036AF7352942F49644C9276459",
+      "sizeBytes": 1625
+    },
+    {
+      "path": "integrations/contracts/_DIRECTORY.leeway.md",
+      "sha256": "846C4F511C5D34ACC9B74072E6AFD97BC9BDADAA4B228135833C30CBC32D49F9",
+      "sizeBytes": 1655
+    },
+    {
+      "path": "integrations/contracts/customer-case.contract.json",
+      "sha256": "6855600FA5D9DFA6B63AD47DFAEA83408B9834542634958F9C2AA77B6B9EE0EE",
+      "sizeBytes": 1307
+    },
+    {
+      "path": "integrations/dynamics365/_DIRECTORY.leeway.md",
+      "sha256": "C9BAEA7D6EA0765BE1BDBEA23AFA34DBE727254D66420C999612F8F2A94FF2B3",
+      "sizeBytes": 1661
+    },
+    {
+      "path": "integrations/dynamics365/README.md",
+      "sha256": "3C19B55DA9F5C924A8D02984BE8BE2B3D29DE6EC723B3217BDA7EF4D1AD9069D",
+      "sizeBytes": 1057
+    },
+    {
+      "path": "LeeWay.EnterpriseTransitHub.sln",
+      "sha256": "6899D4375D00E54F79AFD3D1BC2763DC2420A4A24D5B835BA29218DB0C52C106",
+      "sizeBytes": 19948
+    },
+    {
+      "path": "LeeWay.EnterpriseTransitHub.sln.leeway.yaml",
+      "sha256": "EF88AC7435B6613B310FFE96DB5E9E34CFA4BBC4029CE4D82FB14D9E7DABDADC",
+      "sizeBytes": 1367
+    },
+    {
+      "path": "leeway/_DIRECTORY.leeway.md",
+      "sha256": "C3BE9D38FE5FCE95B771243706FE6B878EA04DDD07C4F92CF2251C16C6364332",
+      "sizeBytes": 1686
+    },
+    {
+      "path": "leeway/capabilities/_DIRECTORY.leeway.md",
+      "sha256": "600D51D79F29B64066F9504DCC3855B92924123480600E5DB121B1C3454CD61B",
+      "sizeBytes": 1624
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/_DIRECTORY.leeway.md",
+      "sha256": "CC335C47DCAB98B2394C674D9F57AD0359777CBADC65BE5942B2DC942C3E8BAE",
+      "sizeBytes": 1844
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/AGENT-LEE-EMPLOYMENT-AND-BOUNDARY.md",
+      "sha256": "DA2107FEB595CC1DBF3004D553866C375EF4D75DB78E77C9979CF9180A7B58D6",
+      "sizeBytes": 1600
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/capability-manifest.json",
+      "sha256": "29FFA7AB26A1C15A9C7D008EA1054643A5D4ACE965447E465E5099C493F1431A",
+      "sizeBytes": 2897
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/database-capability.json",
+      "sha256": "6E39561B0C0F93DABBECED83C0083CECF17127F01738E7B4CFDDAB1662CFA101",
+      "sizeBytes": 2243
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/DEGRADED-MODE.md",
+      "sha256": "66AC843CAE440B7889FDA08A0B72886B153529563313FA33AE51CF7091B7AB04",
+      "sizeBytes": 1570
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/_DIRECTORY.leeway.md",
+      "sha256": "3F77AA30DC574CC0857CC30FD984D86BCBBFFD3F4AAF45203814E52A50BEBC9C",
+      "sizeBytes": 2146
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/interview-assessment-proctor.json",
+      "sha256": "A9BD39D306A7AD9EF5F41B496B3AE1D7633D3B74CB90BC30EA51A49A5AF47851",
+      "sizeBytes": 1986
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/private-learning-access.json",
+      "sha256": "5DF1C4FF1F1994187079F5C1A737B1A1C0D6412C3D97C0430E94A7B84173159B",
+      "sizeBytes": 1910
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/question-bank-index.json",
+      "sha256": "71A67EC7EFB54D1EE4671B8F0FEA7E36D921E15C7FB98F1650C152F7E5EE8988",
+      "sizeBytes": 1269
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/training-knowledge-index.json",
+      "sha256": "CE25EE08683CC3B2859D8854656060811F2887A79548EEAE15B41D864F76856C",
+      "sizeBytes": 5980
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/evidence-schema.json",
+      "sha256": "0B023F14B0485E6379AB8E833737A5FEC3A1112A22A81A1F72FE6BD648D2B9B1",
+      "sizeBytes": 1599
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/health-checks.json",
+      "sha256": "5227DF55F92CDB05841D729D95C82A6006A5DDCE34C99EEA1D9FF52409AFA8C0",
+      "sizeBytes": 1953
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/identity-contract.json",
+      "sha256": "858740902DC1A3456865F6858A876689BA58C93B15D6E1F55B386C2DA892AEEB",
+      "sizeBytes": 1976
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/knowledge-manifest.json",
+      "sha256": "85E16AB88FC8558AF25CBEBCE24BE0B1236DEB17DBD148A8C6C94274784CFA31",
+      "sizeBytes": 3108
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/permissions.json",
+      "sha256": "FD163F94A2407919E3ABAE0E18D5B5BEBC65415A827D2A75F5008DBAFDBD153D",
+      "sizeBytes": 2869
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/README.md",
+      "sha256": "429167939C4922D3233B32E1E6F8D65201D5C06C5E8888EA284E7FBF266AAC79",
+      "sizeBytes": 1585
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/realtime-operations-capability.json",
+      "sha256": "5FA0E50F6D2BF7919BAEB1B240A1C66FDABA98D8E06B0FABAEE5A5250ADC08DE",
+      "sizeBytes": 1701
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/REPAIR-RUNBOOK-STANDARD.md",
+      "sha256": "F18DC6C774DA2CE626CC9AC25BA701B09C1B340DA7561E573BA959009F8E1A44",
+      "sizeBytes": 1576
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/tool-catalog.json",
+      "sha256": "66C1F164871ED951D1F6038A78CABC71B007CA720CDB39646AAB4E6CAAE3956B",
+      "sizeBytes": 2733
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/training-proctor.json",
+      "sha256": "2254CDF2C59902ABFEC849C5CE33842D1F2EBB3891C0238DE8C450AF14E0661C",
+      "sizeBytes": 1967
+    },
+    {
+      "path": "operations/_DIRECTORY.leeway.md",
+      "sha256": "84B9F30E800AF78A137C4A5AE5841843683314E787BD0630C9C5F9EB681ADB9D",
+      "sizeBytes": 1601
+    },
+    {
+      "path": "operations/docker/_DIRECTORY.leeway.md",
+      "sha256": "E0BE75C4AC2D48C646A3356CD3D9FC9ACC127CEFF53C2B1C91B1D4C81C8E1C23",
+      "sizeBytes": 1622
+    },
+    {
+      "path": "operations/docker/README.md",
+      "sha256": "01568129269ADB4961194294444E147EBDEF7D424C38DE9133887808EF6A7284",
+      "sizeBytes": 918
+    },
+    {
+      "path": "operations/docker/sqlserver/_DIRECTORY.leeway.md",
+      "sha256": "87EBC110F19EB293308E45377907452B311F20A47989805F2FE7C4BC0F547186",
+      "sizeBytes": 1367
+    },
+    {
+      "path": "operations/docker/sqlserver/.env.example",
+      "sha256": "A7CFC8A6A036AE00ADF5BD063DA9BD1A7211AE8F650AE32D598A919BC5C3E74E",
+      "sizeBytes": 833
+    },
+    {
+      "path": "operations/docker/sqlserver/docker-compose.yml",
+      "sha256": "C2D3DCECBE29D211558367F19677398D17FAFFCE537C70895566419042900D17",
+      "sizeBytes": 1743
+    },
+    {
+      "path": "operations/docker/sqlserver/README.md",
+      "sha256": "60CA8CD0021D9FABB321B552BD2940A98529DF8C298EE078917955FE050046FF",
+      "sizeBytes": 1569
+    },
+    {
+      "path": "operations/powershell/_DIRECTORY.leeway.md",
+      "sha256": "331F6FE624B51B8601FE9EB93F62577DB396AF652D1A1B2FE2E74737DF581292",
+      "sizeBytes": 1634
+    },
+    {
+      "path": "operations/powershell/Build-All.ps1",
+      "sha256": "EA582ACB8FFE2DD1370A95EE6B15B770DEFAB8C571ADDC407F92EABBB0B35E93",
+      "sizeBytes": 1667
+    },
+    {
+      "path": "operations/powershell/Build-LeeWayTrainingManual.ps1",
+      "sha256": "826AFAC84A7DC1A72D25652A5536F42793BCB5FEF3778F944F480AD9467F2575",
+      "sizeBytes": 6355
+    },
+    {
+      "path": "operations/powershell/New-Solution.ps1",
+      "sha256": "2F861D1BC5DCA6CE4D7E6C207A402BFD29164AEFFB4AF4ECFEEFEC427A5C533F",
+      "sizeBytes": 2625
+    },
+    {
+      "path": "operations/powershell/Run-Development.ps1",
+      "sha256": "09531CEB4E940CE81B69CBDE55B59CD3CD9D24996FB7E83CB47769400CB74E0B",
+      "sizeBytes": 1375
+    },
+    {
+      "path": "operations/powershell/security/_DIRECTORY.leeway.md",
+      "sha256": "477E2B1161B691A6CFAF599E527EBCB61BFBB7E128B6D5FCF7CE94B4256ECEED",
+      "sizeBytes": 1311
+    },
+    {
+      "path": "operations/powershell/security/SECRET-ROTATION-AND-REDACTION-RUNBOOK.md",
+      "sha256": "BB134136B0A4B8AF9BDD7CCAD3DF37FD5DAADF824AA1DA0C6B060F5509FF26BD",
+      "sizeBytes": 2199
+    },
+    {
+      "path": "operations/powershell/security/SecretSafeProcess.psm1",
+      "sha256": "AF762A72D6160C5F241F20E093B16B40FECFF5701D1B152A9BD1792FBDC9EBE6",
+      "sizeBytes": 3213
+    },
+    {
+      "path": "operations/powershell/security/Test-LeeWaySecretExposure.ps1",
+      "sha256": "ABE06CDE6217FEFD640A72B3B0B0436DB3DDCA6C4C8D58F1FBDC0E939E3675EE",
+      "sizeBytes": 2358
+    },
+    {
+      "path": "operations/powershell/sqlserver/_DIRECTORY.leeway.md",
+      "sha256": "9E3D85168B7F51924E3CCF1FD1D37C8247A71F28B441DE322583CD23F2C5E4C3",
+      "sizeBytes": 1349
+    },
+    {
+      "path": "operations/powershell/sqlserver/Test-LeeWaySqlServer.ps1",
+      "sha256": "DD883239E6930577786A01846013DD2800AD54593E268E7C079D8826CF6CB0FF",
+      "sizeBytes": 1765
+    },
+    {
+      "path": "operations/powershell/Update-LeeWayRegistry.ps1",
+      "sha256": "A70CEF70C31FF55721948212DB1FCF0BB605AFF94FE72AC57031AACD620A4F92",
+      "sizeBytes": 2835
+    },
+    {
+      "path": "operations/powershell/Verify-ContinuousLearningGate.ps1",
+      "sha256": "19395FFA4E6DFA9D5E9F9808A14F5E62E3DF7D3788D7533490C4B09EBE61DF4E",
+      "sizeBytes": 9826
+    },
+    {
+      "path": "operations/powershell/Verify-LeeWayGovernance.ps1",
+      "sha256": "33079C0CEF906E0266239774B03B988C504987FD4DEF571D890961B2F5099CEE",
+      "sizeBytes": 2505
+    },
+    {
+      "path": "README.md",
+      "sha256": "57348DEC8822A36A3D84322A333C9F0F2807AE91DBD9A738CC831C7BE2CBB8AC",
+      "sizeBytes": 3670
+    },
+    {
+      "path": "src/_DIRECTORY.leeway.md",
+      "sha256": "02459F432CF04D33205497C9F1752895826FD0731B08D1918F475B8BBF5AFA19",
+      "sizeBytes": 1518
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/_DIRECTORY.leeway.md",
+      "sha256": "DBFED4F91FCB084B22D9B91A6CAC9CD1B78AEF9EE89BF396183E35451CF42D26",
+      "sizeBytes": 1584
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/appsettings.json",
+      "sha256": "44993E857261DB6B655E93643E8152B7A003FF671209313E651F027CECED346A",
+      "sizeBytes": 940
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/_DIRECTORY.leeway.md",
+      "sha256": "48C49D7D22BA8882EF7A8E1CA3D7576A4B8A1CA1D6127F37F81F74B378CD9370",
+      "sizeBytes": 1620
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/AccessControlController.cs",
+      "sha256": "7B5FE9CC56551F4CC16323322F6D17AD857AEAB4F664075933F03DED0341393D",
+      "sizeBytes": 3058
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/DashboardController.cs",
+      "sha256": "37A7DB26341A8D76FF35B5E7D3FA6FAA7AE7A4E53B9C1A262404A4FACEF17576",
+      "sizeBytes": 1271
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/HealthController.cs",
+      "sha256": "996731C4EE71A5A3F9B2CDE0CC4AC0BE655BB1646D1043DEE467CBCCC45F76C1",
+      "sizeBytes": 1151
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/OperationsController.cs",
+      "sha256": "AB9080ED2140820408749D846E480605C782E38764B05D9910AE7872995798F0",
+      "sizeBytes": 3174
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/OperationsEventsController.cs",
+      "sha256": "2A32D6B2CDC9ACC4B15B8566713791B3B5B8A83989FCEC2396EC9C88A5B74464",
+      "sizeBytes": 2651
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/PlatformController.cs",
+      "sha256": "368A6D184C4BB14FE0A4AF3BD3E5F50DB4D0D9CD387AF3FCBE5B0E9EBAC1E5C0",
+      "sizeBytes": 1840
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/VehiclesController.cs",
+      "sha256": "31BB8FF18EF039505C0D0CB83DFA170A4CF10EDEBC0319B0F64A1D4FA6E78F9B",
+      "sizeBytes": 1884
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/WorkOrdersController.cs",
+      "sha256": "48E22B92D1DB98E5BBF41F4F4B256AFBE39254A7C0E7D9E655700B0713AD0EB8",
+      "sizeBytes": 1556
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Hubs/_DIRECTORY.leeway.md",
+      "sha256": "92D405191A666726238346ED7654DD26B920D1D98B613DF1AD88C18ED7F26165",
+      "sizeBytes": 1253
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Hubs/OperationsHub.cs",
+      "sha256": "9C93682CE59A7AC927A2DFE6380BA6F5E4944E108213F31C308D6A3E51729996",
+      "sizeBytes": 1818
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Hubs/TenantOperationsGroup.cs",
+      "sha256": "8ED89706DEA9CA414778D23AF9C85479CBA0A4248B5951059D3D8D4C5B496515",
+      "sizeBytes": 1184
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/LeeWay.TransitHub.Api.csproj",
+      "sha256": "AB293F42903C1D72DFB39C27D1137A3DA91F4BC3CF3D64D509D27372FF86EB13",
+      "sizeBytes": 2006
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Program.cs",
+      "sha256": "22D23DAB6B65EEFFFBC9A0FD3F1D85ED18AC1AFF566C7E1CB64A54399CCEFC13",
+      "sizeBytes": 8016
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Properties/_DIRECTORY.leeway.md",
+      "sha256": "BC65A8A1ADC2F016AF1D98529F6BCF202529564CC0CDF002B3EBA1E10DFC7840",
+      "sizeBytes": 1617
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Properties/launchSettings.json",
+      "sha256": "325A574CC8F26A1BB490432E5A17DF52F9BB5D2945587D90DDD3F116DEA63479",
+      "sizeBytes": 1086
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Realtime/_DIRECTORY.leeway.md",
+      "sha256": "3A84B180BDFA2E3BBB212598B275A0D801C78F13B1205CFC665C3AE2EA766AF2",
+      "sizeBytes": 1311
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Realtime/SignalROperationsNotifier.cs",
+      "sha256": "D6A6D617B816A2AC536A4EC9B927DFF7A5B6C9CE83BEA774425B8CC4C3FA468F",
+      "sizeBytes": 2001
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/_DIRECTORY.leeway.md",
+      "sha256": "C90AB962CCA563FE8D1A2E66DFB8F6430C056C3D3D234967013A298151A0D979",
+      "sizeBytes": 1145
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/DevelopmentHeaderAuthenticationHandler.cs",
+      "sha256": "33D18A859FA962CE73DED716C867A5DA2EF21F1B324E689600BD590D7B5CB080",
+      "sizeBytes": 6215
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/TenantAccessAuthorizationHandler.cs",
+      "sha256": "A75BD99DDC8DA0A61ACA76DE9B5B827EFF42F3D51499C485B7E96D9BCEED1631",
+      "sizeBytes": 2418
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/TenantAccessRequirement.cs",
+      "sha256": "7F085106EABD4BA3311D6864A579BB01CC20952311F77D86395F4779A4F97BC6",
+      "sizeBytes": 1100
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/TransitSecurityServiceCollectionExtensions.cs",
+      "sha256": "BDA008E9ED572C3362B045C9115A3C4734FC1884B8D69118D5A66424CC87528B",
+      "sizeBytes": 5066
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Tenancy/_DIRECTORY.leeway.md",
+      "sha256": "A80579027D9DF9F28D579B4F78DFDA1E516799A711A3944C5E5678DEB1D53281",
+      "sizeBytes": 1727
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Tenancy/HeaderTenantContext.cs",
+      "sha256": "95CFBD50A74546051D6C679A8AFE2E29194BBC2A4DDF8261872448E435F4A739",
+      "sizeBytes": 1845
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Tenancy/TenantResolutionMiddleware.cs",
+      "sha256": "DD4ED99A8924363424DB221B087AB1C80F104A0D9536C8AC39D753BB5AD00E9A",
+      "sizeBytes": 2698
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/_DIRECTORY.leeway.md",
+      "sha256": "728416A3E9DD124292FEF5AC4FDDA952974662C5FE4F49CC29FD98C8201E5FBB",
+      "sizeBytes": 1608
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/_DIRECTORY.leeway.md",
+      "sha256": "7002963BA7BC3947DD538DCFFE44A884679493E5400FE9C4CA66236D17CDBC3C",
+      "sizeBytes": 1647
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/ICustomerCaseRepository.cs",
+      "sha256": "5B86B9CDE9636D1C1C499888196B05693C080E915491F89E4C3D883E17871349",
+      "sizeBytes": 1130
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IEmployeeFormRepository.cs",
+      "sha256": "CC6DCC8EBF9FEE6F11EF6BAE75CC0C27989507D09DBB3FDBF1953DD0A5BE3A06",
+      "sizeBytes": 1122
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IIncidentRepository.cs",
+      "sha256": "24D9BA7C74D4549A9FA35A8479FFD78215291434A488C7D0A19146F4B36FA5D0",
+      "sizeBytes": 1116
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IInspectionRepository.cs",
+      "sha256": "8650933A907215C0A3E7B7B92BD7A511BC542A8659E373643C76ECE96E356335",
+      "sizeBytes": 1130
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IOperationsEventRepository.cs",
+      "sha256": "39BE54A3AAB6BBA16D19A01D08C1F6AA71D23E73B98759B3721C15CF0DCA6DE0",
+      "sizeBytes": 1338
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IOperationsNotifier.cs",
+      "sha256": "86D3C60E6E694DA62111CCEA0B919567841244836A52C17444D51610137DD776",
+      "sizeBytes": 1222
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IReceiptWriter.cs",
+      "sha256": "0A366007DAF0B21CBF18DE93820F0B9790B04C02B08B03FDE814BE517714C157",
+      "sizeBytes": 1115
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IVehicleRepository.cs",
+      "sha256": "70593DAA2A0A7A8A30D32FC11FAF2CB7466E2A6F33FA3F0059E85A2F035592B6",
+      "sizeBytes": 1126
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IWorkOrderRepository.cs",
+      "sha256": "D8D8E9280F50CF8A70027E837991E005A4E5FC32B19419C75B2C149FFDAF7D06",
+      "sizeBytes": 1142
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/LeeWay.TransitHub.Application.csproj",
+      "sha256": "AC158C190C7D3E29B7B4E90C0DC1C9475AD969BA8A4CE1DC39ADB5E446BC4211",
+      "sizeBytes": 1266
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Models/_DIRECTORY.leeway.md",
+      "sha256": "BEFEA1A101393C1AEC1699618E1658A38C905C5CE172383E021A5E37120A1364",
+      "sizeBytes": 1629
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Models/CreateOperationsEventRequest.cs",
+      "sha256": "0DE7B7CB52896131516F04DBA4B4FF1649F70CAA123B123C1F67E6DB999F5132",
+      "sizeBytes": 1269
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Models/CreateWorkOrderRequest.cs",
+      "sha256": "E36E367E94F05248B092F46226CC08368D6DB51EBB5839DBB06FE1AC60AC891B",
+      "sizeBytes": 937
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Models/DashboardSummary.cs",
+      "sha256": "8308C1F435830377D9E15A4880E827F8D1706FCBBCB713988E7812E59E12A09B",
+      "sizeBytes": 989
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Product/_DIRECTORY.leeway.md",
+      "sha256": "1E5B0D1F15C16D32373F3A269675F7618785BB866F39D0EDD62018AAA9112284",
+      "sizeBytes": 1727
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Product/TransitHubProductProfile.cs",
+      "sha256": "6EAB6370F4D0B8738915367E935C64213A1BADF6321BA0AACEC37E0435516FEF",
+      "sizeBytes": 1740
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Product/TransitHubProductProfileService.cs",
+      "sha256": "8C794D0E091AF1539FEA4BFD505D05B602AABA9941203AE7619AEB3015DE9678",
+      "sizeBytes": 2892
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/_DIRECTORY.leeway.md",
+      "sha256": "7CAF4F22FD1E078C13467875F70161B67F8B078FEE556735DB3D75E955D7B632",
+      "sizeBytes": 1119
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/SecretRedactor.cs",
+      "sha256": "6A908832B9E0CBF7F9A3A8CFD7ED7DA3A50F207FBF95F6E9A48878F6B8275377",
+      "sizeBytes": 1654
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitClaimTypes.cs",
+      "sha256": "7ECA37D24A7A46C1B7295CBBCEF21EB8B041165EFF9CDEA4BA77216BBFED7D15",
+      "sizeBytes": 1364
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitPermissions.cs",
+      "sha256": "55F160B708B9507E4C20F089F8A7383ED466F040851F331F7FE362DB7B8F5956",
+      "sizeBytes": 4413
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitPolicies.cs",
+      "sha256": "F0A2C60D0B1A7D8E8D3D07FD3415619CB75153AA1EB84868A9AF27019A6788A2",
+      "sizeBytes": 1718
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitRoles.cs",
+      "sha256": "84DACFE04EF5FE6E6EF01B2EA90EA97ABFE6C228016AEB54396EEF33C88B4507",
+      "sizeBytes": 2641
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Services/_DIRECTORY.leeway.md",
+      "sha256": "D5867E6B3FD8FD5AF1CADC9284EBC93F5652BB90BF56FD6B5F9FAB1460F415A6",
+      "sizeBytes": 1635
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Services/DashboardService.cs",
+      "sha256": "F67E5E87625063140892A7B093EE848E559AEC2290E68172A6A33647E6087BCA",
+      "sizeBytes": 1876
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Services/OperationsEventService.cs",
+      "sha256": "A3FE36952596C461FEABEA2F731101DB75552B2BE811E732B13E125F1803104C",
+      "sizeBytes": 3429
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Services/TransitRecordServices.cs",
+      "sha256": "0A2828731D83DC9C46702EBF088E75136E0050DF6E7C15AD4B38642A46A9ABBB",
+      "sizeBytes": 2755
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Services/VehicleService.cs",
+      "sha256": "AD7B804EA0D06DD4552B33D55614E5D6ADF0536603F291EE4EE2CFEC5216458A",
+      "sizeBytes": 2167
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Services/WorkOrderService.cs",
+      "sha256": "6D916BC1F48AF20BA8A3FB51CBB2D49A3B5EC9A24C10A9421C52703E9F5E4659",
+      "sizeBytes": 2377
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Tenancy/_DIRECTORY.leeway.md",
+      "sha256": "9D2A51D9D246559FD321108C4C84AB46887EC774C826C95C9DA821D37C7C342C",
+      "sizeBytes": 1755
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Tenancy/FeatureEntitlement.cs",
+      "sha256": "50E89148D112AFD47990A558B40000AFD342EC475980E475A4EC594DC85E1E92",
+      "sizeBytes": 983
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Tenancy/ITenantContext.cs",
+      "sha256": "AFCC8CAFC1F90912521A43CCC801427A3DEFFC944DBDCDC3982838D0BCC90926",
+      "sizeBytes": 1055
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Tenancy/TenantContextSnapshot.cs",
+      "sha256": "E7AB3D2BD806C9B68438E1B406DAAD35A03E3D059C3A88958F144909F9EA9BF2",
+      "sizeBytes": 962
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/_DIRECTORY.leeway.md",
+      "sha256": "D1AD8EA240C0F115255212C866F568726518410410A953A171A79A116CB8F327",
+      "sizeBytes": 1593
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Entities/_DIRECTORY.leeway.md",
+      "sha256": "87EEA43D6F5BDF1E7521A71DDB842496E2F0D632E671A6F5AD33086BB2129966",
+      "sizeBytes": 1620
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Entities/CustomerCase.cs",
+      "sha256": "B7C7993EC76DD66B851E700BF759CCCFEB747BF4679AD7518F7DBAC072B1A202",
+      "sizeBytes": 2086
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Entities/EmployeeForm.cs",
+      "sha256": "83815CBBB7C747D485D3951C18AF0E10ECD27A0927C201695A68AC08EB70B71E",
+      "sizeBytes": 2047
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Entities/ServiceIncident.cs",
+      "sha256": "1A50D03B45446C69B99EEB6578867D430118F3C8974B5AF43E25159D107AA65E",
+      "sizeBytes": 1872
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Entities/Vehicle.cs",
+      "sha256": "F013E355144FC4AC385807B6E3218E4E4D1DD139C9EC4DABF19C5AEAECF84B5E",
+      "sizeBytes": 2535
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Entities/VehicleInspection.cs",
+      "sha256": "2765D443266A5082A3DE11DE60485E60DDACA259630D8ED9B9A9A21297247588",
+      "sizeBytes": 1914
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Entities/WorkOrder.cs",
+      "sha256": "A18864E74CF8D60E8B2F07657E827B2F9A5057DECB32412DB0820C503BE85D06",
+      "sizeBytes": 2955
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Enums/_DIRECTORY.leeway.md",
+      "sha256": "967DD3B72DC12D675A20EA018439654BAF186FDD64503B3D84CE14B7D7BDD7AE",
+      "sizeBytes": 1611
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Enums/CaseStatus.cs",
+      "sha256": "E3BFEC368E54634203B60BEBDA1A13AADFAAA3E77BAD9248987D42C0699C15AB",
+      "sizeBytes": 833
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Enums/FormStatus.cs",
+      "sha256": "8C903FE4A1720A97854607BC3BBE8BFB611C855A683714C4441B10A982A65DBD",
+      "sizeBytes": 833
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Enums/IncidentSeverity.cs",
+      "sha256": "B507BE34531E46D1A66087289DFC767B24A35FF864D23BD10A03A2D2B366A798",
+      "sizeBytes": 852
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Enums/InspectionResult.cs",
+      "sha256": "DFB72EE6FB81ED94702F5E87DF2EECE097E26EA8D5D0AA1E9504CAF73F2CF9A3",
+      "sizeBytes": 838
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Enums/VehicleStatus.cs",
+      "sha256": "693F8341D8425E226E8BADFCF03B04957E5255EB9AB85BEE38F96F68BE143370",
+      "sizeBytes": 881
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Enums/WorkOrderStatus.cs",
+      "sha256": "800C47C7E9FB7E71FEE176BC2CD9A7E4166302CBA64FB887D3AD4489657D8852",
+      "sizeBytes": 878
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/LeeWay.TransitHub.Domain.csproj",
+      "sha256": "8BFE4B87215AC63A574C75E1A968464C2ABBCD4E8D899D11001A3F8F60F4034F",
+      "sizeBytes": 1015
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Operations/_DIRECTORY.leeway.md",
+      "sha256": "1FC585312209354064F66C7E08DFDF2397DAE463976E2818F85F6E4EA4DA935D",
+      "sizeBytes": 1291
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Operations/OperationsEvent.cs",
+      "sha256": "0375804ABA7892D0BBB51F3CF4821624F2E7DB1BFA9A70AE98EC6E106C06776F",
+      "sizeBytes": 3426
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Operations/OperationsEventSeverity.cs",
+      "sha256": "A9B6FAD715AF8755D65AB1C6193389A335B585B5CA9E547023DD143A436715D3",
+      "sizeBytes": 1153
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Operations/OperationsEventType.cs",
+      "sha256": "A877A4334FF79334B501E4581B326BA5AF9FA345201B53AD5D458D68460E3DA7",
+      "sizeBytes": 1209
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/_DIRECTORY.leeway.md",
+      "sha256": "19883D065DB37EC70AC09BC82208F2D0281E2CB36EBD5EC23C96DC13B191BA28",
+      "sizeBytes": 1717
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/ITenantOwned.cs",
+      "sha256": "FCC692AFB9E094D642E36A695A932A85EC8791E3590E99C2F62C16596A74C137",
+      "sizeBytes": 859
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/OrganizationUnit.cs",
+      "sha256": "29A3296E4F6548C7253E9C187A33FB9D7D06D32EDDD03DA7E3B06BF5323A090A",
+      "sizeBytes": 2570
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/OrganizationUnitType.cs",
+      "sha256": "D9B61173F50FB3C90CEE316E1C2DDF768FDED8370A245856D147E39F6C2E1E32",
+      "sizeBytes": 1014
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/SaaSDeploymentProfile.cs",
+      "sha256": "AFB32ECDBC797F4F9C32EE53E465EAD65368DCD8A41D876D1959B56A91203CCE",
+      "sizeBytes": 972
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/Tenant.cs",
+      "sha256": "0A3836828B3C7BD4502A3DE0CC3917C00B2F2FA4A46C57F28BB1FE59E5BF89D5",
+      "sizeBytes": 3440
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/TenantStatus.cs",
+      "sha256": "A0CC126FB2C1CC701B647D302B7D9B31F96648781DEDDA46207B5EDBA916F788",
+      "sizeBytes": 881
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Governance/_DIRECTORY.leeway.md",
+      "sha256": "4353B610CF0EE8669D851A31448FE9A1CB12FF279C516F8D184C1D4F1994EE8A",
+      "sizeBytes": 1605
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Governance/LeeWay.TransitHub.Governance.csproj",
+      "sha256": "DA70D515AE3EF1A2765AD6DBC01077A3C820829A827C263914D91FC8AC89FA98",
+      "sizeBytes": 1035
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Governance/Receipts/_DIRECTORY.leeway.md",
+      "sha256": "259E11EC1E83329254E0C6F253B7B50E7319745073BB871AF705F9201A9C3A53",
+      "sizeBytes": 1632
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Governance/Receipts/LeeWayExecutionReceipt.cs",
+      "sha256": "7B80F1DACB54928B793E391653C2F0D7D15CFBB3843AB5D9D9823B2ACC273E65",
+      "sizeBytes": 1090
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Governance/Receipts/ReceiptFactory.cs",
+      "sha256": "F958A52B71D6D376D6B5C3FDEC61DA6E67E0132DA3B83FEB75CB7CEF53783A22",
+      "sizeBytes": 1327
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Governance/Stages/_DIRECTORY.leeway.md",
+      "sha256": "2F14333E7029F4B9211EECCAEE517B64241353544DE8AE722C8D03C8C4517E2A",
+      "sizeBytes": 1626
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Governance/Stages/SovereignStage.cs",
+      "sha256": "F1ACAD5DDB7D9657E2760E98E035A5AA5D80B113934783B7A257AA31E1DA87DB",
+      "sizeBytes": 938
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/_DIRECTORY.leeway.md",
+      "sha256": "D33E182941BC0F522879D764AE20720171817F35A1526F4081BC9F259ECEA353",
+      "sizeBytes": 1644
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/DependencyInjection/_DIRECTORY.leeway.md",
+      "sha256": "28ED0C5E55110A7EAD27050D76677F66810573995A043E3B38704E3257DBC1C2",
+      "sizeBytes": 1704
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/DependencyInjection/InMemoryServiceCollectionExtensions.cs",
+      "sha256": "B19A10618B42D557F1220523786B51F94BF8FCBFB96E52C9B8545700687806A8",
+      "sizeBytes": 2129
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/LeeWay.TransitHub.Infrastructure.InMemory.csproj",
+      "sha256": "1F218978B03394C8D8FEE699D0F9192BE7ACC72AB7C65E3E4BBA706354729383",
+      "sizeBytes": 1522
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/Repositories/_DIRECTORY.leeway.md",
+      "sha256": "0ACA56876B5B1EEC6CE18DEF58A882074BB05EFC6789797A209A6E23D21E9230",
+      "sizeBytes": 1683
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/Repositories/InMemoryRepositories.cs",
+      "sha256": "C3FD86692375E280875DC8066F9CB17725D1C65200ADA784DE251BFFA291A993",
+      "sizeBytes": 5455
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/Storage/_DIRECTORY.leeway.md",
+      "sha256": "6B8E0B14A5242CEEB0897F488CFDCAAA724F83285BD74DCBE2EC53AF2F32064E",
+      "sizeBytes": 1668
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/Storage/InMemoryTransitStore.cs",
+      "sha256": "4842C9DC7BBEDEE08832B8B0ECCE243B216BB3CA7CF4745FF24ED71C5499C103",
+      "sizeBytes": 2755
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.Oracle/_DIRECTORY.leeway.md",
+      "sha256": "D9A4A20466E69397A62E69F6CC6C0DAEEDA9D3F91A1E3AF16D628C9603B946E7",
+      "sizeBytes": 1638
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.Oracle/LeeWay.TransitHub.Infrastructure.Oracle.csproj",
+      "sha256": "D60E6B4DC0581A85CBF1A5F004642399251A2A71C50BFD1CB68FE5AB1EA49893",
+      "sizeBytes": 1421
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.Oracle/OracleConnectionOptions.cs",
+      "sha256": "A0AB93E90BBCF0945BF2F2293343790CC6CB9151F89FBB68018F81E03CBBB9A6",
+      "sizeBytes": 1430
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.Oracle/OracleImplementationPlan.cs",
+      "sha256": "8A2D18812CB617D144BE043AD7860E8BDA18291DFEFBDFEDC86553B3ADC526B8",
+      "sizeBytes": 1265
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/_DIRECTORY.leeway.md",
+      "sha256": "B5D5F991ECBD10BD1D04D64377E5FEFC10EA12294A3959B21BC92166555E7C62",
+      "sizeBytes": 1647
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/DependencyInjection/_DIRECTORY.leeway.md",
+      "sha256": "9BAC04E9084FE601882ABB5A5A5E46DDBB66935F2BF1475AFABD9F094CEFFFAF",
+      "sizeBytes": 1368
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/DependencyInjection/SqlServerServiceCollectionExtensions.cs",
+      "sha256": "4342D9C01956030933ED171FE5D5ABC1DFB1558677A0D67D28E7D0D7C6B42ED3",
+      "sizeBytes": 3560
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/LeeWay.TransitHub.Infrastructure.SqlServer.csproj",
+      "sha256": "B37A48D9CFC75151FAC48D957FF938306FB5D4496B7A049FE964FAEB433A5694",
+      "sizeBytes": 2156
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/_DIRECTORY.leeway.md",
+      "sha256": "E2AA2EDF2F2CFE11E924CBD78D09EC1D22E3B0E72E5A2C52F76683A030717BF8",
+      "sizeBytes": 1334
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/202607250001_InitialTenantPersistence.cs",
+      "sha256": "64BDE822DF9AFE89DE1B3966A532FFF211F0D49F9C9125739CED94E024182B48",
+      "sizeBytes": 6661
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/202607250001_InitialTenantPersistence.Designer.cs",
+      "sha256": "700F05A7E38E3C1126D5C353C995F6B92E399E50E5C26117A46E0BD9F0FA99EC",
+      "sizeBytes": 1585
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/202607260001_OperationsEventsAndRealtime.cs",
+      "sha256": "1032B2DF6D00EEF87CAF386DC1FF8747BDA93D7BF2028AA64D75CD55479EC0D8",
+      "sizeBytes": 4171
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/TransitHubDbContextModelSnapshot.cs",
+      "sha256": "6AA42026037526063BD0C3A41890DC699EC94E37E2D64D078C214E85EB10C496",
+      "sizeBytes": 5591
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/_DIRECTORY.leeway.md",
+      "sha256": "9A409C4377975F1C8A7C226C4594BCB93A11BB9A4C1E68155EC163FDB4F699C8",
+      "sizeBytes": 1368
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/DesignTimeTenantContext.cs",
+      "sha256": "C3ABD6625EAAE6AE5687C93D15EABBCC8D4B24A1103907BC083CA9234AC05638",
+      "sizeBytes": 1538
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/OperationsEventRecord.cs",
+      "sha256": "E7152DBE7CF06F6E3BD7DADC375314CF02C808E1499D6F701F2376E1938163E0",
+      "sizeBytes": 1680
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/TenantSessionConnectionInterceptor.cs",
+      "sha256": "605ED2018ED501E125414D8A9137427E61BD332DC9C92CE2308433AC7701DB34",
+      "sizeBytes": 3036
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/TransitHubDbContext.cs",
+      "sha256": "3E5ACD3E688CBB6C338E294B00952B2A225E8F166FF5F73081384A47A076FE04",
+      "sizeBytes": 4654
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/TransitHubDesignTimeDbContextFactory.cs",
+      "sha256": "8994AF4693E0D22FC7E07C4A0200038E79C55F005AF41C414330C1346488DDA2",
+      "sizeBytes": 1966
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/VehicleRecord.cs",
+      "sha256": "77316EF9C7CDD8C217CDA9F8287F6F852F2CC6806E45A52E12245B3F874DB97F",
+      "sizeBytes": 1714
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/WorkOrderRecord.cs",
+      "sha256": "48CF0C0DAC98C690246398454D6DB235670C0C5790817BDC6441A34818DED90F",
+      "sizeBytes": 1743
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Repositories/_DIRECTORY.leeway.md",
+      "sha256": "A7A5C054A92354E4317928B4976466FFD33BF2655BC1A76B10A2F57EC6DEBD90",
+      "sizeBytes": 1352
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Repositories/SqlServerOperationsEventRepository.cs",
+      "sha256": "54F5355E3DD185BFC8AB5E66AC1DA5944A4AF2652600973A45D22B3CBBAC0B81",
+      "sizeBytes": 3651
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Repositories/SqlServerVehicleRepository.cs",
+      "sha256": "BB7C448F0A5A6A65E9038A0CB86DAB36BEE72095191787689C0F7EC819BA63CB",
+      "sizeBytes": 3511
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Repositories/SqlServerWorkOrderRepository.cs",
+      "sha256": "094CE9EC98A4DCC363FD1EE44ED66045A285D0EC8DCFCFAA1D80A0B6B538A80F",
+      "sizeBytes": 3680
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/SqlServerConnectionOptions.cs",
+      "sha256": "E81FCEF9FFD285EAA74371C4982B86AB1A4E5794E306F43F4038385845AA7AF8",
+      "sizeBytes": 1755
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/SqlServerImplementationPlan.cs",
+      "sha256": "2E66C5E337F3F855C864E88B2D70C026C09F30B208FDE6EB65E76CAA17D3361C",
+      "sizeBytes": 1287
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Integration.Dataverse/_DIRECTORY.leeway.md",
+      "sha256": "BDAE5B2DDD6C386854A697848DA781410C3C8D8BB2148D99811D7F580E12E35D",
+      "sizeBytes": 1638
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Integration.Dataverse/DataverseCaseClient.cs",
+      "sha256": "13B6CE4F1D126B0344F210FEFD120C0C66E3854FB1070F770D800030247B3C46",
+      "sizeBytes": 1762
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Integration.Dataverse/DataverseCaseRecord.cs",
+      "sha256": "5B652F2A47DDAB46512CDC3610B22F36133FFF29D0E508E19F75AC8220344BC7",
+      "sizeBytes": 939
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Integration.Dataverse/DataverseOptions.cs",
+      "sha256": "875A8CDD6B4BEBE8BE1933E74B08C8458F276716171AE54206BD9C567410E4BF",
+      "sizeBytes": 1376
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Integration.Dataverse/LeeWay.TransitHub.Integration.Dataverse.csproj",
+      "sha256": "5BD81F21D1A50318721D7189CA3A5699308965201DF0BD91EDA6AA29745EEF06",
+      "sizeBytes": 1326
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/_DIRECTORY.leeway.md",
+      "sha256": "C8D848CB615D50E487FBB833C0A0950AD847062C3803B82D161C43088C6667CB",
+      "sizeBytes": 1584
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/appsettings.json",
+      "sha256": "F88F10F0991B1D5B7F3C050492B88B53029C8BDEC21F52D23E604758F128EF77",
+      "sizeBytes": 826
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/LeeWay.TransitHub.Web.csproj",
+      "sha256": "FE865ACF013311D342146E2D5799931492547EED5FFF2393DE5864D6F367421C",
+      "sizeBytes": 1004
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/Program.cs",
+      "sha256": "C0192B1D3946A4D14246E7F950EC10CE1A3AE48DD3971D6E0D34FA3BFEC5F2F7",
+      "sizeBytes": 910
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/Properties/_DIRECTORY.leeway.md",
+      "sha256": "8F7E2E52C87684D8B8FADDAF7C0202875F0F13C2A7B92B37FC6626ADE05B3152",
+      "sizeBytes": 1617
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/Properties/launchSettings.json",
+      "sha256": "241EC85691B5B387F4B5791B9AFC6A4A2531A728CD8FE3026E388ECA65E20A54",
+      "sizeBytes": 1099
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/wwwroot/_DIRECTORY.leeway.md",
+      "sha256": "EABFD0E70EAB7AAE2CF5D4343AA7F1A0145210C3D2484169FAF610110DDE3097",
+      "sizeBytes": 1608
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/wwwroot/app.js",
+      "sha256": "4EE7D673AB6EFD33BDE5505820AE1873B15E90E21E495144F1BE4D7D5E33EA0F",
+      "sizeBytes": 2648
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/wwwroot/index.html",
+      "sha256": "137428369E329A4B988DF3EF78EBF40E2CA9006A75A2B76D4C554C05858ABDA0",
+      "sizeBytes": 1450
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Web/wwwroot/styles.css",
+      "sha256": "6589BA74B759DA57F91AE517AE583848DF813DE239C449E45AC31871A7A58F30",
+      "sizeBytes": 1302
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Worker/_DIRECTORY.leeway.md",
+      "sha256": "FC4735FC022F1CB44554B0DC389F38155902BC51736AA06F3E5E896150181430",
+      "sizeBytes": 1593
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Worker/appsettings.json",
+      "sha256": "D28B8B052358CF3FE091D4CD5559EC5ED52254613199794D4D5BC655FA9560E8",
+      "sizeBytes": 861
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Worker/LeeWay.TransitHub.Worker.csproj",
+      "sha256": "4FC50D26BFB259A6816B67FEC3DD3A46D49019C73DA6F6EE2039A7DB3D30B2B8",
+      "sizeBytes": 1603
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Worker/Program.cs",
+      "sha256": "9412A55AFE64D97E39ACF0634ED93B210C16D5C508EB5D3FABD2ACD732104147",
+      "sizeBytes": 916
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Worker/TransitSyncWorker.cs",
+      "sha256": "97445C5C9CAA375B3F11C46608252EDE710146FC0E6C28B1913F9EC9199ACD5A",
+      "sizeBytes": 1248
+    },
+    {
+      "path": "tests/_DIRECTORY.leeway.md",
+      "sha256": "C8F86227853A08E5C1FB3D1D99CDFD9D8B4E6B2BCB3EA5D043BE55F41A477B07",
+      "sizeBytes": 1583
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/_DIRECTORY.leeway.md",
+      "sha256": "6044B7D3756BA279B5DAF7302079CAF8AAD0760598432A8D5E507C987FD8BFDE",
+      "sizeBytes": 1691
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/ContinuousLearningArchitectureTests.cs",
+      "sha256": "DB7321F9BC3A7FBFEA2208696733CCEDB321BAE75E49D8315F329D73C4B12A20",
+      "sizeBytes": 7510
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/DependencyDirectionTests.cs",
+      "sha256": "71E2CA7104AAAD6E850F8B2157D044107D00AB8FE72A60576B65922AEF08E572",
+      "sizeBytes": 1494
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/InterviewAssessmentArchitectureTests.cs",
+      "sha256": "4436C827A11A77A8B938E6D5D92EE94CDE27386413D8C71DE66D8F3971EAA626",
+      "sizeBytes": 6895
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/LeeWay.TransitHub.ArchitectureTests.csproj",
+      "sha256": "4C57743268B7AB8AAC19D643E65B233DE77F315BD81266455BB807C26976864E",
+      "sizeBytes": 1903
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/Phase06RealtimeArchitectureTests.cs",
+      "sha256": "93FDDDF2AB3AED52F302CE1339634BD6039B80CF0B14A3FC8E88BE8E7410F7C7",
+      "sizeBytes": 5547
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/SqlServerPersistenceArchitectureTests.cs",
+      "sha256": "515538CBA075204BFEA3400F92DEED05812D3862E5A5B9C29AACA0E5FD1A1E29",
+      "sizeBytes": 2516
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/TenancyArchitectureTests.cs",
+      "sha256": "F4249D67E89BFCD3600769EC4C5CB17C22C88B5B8C99C6EEB039C52572C06A9D",
+      "sizeBytes": 1629
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/TrainingDocumentationArchitectureTests.cs",
+      "sha256": "13F0A6DC95851D38D63A25077ACB3AA7E007E489E58BF73EFB2DE38AB6CCAB3A",
+      "sizeBytes": 5079
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.IntegrationTests/_DIRECTORY.leeway.md",
+      "sha256": "203F63CD9FD7D239B2BDE4204BCE6F0BCFF966C3624649FA7E897070646A440C",
+      "sizeBytes": 1688
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.IntegrationTests/ApplicationServiceIntegrationTests.cs",
+      "sha256": "399ECEC8D6FDD452B5C5B814C30E3BD21B06320C5C93E4B06BCCB738FF0B58A2",
+      "sizeBytes": 2154
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.IntegrationTests/LeeWay.TransitHub.IntegrationTests.csproj",
+      "sha256": "B8AC434B57449D63E103C40DE251E57B514E56ABE0518A9CC5AB8F20C01471A9",
+      "sizeBytes": 2034
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.IntegrationTests/OperationsEventSqlServerIntegrationTests.cs",
+      "sha256": "4CF99FC96E13622325032153913D545ADBEDC349C08E30E229BD0A72A3972F2A",
+      "sizeBytes": 4386
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.IntegrationTests/SqlServerDatabaseIntegrationTests.cs",
+      "sha256": "EE132BB363C7ACBFC7926D2608C5CA897F0FF6FF1CDC60901681B6B8E852FB9C",
+      "sizeBytes": 4644
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.RegressionTests/_DIRECTORY.leeway.md",
+      "sha256": "5F8DC1DFCE8E03BEEE1DF63998F5AAD5529D35B66471A4D0DB6CB4AAB16567B5",
+      "sizeBytes": 1685
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.RegressionTests/LeeWay.TransitHub.RegressionTests.csproj",
+      "sha256": "7482504D4AECABB0D165C6F5E7907888D6A574CCC404494C63C0E050751B4295",
+      "sizeBytes": 1891
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.RegressionTests/VehicleRegressionTests.cs",
+      "sha256": "9B4A01DCB6EE826879AE4AA03DCF6AB81B6D3A793A095B06C83737A7D25BD023",
+      "sizeBytes": 1255
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/_DIRECTORY.leeway.md",
+      "sha256": "472B66C2BEA27A69BEAAF02F22EEF703A5E6015DA9C520A67E1CBF5B19B04D69",
+      "sizeBytes": 1679
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/AuthorizationBoundaryTests.cs",
+      "sha256": "6C9C09226039EE98AA4C907A467FED1739DCE17E455E294E5C46CA251196FEE2",
+      "sizeBytes": 1976
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/ConfigurationSecurityTests.cs",
+      "sha256": "746B98E22271D21D0B624B00706D5369B945212EEB7F25519FC2586E04338731",
+      "sizeBytes": 1352
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/LeeWay.TransitHub.SecurityTests.csproj",
+      "sha256": "CA894C555FE558EA8765BEC120C1C930D729E01C8D3DE1848B8FC36CF6151495",
+      "sizeBytes": 2015
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/RealtimeOperationsSecurityTests.cs",
+      "sha256": "82918931A74F14B13E1919089A25D7460E1AA84AF9E489F71B4A7FE39D348FE3",
+      "sizeBytes": 2345
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/SqlServerTenantSecurityTests.cs",
+      "sha256": "1E68835CCE817E8E0360106C5FCAE7060869F45BC39EE1C292D3DB2C2C3DF651",
+      "sizeBytes": 3003
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/TenantSecurityTests.cs",
+      "sha256": "EC2F796BC7F5E86848A27E6924B55F2B9AD808A07B8A9A587E3442B38A3BDB4D",
+      "sizeBytes": 1409
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/_DIRECTORY.leeway.md",
+      "sha256": "F78C3E444F923F0F7522F19BC3D5F3B4075A8EA4C21B56044106414F78AA0964",
+      "sizeBytes": 1667
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/AuthorizationCatalogTests.cs",
+      "sha256": "A85396676819449D44F19BC03BCB3C3074ACD6E7481FB75892D23319B273CF03",
+      "sizeBytes": 2040
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/LeeWay.TransitHub.UnitTests.csproj",
+      "sha256": "03F412AE2590F44DEB137522F043B1C826B3350644F7908AF21969C427DEA5B1",
+      "sizeBytes": 1999
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/OperationsEventServiceTests.cs",
+      "sha256": "F0CA41CFBDCB8967AC5D1525AC2FE1FF31CA21C1186798DC0FFF68B0D9CD94FC",
+      "sizeBytes": 3956
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/OperationsEventTests.cs",
+      "sha256": "225C44774185ECB06961A74CA9B2A402A17644857CC36F2EB5FDFDAFA1A6227F",
+      "sizeBytes": 2618
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/ProductProfileTests.cs",
+      "sha256": "D7C326D05D6537E9837ECB350D2171B962E453A7D342F1900C0C451FF307B6B0",
+      "sizeBytes": 1818
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/SqlServerOptionsTests.cs",
+      "sha256": "E650F318F9D7E37863D52341FD606592C4507D11DA688C68141AC201B21A2CAF",
+      "sizeBytes": 1616
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/TenantTests.cs",
+      "sha256": "A2CBFC2F3A90D87E3C41924A6F8C864F2255AF79AEA98BF86AB9D6EE208A5109",
+      "sizeBytes": 2233
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/VehicleTests.cs",
+      "sha256": "D636C0BDE7869443142C04C3D94D9232CD079F5ACBDB2458DA1FE66887AA272E",
+      "sizeBytes": 1782
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/WorkOrderTests.cs",
+      "sha256": "9DA602F0997AD85127A7D71A4DB82C8063B7A04830E0E1B72FE90DA1851F487F",
+      "sizeBytes": 1487
+    }
+  ]
+}

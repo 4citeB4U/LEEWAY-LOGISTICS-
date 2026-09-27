@@ -1,0 +1,49 @@
+<!--
+LEEWAY ENTERPRISE FILE HEADER
+File: index.html
+Path: src/LeeWay.TransitHub.Web/wwwroot/index.html
+Project: LeeWay Enterprise Transit Hub
+Layer: Web / User Interface
+Purpose: Provide the browser dashboard document structure.
+Inputs: Dashboard API responses and stylesheet.
+Outputs: Rendered operations dashboard.
+Mutation Scope: Browser DOM only.
+Dependencies: styles.css, app.js, and API endpoints.
+Tests: Manual browser check.
+Security Impact: Renders fictional training data.
+Database Impact: No direct database access.
+Sovereign Cycle: Perception -> Synthesis -> Lee Prime
+Status: ACTIVE / GOVERNED
+Human Comprehension: REQUIRED
+Owner: Leonard Lee / Leeway Industries
+Version: 1.0.0
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LeeWay Enterprise Transit Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>LeeWay Enterprise Transit Hub</h1>
+    <p>Governed enterprise transit operations dashboard</p>
+  </header>
+  <main>
+    <section class="status"><strong id="api-status">Checking API...</strong></section>
+    <section id="summary" class="grid"></section>
+    <section>
+      <h2>Vehicles</h2>
+      <div id="vehicles"></div>
+    </section>
+    <section>
+      <h2>Open Work Orders</h2>
+      <div id="work-orders"></div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

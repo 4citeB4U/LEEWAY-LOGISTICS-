@@ -1,0 +1,28 @@
+<!--
+  LEEWAY ENTERPRISE FILE HEADER
+  File: LeeWay.TransitHub.Web.csproj
+  Path: src/LeeWay.TransitHub.Web/LeeWay.TransitHub.Web.csproj
+  Project: LeeWay Enterprise Transit Hub
+  Layer: MSBuild Project Definition
+  Purpose: Declare compilation, dependencies, and project identity.
+  Inputs: Source files, project references, and package references.
+  Outputs: Compiled .NET assembly.
+  Mutation Scope: Build metadata only.
+  Dependencies: Directory.Build.props and referenced projects.
+  Tests: dotnet restore and build.
+  Security Impact: References affect supply-chain trust.
+  Database Impact: As declared by owning project.
+  Sovereign Cycle: Structure -> Execution -> Veritas
+  Status: ACTIVE / GOVERNED
+  Human Comprehension: REQUIRED
+  Owner: Leonard Lee / Leeway Industries
+  Version: 1.0.0
+-->
+
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>LeeWay.TransitHub.Web</RootNamespace>
+    <AssemblyName>LeeWay.TransitHub.Web</AssemblyName>
+  </PropertyGroup>
+
+</Project>

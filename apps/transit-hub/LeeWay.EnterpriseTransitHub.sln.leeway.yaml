@@ -1,0 +1,26 @@
+# LEEWAY ENTERPRISE FILE HEADER
+_leewayHeader:
+  file: LeeWay.EnterpriseTransitHub.sln.leeway.yaml
+  path: LeeWay.EnterpriseTransitHub.sln.leeway.yaml
+  project: LeeWay Enterprise Transit Hub
+  layer: Governance / Solution Sidecar
+  purpose: Govern the generated Visual Studio solution without injecting LeeWay metadata into the solution grammar.
+  inputs: LeeWay.EnterpriseTransitHub.sln and the 15 registered project references.
+  outputs: Sidecar authority for solution provenance, governance, and verification.
+  mutationScope: Governance metadata only; does not alter the solution file.
+  dependencies: dotnet sln, Visual Studio solution parser, and LeeWay governance verification.
+  tests: Sidecar authority self-test, dotnet sln list, restore, build, and architecture tests.
+  securityImpact: None directly; preserves trustworthy project composition evidence.
+  databaseImpact: None directly; the solution continues to register the SQL Server infrastructure project.
+  sovereignCycle:
+    - Origin
+    - Structure
+    - Veritas
+    - Echo
+  status: ACTIVE_GOVERNED
+  humanComprehension: REQUIRED
+  owner: Leonard Lee / Leeway Industries
+  version: 5.0.3
+governedFile: LeeWay.EnterpriseTransitHub.sln
+authorityMode: EXTERNAL_SIDECAR
+reason: The .sln file is a tool-managed structured solution document and remains byte-compatible with dotnet and Visual Studio.

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Logistics OS | Terminal Operations</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#c1c7d0",
+                    "on-primary-fixed": "#161c23",
+                    "surface-container-high": "#282a2e",
+                    "tertiary-fixed": "#e0e2ec",
+                    "on-error": "#690005",
+                    "surface-container-highest": "#333539",
+                    "primary-container": "#30363d",
+                    "outline": "#8f9195",
+                    "error": "#ffb4ab",
+                    "surface-tint": "#c1c7d0",
+                    "on-secondary-container": "#b1b5bf",
+                    "on-error-container": "#ffdad6",
+                    "tertiary-container": "#32353d",
+                    "surface-container-low": "#1a1c20",
+                    "on-tertiary-fixed": "#191c23",
+                    "on-primary": "#2b3138",
+                    "secondary-fixed-dim": "#c2c7d0",
+                    "surface-container-lowest": "#0c0e12",
+                    "inverse-surface": "#e2e2e8",
+                    "secondary-fixed": "#dee2ec",
+                    "secondary": "#c2c7d0",
+                    "outline-variant": "#44474b",
+                    "on-primary-fixed-variant": "#41474f",
+                    "on-primary-container": "#999fa7",
+                    "inverse-on-surface": "#2f3035",
+                    "on-tertiary": "#2d3038",
+                    "surface-bright": "#37393e",
+                    "surface": "#111318",
+                    "primary-fixed-dim": "#c1c7d0",
+                    "on-tertiary-container": "#9b9da7",
+                    "tertiary-fixed-dim": "#c4c6d0",
+                    "secondary-container": "#42474f",
+                    "on-secondary-fixed": "#171c23",
+                    "surface-container": "#1e2024",
+                    "on-tertiary-fixed-variant": "#44474f",
+                    "error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#42474f",
+                    "on-secondary": "#2c3138",
+                    "inverse-primary": "#595f67",
+                    "background": "#111318",
+                    "surface-dim": "#111318",
+                    "on-surface-variant": "#c5c6cb",
+                    "tertiary": "#c4c6d0",
+                    "surface-variant": "#333539",
+                    "on-surface": "#e2e2e8",
+                    "on-background": "#e2e2e8",
+                    "primary-fixed": "#dde3ec",
+                    "status-green": "#4ade80",
+                    "status-amber": "#fbbf24",
+                    "status-red": "#f87171"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-md": "12px",
+                    "stack-lg": "20px",
+                    "container-padding": "12px",
+                    "stack-sm": "4px",
+                    "gutter": "8px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "data-mono": ["JetBrains Mono"],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "data-mono": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                    "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #111318; }
+        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+        .bay-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 8px;
+        }
+        .hud-border {
+            border: 1px solid rgba(48, 54, 61, 0.9);
+            box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.05);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-container">
+<!-- Top Navigation Bar -->
+<header class="w-full top-0 sticky bg-surface border-b border-outline-variant flex items-center justify-between px-container-padding h-14 w-full z-50">
+<div class="flex items-center gap-stack-md">
+<span class="material-symbols-outlined text-primary cursor-pointer active:opacity-80">menu</span>
+<h1 class="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface">Logistics OS</h1>
+</div>
+<div class="flex items-center gap-stack-lg">
+<div class="hidden md:flex items-center gap-stack-md">
+<span class="text-primary font-label-caps text-label-caps px-2 py-1 border border-primary-container rounded">TERMINAL_04</span>
+<span class="text-on-surface-variant font-data-mono text-data-mono">14:22:09 UTC</span>
+</div>
+<div class="flex items-center gap-2 cursor-pointer hover:bg-surface-container-high p-1 rounded transition-colors">
+<span class="text-on-surface-variant font-body-sm text-body-sm mr-2">Agent Lee AI</span>
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-primary text-[18px]">smart_toy</span>
+</div>
+</div>
+</div>
+</header>
+<div class="flex h-[calc(100vh-3.5rem)] overflow-hidden">
+<!-- Sidebar Drawer (Desktop) -->
+<aside class="hidden md:flex flex-col h-full w-72 bg-surface-container-low border-r border-outline-variant py-stack-lg shrink-0">
+<div class="px-container-padding mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface">Operational Modules</h2>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 bg-secondary-container text-on-secondary-container font-semibold rounded hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-md text-body-md">Fleet Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant rounded hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-body-md text-body-md">Mapping</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant rounded hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant rounded hover:bg-surface-container-highest transition-all duration-150 border-l-2 border-primary" href="#">
+<span class="material-symbols-outlined">view_quilt</span>
+<span class="font-body-md text-body-md">Bay Control</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant rounded hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-body-md text-body-md">Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant rounded hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">ROI Analysis</span>
+</a>
+</nav>
+<div class="px-container-padding pt-stack-lg border-t border-outline-variant">
+<div class="bg-surface-container rounded p-3 hud-border">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label-caps text-label-caps text-primary uppercase">System Integrity</span>
+</div>
+<div class="text-data-mono text-status-green">99.98% NOMINAL</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-background p-container-padding">
+<!-- Dashboard Header & AI Insight -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-md mb-stack-lg">
+<div class="lg:col-span-2 flex flex-col justify-center">
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest">Active Operations</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Terminal Bay Control Panel</h2>
+</div>
+<!-- Agent Lee Intelligence Overlay -->
+<div class="bg-[rgba(48,54,61,0.9)] border border-primary/20 p-stack-md rounded flex items-start gap-stack-md relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-16 h-16 opacity-10">
+<span class="material-symbols-outlined text-[64px] text-primary">psychology</span>
+</div>
+<div class="p-2 bg-primary-container rounded">
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-primary uppercase block mb-1">Lee AI Insight</span>
+<p class="text-body-sm text-on-surface leading-tight">
+                            Bay 04 dwell time is exceeding threshold by <span class="text-status-amber font-data-mono">12.4m</span>. Recommend rerouting inbound <span class="font-data-mono">ASSET_882</span> to Bay 09 for optimal throughput.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Global Stats Bar -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-stack-lg">
+<div class="bg-surface-container-low border border-outline-variant p-2 flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">Active Bays</span>
+<span class="font-data-mono text-headline-md">08<span class="text-on-surface-variant text-body-sm">/12</span></span>
+</div>
+<div class="bg-surface-container-low border border-outline-variant p-2 flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">Avg. Load Speed</span>
+<span class="font-data-mono text-headline-md">84.2 <span class="text-on-surface-variant text-body-sm">units/h</span></span>
+</div>
+<div class="bg-surface-container-low border border-outline-variant p-2 flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">Total Throughput</span>
+<span class="font-data-mono text-headline-md">1,402 <span class="text-on-surface-variant text-body-sm">t</span></span>
+</div>
+<div class="bg-surface-container-low border border-outline-variant p-2 flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-1">Alerts</span>
+<span class="font-data-mono text-headline-md text-status-amber">02</span>
+</div>
+</div>
+<!-- Bay Management Grid -->
+<div class="bay-grid">
+<!-- Bay 01: Active Loading -->
+<div class="bg-surface-container-low border border-outline-variant rounded p-stack-md flex flex-col gap-stack-sm hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<div>
+<div class="text-headline-md font-headline-md">BAY 01</div>
+<div class="text-data-mono text-primary text-[11px]">ASSET_TX992</div>
+</div>
+<span class="px-2 py-0.5 bg-status-green/10 text-status-green border border-status-green/20 font-label-caps text-[10px] rounded">LOADING</span>
+</div>
+<div class="mt-stack-sm">
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-on-surface-variant">Load Progress</span>
+<span class="font-data-mono">68%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-status-green" style="width: 68%"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-2 border-t border-outline-variant/30 pt-2">
+<div>
+<div class="text-label-caps text-on-surface-variant uppercase">Type</div>
+<div class="text-body-sm flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">arrow_outward</span> Outbound</div>
+</div>
+<div>
+<div class="text-label-caps text-on-surface-variant uppercase">Dwell Time</div>
+<div class="text-body-sm font-data-mono">00:42:15</div>
+</div>
+</div>
+</div>
+<!-- Bay 02: Delayed Amber Alert -->
+<div class="bg-surface-container-low border border-status-amber/40 rounded p-stack-md flex flex-col gap-stack-sm hover:border-status-amber transition-colors">
+<div class="flex justify-between items-start">
+<div>
+<div class="text-headline-md font-headline-md">BAY 02</div>
+<div class="text-data-mono text-primary text-[11px]">ASSET_TX451</div>
+</div>
+<span class="px-2 py-0.5 bg-status-amber/10 text-status-amber border border-status-amber/20 font-label-caps text-[10px] rounded">DELAYED</span>
+</div>
+<div class="mt-stack-sm">
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-on-surface-variant">Load Progress</span>
+<span class="font-data-mono">92%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-status-amber" style="width: 92%"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-2 border-t border-outline-variant/30 pt-2">
+<div>
+<div class="text-label-caps text-on-surface-variant uppercase">Type</div>
+<div class="text-body-sm flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">call_received</span> Inbound</div>
+</div>
+<div>
+<div class="text-label-caps text-on-surface-variant uppercase">Dwell Time</div>
+<div class="text-body-sm font-data-mono text-status-amber">02:12:05</div>
+</div>
+</div>
+</div>
+<!-- Bay 03: Available Green -->
+<div class="bg-surface-container-low border border-outline-variant border-dashed rounded p-stack-md flex flex-col justify-center items-center gap-2 opacity-60 hover:opacity-100 transition-opacity min-h-[160px]">
+<span class="material-symbols-outlined text-[32px] text-status-green">add_circle</span>
+<div class="text-headline-md font-headline-md">BAY 03</div>
+<div class="text-label-caps text-status-green uppercase">Ready for Docking</div>
+</div>
+<!-- Bay 04: Processing -->
+<div class="bg-surface-container-low border border-outline-variant rounded p-stack-md flex flex-col gap-stack-sm hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<div>
+<div class="text-headline-md font-headline-md">BAY 04</div>
+<div class="text-data-mono text-primary text-[11px]">ASSET_TX104</div>
+</div>
+<span class="px-2 py-0.5 bg-primary-container text-on-primary-container border border-outline-variant font-label-caps text-[10px] rounded">UNLOADING</span>
+</div>
+<div class="mt-stack-sm">
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-on-surface-variant">Progress</span>
+<span class="font-data-mono">15%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 15%"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-2 border-t border-outline-variant/30 pt-2">
+<div>
+<div class="text-label-caps text-on-surface-variant uppercase">Type</div>
+<div class="text-body-sm flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">call_received</span> Inbound</div>
+</div>
+<div>
+<div class="text-label-caps text-on-surface-variant uppercase">Dwell Time</div>
+<div class="text-body-sm font-data-mono">00:08:44</div>
+</div>
+</div>
+</div>
+<!-- Bay 05: Maintenance Red Alert -->
+<div class="bg-surface-container-low border border-status-red/40 rounded p-stack-md flex flex-col gap-stack-sm hover:border-status-red transition-colors">
+<div class="flex justify-between items-start">
+<div>
+<div class="text-headline-md font-headline-md">BAY 05</div>
+<div class="text-data-mono text-status-red text-[11px]">FAULT_SEC_A1</div>
+</div>
+<span class="px-2 py-0.5 bg-status-red/10 text-status-red border border-status-red/20 font-label-caps text-[10px] rounded">OFFLINE</span>
+</div>
+<div class="mt-stack-sm py-4 text-center">
+<span class="material-symbols-outlined text-status-red text-[32px]">warning</span>
+<div class="text-label-caps text-on-surface mt-1">Sensor Failure Detected</div>
+</div>
+<div class="grid grid-cols-1 gap-2 mt-2 border-t border-outline-variant/30 pt-2">
+<div class="flex justify-between">
+<div class="text-label-caps text-on-surface-variant uppercase">Downtime</div>
+<div class="text-body-sm font-data-mono text-status-red">04:55:22</div>
+</div>
+</div>
+</div>
+<!-- Bay 06: Finalizing -->
+<div class="bg-surface-container-low border border-outline-variant rounded p-stack-md flex flex-col gap-stack-sm hover:border-primary transition-colors">
+<div class="flex justify-between items-start">
+<div>
+<div class="text-headline-md font-headline-md">BAY 06</div>
+<div class="text-data-mono text-primary text-[11px]">ASSET_TX011</div>
+</div>
+<span class="px-2 py-0.5 bg-status-green/10 text-status-green border border-status-green/20 font-label-caps text-[10px] rounded">COMPLETE</span>
+</div>
+<div class="mt-stack-sm">
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-on-surface-variant">Progress</span>
+<span class="font-data-mono">100%</span>
+</div>
+<div class="w-full h-1.5 bg-status-green rounded-full overflow-hidden"></div>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-2 border-t border-outline-variant/30 pt-2">
+<div>
+<div class="text-label-caps text-on-surface-variant uppercase">Type</div>
+<div class="text-body-sm flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">arrow_outward</span> Outbound</div>
+</div>
+<div>
+<div class="text-label-caps text-on-surface-variant uppercase">Dwell Time</div>
+<div class="text-body-sm font-data-mono">01:02:18</div>
+</div>
+</div>
+</div>
+<!-- Additional Placeholder Bays (Repeated Pattern) -->
+<!-- Bay 07-12 are similar, showing diversity of states -->
+<div class="bg-surface-container-low border border-outline-variant rounded p-stack-md flex flex-col gap-stack-sm opacity-90">
+<div class="flex justify-between items-start">
+<div class="text-headline-md font-headline-md">BAY 07</div>
+<span class="px-2 py-0.5 bg-primary-container text-on-primary-container border border-outline-variant font-label-caps text-[10px] rounded">INCOMING</span>
+</div>
+<div class="text-data-mono text-primary text-[11px]">ETA: 4m (ASSET_991)</div>
+<div class="mt-stack-sm py-4 bg-background/50 rounded flex justify-center items-center">
+<span class="material-symbols-outlined animate-pulse text-on-surface-variant">local_shipping</span>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant border-dashed rounded p-stack-md flex flex-col justify-center items-center gap-2 opacity-60 min-h-[160px]">
+<div class="text-headline-md font-headline-md">BAY 08</div>
+<div class="text-label-caps text-status-green uppercase">Available</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded p-stack-md flex flex-col gap-stack-sm">
+<div class="flex justify-between items-start">
+<div class="text-headline-md font-headline-md">BAY 09</div>
+<span class="px-2 py-0.5 bg-status-green/10 text-status-green border border-status-green/20 font-label-caps text-[10px] rounded">LOADING</span>
+</div>
+<div class="text-data-mono text-primary text-[11px]">ASSET_TX220</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden mt-1">
+<div class="h-full bg-status-green" style="width: 32%"></div>
+</div>
+<div class="text-body-sm font-data-mono mt-2">Dwell: 00:15:30</div>
+</div>
+<!-- Repeat empty for 10, 11, 12 -->
+<div class="bg-surface-container-low border border-outline-variant border-dashed rounded p-stack-md flex flex-col justify-center items-center gap-2 opacity-60 min-h-[160px]">
+<div class="text-headline-md font-headline-md">BAY 10</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant border-dashed rounded p-stack-md flex flex-col justify-center items-center gap-2 opacity-60 min-h-[160px]">
+<div class="text-headline-md font-headline-md">BAY 11</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant border-dashed rounded p-stack-md flex flex-col justify-center items-center gap-2 opacity-60 min-h-[160px]">
+<div class="text-headline-md font-headline-md">BAY 12</div>
+</div>
+</div>
+<!-- Detailed Terminal Map (Simplified HUD Schematic) -->
+<div class="mt-stack-lg bg-surface-container-low border border-outline-variant rounded-lg overflow-hidden relative min-h-[300px]">
+<div class="absolute top-4 left-4 z-10 flex flex-col gap-2">
+<div class="flex items-center gap-2 bg-surface p-2 border border-outline-variant rounded">
+<span class="material-symbols-outlined text-[16px] text-primary">visibility</span>
+<span class="font-label-caps text-label-caps uppercase">Tactical Overlay</span>
+</div>
+</div>
+<!-- Background Map Element -->
+<div class="w-full h-[400px] bg-cover bg-center grayscale contrast-125 opacity-40" data-alt="A bird's eye view schematic of a logistics terminal yard with numbered loading bays, dark metallic surfaces, neon status indicator lines in green and red, and high-contrast industrial lighting. The aesthetic is clean and technical, reminiscent of a high-tech control room display with glowing data overlays and architectural floor plans in a midnight-blue and slate-gray palette." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDx-1ZobfyriKmx98twqykASca7GFRH3RG-FrRFFWAwSR2POwSFjQA4GjKmqz6VEBm-wSixUm5ZVk1AGqefmd9yUfXbZxBQVnzOP4J0x0Os70EqrAKJnEVZ4N8eN27bic5_Y-8clAGRLxEOXDw-hNhnwIAbo_r20Q-tR2fhIabqybzbcvXDeG9ONB8qUvNapVr6NgxYpQocyueJdWXVptt1aSqmiGC61r74AvpLAnka0veCQ3Dg0NAY1crlEL5-a03mWuKzmnSENpCc')"></div>
+<!-- SVG HUD Overlay for Schematic Lines -->
+<div class="absolute inset-0 pointer-events-none">
+<svg class="w-full h-full opacity-30" viewbox="0 0 1000 400">
+<line stroke="#c1c7d0" stroke-dasharray="4" stroke-width="1" x1="50" x2="950" y1="50" y2="50"></line>
+<line stroke="#c1c7d0" stroke-dasharray="4" stroke-width="1" x1="50" x2="950" y1="350" y2="350"></line>
+<rect fill="none" height="240" stroke="#4ade80" stroke-width="1" width="80" x="100" y="80"></rect>
+<rect fill="none" height="240" stroke="#fbbf24" stroke-width="1" width="80" x="200" y="80"></rect>
+<rect fill="none" height="240" stroke="#30363d" stroke-width="1" width="80" x="300" y="80"></rect>
+<rect fill="none" height="240" stroke="#44474b" stroke-width="1" width="80" x="400" y="80"></rect>
+</svg>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Bottom Navigation Bar (Responsive Pivot) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 bg-surface-container border-t border-outline-variant flex justify-around items-center px-4 z-50">
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-[8px] uppercase mt-1">Diagnostics</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl py-1 px-4 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-[8px] uppercase mt-1">Active Fleet</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-[8px] uppercase mt-1">Schedule</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-caps text-[8px] uppercase mt-1">Insights</span>
+</button>
+</nav>
+<!-- Micro-interaction for real-time simulation -->
+<script>
+        // Simple script to simulate ticking clocks and dynamic data
+        function updateClocks() {
+            const timeElements = document.querySelectorAll('.font-data-mono');
+            const now = new Date();
+            const timeString = now.toISOString().substr(11, 8) + ' UTC';
+            
+            // Update the main header clock only
+            const headerClock = document.querySelector('header .font-data-mono');
+            if (headerClock) headerClock.textContent = timeString;
+        }
+        setInterval(updateClocks, 1000);
+
+        // Randomly simulate loading bar movement
+        function simulateLoading() {
+            const progressBars = document.querySelectorAll('.h-full.bg-status-green, .h-full.bg-primary');
+            progressBars.forEach(bar => {
+                if(bar.style.width === '100%') return;
+                let currentWidth = parseFloat(bar.style.width);
+                if(currentWidth < 98) {
+                    let nextWidth = currentWidth + (Math.random() * 0.5);
+                    bar.style.width = nextWidth + '%';
+                    const label = bar.parentElement.previousElementSibling.querySelector('.font-data-mono');
+                    if(label) label.textContent = Math.floor(nextWidth) + '%';
+                }
+            });
+        }
+        setInterval(simulateLoading, 3000);
+    </script>
+</body></html>

@@ -1,0 +1,324 @@
+{
+  "_leewayHeader": {
+    "file": "phase-03-artifact-manifest.json",
+    "path": "governance/registries/phase-03-artifact-manifest.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Governance / Phase Artifact Manifest",
+    "purpose": "Record every deterministic Phase 03 patch file and hash.",
+    "inputs": "Generated Phase 03 files.",
+    "outputs": "Verifiable patch inventory.",
+    "mutationScope": "Registry metadata only.",
+    "dependencies": "Phase 03 patch payload.",
+    "tests": "File count, source existence, and SHA-256 verification.",
+    "securityImpact": "Integrity evidence only.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Structure",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "PASS",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "3.0.0"
+  },
+  "phase": "03_TRAINING_MANUAL_AND_PERSONAL_LEARNING_FOUNDATION",
+  "generatedFileCount": 59,
+  "files": [
+    {
+      "path": ".leeway/project.manifest.json",
+      "sha256": "384ECE4AE35DBCE86819B1F6F01EB5EC5F1BF872CFC06F50BD08920CC4967A81",
+      "sizeBytes": 4221
+    },
+    {
+      "path": "docs/architecture/ADR-0005-DOCUMENTATION-AS-PRODUCT-AND-PRIVATE-LEARNING-SEPARATION.md",
+      "sha256": "DCF15915A7EC62FE61261F8EAB21E8D3858873EDC8818F25A07114F50709808F",
+      "sizeBytes": 2280
+    },
+    {
+      "path": "docs/evidence/PHASE-03-DOCUMENTATION-AND-LEARNING-SOURCE-EVIDENCE.md",
+      "sha256": "4DEA4C6C5FE72AA1D7DBFE73EBE60BCF45CDF253312F2584383D40A066E022AC",
+      "sizeBytes": 2724
+    },
+    {
+      "path": "docs/learning/LESSON-03-DOCUMENTATION-PROCTORING-AND-FAMILY-TEACHING.md",
+      "sha256": "4FDF2EDC250DA0B595C209C9C065304D9072F44CA0F9B3CA8AE7CE6B5C8FEDD3",
+      "sizeBytes": 2727
+    },
+    {
+      "path": "docs/private-learning/_DIRECTORY.leeway.md",
+      "sha256": "86CCDA35C00F9E91E2D677CB0313414135A249D9BBDD3C3A4F01B0751E833939",
+      "sizeBytes": 2069
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/INTERVIEW-DEFENSE-WORKBOOK.md",
+      "sha256": "29D68B77F6CF61C53D5F935944778A882068A1E0776F414924B9E579A6D4A826",
+      "sizeBytes": 1977
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-01-WORKBOOK.md",
+      "sha256": "B873FDB6FD3F8EDACBD3E10B3BEE4C5185A48274A74C059A124BC324BA5D349D",
+      "sizeBytes": 4262
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-02-WORKBOOK.md",
+      "sha256": "40D3E5226115FD1672772C57EFF79275D5F2A1448BA3484908A3690DFE006685",
+      "sizeBytes": 4864
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/MASTER-QUESTION-BANK.md",
+      "sha256": "F62C237441F3400DC9A3086E17C03EA43BC1A8DA813D3C48D78FF4DA5242A389",
+      "sizeBytes": 10528
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/README.md",
+      "sha256": "703227D9FADB10B1CEFAA11B36CEA0EE053EE734EE089F4A9F205188B9B515DC",
+      "sizeBytes": 1782
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/_DIRECTORY.leeway.md",
+      "sha256": "FA3993282252B7B476A4D57ADAD4F09CB857B5A01C031E693B6B71F1B371507A",
+      "sizeBytes": 2017
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/FAMILY-TEACHING-GUIDE.md",
+      "sha256": "F286BF83A616C06B0E710E65AA63433FEB4284A2AEDB86766324F1CAA495EBDD",
+      "sizeBytes": 2111
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/_DIRECTORY.leeway.md",
+      "sha256": "8168CF5462046DB68735CD0DD1D749BDA1D0F3D91E77FB3318DA6F4AB9907DD8",
+      "sizeBytes": 2099
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/instructor/ANSWER-RUBRICS.md",
+      "sha256": "865D3879D2C339CA567ABAE78A0B3FEEE609749D26D96579A02B0ACAC93B98CC",
+      "sizeBytes": 13114
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/instructor/_DIRECTORY.leeway.md",
+      "sha256": "831DB6BBBD5DCCDA883771643E3818EF92F04EC7C2BBF88C861CC4DC6EEF8363",
+      "sizeBytes": 2056
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/learning-profile.json",
+      "sha256": "5D09F4F59F18618E98D7E5720C64818224B1D6F06D28CCCA0C0C12CE7F53DB93",
+      "sizeBytes": 1394
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/progress-tracker.json",
+      "sha256": "40C7B68AD9BAA633B6139EAC7D33CB2A31B22EC1BB8A917C7463B3C74C7903C9",
+      "sizeBytes": 1258
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/question-bank.json",
+      "sha256": "7CE44AB6DA9063A2ED05F606A0943BF568157983B1AE6C51B054CC14E1DEA20A",
+      "sizeBytes": 11411
+    },
+    {
+      "path": "docs/requirements/REQ-0003-TRAINING-MANUAL-PERSONAL-LEARNING-AND-AGENT-PROCTORING.md",
+      "sha256": "F3F5A85730D6F6BDEFF749BA5BF092276BA3E46231456D77A72521466F160540",
+      "sizeBytes": 1979
+    },
+    {
+      "path": "docs/roadmap/TRAINING-MANUAL-CONTENT-ROADMAP.md",
+      "sha256": "518FA8A75474ABC43CC2E2588B49E9B85E702FB1E0DE9E1A977E9AE18396C76E",
+      "sizeBytes": 2058
+    },
+    {
+      "path": "docs/training-manual/00-front-matter/TITLE-PAGE-AND-HOW-TO-USE-THIS-MANUAL.md",
+      "sha256": "92CBE798F56EE844E3C063A405FF8DB6EBBC409ECC80BBAC2733184B3D5BBD41",
+      "sizeBytes": 2953
+    },
+    {
+      "path": "docs/training-manual/00-front-matter/_DIRECTORY.leeway.md",
+      "sha256": "FFFC670FA548BD7189E8DC0F2FB269E5978AF802CA55619D0F79795ABF332804",
+      "sizeBytes": 2026
+    },
+    {
+      "path": "docs/training-manual/01-product-orientation/CHAPTER-01-PRODUCT-MISSION-AND-AUDIENCE.md",
+      "sha256": "C2B93A2C459F2D0E46475B0B45325420B9633136CD350D02B8AAFAE29020DADA",
+      "sizeBytes": 12058
+    },
+    {
+      "path": "docs/training-manual/01-product-orientation/CHAPTER-02-TRANSPORTATION-OPERATING-MODELS.md",
+      "sha256": "A85380DD1A45EF7842EC9BD5E1B0C232C965D3FD39EA3D28FEDA409422A3CCBD",
+      "sizeBytes": 11607
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/CHAPTER-03-ROLES-RESPONSIBILITIES-AND-SEPARATION-OF-DUTIES.md",
+      "sha256": "B1E457FF1AAB85FF2F342D1D5F26691A0E115FD19D3B73FE2126CDAAB584AC01",
+      "sizeBytes": 11430
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/CHAPTER-04-END-TO-END-OPERATING-DAY.md",
+      "sha256": "C2CE5093662CAF46FE54B6B8F8B18429623769BBB20C11DD186BAAEB6276C20D",
+      "sizeBytes": 11444
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-05-TENANTS-ORGANIZATION-UNITS-AND-OWNERSHIP.md",
+      "sha256": "D054F49BC2A9AA292D151FC3395A1C891F48522C34C06815624B1A10AB638E40",
+      "sizeBytes": 11600
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-06-SAAS-DEPLOYMENT-PROFILES-AND-ENTITLEMENTS.md",
+      "sha256": "D7C282E63C653A006FF8728CE99D0BB9AF74A8ABF4D77225A207A562975673C2",
+      "sizeBytes": 11557
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/CHAPTER-07-VEHICLE-DOMAIN-AND-BUSINESS-INVARIANTS.md",
+      "sha256": "9E5D9A8CA9FFDF9BD3CCF1A093184895869F262E3B2C104C362A30E5DC7BD4FD",
+      "sizeBytes": 11455
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/CHAPTER-08-VEHICLE-REQUEST-PATH-LAB.md",
+      "sha256": "16BB81772BB760D6B5E486B6DB99B69E274CC3E8448596429A8061661CD306CD",
+      "sizeBytes": 11441
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/CHAPTER-09-DISPATCH-ROUTES-TRIPS-AND-ASSIGNMENTS.md",
+      "sha256": "0A07E576A98AD4F4F20FDD4D6707CCF437905FEB8894B75708C24C3EE78D29D8",
+      "sizeBytes": 11291
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/CHAPTER-10-EXCEPTION-AND-COMMUNICATION-WORKFLOWS.md",
+      "sha256": "8A43CCEE1CD5F6BDC09EB5B0FE9A2F0114EFDAA515CD6C8508F08F226FF9A877",
+      "sizeBytes": 11394
+    },
+    {
+      "path": "docs/training-manual/06-maintenance-and-inspections/CHAPTER-11-WORK-ORDERS-MAINTENANCE-AND-INSPECTIONS.md",
+      "sha256": "986DA1A126945F069938D40ABC9C614A78E39035BD0A0256707CE7F9ABA5CE11",
+      "sizeBytes": 11444
+    },
+    {
+      "path": "docs/training-manual/06-maintenance-and-inspections/CHAPTER-12-MAINTENANCE-EVIDENCE-LAB.md",
+      "sha256": "ECAABB37EE520C3047BB8AC8F87646C6D3329E8AE86F5F86A7DC2E0E46809AF2",
+      "sizeBytes": 11408
+    },
+    {
+      "path": "docs/training-manual/07-safety-and-compliance/CHAPTER-13-SAFETY-TENANT-AND-AUDIT-BOUNDARIES.md",
+      "sha256": "EEF381CB89B43ED690A8068E18BCF746737D42060D96A19161FA67F093D69342",
+      "sizeBytes": 11380
+    },
+    {
+      "path": "docs/training-manual/07-safety-and-compliance/CHAPTER-14-INCIDENT-COMPLIANCE-AND-RECORD-RETENTION.md",
+      "sha256": "E2E9A050710A2562A5A61EC59B560B30052CBF3CAE40C148EFBAD2DFA2E6F0A3",
+      "sizeBytes": 11397
+    },
+    {
+      "path": "docs/training-manual/08-driver-voice-and-vision/CHAPTER-15-DRIVER-MOBILE-VOICE-AND-VISION-BOUNDARIES.md",
+      "sha256": "01450A6AEBE3C4E4DD43D4B0F8F7A4264C2E725D24D279E61AFE6383EFEA05F6",
+      "sizeBytes": 11531
+    },
+    {
+      "path": "docs/training-manual/08-driver-voice-and-vision/CHAPTER-16-GOVERNED-PERCEPTION-AND-HUMAN-APPROVAL.md",
+      "sha256": "5AE1A7CC308611290E81BAD315B32AACC6EED9C881CA2F56E8F981F39EB1F227",
+      "sizeBytes": 11328
+    },
+    {
+      "path": "docs/training-manual/09-reporting-and-integrations/CHAPTER-17-REPORTING-DATA-EXCHANGE-AND-LINEAGE.md",
+      "sha256": "9FF6966D7EC74E47584730DDB79E5114592016A1F866D7EC395FFCD5B9DE197C",
+      "sizeBytes": 11347
+    },
+    {
+      "path": "docs/training-manual/09-reporting-and-integrations/CHAPTER-18-INTEGRATION-CONTRACTS-AND-FAILURE-HANDLING.md",
+      "sha256": "6A673F80564277B198B6C064D43D4EAECCE658FEE2305A61C3C9B9C8811A28D1",
+      "sizeBytes": 11357
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/CHAPTER-19-AGENT-LEE-AS-EXTERNAL-LEEWAY-EMPLOYEE.md",
+      "sha256": "91DCDBEF67AA4B4EF1859497953721E222A5A1B956643576405F7145B98404C2",
+      "sizeBytes": 11469
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/CHAPTER-20-AGENT-LEE-TRAINER-PROCTOR-AND-REPAIR-ORCHESTRATOR.md",
+      "sha256": "79370CF4FD47A58A6BD1F4B7155F96E5B7E7D4687CFBD4CF5665B5B9B6814D7E",
+      "sizeBytes": 11510
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/CHAPTER-21-BUILD-TEST-EVIDENCE-AND-RELEASE-GATES.md",
+      "sha256": "E48E60579635C80D96CAC01CB8F4933A6E6A2E9C5861975EE527F842C0CF3AFD",
+      "sizeBytes": 11434
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/CHAPTER-22-SECURITY-CONFIGURATION-AND-DEGRADED-MODE.md",
+      "sha256": "51DB32CC88EDC073D6C2DCF77ACF86F6084A49EB5187B2354AD74A0DD22EF178",
+      "sizeBytes": 11408
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/CHAPTER-23-TROUBLESHOOTING-WITH-EVIDENCE.md",
+      "sha256": "B8058EC182ACE2F623C94CE52ECB93F928EEB57D954AEB938B5A13695821333C",
+      "sizeBytes": 11384
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/CHAPTER-24-GLOSSARY-INTERVIEW-AND-CUSTOMER-DEFENSE.md",
+      "sha256": "C55F810E82B8CAEC1FBFB60AFD7915BB7EEA47ADAC445AE3CFAAD009E0E9F6E1",
+      "sizeBytes": 11369
+    },
+    {
+      "path": "docs/training-manual/instructor/INSTRUCTOR-GUIDE.md",
+      "sha256": "D2F6B71B373E961689D15838F97DF33469F5BDE55FDA32BA39B60A8C56862C61",
+      "sizeBytes": 2122
+    },
+    {
+      "path": "docs/training-manual/instructor/_DIRECTORY.leeway.md",
+      "sha256": "62889CE33CA82FE80AE80E3AA901944D90DFE65F50694C458415C47BEC7711DE",
+      "sizeBytes": 2014
+    },
+    {
+      "path": "docs/training-manual/manual.manifest.json",
+      "sha256": "5A78D89C5D7BD0A382E0D49DF8CC70BC100590287DC1D02CE152D0A3B3F5FF2B",
+      "sizeBytes": 5700
+    },
+    {
+      "path": "docs/training-manual/workbooks/COMMERCIAL-LEARNER-WORKBOOK.md",
+      "sha256": "566E84E90AAF89045E7ACB351BEC64115C28DA82110EAE7015FE57263709E59D",
+      "sizeBytes": 1706
+    },
+    {
+      "path": "docs/training-manual/workbooks/_DIRECTORY.leeway.md",
+      "sha256": "9874DF7B6839D74C39B93206E399B616ECDFCEDF7FE4F826A2A35D6F3B4C9777",
+      "sizeBytes": 1950
+    },
+    {
+      "path": "governance/policies/PRIVATE-LEARNING-AND-FAMILY-TEACHING-POLICY.md",
+      "sha256": "F84FA9D524A518BE36D86825D8A0C8D69E5E6D41CDEF3AF0C231CA9A4B225776",
+      "sizeBytes": 1933
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/_DIRECTORY.leeway.md",
+      "sha256": "3F77AA30DC574CC0857CC30FD984D86BCBBFFD3F4AAF45203814E52A50BEBC9C",
+      "sizeBytes": 2146
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/private-learning-access.json",
+      "sha256": "48D19D280B4CE0B6C855755304A7BD2B15976BCD436DC13803B35367C86810A3",
+      "sizeBytes": 1532
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/question-bank-index.json",
+      "sha256": "711CB96A35901168C337CE274728C6336732474CADAE7778EBAF841B632EEE0C",
+      "sizeBytes": 1248
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/training-knowledge-index.json",
+      "sha256": "3CEDE0782764019FDC17C8CFD962FC1DBE197DB847E238AB007DFF452610E2A3",
+      "sizeBytes": 1998
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/knowledge-manifest.json",
+      "sha256": "85E16AB88FC8558AF25CBEBCE24BE0B1236DEB17DBD148A8C6C94274784CFA31",
+      "sizeBytes": 3108
+    },
+    {
+      "path": "operations/powershell/Build-LeeWayTrainingManual.ps1",
+      "sha256": "4F5FA3CD55F36EB92BE5FDAD5071EE1A806B17CB04655C4ED0E64D0235306B06",
+      "sizeBytes": 6355
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/TrainingDocumentationArchitectureTests.cs",
+      "sha256": "336DF144873E20865D8F6D1B33A1E0E40487F57FB73141EE5EB926EA12EC3998",
+      "sizeBytes": 4139
+    }
+  ]
+}

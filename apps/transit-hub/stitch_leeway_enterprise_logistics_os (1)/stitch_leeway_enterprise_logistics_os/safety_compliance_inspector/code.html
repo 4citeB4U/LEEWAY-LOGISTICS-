@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Logistics OS - Safety &amp; Compliance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#333539",
+                    "primary-container": "#30363d",
+                    "on-primary-fixed-variant": "#41474f",
+                    "surface": "#111318",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "surface-container-low": "#1a1c20",
+                    "on-primary-fixed": "#161c23",
+                    "tertiary-container": "#32353d",
+                    "secondary-fixed-dim": "#c2c7d0",
+                    "on-tertiary-fixed": "#191c23",
+                    "on-secondary-container": "#b1b5bf",
+                    "on-primary": "#2b3138",
+                    "tertiary-fixed-dim": "#c4c6d0",
+                    "on-background": "#e2e2e8",
+                    "surface-container-high": "#282a2e",
+                    "inverse-on-surface": "#2f3035",
+                    "secondary-fixed": "#dee2ec",
+                    "inverse-primary": "#595f67",
+                    "inverse-surface": "#e2e2e8",
+                    "on-secondary": "#2c3138",
+                    "error": "#ffb4ab",
+                    "secondary": "#c2c7d0",
+                    "primary-fixed": "#dde3ec",
+                    "on-secondary-fixed": "#171c23",
+                    "on-surface": "#e2e2e8",
+                    "on-tertiary-fixed-variant": "#44474f",
+                    "on-tertiary-container": "#9b9da7",
+                    "on-secondary-fixed-variant": "#42474f",
+                    "surface-container-lowest": "#0c0e12",
+                    "surface-container": "#1e2024",
+                    "primary-fixed-dim": "#c1c7d0",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-container": "#999fa7",
+                    "surface-tint": "#c1c7d0",
+                    "on-tertiary": "#2d3038",
+                    "tertiary": "#c4c6d0",
+                    "on-surface-variant": "#c5c6cb",
+                    "surface-container-highest": "#333539",
+                    "background": "#111318",
+                    "outline-variant": "#44474b",
+                    "surface-dim": "#111318",
+                    "primary": "#c1c7d0",
+                    "tertiary-fixed": "#e0e2ec",
+                    "surface-bright": "#37393e",
+                    "secondary-container": "#42474f",
+                    "outline": "#8f9195"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-lg": "20px",
+                    "stack-md": "12px",
+                    "gutter": "8px",
+                    "container-padding": "12px",
+                    "unit": "4px",
+                    "stack-sm": "4px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "data-mono": ["JetBrains Mono"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "data-mono": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                    "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #111318; color: #e2e2e8; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .status-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        .sovereign-locked { color: #595f67; border-color: #44474b; background: rgba(48, 54, 61, 0.2); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden pb-20">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full bg-surface-dim dark:bg-surface-dim text-primary dark:text-primary border-b border-outline-variant flex items-center justify-between px-gutter h-12 z-50">
+<div class="flex items-center gap-unit">
+<span class="material-symbols-outlined text-on-surface" data-icon="terminal">terminal</span>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-on-surface">LOGISTICS OS</h1>
+</div>
+<div class="flex items-center gap-stack-md">
+<!-- Sovereign Lock Status Indicator -->
+<div class="flex items-center gap-unit bg-surface-container px-2 py-0.5 rounded border border-outline-variant">
+<span class="material-symbols-outlined text-xs text-primary" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-label-caps text-label-caps text-on-surface">SOVEREIGN LOCK</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="sensors">sensors</span>
+</div>
+</header>
+<main class="mt-12 p-container-padding space-y-stack-lg">
+<!-- Executive HUD / Intelligence Overlay -->
+<section class="bg-primary-container border border-outline-variant p-stack-md rounded shadow-inner">
+<div class="flex justify-between items-start mb-unit">
+<div class="flex items-center gap-unit">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="security">security</span>
+<span class="font-label-caps text-label-caps text-primary">COMPLIANCE STATUS: OPERATIONAL</span>
+</div>
+<span class="font-data-mono text-data-mono text-on-surface-variant">V4.2.0-SEC</span>
+</div>
+<div class="grid grid-cols-2 gap-stack-md mt-stack-md">
+<div class="border-l-2 border-primary pl-stack-md">
+<p class="font-label-caps text-label-caps text-on-surface-variant">FATIGUE RISK</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">LOW</p>
+</div>
+<div class="border-l-2 border-error pl-stack-md">
+<p class="font-label-caps text-label-caps text-on-surface-variant">ELD FLAGS</p>
+<p class="font-headline-lg text-headline-lg text-error">03</p>
+</div>
+</div>
+</section>
+<!-- Driver Fatigue Risk Matrix (Bento-ish Layout) -->
+<section class="space-y-stack-sm">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant px-unit">FATIGUE RISK MATRIX</h2>
+<div class="grid grid-cols-4 gap-unit">
+<!-- Data Visualization Placeholder -->
+<div class="col-span-4 h-32 bg-surface-container border border-outline-variant relative overflow-hidden flex items-center justify-center">
+
+<div class="relative z-10 text-center">
+<span class="material-symbols-outlined text-4xl text-primary opacity-50" data-icon="psychology">psychology</span>
+<p class="font-data-mono text-data-mono mt-unit">NEURAL SCAN: NOMINAL</p>
+</div>
+</div>
+<!-- Risk Factors -->
+<div class="col-span-2 bg-surface-container-low border border-outline-variant p-stack-sm">
+<p class="font-label-caps text-label-caps text-on-surface-variant">SHIFT TIME</p>
+<p class="font-headline-md text-headline-md text-on-surface">06:42<span class="text-xs font-normal"> / 11h</span></p>
+</div>
+<div class="col-span-2 bg-surface-container-low border border-outline-variant p-stack-sm">
+<p class="font-label-caps text-label-caps text-on-surface-variant">MICROSLEEP</p>
+<p class="font-headline-md text-headline-md text-on-surface">0 DETECTED</p>
+</div>
+</div>
+</section>
+<!-- DVIR Audit Trail (High Density List) -->
+<section class="space-y-stack-sm">
+<div class="flex justify-between items-center px-unit">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant uppercase">DVIR Audit Trail</h2>
+<button class="font-label-caps text-label-caps text-primary border border-primary px-2 py-1 rounded">REFRESH</button>
+</div>
+<div class="border border-outline-variant bg-surface-container divide-y divide-outline-variant">
+<!-- Audit Row 1 -->
+<div class="p-stack-md flex items-center justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col">
+<span class="font-data-mono text-data-mono text-on-surface">TRK-9021 (Lee, A.)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pre-Trip | Tires, Brakes, Lights</span>
+</div>
+<div class="flex items-center gap-unit bg-on-primary-fixed-variant px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-xs text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-caps text-label-caps text-on-primary-fixed">PASS</span>
+</div>
+</div>
+<!-- Audit Row 2 -->
+<div class="p-stack-md flex items-center justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col">
+<span class="font-data-mono text-data-mono text-on-surface">TRK-1148 (Chen, J.)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Post-Trip | Fluid Leaks Detected</span>
+</div>
+<div class="flex items-center gap-unit bg-error-container px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-xs text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-label-caps text-label-caps text-on-error-container">FAIL</span>
+</div>
+</div>
+<!-- Audit Row 3 -->
+<div class="p-stack-md flex items-center justify-between hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col">
+<span class="font-data-mono text-data-mono text-on-surface">TRK-0052 (Davis, M.)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pre-Trip | Secured Cargo Check</span>
+</div>
+<div class="flex items-center gap-unit bg-on-primary-fixed-variant px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-xs text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-caps text-label-caps text-on-primary-fixed">PASS</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Incident Evidence Capture (Asymmetric Layout) -->
+<section class="space-y-stack-sm">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant px-unit">INCIDENT EVIDENCE CAPTURE</h2>
+<div class="grid grid-cols-6 gap-unit h-48">
+<!-- Primary Action -->
+<div class="col-span-4 bg-surface-container-high border border-outline-variant p-stack-md flex flex-col justify-end relative overflow-hidden active:scale-95 transition-transform cursor-pointer">
+<div class="absolute top-2 right-2 status-pulse bg-error w-2 h-2 rounded-full"></div>
+<span class="material-symbols-outlined text-3xl text-on-surface mb-unit" data-icon="photo_camera">photo_camera</span>
+<p class="font-headline-md text-headline-md leading-none">LAUNCH EVIDENCE</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Secure Geo-Tagged Capture</p>
+</div>
+<!-- Recent Evidence -->
+<div class="col-span-2 space-y-unit">
+<div class="h-1/2 bg-surface-container border border-outline-variant relative group overflow-hidden">
+<div class="w-full h-full bg-cover bg-center opacity-70 group-hover:opacity-100 transition-opacity" data-alt="High-resolution aerial view of a logistics center parking lot with several heavy-duty semi-trucks aligned in rows under bright industrial halogen lighting. The image has a desaturated, industrial blue tone, emphasizing textures of asphalt and metallic surfaces. The composition is focused on compliance and order, with a clear perspective of vehicle identifiers." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3cC4-5YHfRC-3zKQ5gIhvZau1QePPoqoOzXB9o1_GhCfY8bDch4rP9eWJ016nus0xTZdIlJqPqPkB5hxHVo3aQGYjIVihNS_DCrrN26i8BgvBQTiDgWeoTa_OAwrrz-NT87r_tXvplBeEar6eXjMTX423DgdYhwHb4c_TP0SAsIhMLvNm-q4RDL1NiGVst7xpB0Qz2CHtwafd_6i8o9TfBfct0GswdfBS_lkD9Tc5su2SxJtzPZgxFhAvquWQqZOrS_b3lgiHxNjQ')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-60"></div>
+<span class="absolute bottom-1 left-1 font-label-caps text-[8px]">IMG_098</span>
+</div>
+<div class="h-1/2 bg-surface-container border border-outline-variant relative group overflow-hidden">
+<div class="w-full h-full bg-cover bg-center opacity-70 group-hover:opacity-100 transition-opacity" data-alt="A macro photograph of a damaged heavy truck tire, showing deep tread abrasions and a sidewall puncture. The lighting is harsh and direct, characteristic of a handheld inspection flashlight in a dark warehouse setting. The overall color palette is dominated by dark greys, blacks, and subtle metallic glints, conveying a sense of urgent maintenance inspection." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBj-uNVw95IF1tGG_5qYblFA-ey2Ky0w_nVjnxMm6v0sdi8PGMzcMp1caFvhRZ8kCJ2FlsuVzZO6h3NHNxrkKIrPaoi-TCrFUU_jDFy6XYohaAUuHuyGQugXcy7ZG7obO9YFMGg_LHQ8XX9jQh66IoVLqpzzHo6gXdhwfywTKOw3MlZANCZRFSn6p7Rc7ytKxt2-cXe7bJxeOu_Qy24AMV_ko-fbW10sWZndnfP9XdlynjWH4Vo1dOs_ZYwb8K3aio37SRvHeoxf3By')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent opacity-60"></div>
+<span class="absolute bottom-1 left-1 font-label-caps text-[8px]">IMG_099</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ELD Violation Flags (Warning HUD) -->
+<section class="bg-surface-container-lowest border border-error p-stack-md rounded-lg">
+<div class="flex items-center gap-stack-md mb-stack-md">
+<span class="material-symbols-outlined text-error" data-icon="report_problem">report_problem</span>
+<div>
+<h3 class="font-headline-md text-headline-md text-error leading-none uppercase">ELD Violation Critical</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">3 Active alerts requiring immediate officer review</p>
+</div>
+</div>
+<div class="space-y-stack-sm">
+<div class="bg-surface-container p-stack-sm border border-outline-variant flex justify-between items-center">
+<span class="font-data-mono text-data-mono text-on-surface">TRK-9021: HOS OVERAGE (12m)</span>
+<button class="bg-primary-container text-on-primary-container px-2 py-1 font-label-caps text-label-caps">REVIEW</button>
+</div>
+<div class="bg-surface-container p-stack-sm border border-outline-variant flex justify-between items-center opacity-60">
+<span class="font-data-mono text-data-mono text-on-surface">TRK-1148: UNIDENTIFIED DRIVING</span>
+<button class="bg-primary-container text-on-primary-container px-2 py-1 font-label-caps text-label-caps">REVIEW</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container dark:bg-surface-container border-t border-outline-variant flex justify-around items-center h-16 px-container-padding">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-lg p-unit" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label-caps text-label-caps">Fleet</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-label-caps text-label-caps">Insights</span>
+</a>
+<div class="relative">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface" href="#">
+<span class="material-symbols-outlined" data-icon="report_problem">report_problem</span>
+<span class="font-label-caps text-label-caps">Alerts</span>
+</a>
+<span class="absolute top-0 right-1 w-2 h-2 bg-error rounded-full border border-surface"></span>
+</div>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-unit hover:text-on-surface" href="#">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+</nav>
+<!-- Floating HUD Elements (Contextual UI) -->
+<div class="fixed bottom-20 right-4 flex flex-col gap-stack-sm pointer-events-none">
+<div class="bg-surface-container-highest border border-outline-variant p-2 rounded shadow-2xl pointer-events-auto backdrop-blur-sm bg-opacity-90">
+<div class="flex items-center gap-unit text-primary">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-label-caps text-[9px] tracking-widest">SECURE LINK ENCRYPTED</span>
+</div>
+</div>
+</div>
+<script>
+        // Micro-interaction for buttons
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.96)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simulating Agent Lee Intelligence Scan
+        console.log("Agent Lee Command: Safety Protocol V4.2 Initiated.");
+    </script>
+</body></html>

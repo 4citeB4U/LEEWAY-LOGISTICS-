@@ -1,0 +1,61 @@
+{
+  "_leewayHeader": {
+    "file": "assessment-schema.json",
+    "path": "docs/training-manual/assessment-schema.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Training / Assessment Schema",
+    "purpose": "Define knowledge, practical, evidence, and recertification requirements.",
+    "inputs": "Curriculum and chapter objectives.",
+    "outputs": "Deterministic assessment and proctor rules.",
+    "mutationScope": "Training metadata only.",
+    "dependencies": "Manual and curriculum registries.",
+    "tests": "JSON parse and rubric review.",
+    "securityImpact": "Prevents learners from receiving unsafe practical permissions.",
+    "databaseImpact": "Future learning records will persist assessment results.",
+    "sovereignCycle": [
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "2.0.0"
+  },
+  "scoring": {
+    "knowledgePercent": 35,
+    "practicalPercent": 45,
+    "evidencePercent": 20,
+    "minimumOverallPercent": 85,
+    "criticalSafetyFailureOverridesScore": true
+  },
+  "attemptRecord": [
+    "learnerId",
+    "tenantId",
+    "role",
+    "curriculumId",
+    "moduleId",
+    "lessonId",
+    "productVersion",
+    "attemptNumber",
+    "knowledgeScore",
+    "practicalScore",
+    "evidenceScore",
+    "overallScore",
+    "criticalFailures",
+    "proctorIdentity",
+    "receiptId",
+    "recordedUtc"
+  ],
+  "proctorRules": [
+    "Retrieve approved version-matched sources",
+    "Cite the material used",
+    "Do not reveal answer keys before submission",
+    "Evaluate against the published rubric",
+    "Provide corrective teaching after scoring",
+    "Require practical evidence",
+    "Write a governed receipt",
+    "Escalate safety-critical uncertainty to a human instructor"
+  ]
+}

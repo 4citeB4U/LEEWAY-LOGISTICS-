@@ -1,0 +1,252 @@
+<!--
+LEEWAY ENTERPRISE FILE HEADER
+File: CHAPTER-34-REALTIME-OPERATIONS-AND-SIGNALR.md
+Path: docs/training-manual/05-dispatch-and-routing/CHAPTER-34-REALTIME-OPERATIONS-AND-SIGNALR.md
+Project: LeeWay Enterprise Transit Hub
+Layer: Commercial Training Manual
+Purpose: Teach real-time operations and signalr for the version-matched commercial product.
+Inputs: Governed Phase 06 implementation, tests, and evidence.
+Outputs: Version-matched training, operating, or architecture guidance.
+Mutation Scope: Documentation only.
+Dependencies: Phase 05 host-runtime pass and Phase 06 source.
+Tests: Documentation build, learning gate, JSON checks, and architecture tests.
+Security Impact: Separates private learning from commercial material and prohibits secret disclosure.
+Database Impact: Documents or governs only declared Phase 06 database behavior.
+Sovereign Cycle: Perception -> Origin -> Structure -> Execution -> Veritas -> Echo -> Synthesis -> Lee Prime
+Status: ACTIVE / GOVERNED
+Human Comprehension: REQUIRED
+Owner: Leonard Lee / Leeway Industries
+Version: 6.0.11
+-->
+
+# Chapter 34 - Real-Time Operations and SignalR
+## Purpose and audience
+
+This chapter teaches dispatchers, fleet managers, developers, and administrators how Phase 06 behaves, why each boundary exists, and how to verify the behavior without exposing credentials or crossing tenant boundaries. The material applies to the development product baseline and must not be represented as a production secret-vault or global realtime deployment.
+## Business context
+
+Transportation operations depend on timely facts, but speed cannot replace authorization. A delay, inspection warning, work-order change, or system alert must be accepted under one tenant, persisted as evidence, and delivered only to authorized people working for that tenant.
+
+### Business context review 1
+
+Transportation operations depend on timely facts, but speed cannot replace authorization. A delay, inspection warning, work-order change, or system alert must be accepted under one tenant, persisted as evidence, and delivered only to authorized people working for that tenant. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Business context review 2
+
+Transportation operations depend on timely facts, but speed cannot replace authorization. A delay, inspection warning, work-order change, or system alert must be accepted under one tenant, persisted as evidence, and delivered only to authorized people working for that tenant. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Business context review 3
+
+Transportation operations depend on timely facts, but speed cannot replace authorization. A delay, inspection warning, work-order change, or system alert must be accepted under one tenant, persisted as evidence, and delivered only to authorized people working for that tenant. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Business context review 4
+
+Transportation operations depend on timely facts, but speed cannot replace authorization. A delay, inspection warning, work-order change, or system alert must be accepted under one tenant, persisted as evidence, and delivered only to authorized people working for that tenant. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Core vocabulary
+
+Credential rotation replaces an authentication secret. Redaction removes sensitive values from output. An operations event is an immutable tenant-owned fact. A SignalR hub manages realtime connections. A group is a server-managed set of connections. Row-Level Security is a database enforcement layer.
+
+### Core vocabulary review 1
+
+Credential rotation replaces an authentication secret. Redaction removes sensitive values from output. An operations event is an immutable tenant-owned fact. A SignalR hub manages realtime connections. A group is a server-managed set of connections. Row-Level Security is a database enforcement layer. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Core vocabulary review 2
+
+Credential rotation replaces an authentication secret. Redaction removes sensitive values from output. An operations event is an immutable tenant-owned fact. A SignalR hub manages realtime connections. A group is a server-managed set of connections. Row-Level Security is a database enforcement layer. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Core vocabulary review 3
+
+Credential rotation replaces an authentication secret. Redaction removes sensitive values from output. An operations event is an immutable tenant-owned fact. A SignalR hub manages realtime connections. A group is a server-managed set of connections. Row-Level Security is a database enforcement layer. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Core vocabulary review 4
+
+Credential rotation replaces an authentication secret. Redaction removes sensitive values from output. An operations event is an immutable tenant-owned fact. A SignalR hub manages realtime connections. A group is a server-managed set of connections. Row-Level Security is a database enforcement layer. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Architecture
+
+The design separates domain validation, application coordination, persistence, and realtime transport. The application service depends on repository and notifier interfaces. SQL Server stores the event and enforces tenant context. The API adapter publishes only after persistence succeeds.
+
+### Architecture review 1
+
+The design separates domain validation, application coordination, persistence, and realtime transport. The application service depends on repository and notifier interfaces. SQL Server stores the event and enforces tenant context. The API adapter publishes only after persistence succeeds. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Architecture review 2
+
+The design separates domain validation, application coordination, persistence, and realtime transport. The application service depends on repository and notifier interfaces. SQL Server stores the event and enforces tenant context. The API adapter publishes only after persistence succeeds. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Architecture review 3
+
+The design separates domain validation, application coordination, persistence, and realtime transport. The application service depends on repository and notifier interfaces. SQL Server stores the event and enforces tenant context. The API adapter publishes only after persistence succeeds. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Architecture review 4
+
+The design separates domain validation, application coordination, persistence, and realtime transport. The application service depends on repository and notifier interfaces. SQL Server stores the event and enforces tenant context. The API adapter publishes only after persistence succeeds. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Procedure
+
+Authenticate, resolve the tenant, authorize the operation, validate the event, persist it, write a receipt, publish to the tenant group, and verify the client sees only authorized data. For credential incidents, generate replacements, rotate logins, update the approved store, reject old credentials, and scan evidence.
+
+### Procedure review 1
+
+Authenticate, resolve the tenant, authorize the operation, validate the event, persist it, write a receipt, publish to the tenant group, and verify the client sees only authorized data. For credential incidents, generate replacements, rotate logins, update the approved store, reject old credentials, and scan evidence. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Procedure review 2
+
+Authenticate, resolve the tenant, authorize the operation, validate the event, persist it, write a receipt, publish to the tenant group, and verify the client sees only authorized data. For credential incidents, generate replacements, rotate logins, update the approved store, reject old credentials, and scan evidence. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Procedure review 3
+
+Authenticate, resolve the tenant, authorize the operation, validate the event, persist it, write a receipt, publish to the tenant group, and verify the client sees only authorized data. For credential incidents, generate replacements, rotate logins, update the approved store, reject old credentials, and scan evidence. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Procedure review 4
+
+Authenticate, resolve the tenant, authorize the operation, validate the event, persist it, write a receipt, publish to the tenant group, and verify the client sees only authorized data. For credential incidents, generate replacements, rotate logins, update the approved store, reject old credentials, and scan evidence. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Security controls
+
+Never accept TenantId from the event body. Never broadcast with Clients.All. Never print process arguments that include passwords. Never treat .NET Secret Manager as a production vault. Never let Agent Lee bypass the same policies applied to human and service identities.
+
+### Security controls review 1
+
+Never accept TenantId from the event body. Never broadcast with Clients.All. Never print process arguments that include passwords. Never treat .NET Secret Manager as a production vault. Never let Agent Lee bypass the same policies applied to human and service identities. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Security controls review 2
+
+Never accept TenantId from the event body. Never broadcast with Clients.All. Never print process arguments that include passwords. Never treat .NET Secret Manager as a production vault. Never let Agent Lee bypass the same policies applied to human and service identities. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Security controls review 3
+
+Never accept TenantId from the event body. Never broadcast with Clients.All. Never print process arguments that include passwords. Never treat .NET Secret Manager as a production vault. Never let Agent Lee bypass the same policies applied to human and service identities. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Security controls review 4
+
+Never accept TenantId from the event body. Never broadcast with Clients.All. Never print process arguments that include passwords. Never treat .NET Secret Manager as a production vault. Never let Agent Lee bypass the same policies applied to human and service identities. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Troubleshooting
+
+Separate connection failures from authorization failures and delivery failures. A database health pass proves connectivity, not SignalR delivery. A negotiate response proves the hub endpoint and policy path, not a complete distributed messaging path. Review server logs only after redaction.
+
+### Troubleshooting review 1
+
+Separate connection failures from authorization failures and delivery failures. A database health pass proves connectivity, not SignalR delivery. A negotiate response proves the hub endpoint and policy path, not a complete distributed messaging path. Review server logs only after redaction. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Troubleshooting review 2
+
+Separate connection failures from authorization failures and delivery failures. A database health pass proves connectivity, not SignalR delivery. A negotiate response proves the hub endpoint and policy path, not a complete distributed messaging path. Review server logs only after redaction. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Troubleshooting review 3
+
+Separate connection failures from authorization failures and delivery failures. A database health pass proves connectivity, not SignalR delivery. A negotiate response proves the hub endpoint and policy path, not a complete distributed messaging path. Review server logs only after redaction. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Troubleshooting review 4
+
+Separate connection failures from authorization failures and delivery failures. A database health pass proves connectivity, not SignalR delivery. A negotiate response proves the hub endpoint and policy path, not a complete distributed messaging path. Review server logs only after redaction. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Guided lab
+
+Use fictional tenants. Publish one event for Tenant A, retrieve it as Tenant A, confirm Tenant B cannot see it, negotiate a SignalR connection with authorized headers, and capture only non-secret evidence. Then explain each layer in your own words.
+
+### Guided lab review 1
+
+Use fictional tenants. Publish one event for Tenant A, retrieve it as Tenant A, confirm Tenant B cannot see it, negotiate a SignalR connection with authorized headers, and capture only non-secret evidence. Then explain each layer in your own words. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Guided lab review 2
+
+Use fictional tenants. Publish one event for Tenant A, retrieve it as Tenant A, confirm Tenant B cannot see it, negotiate a SignalR connection with authorized headers, and capture only non-secret evidence. Then explain each layer in your own words. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Guided lab review 3
+
+Use fictional tenants. Publish one event for Tenant A, retrieve it as Tenant A, confirm Tenant B cannot see it, negotiate a SignalR connection with authorized headers, and capture only non-secret evidence. Then explain each layer in your own words. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Guided lab review 4
+
+Use fictional tenants. Publish one event for Tenant A, retrieve it as Tenant A, confirm Tenant B cannot see it, negotiate a SignalR connection with authorized headers, and capture only non-secret evidence. Then explain each layer in your own words. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Common mistakes
+
+Common errors include logging connection strings, using a global broadcast, trusting a client-supplied tenant ID, publishing before persistence, skipping receipts, assuming local credentials are harmless, and claiming production readiness from a single-node development test.
+
+### Common mistakes review 1
+
+Common errors include logging connection strings, using a global broadcast, trusting a client-supplied tenant ID, publishing before persistence, skipping receipts, assuming local credentials are harmless, and claiming production readiness from a single-node development test. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Common mistakes review 2
+
+Common errors include logging connection strings, using a global broadcast, trusting a client-supplied tenant ID, publishing before persistence, skipping receipts, assuming local credentials are harmless, and claiming production readiness from a single-node development test. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Common mistakes review 3
+
+Common errors include logging connection strings, using a global broadcast, trusting a client-supplied tenant ID, publishing before persistence, skipping receipts, assuming local credentials are harmless, and claiming production readiness from a single-node development test. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Common mistakes review 4
+
+Common errors include logging connection strings, using a global broadcast, trusting a client-supplied tenant ID, publishing before persistence, skipping receipts, assuming local credentials are harmless, and claiming production readiness from a single-node development test. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Agent Lee support
+
+Agent Lee may explain the workflow and observe authorized tenant events through governed capabilities. Agent Lee remains external to the application, receives no automatic publish permission, and must use a delegated tool path for mutations.
+
+### Agent Lee support review 1
+
+Agent Lee may explain the workflow and observe authorized tenant events through governed capabilities. Agent Lee remains external to the application, receives no automatic publish permission, and must use a delegated tool path for mutations. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Agent Lee support review 2
+
+Agent Lee may explain the workflow and observe authorized tenant events through governed capabilities. Agent Lee remains external to the application, receives no automatic publish permission, and must use a delegated tool path for mutations. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Agent Lee support review 3
+
+Agent Lee may explain the workflow and observe authorized tenant events through governed capabilities. Agent Lee remains external to the application, receives no automatic publish permission, and must use a delegated tool path for mutations. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Agent Lee support review 4
+
+Agent Lee may explain the workflow and observe authorized tenant events through governed capabilities. Agent Lee remains external to the application, receives no automatic publish permission, and must use a delegated tool path for mutations. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Completion evidence
+
+Completion requires source review, automated tests, runtime tenant-isolation proof, credential-rotation evidence, secret-leak scan, backup verification, learning questions, answer keys, and a LeeWay receipt.
+
+### Completion evidence review 1
+
+Completion requires source review, automated tests, runtime tenant-isolation proof, credential-rotation evidence, secret-leak scan, backup verification, learning questions, answer keys, and a LeeWay receipt. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Completion evidence review 2
+
+Completion requires source review, automated tests, runtime tenant-isolation proof, credential-rotation evidence, secret-leak scan, backup verification, learning questions, answer keys, and a LeeWay receipt. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Completion evidence review 3
+
+Completion requires source review, automated tests, runtime tenant-isolation proof, credential-rotation evidence, secret-leak scan, backup verification, learning questions, answer keys, and a LeeWay receipt. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+### Completion evidence review 4
+
+Completion requires source review, automated tests, runtime tenant-isolation proof, credential-rotation evidence, secret-leak scan, backup verification, learning questions, answer keys, and a LeeWay receipt. The reviewer must identify the responsible file, the trust boundary, the expected failure status, and the evidence that distinguishes a source claim from a host-runtime pass. This repeated review is intentional because operational training must prepare the learner to perform the task, diagnose a failure, and explain the design during an interview or customer handoff.
+
+## Knowledge check
+
+1. Which layer owns tenant identity?
+2. Why does persistence occur before notification?
+3. What proves that old credentials are invalid?
+4. Why is a tenant SignalR group not a substitute for SQL RLS?
+5. Which production capabilities remain deferred?
+
+## Practical assessment
+
+Complete the guided lab, submit source references, include runtime status codes, and explain the rollback boundary. The instructor scores technical accuracy, evidence, security awareness, and professional explanation.
+
+## Runtime verification of event-query responses
+
+Operations administrators may see a valid event list, a valid empty list, or a schema error. Automated verification must distinguish those outcomes. The LeeWay verifier checks the status code before parsing the body, preserves an empty array as zero items, and accepts only governed collection representations. Supported representations include a raw JSON array and approved envelopes such as `items`, `value`, `data`, `results`, `events`, or `$values`.
+
+Each parsed event must be an object. Required properties are located case-insensitively because ASP.NET web JSON normally uses camel-case names while tooling may preserve another casing. A collection element that lacks the required `subject` property is rejected with its available keys. This provides a precise contract failure rather than a generic strict-mode property exception.
+
+The runtime receipt stores status codes, parsed item counts, tenant match counts, and SHA-256 hashes of the response bodies. It does not retain the complete response bodies in the receipt. This balances reproducibility with evidence minimization.
+
+### Operator interpretation
+
+- HTTP 200 plus an empty array for Tenant B is a tenant-isolation pass when Tenant A's event is absent.
+- HTTP 200 plus a malformed event object is a contract failure.
+- HTTP 401 or 403 is an identity or authorization result, not an empty event list.
+- A SignalR negotiate pass proves authorized negotiation, not full WebSocket message delivery.
+

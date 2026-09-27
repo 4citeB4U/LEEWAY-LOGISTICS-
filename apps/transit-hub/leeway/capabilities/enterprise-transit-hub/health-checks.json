@@ -1,0 +1,63 @@
+{
+  "_leewayHeader": {
+    "file": "health-checks.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/health-checks.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "LeeWay / Health Contract",
+    "purpose": "Define health signals Agent Lee may inspect before diagnosis or action.",
+    "inputs": "API, application, database, integration, training, knowledge, and governance status.",
+    "outputs": "Structured health classification and evidence links.",
+    "mutationScope": "Read-only diagnostics.",
+    "dependencies": "Health endpoints, logs, receipts, and future observability.",
+    "tests": "Health endpoint and negative-state tests.",
+    "securityImpact": "Health output must not expose secrets or cross-tenant data.",
+    "databaseImpact": "Database health remains deferred until activation.",
+    "sovereignCycle": [
+      "Perception",
+      "Execution",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "2.0.0"
+  },
+  "checks": [
+    {
+      "id": "api.health",
+      "source": "GET /health",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "id": "product.profile",
+      "source": "GET /api/platform/profile",
+      "status": "IMPLEMENTED"
+    },
+    {
+      "id": "tenant.context",
+      "source": "GET /api/platform/tenant-context",
+      "status": "IMPLEMENTED_FOUNDATION"
+    },
+    {
+      "id": "database.sqlserver",
+      "source": "future database health",
+      "status": "DEFERRED"
+    },
+    {
+      "id": "database.oracle",
+      "source": "future integration health",
+      "status": "DEFERRED"
+    },
+    {
+      "id": "agent.knowledge",
+      "source": "knowledge manifest and index receipt",
+      "status": "CONTRACT_DEFINED"
+    },
+    {
+      "id": "training.manual",
+      "source": "manual manifest and release validation",
+      "status": "FOUNDATION"
+    }
+  ]
+}
