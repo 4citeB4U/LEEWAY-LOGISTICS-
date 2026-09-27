@@ -11,6 +11,7 @@ import {
   PROJECTION_IDLE_REFRESH_MS,
   PLACEHOLDER_REPAINT_MS,
 } from './policy.js';
+import { staticFrameRefreshMs } from '../../data/cctvLod.js';
 
 export function createFrames({ state: layerState, services, parts, source }) {
   /**
@@ -226,10 +227,14 @@ export function createFrames({ state: layerState, services, parts, source }) {
     // clears this latch so the next normal tick can refresh.
     if (runtime.imageLoading) return;
     const now = Date.now();
-    const refreshMs =
+    const projectionRefreshMs =
       record.camera.id === layerState._activeCameraId
         ? PROJECTION_ACTIVE_REFRESH_MS
         : PROJECTION_IDLE_REFRESH_MS;
+    const refreshMs = Math.max(
+      projectionRefreshMs,
+      staticFrameRefreshMs(record.camera),
+    );
     if (!force && now - runtime.lastImageRefreshAt < refreshMs) return;
     runtime.lastImageRefreshAt = now;
 

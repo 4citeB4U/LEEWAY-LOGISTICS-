@@ -198,6 +198,9 @@ export function createCatalog({ state: layerState, services, parts, source }) {
         license: String(source.license || source.licenseNote || ''),
         credit: String(source.credit || ''),
         code: String(source.code || ''),
+        frameRefreshMs: parts.model.safeNumber(source.frameRefreshMs, NaN),
+        ageMinutes: parts.model.safeNumber(source.ageMinutes, NaN),
+        warningAge: Boolean(source.warningAge),
         // Shipped precompute (see server/providers/cctv/groundHeights.js).
         groundHeights:
           source.groundHeights && typeof source.groundHeights === 'object'

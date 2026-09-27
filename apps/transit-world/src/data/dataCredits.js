@@ -192,8 +192,8 @@ export const DATA_CREDITS = [
     key: 'illinois-gateway-cctv',
     html:
       'Traffic cameras (Illinois / Chicago): ' +
-      '<a href="https://www.travelmidwest.com/" target="_blank" rel="noopener">Illinois Gateway / Travel Midwest</a> · ' +
-      'public camera locations and snapshots distributed through Illinois Gateway open data',
+      '<a href="https://www.travelmidwest.com/" target="_blank" rel="noopener">Gateway traffic information courtesy of the Illinois Department of Transportation</a> · ' +
+      'Illinois Gateway camera layer metadata is published under CC BY-SA 2.0; IDOT reuse policy applies',
   },
   {
     key: 'ontario-511-cctv',

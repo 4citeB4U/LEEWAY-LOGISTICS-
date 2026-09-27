@@ -47,8 +47,13 @@ test('Illinois Gateway loader keeps fresh Chicago cameras and rejects TooOld row
     const rows = await loadIllinoisGatewaySourcesFromOpenData();
     assert.equal(rows.length, 1);
     assert.equal(rows[0].cityId, 'chicago-illinois');
-    assert.equal(rows[0].provider, 'Illinois Gateway / Travel Midwest');
+    assert.equal(
+      rows[0].provider,
+      'Illinois Department of Transportation / Travel Midwest',
+    );
     assert.equal(rows[0].url, 'https://cctv.travelmidwest.com/snapshots/fresh.jpg');
+    assert.equal(rows[0].frameRefreshMs, 5 * 60 * 1000);
+    assert.match(rows[0].credit, /Illinois Department of Transportation/);
     assert.equal(rows[0].ageMinutes, 5);
     assert.equal(rows[0].warningAge, false);
   } finally {

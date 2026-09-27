@@ -510,6 +510,13 @@ export function normalizeSourceItem(item) {
       item.code || String(item.name || '').toUpperCase() || item.id || '',
     ),
     sourceKind: String(item.sourceKind || item.kind || 'configured'),
+    frameRefreshMs: Number.isFinite(Number(item.frameRefreshMs))
+      ? Number(item.frameRefreshMs)
+      : undefined,
+    ageMinutes: Number.isFinite(Number(item.ageMinutes))
+      ? Number(item.ageMinutes)
+      : null,
+    warningAge: Boolean(item.warningAge),
     // Optional CAL badge input (cctv-v2 design §3b/§9.2, additive-only per the
     // global constraints — nothing else in this file changes): hand-authored
     // file/env catalog entries may declare poseSource:'curated' so the panel

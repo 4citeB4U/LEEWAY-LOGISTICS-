@@ -1,5 +1,6 @@
 import { CCTV_AMBIENT_CARD_MAX } from '../../data/cctvLod.js';
 import { ACTIVE_FRAME_REFRESH_MS, IDLE_FRAME_REFRESH_MS } from './policy.js';
+import { staticFrameRefreshMs } from '../../data/cctvLod.js';
 import { headingHudToken, isHeadingEstimated } from './headingConfidence.js';
 
 export function createPresentation({
@@ -68,9 +69,13 @@ export function createPresentation({
     const camera = record.camera;
     const health = layerState._healthById.get(camera.id) || null;
     const isActive = camera.id === resolvedActiveId;
-    const refreshMs = isActive
+    const requestedRefreshMs = isActive
       ? ACTIVE_FRAME_REFRESH_MS
       : IDLE_FRAME_REFRESH_MS;
+    const refreshMs = Math.max(
+      requestedRefreshMs,
+      staticFrameRefreshMs(camera),
+    );
     return {
       id: camera.id,
       name: camera.name,
@@ -102,6 +107,11 @@ export function createPresentation({
       sourceMessage: health?.message || '',
       sourceLabel: health?.label || camera.provider || '',
       credit: camera.credit || '',
+      frameRefreshMs: Number.isFinite(camera.frameRefreshMs)
+        ? camera.frameRefreshMs
+        : null,
+      ageMinutes: Number.isFinite(camera.ageMinutes) ? camera.ageMinutes : null,
+      warningAge: Boolean(camera.warningAge),
       calibration: {
         ...parts.calibration.normalizeCalibration(camera.calibration),
       },
