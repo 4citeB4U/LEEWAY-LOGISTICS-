@@ -102,6 +102,23 @@ function ensureStyles(documentRef) {
     .lws-context-inspector .cctv-panel-inner { max-height:calc(100vh - 94px) !important; border-radius:15px !important; background:rgba(3,15,24,.96) !important; border-color:rgba(71,225,242,.24) !important; box-shadow:0 18px 55px rgba(0,0,0,.42) !important; }
     .lws-context-inspector #cctv-frame-wrap { border-radius:12px; overflow:hidden; }
     .lws-context-inspector #cctv-source-badge { font-size:9px; letter-spacing:.08em; }
+    .lws-location-badge { pointer-events:none; position:absolute; top:76px; left:98px; z-index:9750; max-width:min(520px,calc(100vw - 620px)); padding:8px 12px; border:1px solid rgba(68,221,241,.25); border-radius:10px; background:rgba(3,15,24,.82); backdrop-filter:blur(12px); color:#ecfbff; box-shadow:0 8px 30px rgba(0,0,0,.22); }
+    .lws-location-badge strong { font-size:12px; letter-spacing:.06em; }
+    .lws-location-badge span { margin-left:8px; font-size:9px; opacity:.65; }
+    .lws-ui-restore { display:none; pointer-events:auto; position:absolute; top:12px; right:12px; z-index:9900; border:1px solid rgba(72,227,241,.55); border-radius:10px; padding:9px 12px; background:rgba(3,15,24,.92); color:#eaffff; cursor:pointer; font:700 10px Inter,ui-sans-serif,sans-serif; }
+    body.leeway-map-only #leeway-world-shell > :not(.lws-ui-restore) { display:none !important; }
+    body.leeway-map-only #leeway-world-shell .lws-ui-restore { display:block !important; }
+    body.leeway-map-only #leeway-transit-world,
+    body.leeway-map-only #leeway-agent-lee,
+    body.leeway-map-only #right-context-rail { display:none !important; }
+    body.leeway-enterprise-shell #right-context-rail { display:none; pointer-events:auto; position:fixed !important; top:76px !important; right:12px !important; bottom:auto !important; left:auto !important; width:min(425px,calc(100vw - 106px)) !important; max-height:calc(100vh - 94px) !important; z-index:9795 !important; }
+    body.leeway-enterprise-shell.leeway-right-weather-open #right-context-rail { display:block !important; }
+    body.leeway-enterprise-shell.leeway-right-weather-open #right-context-rail > * { display:none !important; }
+    body.leeway-enterprise-shell.leeway-right-weather-open #right-context-rail > #weather-panel { display:block !important; position:relative !important; inset:auto !important; width:100% !important; max-height:calc(100vh - 94px) !important; }
+    body.leeway-enterprise-shell.leeway-right-weather-open #weather-panel .weather-panel-inner { background:rgba(3,15,24,.96); border-color:rgba(71,225,242,.24); border-radius:15px; }
+    .lws-truck-status { grid-column:1/-1; padding:9px 10px; border:1px solid rgba(255,216,119,.35); border-radius:9px; background:rgba(255,216,119,.06); color:#ffd877; font-size:9px; letter-spacing:.06em; }
+    .lws-truck-status[data-state="blocked"] { border-color:rgba(255,105,105,.5); color:#ff8f8f; background:rgba(255,80,80,.08); }
+    .lws-truck-status[data-state="checked"] { border-color:rgba(100,230,190,.32); color:#9df1cf; background:rgba(80,220,170,.06); }
     .lws-toast { position:absolute; top:76px; left:50%; transform:translateX(-50%); opacity:0; pointer-events:none; padding:9px 14px; border-radius:10px; background:#071722; border:1px solid rgba(64,221,238,.24); transition:opacity .2s; }
     .lws-toast.show { opacity:1; }
     @media(max-width:1000px){.lws-top{grid-template-columns:270px 1fr}.lws-top-actions .hide-sm{display:none}.lws-brand strong{font-size:13px}.lws-brand span{display:none}.lws-dock-btn{min-width:58px}.lws-live{display:none}}
