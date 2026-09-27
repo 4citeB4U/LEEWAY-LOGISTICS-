@@ -266,6 +266,7 @@ export function mountEnterpriseShell(application) {
 
   if (cctvPanel) {
     contextInspector.appendChild(cctvPanel);
+    cctvPanel.classList.add('collapsed');
     cctvObserver = new MutationObserver(syncCctvInspector);
     cctvObserver.observe(cctvPanel, {
       attributes: true,
