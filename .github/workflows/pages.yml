@@ -53,6 +53,14 @@ jobs:
       - name: Build Pages site
         run: npm run build
 
+      - name: Normalize Cesium artifact path
+        run: |
+          if [ -d "dist/LEEWAY-LOGISTICS-/cesium" ]; then
+            rm -rf dist/cesium
+            mv "dist/LEEWAY-LOGISTICS-/cesium" dist/cesium
+            rm -rf "dist/LEEWAY-LOGISTICS-"
+          fi
+
       - name: Add Pages marker
         run: touch dist/.nojekyll
 
