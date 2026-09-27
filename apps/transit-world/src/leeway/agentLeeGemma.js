@@ -3,6 +3,9 @@ import { createAgentLeeToolRuntime } from './agentLeeTools.js';
 
 const DEFAULT_MODEL = 'gemma4:e4b';
 const DEFAULT_ENDPOINT = 'http://127.0.0.1:11435';
+const DEFAULT_VOICE_ENABLED = true;
+const AGENT_LEE_TTS_ENDPOINT = '/api/agent-lee/tts';
+const MAX_SPOKEN_RESPONSE_CHARS = 1200;
 
 function loadSetting(key, fallback) {
   try {
@@ -196,6 +199,11 @@ function ensureStyles(documentRef) {
       border:1px solid rgba(98,231,255,.28);
       font:inherit;
     }
+    .lal-btn[data-action="voice"][aria-pressed="true"] {
+      color:#86ffa8;
+      border-color:rgba(134,255,168,.42);
+      background:rgba(134,255,168,.08);
+    }
     .lal-settings { margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:6px; }
     .lal-settings input { width:100%; padding:7px; background:#07121b; color:#efffff; border:1px solid rgba(255,255,255,.12); font:inherit; }
     .lal-note { margin-top:7px; opacity:.58; font-size:9px; }
@@ -238,6 +246,7 @@ export function mountAgentLeeGemma(application, shell = null) {
       <div class="lal-row">
         <input class="lal-input" aria-label="Ask Agent Lee" placeholder="Ask about a load, route, driver, facility, maintenance, CRM, or fleet..." />
         <button class="lal-btn" type="button" data-action="send">ASK</button>
+        <button class="lal-btn" type="button" data-action="voice" aria-pressed="true">VOICE ON</button>
       </div>
       <div class="lal-settings">
         <input data-setting="model" aria-label="Gemma model" />
@@ -254,7 +263,73 @@ export function mountAgentLeeGemma(application, shell = null) {
   const modelInput = root.querySelector('[data-setting="model"]');
   const endpointInput = root.querySelector('[data-setting="endpoint"]');
   const sendButton = root.querySelector('[data-action="send"]');
+  const voiceButton = root.querySelector('[data-action="voice"]');
   const history = [];
+  let voiceEnabled = loadSetting('leeway.agentLee.voice', 'on') !== 'off';
+  let activeAudio = null;
+  let activeAudioUrl = null;
+  let queuedAudio = null;
+
+  function syncVoiceButton(state = '') {
+    voiceButton.setAttribute('aria-pressed', String(voiceEnabled));
+    voiceButton.textContent = state || (voiceEnabled ? 'VOICE ON' : 'VOICE OFF');
+  }
+
+  function stopVoicePlayback() {
+    if (activeAudio) {
+      try { activeAudio.pause(); } catch {}
+      activeAudio = null;
+    }
+    if (activeAudioUrl) {
+      URL.revokeObjectURL(activeAudioUrl);
+      activeAudioUrl = null;
+    }
+    queuedAudio = null;
+  }
+
+  async function speakAgentLee(content) {
+    if (!voiceEnabled) return false;
+    const text = String(content || '').trim().slice(0, MAX_SPOKEN_RESPONSE_CHARS);
+    if (!text) return false;
+    syncVoiceButton('VOICE …');
+    try {
+      const response = await fetch(AGENT_LEE_TTS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          Accept: 'audio/wav,audio/*;q=0.9,*/*;q=0.1',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
+      if (!response.ok) throw new Error(`Agent Lee voice HTTP ${response.status}`);
+      const blob = await response.blob();
+      if (!blob.size) throw new Error('Agent Lee voice returned empty audio');
+      stopVoicePlayback();
+      activeAudioUrl = URL.createObjectURL(blob);
+      activeAudio = new Audio(activeAudioUrl);
+      activeAudio.preload = 'auto';
+      activeAudio.addEventListener('ended', () => {
+        stopVoicePlayback();
+        syncVoiceButton();
+      }, { once: true });
+      try {
+        await activeAudio.play();
+        syncVoiceButton('SPEAKING');
+      } catch (error) {
+        queuedAudio = activeAudio;
+        syncVoiceButton('PLAY VOICE');
+        console.warn('Agent Lee voice is ready but browser playback needs a click:', error);
+      }
+      return true;
+    } catch (error) {
+      syncVoiceButton('VOICE !');
+      console.warn('Agent Lee local clone voice failed:', error);
+      setTimeout(() => syncVoiceButton(), 1800);
+      return false;
+    }
+  }
+
+  syncVoiceButton();
 
   modelInput.value = loadSetting('leeway.agentLee.model', DEFAULT_MODEL);
   endpointInput.value = loadSetting('leeway.agentLee.endpoint', DEFAULT_ENDPOINT);
@@ -313,7 +388,8 @@ export function mountAgentLeeGemma(application, shell = null) {
       );
       appendEntry(log, 'assistant', response.content);
       status.dataset.state = 'connected';
-      status.textContent = `CONNECTED · ${model}`;
+      status.textContent = `CONNECTED · ${model} · LOCAL VOICE`;
+      void speakAgentLee(response.content);
     } catch (error) {
       const message =
         'Local Gemma 4 is not reachable from this browser. Start Ollama on this device and allow this LeeWay Pages origin, then ask again. No AI answer was fabricated.';
@@ -328,6 +404,20 @@ export function mountAgentLeeGemma(application, shell = null) {
   }
 
   sendButton.addEventListener('click', ask);
+  voiceButton.addEventListener('click', () => {
+    if (queuedAudio && voiceEnabled) {
+      const audio = queuedAudio;
+      queuedAudio = null;
+      audio.play()
+        .then(() => syncVoiceButton('SPEAKING'))
+        .catch(() => syncVoiceButton('PLAY VOICE'));
+      return;
+    }
+    voiceEnabled = !voiceEnabled;
+    saveSetting('leeway.agentLee.voice', voiceEnabled ? 'on' : 'off');
+    if (!voiceEnabled) stopVoicePlayback();
+    syncVoiceButton();
+  });
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') ask();
   });
@@ -347,6 +437,7 @@ export function mountAgentLeeGemma(application, shell = null) {
     ask,
     probe,
     destroy() {
+      stopVoicePlayback();
       root.remove();
     },
   };
