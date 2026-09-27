@@ -153,6 +153,7 @@ export function createPresentation({
   function uiState() {
     const active = parts.selection.getActiveRecord();
     const activeId = active?.camera.id || null;
+    const scopedRecords = parts.navigation.scopedRecordsNearViewer();
     const payload = {
       enabled: layerState._enabled,
       // Compat boolean + the full tri-state (viewshed design §3b).
@@ -163,7 +164,9 @@ export function createPresentation({
       autoHop: layerState._autoHop,
       autoHopSuspended: layerState._autoHopSuspended,
       autoHopSec: layerState._autoHopSec,
-      count: layerState._count,
+      count: scopedRecords.length,
+      totalCount: layerState._count,
+      scopeRadiusKm: parts.navigation.scopeRadiusKm(),
       lastUpdate: layerState._lastUpdate,
       error: layerState._lastError,
       loading: {
@@ -186,7 +189,7 @@ export function createPresentation({
       },
       activeCameraId: activeId,
       activeCamera: active ? getPublicCameraState(active, activeId) : null,
-      cameras: layerState._records.map((record) =>
+      cameras: scopedRecords.map((record) =>
         getPublicCameraState(record, activeId),
       ),
       summary: buildSummaryText(),
