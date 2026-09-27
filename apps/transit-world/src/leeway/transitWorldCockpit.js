@@ -212,6 +212,12 @@ function buildPanel(documentRef) {
       </div>
     </section>
     <section class="ltw-section">
+      <h3>LEEWAY PRODUCT LINEAGE</h3>
+      <div class="ltw-value">LeeWay Logistics · Transit World</div>
+      <div class="ltw-label" style="margin-top:6px">Spatial engine lineage</div>
+      <div class="ltw-value" style="opacity:.68">Built in part from MIT-licensed God's Eye View spatial work by Bilawal Sidhu. LeeWay product identity, workflows, governance, CRM, Transit Hub, Driver Cockpit, and Agent Lee are LeeWay-owned layers.</div>
+    </section>
+    <section class="ltw-section">
       <div class="ltw-actions">
         <button type="button" data-action="driver-view">DRIVER VIEW</button>
         <button type="button" data-action="route-view">ROUTE VIEW</button>
