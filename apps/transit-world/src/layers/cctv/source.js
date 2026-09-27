@@ -3,10 +3,16 @@ import {
   FRAME_ENDPOINT,
   MEDIA_ENDPOINT,
 } from './sourcePolicy.js';
+import { worldApiBase } from '../../leeway/worldApiBridge.js';
 function safeNumber(value, fallback = NaN) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
 }
+function apiUrl(path) {
+  const base = worldApiBase();
+  return base ? `${base}${path}` : path;
+}
+
 function frameUrlFor(camera, refreshMs = ACTIVE_FRAME_REFRESH_MS) {
   const cadenceMs = Math.max(
     1000,
@@ -23,10 +29,10 @@ function frameUrlFor(camera, refreshMs = ACTIVE_FRAME_REFRESH_MS) {
     pitch: String(Math.round(camera.pitchDeg || -10)),
     ts: String(tick),
   });
-  return `${FRAME_ENDPOINT}/${encodeURIComponent(camera.id)}?${params.toString()}`;
+  return apiUrl(`${FRAME_ENDPOINT}/${encodeURIComponent(camera.id)}?${params.toString()}`);
 }
 function mediaUrlFor(camera) {
-  return `${MEDIA_ENDPOINT}/${encodeURIComponent(camera.id)}?ts=${Math.floor(Date.now() / 15000)}`;
+  return apiUrl(`${MEDIA_ENDPOINT}/${encodeURIComponent(camera.id)}?ts=${Math.floor(Date.now() / 15000)}`);
 }
 /** Supply catalog/health records and the existing registered camera URL families. */
 export function createCctvSource({

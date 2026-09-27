@@ -59,6 +59,7 @@ jobs:
           ./server/standalone/provider-cors.test.mjs
           ./server/providers/cctv/illinoisGateway.test.mjs
           ./server/providers/cctv/normalizeFreshness.test.mjs
+          ./src/layers/cctv/source.pages.test.mjs
           ./src/leeway/truckRoutePolicy.test.mjs
           ./server/providers/leeway-driver-cockpit.test.mjs
           ./src/sources/leewayTransit.test.mjs
