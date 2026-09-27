@@ -68,14 +68,35 @@ export function installWorldApiBridge({
   }
 
   const originalFetch = fetchImpl;
+
+  function localRequestInit(init = {}) {
+    return {
+      ...init,
+      // Chromium Local Network Access: mark 127.0.0.1 as an intentional
+      // loopback destination so the browser can request the proper permission.
+      targetAddressSpace: 'loopback',
+    };
+  }
+
   const bridgedFetch = (input, init) => {
     const resolved = resolveWorldApiUrl(input);
+    const isBridged =
+      typeof resolved === 'string' &&
+      resolved !== input &&
+      resolved.startsWith(base);
 
     if (input instanceof Request && typeof resolved === 'string') {
-      return originalFetch(new Request(resolved, input), init);
+      const request = new Request(resolved, input);
+      return originalFetch(
+        request,
+        isBridged ? localRequestInit(init) : init,
+      );
     }
 
-    return originalFetch(resolved, init);
+    return originalFetch(
+      resolved,
+      isBridged ? localRequestInit(init) : init,
+    );
   };
 
   globalThis.fetch = bridgedFetch;
@@ -88,6 +109,7 @@ export function installWorldApiBridge({
       try {
         const response = await originalFetch(`${base}/api/cctv/sources`, {
           cache: 'no-store',
+          targetAddressSpace: 'loopback',
         });
         return {
           ok: response.ok,

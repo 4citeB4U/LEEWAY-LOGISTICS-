@@ -43,7 +43,7 @@ function ensureStyles(documentRef) {
     .lws-dock-btn:hover { background:rgba(66,225,242,.08); }
     .lws-ai { width:88px; height:88px; margin:-18px 4px; border-radius:50%; border:1px solid #43ecfa; background:radial-gradient(circle at 50% 35%,rgba(61,226,245,.20),rgba(4,20,31,.96) 62%); box-shadow:0 0 25px rgba(42,223,241,.22); color:#fff; cursor:pointer; display:grid; place-items:center; align-content:center; }
     .lws-ai strong { font-size:10px; } .lws-ai span { font-size:8px; color:#7feeff; }
-    .lws-live { position:absolute; left:98px; bottom:22px; pointer-events:none; display:flex; gap:8px; align-items:center; padding:9px 12px; border:1px solid rgba(255,255,255,.10); border-radius:12px; background:rgba(3,15,24,.86); }
+    .lws-live { position:absolute; left:98px; bottom:22px; pointer-events:auto; display:flex; gap:8px; align-items:center; padding:9px 12px; border:1px solid rgba(255,255,255,.10); border-radius:12px; background:rgba(3,15,24,.86); cursor:pointer; }
     .lws-live b { color:#57f1a9; font-size:9px; } .lws-live span { opacity:.56; font-size:9px; }
     .lws-layer-menu { pointer-events:auto; position:absolute; top:76px; left:94px; width:260px; padding:12px; border-radius:14px; background:rgba(3,15,24,.96); border:1px solid rgba(68,221,241,.22); box-shadow:0 18px 55px rgba(0,0,0,.35); backdrop-filter:blur(16px); display:none; }
     .lws-layer-menu.open { display:block; }
@@ -139,7 +139,7 @@ export function mountEnterpriseShell(application) {
       <div class="lws-layer-head"><strong>WORLD LAYERS</strong><button class="lws-chip" data-action="close-layers">×</button></div>
       <div data-layer-list></div>
     </aside>
-    <div class="lws-live"><b>● LIVE</b><span>World data · source-aware</span></div>
+    <button class="lws-live" data-action="connect-world" type="button"><b data-world-led>● CHECK</b><span data-world-status>Connect live world data</span></button>
     <nav class="lws-dock">
       ${[['layers','Layers'],['traffic','Traffic'],['weather','Weather']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
       <button class="lws-ai" data-action="ai"><strong>Ask LeeWay</strong><span>Gemma 4 E4B</span></button>
@@ -152,6 +152,8 @@ export function mountEnterpriseShell(application) {
   const toast = shell.querySelector('.lws-toast');
   const layerMenu = shell.querySelector('[data-layer-menu]');
   const layerList = shell.querySelector('[data-layer-list]');
+  const worldLed = shell.querySelector('[data-world-led]');
+  const worldStatus = shell.querySelector('[data-world-status]');
   let toastTimer;
 
   function renderLayerMenu() {
@@ -195,6 +197,56 @@ export function mountEnterpriseShell(application) {
     toast.textContent = message;
     toast.classList.add('show');
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+  }
+
+  function setWorldStatus(state, message) {
+    const colors = {
+      live: '#57f1a9',
+      permission: '#ffd36b',
+      offline: '#ff8c8c',
+      checking: '#72eefa',
+    };
+    worldLed.style.color = colors[state] || colors.checking;
+    worldLed.textContent =
+      state === 'live'
+        ? '● LIVE'
+        : state === 'permission'
+          ? '● PERMISSION'
+          : state === 'offline'
+            ? '● OFFLINE'
+            : '● CHECK';
+    worldStatus.textContent = message;
+  }
+
+  async function probeWorldProvider({ explain = false } = {}) {
+    const bridge = globalThis.__leewayWorldApiBridge;
+    if (!bridge?.installed || typeof bridge.probe !== 'function') {
+      setWorldStatus('offline', 'Local live-data bridge not configured');
+      if (explain) say('Live-world provider bridge is not configured in this build');
+      return false;
+    }
+
+    setWorldStatus('checking', 'Checking LeeWay world providers…');
+    const result = await bridge.probe();
+    if (result.ok) {
+      setWorldStatus('live', 'CCTV · world providers connected');
+      if (explain) say('LeeWay live-world provider connected');
+      return true;
+    }
+
+    const error = String(result.error || '');
+    const permissionLikely =
+      /permission|network|failed to fetch|load failed|blocked/i.test(error);
+    if (permissionLikely) {
+      setWorldStatus('permission', 'Click to allow local world data');
+      if (explain) {
+        say('Allow this site to access loopback/local network when your browser asks');
+      }
+    } else {
+      setWorldStatus('offline', 'Start LeeWay World Providers');
+      if (explain) say('Start the LeeWay World Provider runtime on this device');
+    }
+    return false;
   }
 
   async function locate(query) {
@@ -286,6 +338,7 @@ export function mountEnterpriseShell(application) {
     }
 
     if (action === 'ai') { toggleAgent(); return; }
+    if (action === 'connect-world') { await probeWorldProvider({ explain: true }); return; }
     if (action === 'map') { workspace.close(); setNav('map'); return; }
     if (action === 'workspace') { workspace.open(); return; }
     if (action === 'layers') { toggleLayerMenu(); return; }
