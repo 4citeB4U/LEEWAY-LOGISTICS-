@@ -1,0 +1,39 @@
+# LEEWAY ENTERPRISE FILE HEADER
+# File: docker-compose.yml
+# Path: operations/docker/sqlserver/docker-compose.yml
+# Project: LeeWay Enterprise Transit Hub
+# Layer: Operations / Docker
+# Purpose: Define the isolated SQL Server 2025 development service without embedding secrets.
+# Inputs: Runtime environment variable LEEWAY_TRANSIT_HUB_SA_PASSWORD.
+# Outputs: One labeled SQL Server container and one persistent named volume.
+# Mutation Scope: LeeWay Transit Hub development Docker resources only.
+# Dependencies: Docker Desktop, Linux containers, and mcr.microsoft.com/mssql/server:2025-latest.
+# Tests: docker compose config, image digest capture, SQL readiness, migration, and backup.
+# Security Impact: Password must be supplied externally and is never committed.
+# Database Impact: Persists /var/opt/mssql in a named volume.
+# Sovereign Cycle: Structure -> Execution -> Veritas -> Echo
+# Status: ACTIVE / GOVERNED
+# Human Comprehension: REQUIRED
+# Owner: Leonard Lee / Leeway Industries
+# Version: 5.0.0
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: leeway-transit-hub-sqlserver-dev
+    hostname: leeway-transit-hub-sqlserver-dev
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+      MSSQL_SA_PASSWORD: "${LEEWAY_TRANSIT_HUB_SA_PASSWORD:?Supply LEEWAY_TRANSIT_HUB_SA_PASSWORD outside source control}"
+    ports:
+      - "15433:1433"
+    volumes:
+      - leeway_transit_hub_sqlserver_data_v1:/var/opt/mssql
+    labels:
+      com.leeway.product: enterprise-transit-hub
+      com.leeway.phase: phase-05
+      com.leeway.environment: development
+    restart: unless-stopped
+volumes:
+  leeway_transit_hub_sqlserver_data_v1:
+    name: leeway_transit_hub_sqlserver_data_v1

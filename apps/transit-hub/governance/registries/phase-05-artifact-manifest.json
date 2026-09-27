@@ -1,0 +1,485 @@
+{
+  "_leewayHeader": {
+    "file": "phase-05-artifact-manifest.json",
+    "path": "governance/registries/phase-05-artifact-manifest.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Governance / Phase Artifact Manifest",
+    "purpose": "Verify every deterministic Phase 05 patch file, including SQL persistence, interview assessments, answer keys, and solution sidecar authority, before execution.",
+    "inputs": "Generated Phase 05 source patch.",
+    "outputs": "File path, size, and SHA-256 authority.",
+    "mutationScope": "Registry metadata only.",
+    "dependencies": "Phase 05 installer.",
+    "tests": "Exact file count, size, hash, and path verification.",
+    "securityImpact": "Prevents unverified patch drift and answer-key packaging drift.",
+    "databaseImpact": "Covers database source and scripts without containing secrets.",
+    "sovereignCycle": [
+      "Origin",
+      "Structure",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "5.0.7"
+  },
+  "phase": "PHASE-05",
+  "generatedFileCount": 91,
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "3B3B8E9AB3E4548379FFECCFDC5A9B3E57C434DDF4D67CFA6BEA141A4F5D23F0",
+      "size": 1023
+    },
+    {
+      "path": "Directory.Packages.props",
+      "sha256": "16D1A2BD2AEBA5CA5685B05B4148D9FB930A143A01E9D5FFD0E231161B69C57A",
+      "size": 1524
+    },
+    {
+      "path": "LeeWay.EnterpriseTransitHub.sln.leeway.yaml",
+      "sha256": "EF88AC7435B6613B310FFE96DB5E9E34CFA4BBC4029CE4D82FB14D9E7DABDADC",
+      "size": 1367
+    },
+    {
+      "path": "database/sqlserver/backup/BACKUP-AND-RESTORE-RUNBOOK.md",
+      "sha256": "18F2A7AB1E03D3374D7D87270B57055C18F9B693F6FE9FBD201431EDB2487B91",
+      "size": 1681
+    },
+    {
+      "path": "database/sqlserver/backup/_DIRECTORY.leeway.md",
+      "sha256": "5BACB00C35AAEBD0CB978C8DB69B5EFB505E74425B9E76CFA96A3B2320EB3D2D",
+      "size": 1306
+    },
+    {
+      "path": "database/sqlserver/migrations/001-initial-tenant-schema.sql",
+      "sha256": "B2B8EDBA50E94F130398CC20AC86674133626ECB00C8C9457FD2321A7951BA53",
+      "size": 2142
+    },
+    {
+      "path": "database/sqlserver/migrations/_DIRECTORY.leeway.md",
+      "sha256": "102D459C5750BEE1CC21EA5C4686C436C1C4815F62E53E8ECD76E990DC6ADC8A",
+      "size": 1292
+    },
+    {
+      "path": "database/sqlserver/procedures/020-vehicle-and-work-order-procedures.sql",
+      "sha256": "2D4BE2B62F2A56AA92D3F554DF660546E98A1357CD3FD459DCFDD509D8A381A4",
+      "size": 1917
+    },
+    {
+      "path": "database/sqlserver/procedures/_DIRECTORY.leeway.md",
+      "sha256": "0A7D402BB462B170CC87CF478F3846F96BF9724CE97EBE284E5A29B8509CDAEB",
+      "size": 1310
+    },
+    {
+      "path": "database/sqlserver/security/010-tenant-row-level-security.sql",
+      "sha256": "255A00333E3D0DBCE492C87E0E640D681967DC35409E2F6AEDF98C91F2256351",
+      "size": 1848
+    },
+    {
+      "path": "database/sqlserver/security/_DIRECTORY.leeway.md",
+      "sha256": "44D1E27E05FFED51D707CD86687799C4B9C2F76C3E37F51F29EED427ABA33654",
+      "size": 1302
+    },
+    {
+      "path": "docs/architecture/ADR-0007-SQL-SERVER-TENANT-PERSISTENCE.md",
+      "sha256": "B8EA81C90D48BD858308925455104123DAD65993805EFB33330DEF0D44756673",
+      "size": 2113
+    },
+    {
+      "path": "docs/evidence/PHASE-05-INTERVIEW-ASSESSMENT-SOURCE-AUTHORITY.md",
+      "sha256": "28EDF5658B506A53379C0E00667E8A2B5E0966CCD1AD8CA3EFEDA519B904035F",
+      "size": 2147
+    },
+    {
+      "path": "docs/evidence/PHASE-05-SOURCE-AUTHORITY.md",
+      "sha256": "EFA9D3E87BE0BBCDF4153E6BF34BA2B77BAFE1ADFF9B8B538929DF8D1CA8E1BA",
+      "size": 2156
+    },
+    {
+      "path": "docs/learning/LESSON-05-SQL-SERVER-TENANT-PERSISTENCE.md",
+      "sha256": "E0FA2E5EFA3F4865839DAEB0128067A86CE40D6327DA63F571F99A3CFEE53A0E",
+      "size": 3011
+    },
+    {
+      "path": "docs/learning/learning-phase-registry.json",
+      "sha256": "1D4EEAD796DF2FE9C09F4CD135A3D0814FCEE509A2FE916BDEF0F66AFC7F858B",
+      "size": 4193
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-05-WORKBOOK.md",
+      "sha256": "3AC81D1002C6B9D46AA26711E37C620BE2849B26C7D90363B5FFB2FCE8EFE5B9",
+      "size": 2584
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/MASTER-QUESTION-BANK.md",
+      "sha256": "A72FF5421F1022EBDCAD953159FFA01CCC68C113B9FAA00102BD964C167E778D",
+      "size": 16512
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/LESSON-05-FAMILY-TEACHING-PLAN.md",
+      "sha256": "01A1F1765448316C0CD84DA66B140BFE47D80D30E24DA680BF9FDE2751583457",
+      "size": 1424
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/instructor/ANSWER-RUBRICS.md",
+      "sha256": "6731F7A9F8E41BA143F0D1B30688E1F75F11B3BF3E91E9D05056DD4E8CC9B006",
+      "size": 19406
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/MASTER-INTERVIEW-QUIZ.md",
+      "sha256": "C2185CCE92BBE63D1BC53B1395780DF4CEB3FB095462033777F591A702BBA27F",
+      "size": 6256
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/PRACTICAL-INTERVIEW-LABS.md",
+      "sha256": "51EF4B72BD4B8280DAD6A7F7AF3BD2D83F634018C0CEC9ABF3954DFB352D1AD0",
+      "size": 3915
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/README.md",
+      "sha256": "8FC58A89712885D33C58CD5CB2A60802D463DF6A8ED3BC578827DB30B1DBA1E0",
+      "size": 2513
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/_DIRECTORY.leeway.md",
+      "sha256": "4DA6D1CFEF3E9DCCDB2769DC8236A923C76237C28A548E736F65921C36C70841",
+      "size": 1693
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/assessment-manifest.json",
+      "sha256": "4065457C2B829CD5910A4F8E40B7721EA17728996A121EFC9DA25978E2954BDE",
+      "size": 44184
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/INSTRUCTOR-COMPARISON-SHEET.md",
+      "sha256": "BC6AF4D7E3CFCDEE7AA224160216694BAD9F2A1A65EE63B94317BE8E7AFBF83E",
+      "size": 2820
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/INSTRUCTOR-GRADING-GUIDE.md",
+      "sha256": "BB255F5870CEDC7F6AA0B690EE5670C40F6E82C0C365758A7BFBE061986746F5",
+      "size": 2306
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/MASTER-ANSWER-KEY.md",
+      "sha256": "34C53E84561DB76AC8ED8709BEAE122C9EA5F988803C9D3310058F446FAD392D",
+      "size": 55700
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/SCORING-RUBRIC.md",
+      "sha256": "5A042F0841C396ECCF4F2482EA2AC6F099DB071551B51E183CF83E6A13D5DCC6",
+      "size": 2071
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/_DIRECTORY.leeway.md",
+      "sha256": "F8B0C37A73A8AF8C1480B9C76BF462A98B7AC60373B004DD3A6883AEAEEB35B7",
+      "size": 1724
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/answer-key.json",
+      "sha256": "316263706981DB375CB1A5416C04771564F16CDF462D6327A7753C0136B534AA",
+      "size": 86424
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/INTERVIEW-ASSESSMENT-INDEX.md",
+      "sha256": "955B679C1B19C0BC3E593A5B143EEC7D84B349A1583ED5640C0F9355C21365BE",
+      "size": 1942
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/INTERVIEW-PRACTICE-EXAM.md",
+      "sha256": "AFAA765EB71E6773B43001DF721039AD9730E241063DF71C973B7705E95A364A",
+      "size": 4261
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-01-QUIZ.md",
+      "sha256": "ADA3BE13059AE60FAA52DA118BC786F2FF963879E91E77183A91FBC06D7C4455",
+      "size": 3282
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-02-QUIZ.md",
+      "sha256": "A997DF2814AD73B6488CF1E977D42A17DD5B88002CEC69AB8A9E2642FB2D36DC",
+      "size": 3592
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-04-QUIZ.md",
+      "sha256": "3934139A56E6B93BC1159EB65A40D28468082FFE6D902A4864A8537CA53C87EA",
+      "size": 3494
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-05-QUIZ.md",
+      "sha256": "97F38CC29C4B1FAA247C1C5669DFFCD72CF3D7D11815D871973BA64197D5929E",
+      "size": 3644
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/STUDENT-RESPONSE-SHEET.md",
+      "sha256": "091023E33A163A63935AE3159C81FF4CE13D287837933F5A2553570E3AD81F3A",
+      "size": 2288
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/_DIRECTORY.leeway.md",
+      "sha256": "39F027CB00FE73400724985C07990A0A9ACAA9306FA028BFD73386E0D6D57EB0",
+      "size": 1697
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/progress-tracker.json",
+      "sha256": "FE50C1963DFD8A538C843EE0860EA5650F5D2CC1B1BC9D7893DC8552FD891811",
+      "size": 2933
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/question-bank.json",
+      "sha256": "90BBCD354CEE59F6D0139E8F9DBED4FE6421BB692C97C7B99937ECD9B4D4B2A0",
+      "size": 58737
+    },
+    {
+      "path": "docs/requirements/REQ-0005-SQL-SERVER-TENANT-PERSISTENCE-AND-LEARNING.md",
+      "sha256": "18378F47C66ABE8065A9FC084E0D86C93C3F44CF23644694165976A1AC73AABA",
+      "size": 1639
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-29-SQL-SERVER-TENANT-PERSISTENCE.md",
+      "sha256": "C87929D9A422302EB0F68C736B549CE524D6DABF5FBA73C65CF18CC76B9897E9",
+      "size": 9944
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/CHAPTER-30-VEHICLE-AND-WORK-ORDER-PERSISTENCE.md",
+      "sha256": "60E6134FFEF2E19072FFFF6EB8C5E0566C40968A4BB4404AD4180ADD40028F6A",
+      "size": 10007
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/CHAPTER-31-DOCKER-SQL-SERVER-OPERATIONS-AND-BACKUP.md",
+      "sha256": "3CEED1428060D08E04F723637696387806E126874C4A79088A6F71FF78D2325C",
+      "size": 10673
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/CHAPTER-32-DATABASE-ISOLATION-HEALTH-AND-RECOVERY.md",
+      "sha256": "489CD93FA3F8E9679190ABF31B3CE41E8FBEBE834B43E291C46286FCFFDD3AC3",
+      "size": 11861
+    },
+    {
+      "path": "docs/training-manual/manual.manifest.json",
+      "sha256": "50A39E00229EE8A439B60D85253DAF72C98D6A143AE3386AC61737CC4DF2EB52",
+      "size": 6354
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/database-capability.json",
+      "sha256": "6E39561B0C0F93DABBECED83C0083CECF17127F01738E7B4CFDDAB1662CFA101",
+      "size": 2243
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/interview-assessment-proctor.json",
+      "sha256": "A9BD39D306A7AD9EF5F41B496B3AE1D7633D3B74CB90BC30EA51A49A5AF47851",
+      "size": 1986
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/private-learning-access.json",
+      "sha256": "5DF1C4FF1F1994187079F5C1A737B1A1C0D6412C3D97C0430E94A7B84173159B",
+      "size": 1910
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/training-knowledge-index.json",
+      "sha256": "F433D778B693378BE1E5C3E7679216127455864A62A3D9C870F03E5A9A6676DE",
+      "size": 4864
+    },
+    {
+      "path": "operations/docker/sqlserver/.env.example",
+      "sha256": "A7CFC8A6A036AE00ADF5BD063DA9BD1A7211AE8F650AE32D598A919BC5C3E74E",
+      "size": 833
+    },
+    {
+      "path": "operations/docker/sqlserver/README.md",
+      "sha256": "60CA8CD0021D9FABB321B552BD2940A98529DF8C298EE078917955FE050046FF",
+      "size": 1569
+    },
+    {
+      "path": "operations/docker/sqlserver/_DIRECTORY.leeway.md",
+      "sha256": "87EBC110F19EB293308E45377907452B311F20A47989805F2FE7C4BC0F547186",
+      "size": 1367
+    },
+    {
+      "path": "operations/docker/sqlserver/docker-compose.yml",
+      "sha256": "C2D3DCECBE29D211558367F19677398D17FAFFCE537C70895566419042900D17",
+      "size": 1743
+    },
+    {
+      "path": "operations/powershell/Build-All.ps1",
+      "sha256": "DA3AFCB8F7E1167043E73136D034B54583DE6E60CAAD3E9CB77B017D229F14F6",
+      "size": 1667
+    },
+    {
+      "path": "operations/powershell/Build-LeeWayTrainingManual.ps1",
+      "sha256": "FC2485982EB6A78D0DFAFC67D2FBB60E21E1A73CAF5B922340EC8F78BD2704A9",
+      "size": 6355
+    },
+    {
+      "path": "operations/powershell/Verify-ContinuousLearningGate.ps1",
+      "sha256": "19395FFA4E6DFA9D5E9F9808A14F5E62E3DF7D3788D7533490C4B09EBE61DF4E",
+      "size": 9826
+    },
+    {
+      "path": "operations/powershell/sqlserver/Test-LeeWaySqlServer.ps1",
+      "sha256": "DD883239E6930577786A01846013DD2800AD54593E268E7C079D8826CF6CB0FF",
+      "size": 1765
+    },
+    {
+      "path": "operations/powershell/sqlserver/_DIRECTORY.leeway.md",
+      "sha256": "9E3D85168B7F51924E3CCF1FD1D37C8247A71F28B441DE322583CD23F2C5E4C3",
+      "size": 1349
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/LeeWay.TransitHub.Api.csproj",
+      "sha256": "7FFCD124826959E0829D14587BE5ACECECA6D763BFDBC1E4D1FFB091CF99A066",
+      "size": 2000
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Program.cs",
+      "sha256": "CEE2B7957EA0944B0EB1BDB3C4D41A5689FCAADAA7F4DB6AB66F6BD85D5F733B",
+      "size": 4980
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/DependencyInjection/SqlServerServiceCollectionExtensions.cs",
+      "sha256": "94AEF9711FAC4EF27B39760F40022E567DEF183F6CBAA35DC03B02839ECF0D42",
+      "size": 3115
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/DependencyInjection/_DIRECTORY.leeway.md",
+      "sha256": "9BAC04E9084FE601882ABB5A5A5E46DDBB66935F2BF1475AFABD9F094CEFFFAF",
+      "size": 1368
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/LeeWay.TransitHub.Infrastructure.SqlServer.csproj",
+      "sha256": "5C9CD24BCEEE0CB3721444411225EC0EC1D1FD22B865870910A45BDBCAB3808E",
+      "size": 2156
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/202607250001_InitialTenantPersistence.Designer.cs",
+      "sha256": "700F05A7E38E3C1126D5C353C995F6B92E399E50E5C26117A46E0BD9F0FA99EC",
+      "size": 1585
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/202607250001_InitialTenantPersistence.cs",
+      "sha256": "64BDE822DF9AFE89DE1B3966A532FFF211F0D49F9C9125739CED94E024182B48",
+      "size": 6661
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/TransitHubDbContextModelSnapshot.cs",
+      "sha256": "60AECCBF368DB131D6DA773FEE33673AF2C891CDCE9672BFFD885243C2E39296",
+      "size": 4411
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/_DIRECTORY.leeway.md",
+      "sha256": "E2AA2EDF2F2CFE11E924CBD78D09EC1D22E3B0E72E5A2C52F76683A030717BF8",
+      "size": 1334
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/DesignTimeTenantContext.cs",
+      "sha256": "C3ABD6625EAAE6AE5687C93D15EABBCC8D4B24A1103907BC083CA9234AC05638",
+      "size": 1538
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/TenantSessionConnectionInterceptor.cs",
+      "sha256": "605ED2018ED501E125414D8A9137427E61BD332DC9C92CE2308433AC7701DB34",
+      "size": 3036
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/TransitHubDbContext.cs",
+      "sha256": "2B1ECCD519633EB618547A97AD20286A5CF9F7BA62A6A8F283B766587466E1B2",
+      "size": 3663
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/TransitHubDesignTimeDbContextFactory.cs",
+      "sha256": "8994AF4693E0D22FC7E07C4A0200038E79C55F005AF41C414330C1346488DDA2",
+      "size": 1966
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/VehicleRecord.cs",
+      "sha256": "77316EF9C7CDD8C217CDA9F8287F6F852F2CC6806E45A52E12245B3F874DB97F",
+      "size": 1714
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/WorkOrderRecord.cs",
+      "sha256": "48CF0C0DAC98C690246398454D6DB235670C0C5790817BDC6441A34818DED90F",
+      "size": 1743
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/_DIRECTORY.leeway.md",
+      "sha256": "9A409C4377975F1C8A7C226C4594BCB93A11BB9A4C1E68155EC163FDB4F699C8",
+      "size": 1368
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Repositories/SqlServerVehicleRepository.cs",
+      "sha256": "BB7C448F0A5A6A65E9038A0CB86DAB36BEE72095191787689C0F7EC819BA63CB",
+      "size": 3511
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Repositories/SqlServerWorkOrderRepository.cs",
+      "sha256": "094CE9EC98A4DCC363FD1EE44ED66045A285D0EC8DCFCFAA1D80A0B6B538A80F",
+      "size": 3680
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Repositories/_DIRECTORY.leeway.md",
+      "sha256": "A7A5C054A92354E4317928B4976466FFD33BF2655BC1A76B10A2F57EC6DEBD90",
+      "size": 1352
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/SqlServerConnectionOptions.cs",
+      "sha256": "E81FCEF9FFD285EAA74371C4982B86AB1A4E5794E306F43F4038385845AA7AF8",
+      "size": 1755
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/ContinuousLearningArchitectureTests.cs",
+      "sha256": "CDC14867F3F5B0FB831C62A048D039D39ED5F2494EDA0A2B304761094FBE802C",
+      "size": 7426
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/InterviewAssessmentArchitectureTests.cs",
+      "sha256": "A6B93CE4873E5B4DC3ED5A32D4801C9C9D95F1C6788586C53592E54691F178D8",
+      "size": 6487
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/LeeWay.TransitHub.ArchitectureTests.csproj",
+      "sha256": "4C57743268B7AB8AAC19D643E65B233DE77F315BD81266455BB807C26976864E",
+      "size": 1903
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/SqlServerPersistenceArchitectureTests.cs",
+      "sha256": "515538CBA075204BFEA3400F92DEED05812D3862E5A5B9C29AACA0E5FD1A1E29",
+      "size": 2516
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/TrainingDocumentationArchitectureTests.cs",
+      "sha256": "13F0A6DC95851D38D63A25077ACB3AA7E007E489E58BF73EFB2DE38AB6CCAB3A",
+      "size": 5079
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.IntegrationTests/LeeWay.TransitHub.IntegrationTests.csproj",
+      "sha256": "B8AC434B57449D63E103C40DE251E57B514E56ABE0518A9CC5AB8F20C01471A9",
+      "size": 2034
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.IntegrationTests/SqlServerDatabaseIntegrationTests.cs",
+      "sha256": "CDCF0E2F5ECE216C5DD15F54E66CBBC92024C19F8B91DF8AE1FC4110586371B7",
+      "size": 4586
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/LeeWay.TransitHub.SecurityTests.csproj",
+      "sha256": "CA894C555FE558EA8765BEC120C1C930D729E01C8D3DE1848B8FC36CF6151495",
+      "size": 2015
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/SqlServerTenantSecurityTests.cs",
+      "sha256": "1E68835CCE817E8E0360106C5FCAE7060869F45BC39EE1C292D3DB2C2C3DF651",
+      "size": 3003
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/LeeWay.TransitHub.UnitTests.csproj",
+      "sha256": "03F412AE2590F44DEB137522F043B1C826B3350644F7908AF21969C427DEA5B1",
+      "size": 1999
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/SqlServerOptionsTests.cs",
+      "sha256": "E650F318F9D7E37863D52341FD606592C4507D11DA688C68141AC201B21A2CAF",
+      "size": 1616
+    }
+  ]
+}

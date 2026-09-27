@@ -1,0 +1,154 @@
+{
+  "_leewayHeader": {
+    "file": "curriculum-registry.json",
+    "path": "docs/training-manual/curriculum-registry.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Training / Curriculum Registry",
+    "purpose": "Define role-based training tracks for users, administrators, technical staff, and LeeWay agents.",
+    "inputs": "Product roles and manual sections.",
+    "outputs": "Versioned curriculum assignments.",
+    "mutationScope": "Training metadata only.",
+    "dependencies": "Manual manifest and role model.",
+    "tests": "JSON parse and role-to-section coverage.",
+    "securityImpact": "Restricts learners to role-appropriate examples and tenant-safe labs.",
+    "databaseImpact": "Future training records will reference these identifiers.",
+    "sovereignCycle": [
+      "Structure",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "4.0.0"
+  },
+  "curricula": [
+    {
+      "id": "operations-driver",
+      "audience": "Driver",
+      "requiredParts": [
+        1,
+        2,
+        4,
+        5,
+        7,
+        8,
+        12
+      ]
+    },
+    {
+      "id": "operations-dispatcher",
+      "audience": "Dispatcher",
+      "requiredParts": [
+        1,
+        2,
+        4,
+        5,
+        7,
+        8,
+        9,
+        10,
+        12
+      ]
+    },
+    {
+      "id": "operations-mechanic",
+      "audience": "Mechanic",
+      "requiredParts": [
+        1,
+        2,
+        4,
+        6,
+        7,
+        8,
+        10,
+        12
+      ]
+    },
+    {
+      "id": "tenant-admin",
+      "audience": "Tenant Administrator",
+      "requiredParts": [
+        1,
+        2,
+        3,
+        7,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "technical-support",
+      "audience": "Technical Support",
+      "requiredParts": [
+        1,
+        2,
+        3,
+        7,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "developer-architect",
+      "audience": "Developer or Architect",
+      "requiredParts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "agent-lee-proctor",
+      "audience": "Agent Lee Prime",
+      "requiredParts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    }
+  ],
+  "securityFoundation": {
+    "requiredFor": [
+      "Tenant Administrator",
+      "Technical Support",
+      "Developer or Architect",
+      "Agent Lee Prime"
+    ],
+    "chapters": [
+      25,
+      26,
+      27,
+      28
+    ],
+    "competencies": [
+      "authentication-versus-authorization",
+      "claims-roles-permissions-policies",
+      "tenant-match",
+      "agent-service-identity",
+      "continuous-learning-gate"
+    ]
+  }
+}

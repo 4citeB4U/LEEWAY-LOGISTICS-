@@ -1,0 +1,115 @@
+{
+  "_leewayHeader": {
+    "file": "learning-phase-registry.json",
+    "path": "docs/learning/learning-phase-registry.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Learning / Release Registry",
+    "purpose": "Require every implementation phase to update human learning, private questions, commercial training, Agent Lee knowledge, tests, and receipts.",
+    "inputs": "Phase lessons, workbooks, question bank, manual progress, knowledge index, and receipts.",
+    "outputs": "Machine-readable continuous-learning release authority.",
+    "mutationScope": "Learning metadata only.",
+    "dependencies": "Learning policy and governed project artifacts.",
+    "tests": "JSON parse, latest-phase file existence, count agreement, and architecture tests.",
+    "securityImpact": "Separates private and commercial learning while preventing stale operational guidance.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo",
+      "Synthesis"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "6.0.0"
+  },
+  "policy": {
+    "everyPhaseMustUpdate": true,
+    "requiredSurfaces": [
+      "technicalLesson",
+      "privateWorkbook",
+      "privateQuestionBank",
+      "privateProgressTracker",
+      "commercialManual",
+      "agentLeeKnowledgeIndex",
+      "automatedTests",
+      "phaseReceipt",
+      "privateInterviewQuiz",
+      "privateInstructorAnswerKey",
+      "privateAssessmentManifest",
+      "privateScoringAndRemediation"
+    ],
+    "minimumNewQuestionsForImplementationPhase": 8,
+    "commercialAndPrivateSeparationRequired": true,
+    "agentLeeProctorUpdateRequired": true,
+    "releaseBlockedOnMismatch": true,
+    "everyArchivedQuestionRequiresQuizMapping": true,
+    "everyArchivedQuestionRequiresAnswerKey": true,
+    "answerKeysExcludedFromCommercialRelease": true
+  },
+  "phases": [
+    {
+      "id": "PHASE-01",
+      "lesson": "docs/learning/LESSON-01-REQUEST-PATH.md",
+      "privateWorkbook": "docs/private-learning/leonard-lee/LESSON-01-WORKBOOK.md",
+      "questionLesson": "LESSON-01",
+      "questionCount": 10,
+      "manualChapterCountAfterPhase": 0,
+      "status": "COMPLETE_FOUNDATION_LEARNING"
+    },
+    {
+      "id": "PHASE-02",
+      "lesson": "docs/learning/LESSON-02-SAAS-TENANCY-TRAINING-AND-AGENT-BOUNDARIES.md",
+      "privateWorkbook": "docs/private-learning/leonard-lee/LESSON-02-WORKBOOK.md",
+      "questionLesson": "LESSON-02",
+      "questionCount": 12,
+      "manualChapterCountAfterPhase": 0,
+      "status": "COMPLETE_TENANCY_LEARNING"
+    },
+    {
+      "id": "PHASE-03",
+      "lesson": "docs/learning/LESSON-03-DOCUMENTATION-PROCTORING-AND-FAMILY-TEACHING.md",
+      "privateWorkbook": "docs/private-learning/leonard-lee/INTERVIEW-DEFENSE-WORKBOOK.md",
+      "questionLesson": null,
+      "questionCount": 0,
+      "manualChapterCountAfterPhase": 24,
+      "status": "COMPLETE_DOCUMENTATION_FOUNDATION"
+    },
+    {
+      "id": "PHASE-04",
+      "lesson": "docs/learning/LESSON-04-IDENTITY-ROLES-AUTHORIZATION-AND-CONTINUOUS-LEARNING.md",
+      "privateWorkbook": "docs/private-learning/leonard-lee/LESSON-04-WORKBOOK.md",
+      "questionLesson": "LESSON-04",
+      "questionCount": 12,
+      "manualChapterCountAfterPhase": 28,
+      "status": "COMPLETE_IDENTITY_AUTHORIZATION_LEARNING"
+    },
+    {
+      "id": "PHASE-05",
+      "lesson": "docs/learning/LESSON-05-SQL-SERVER-TENANT-PERSISTENCE.md",
+      "privateWorkbook": "docs/private-learning/leonard-lee/LESSON-05-WORKBOOK.md",
+      "questionLesson": "LESSON-05",
+      "questionCount": 12,
+      "manualChapterCountAfterPhase": 32,
+      "status": "ACTIVE_SQL_SERVER_TENANT_PERSISTENCE_AND_INTERVIEW_ASSESSMENT",
+      "interviewQuiz": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-05-QUIZ.md",
+      "assessmentManifest": "docs/private-learning/leonard-lee/interview-assessment/assessment-manifest.json",
+      "instructorAnswerKey": "docs/private-learning/leonard-lee/interview-assessment/instructor/MASTER-ANSWER-KEY.md",
+      "mappedAssessmentQuestionCount": 46
+    },
+    {
+      "id": "PHASE-06",
+      "lesson": "docs/learning/LESSON-06-CREDENTIAL-ROTATION-SECRET-REDACTION-AND-REALTIME-OPERATIONS.md",
+      "privateWorkbook": "docs/private-learning/leonard-lee/LESSON-06-WORKBOOK.md",
+      "questionLesson": "LESSON-06",
+      "questionCount": 12,
+      "manualChapterCountAfterPhase": 36,
+      "status": "ACTIVE_SECRET_ROTATION_AND_TENANT_REALTIME_OPERATIONS",
+      "interviewQuiz": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-06-QUIZ.md",
+      "assessmentManifest": "docs/private-learning/leonard-lee/interview-assessment/assessment-manifest.json",
+      "instructorAnswerKey": "docs/private-learning/leonard-lee/interview-assessment/instructor/MASTER-ANSWER-KEY.md",
+      "mappedAssessmentQuestionCount": 58
+    }
+  ]
+}

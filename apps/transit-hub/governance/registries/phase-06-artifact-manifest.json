@@ -1,0 +1,370 @@
+{
+  "_leewayHeader": {
+    "file": "phase-06-artifact-manifest.json",
+    "path": "governance/registries/phase-06-artifact-manifest.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Governance / Artifact Manifest",
+    "purpose": "Authorize every deterministic Phase 06 patch file, including SQL database-readiness, credential-retry, realtime JSON response-contract, and learning updates.",
+    "inputs": "Generated Phase 06 patch files.",
+    "outputs": "Hash and size authority for transactional extraction.",
+    "mutationScope": "Registry metadata only.",
+    "dependencies": "SHA-256 and Phase 06 installer.",
+    "tests": "Every file existence, size, and hash.",
+    "securityImpact": "Prevents unverified patch drift.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "6.0.12"
+  },
+  "phase": "PHASE-06",
+  "generatedFileCount": 66,
+  "files": [
+    {
+      "path": "database/sqlserver/migrations/002-operations-events-and-realtime.sql",
+      "sha256": "D6D5FEA6841571D5ECDEF31D6D6B2C2A0753F06956A1BCAA553E76FAF6037E33",
+      "size": 2178
+    },
+    {
+      "path": "docs/architecture/ADR-0008-SECRET-SAFE-AUTOMATION-AND-TENANT-REALTIME-EVENTS.md",
+      "sha256": "A702894CE850378EB6A8C164CF6ECB2443D9E7FD14E5E0BC804ED594331B3FCD",
+      "size": 1939
+    },
+    {
+      "path": "docs/evidence/PHASE-06-SOURCE-AUTHORITY.md",
+      "sha256": "CFC9B8EB38A474F1B65E7044FF8322E222EDBD3B31620994E9F4E5A7EA33EFDE",
+      "size": 3636
+    },
+    {
+      "path": "docs/learning/LESSON-06-CREDENTIAL-ROTATION-SECRET-REDACTION-AND-REALTIME-OPERATIONS.md",
+      "sha256": "944DC9F8C952C12E9F2D8F1B662B1BE3311BAF35ACBC7589DA618B76767F0C47",
+      "size": 15290
+    },
+    {
+      "path": "docs/learning/learning-phase-registry.json",
+      "sha256": "F88DA49C26F3DDF21EFD70963343624807D7CDF7F618CC68691CB5EE68089AE0",
+      "size": 4979
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-06-WORKBOOK.md",
+      "sha256": "528FFA9B8FF4BCE0BEEE29824527D4D2C53462EDF728CA9C042B92F8AF04EF6E",
+      "size": 7747
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/MASTER-QUESTION-BANK.md",
+      "sha256": "45A35593069475B039EFF2883CB9DAD67E6BE53A3C3644DED8BD7619052D9FA1",
+      "size": 6327
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/LESSON-06-FAMILY-TEACHING-PLAN.md",
+      "sha256": "E924931D4C49B5BAC76E5766B05FFC5155B7B614BC618A72FE7C7EF7B33148FE",
+      "size": 1433
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/assessment-manifest.json",
+      "sha256": "A1EAB843AE9610622BC7F83F271C3C8897D4081ACFCAD08D485C9D6546CC3C68",
+      "size": 55056
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/MASTER-ANSWER-KEY.md",
+      "sha256": "B96B0DD0B4D7F934BF21B687C293CE601787279C42B088241DEDCF066C11F1BA",
+      "size": 31336
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/instructor/answer-key.json",
+      "sha256": "A855708E9F0ACCD71C2E744F582BCB6B79C42CA8AC20E7044A237074ED5F9F77",
+      "size": 108421
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/interview-assessment/learner/LESSON-06-QUIZ.md",
+      "sha256": "48CEC305FA50AADC80C4C78182DF42C4BC2333B9196191D163FB9E6A924E90D9",
+      "size": 2843
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/progress-tracker.json",
+      "sha256": "D9D176495F777D32A5609724D54B96FF18C27054A1BF54C39B6062A79D1E5A31",
+      "size": 3272
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/question-bank.json",
+      "sha256": "26CCFF583E2A858091FF810FE06A114F60400AD6264A01FF67E007C52EBECD89",
+      "size": 74061
+    },
+    {
+      "path": "docs/requirements/REQ-0006-SECRET-ROTATION-REALTIME-OPERATIONS-AND-LEARNING.md",
+      "sha256": "C69EA29794631249CF61B1C0D4DC4AE1755A40F551DFEE75B50AAE135F2169A6",
+      "size": 1725
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-35-TENANT-SCOPED-OPERATIONS-EVENTS.md",
+      "sha256": "6A215749EE280B4A4439414C284A1CC2432EA7032726A079A91B90275FC416A5",
+      "size": 31881
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/CHAPTER-34-REALTIME-OPERATIONS-AND-SIGNALR.md",
+      "sha256": "3F118B2BB435197C44E05383EC615179B68D4F0F43621C8C0E77DE50B427982D",
+      "size": 33400
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/CHAPTER-36-AGENT-LEE-REALTIME-OBSERVATION-BOUNDARIES.md",
+      "sha256": "6DF154E0401571C93742B3BFEA7171F033170F3535EF65BD8B75D8ACB58D0D9E",
+      "size": 31914
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/CHAPTER-33-CREDENTIAL-ROTATION-AND-SECRET-SAFE-AUTOMATION.md",
+      "sha256": "96CB2D47F0F93276E798FB6B642B314EA6E81B55BD33038525656730395638B5",
+      "size": 36657
+    },
+    {
+      "path": "docs/training-manual/manual.manifest.json",
+      "sha256": "B806C479E06AD90F40EDF0946BA2D35C2F3E3568A2EC08CA8E7FD974D5F630BE",
+      "size": 6304
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/training-knowledge-index.json",
+      "sha256": "CE25EE08683CC3B2859D8854656060811F2887A79548EEAE15B41D864F76856C",
+      "size": 5980
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/realtime-operations-capability.json",
+      "sha256": "5FA0E50F6D2BF7919BAEB1B240A1C66FDABA98D8E06B0FABAEE5A5250ADC08DE",
+      "size": 1701
+    },
+    {
+      "path": "operations/powershell/Build-All.ps1",
+      "sha256": "EA582ACB8FFE2DD1370A95EE6B15B770DEFAB8C571ADDC407F92EABBB0B35E93",
+      "size": 1667
+    },
+    {
+      "path": "operations/powershell/Build-LeeWayTrainingManual.ps1",
+      "sha256": "826AFAC84A7DC1A72D25652A5536F42793BCB5FEF3778F944F480AD9467F2575",
+      "size": 6355
+    },
+    {
+      "path": "operations/powershell/security/SECRET-ROTATION-AND-REDACTION-RUNBOOK.md",
+      "sha256": "BB134136B0A4B8AF9BDD7CCAD3DF37FD5DAADF824AA1DA0C6B060F5509FF26BD",
+      "size": 2199
+    },
+    {
+      "path": "operations/powershell/security/SecretSafeProcess.psm1",
+      "sha256": "AF762A72D6160C5F241F20E093B16B40FECFF5701D1B152A9BD1792FBDC9EBE6",
+      "size": 3213
+    },
+    {
+      "path": "operations/powershell/security/Test-LeeWaySecretExposure.ps1",
+      "sha256": "ABE06CDE6217FEFD640A72B3B0B0436DB3DDCA6C4C8D58F1FBDC0E939E3675EE",
+      "size": 2358
+    },
+    {
+      "path": "operations/powershell/security/_DIRECTORY.leeway.md",
+      "sha256": "477E2B1161B691A6CFAF599E527EBCB61BFBB7E128B6D5FCF7CE94B4256ECEED",
+      "size": 1311
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/OperationsEventsController.cs",
+      "sha256": "2A32D6B2CDC9ACC4B15B8566713791B3B5B8A83989FCEC2396EC9C88A5B74464",
+      "size": 2651
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Hubs/OperationsHub.cs",
+      "sha256": "9C93682CE59A7AC927A2DFE6380BA6F5E4944E108213F31C308D6A3E51729996",
+      "size": 1818
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Hubs/TenantOperationsGroup.cs",
+      "sha256": "8ED89706DEA9CA414778D23AF9C85479CBA0A4248B5951059D3D8D4C5B496515",
+      "size": 1184
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Hubs/_DIRECTORY.leeway.md",
+      "sha256": "92D405191A666726238346ED7654DD26B920D1D98B613DF1AD88C18ED7F26165",
+      "size": 1253
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/LeeWay.TransitHub.Api.csproj",
+      "sha256": "AB293F42903C1D72DFB39C27D1137A3DA91F4BC3CF3D64D509D27372FF86EB13",
+      "size": 2006
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Program.cs",
+      "sha256": "22D23DAB6B65EEFFFBC9A0FD3F1D85ED18AC1AFF566C7E1CB64A54399CCEFC13",
+      "size": 8016
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Realtime/SignalROperationsNotifier.cs",
+      "sha256": "D6A6D617B816A2AC536A4EC9B927DFF7A5B6C9CE83BEA774425B8CC4C3FA468F",
+      "size": 2001
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Realtime/_DIRECTORY.leeway.md",
+      "sha256": "3A84B180BDFA2E3BBB212598B275A0D801C78F13B1205CFC665C3AE2EA766AF2",
+      "size": 1311
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/TransitSecurityServiceCollectionExtensions.cs",
+      "sha256": "BDA008E9ED572C3362B045C9115A3C4734FC1884B8D69118D5A66424CC87528B",
+      "size": 5066
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IOperationsEventRepository.cs",
+      "sha256": "39BE54A3AAB6BBA16D19A01D08C1F6AA71D23E73B98759B3721C15CF0DCA6DE0",
+      "size": 1338
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Abstractions/IOperationsNotifier.cs",
+      "sha256": "86D3C60E6E694DA62111CCEA0B919567841244836A52C17444D51610137DD776",
+      "size": 1222
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Models/CreateOperationsEventRequest.cs",
+      "sha256": "0DE7B7CB52896131516F04DBA4B4FF1649F70CAA123B123C1F67E6DB999F5132",
+      "size": 1269
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/SecretRedactor.cs",
+      "sha256": "6A908832B9E0CBF7F9A3A8CFD7ED7DA3A50F207FBF95F6E9A48878F6B8275377",
+      "size": 1654
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitPermissions.cs",
+      "sha256": "55F160B708B9507E4C20F089F8A7383ED466F040851F331F7FE362DB7B8F5956",
+      "size": 4413
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitPolicies.cs",
+      "sha256": "F0A2C60D0B1A7D8E8D3D07FD3415619CB75153AA1EB84868A9AF27019A6788A2",
+      "size": 1718
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Services/OperationsEventService.cs",
+      "sha256": "A3FE36952596C461FEABEA2F731101DB75552B2BE811E732B13E125F1803104C",
+      "size": 3429
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Operations/OperationsEvent.cs",
+      "sha256": "0375804ABA7892D0BBB51F3CF4821624F2E7DB1BFA9A70AE98EC6E106C06776F",
+      "size": 3426
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Operations/OperationsEventSeverity.cs",
+      "sha256": "A9B6FAD715AF8755D65AB1C6193389A335B585B5CA9E547023DD143A436715D3",
+      "size": 1153
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Operations/OperationsEventType.cs",
+      "sha256": "A877A4334FF79334B501E4581B326BA5AF9FA345201B53AD5D458D68460E3DA7",
+      "size": 1209
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Operations/_DIRECTORY.leeway.md",
+      "sha256": "1FC585312209354064F66C7E08DFDF2397DAE463976E2818F85F6E4EA4DA935D",
+      "size": 1291
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/DependencyInjection/InMemoryServiceCollectionExtensions.cs",
+      "sha256": "B19A10618B42D557F1220523786B51F94BF8FCBFB96E52C9B8545700687806A8",
+      "size": 2129
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/Repositories/InMemoryRepositories.cs",
+      "sha256": "C3FD86692375E280875DC8066F9CB17725D1C65200ADA784DE251BFFA291A993",
+      "size": 5455
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.InMemory/Storage/InMemoryTransitStore.cs",
+      "sha256": "4842C9DC7BBEDEE08832B8B0ECCE243B216BB3CA7CF4745FF24ED71C5499C103",
+      "size": 2755
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/DependencyInjection/SqlServerServiceCollectionExtensions.cs",
+      "sha256": "4342D9C01956030933ED171FE5D5ABC1DFB1558677A0D67D28E7D0D7C6B42ED3",
+      "size": 3560
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/LeeWay.TransitHub.Infrastructure.SqlServer.csproj",
+      "sha256": "B37A48D9CFC75151FAC48D957FF938306FB5D4496B7A049FE964FAEB433A5694",
+      "size": 2156
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/202607260001_OperationsEventsAndRealtime.cs",
+      "sha256": "1032B2DF6D00EEF87CAF386DC1FF8747BDA93D7BF2028AA64D75CD55479EC0D8",
+      "size": 4171
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Migrations/TransitHubDbContextModelSnapshot.cs",
+      "sha256": "6AA42026037526063BD0C3A41890DC699EC94E37E2D64D078C214E85EB10C496",
+      "size": 5591
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/OperationsEventRecord.cs",
+      "sha256": "E7152DBE7CF06F6E3BD7DADC375314CF02C808E1499D6F701F2376E1938163E0",
+      "size": 1680
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Persistence/TransitHubDbContext.cs",
+      "sha256": "3E5ACD3E688CBB6C338E294B00952B2A225E8F166FF5F73081384A47A076FE04",
+      "size": 4654
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Infrastructure.SqlServer/Repositories/SqlServerOperationsEventRepository.cs",
+      "sha256": "54F5355E3DD185BFC8AB5E66AC1DA5944A4AF2652600973A45D22B3CBBAC0B81",
+      "size": 3651
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/ContinuousLearningArchitectureTests.cs",
+      "sha256": "DB7321F9BC3A7FBFEA2208696733CCEDB321BAE75E49D8315F329D73C4B12A20",
+      "size": 7510
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/InterviewAssessmentArchitectureTests.cs",
+      "sha256": "4436C827A11A77A8B938E6D5D92EE94CDE27386413D8C71DE66D8F3971EAA626",
+      "size": 6895
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/Phase06RealtimeArchitectureTests.cs",
+      "sha256": "93FDDDF2AB3AED52F302CE1339634BD6039B80CF0B14A3FC8E88BE8E7410F7C7",
+      "size": 5547
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.IntegrationTests/OperationsEventSqlServerIntegrationTests.cs",
+      "sha256": "4CF99FC96E13622325032153913D545ADBEDC349C08E30E229BD0A72A3972F2A",
+      "size": 4386
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.IntegrationTests/SqlServerDatabaseIntegrationTests.cs",
+      "sha256": "EE132BB363C7ACBFC7926D2608C5CA897F0FF6FF1CDC60901681B6B8E852FB9C",
+      "size": 4644
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/RealtimeOperationsSecurityTests.cs",
+      "sha256": "82918931A74F14B13E1919089A25D7460E1AA84AF9E489F71B4A7FE39D348FE3",
+      "size": 2345
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/OperationsEventServiceTests.cs",
+      "sha256": "F0CA41CFBDCB8967AC5D1525AC2FE1FF31CA21C1186798DC0FFF68B0D9CD94FC",
+      "size": 3956
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/OperationsEventTests.cs",
+      "sha256": "225C44774185ECB06961A74CA9B2A402A17644857CC36F2EB5FDFDAFA1A6227F",
+      "size": 2618
+    }
+  ],
+  "modelSnapshotAlignment": "ROWVERSION_REQUIRED_METADATA_AND_PREMUTATION_GATE",
+  "migrationConnectionSelection": "DEDICATED_MIGRATION_CONNECTION_WITH_RUNTIME_PRINCIPAL_PROBE",
+  "latestPhaseArchitectureTests": {
+    "status": "MANIFEST_DRIVEN_NO_STALE_PHASE_LITERAL",
+    "files": [
+      "tests/LeeWay.TransitHub.ArchitectureTests/ContinuousLearningArchitectureTests.cs",
+      "tests/LeeWay.TransitHub.ArchitectureTests/InterviewAssessmentArchitectureTests.cs"
+    ]
+  },
+  "backupAuthority": "SA_TRANSACTIONAL_INSTALLER_WITH_MIGRATOR_BACKUP_PERMISSION_ABSENT_AFTER_REVOCATION"
+}

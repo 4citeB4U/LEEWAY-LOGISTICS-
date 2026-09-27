@@ -1,0 +1,34 @@
+{
+  "_leewayHeader": {
+    "file": "question-bank-index.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/education/question-bank-index.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Agent Lee Capability / Education",
+    "purpose": "Expose question counts and source location without duplicating private answers.",
+    "inputs": "Private question bank metadata.",
+    "outputs": "Question inventory for proctor routing.",
+    "mutationScope": "Capability metadata only.",
+    "dependencies": "docs/private-learning/leonard-lee/question-bank.json.",
+    "tests": "JSON parse and exact count validation.",
+    "securityImpact": "Contains prompts and metadata but no learner answers.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Structure",
+      "Veritas",
+      "Synthesis"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "4.0.0"
+  },
+  "source": "docs/private-learning/leonard-lee/question-bank.json",
+  "totalQuestions": 34,
+  "lessons": {
+    "LESSON-01": 10,
+    "LESSON-02": 12,
+    "LESSON-04": 12
+  },
+  "answersSource": "docs/private-learning/leonard-lee/instructor/ANSWER-RUBRICS.md",
+  "visibility": "PRIVATE"
+}

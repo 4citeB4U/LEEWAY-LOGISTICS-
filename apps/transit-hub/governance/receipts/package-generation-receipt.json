@@ -1,0 +1,40 @@
+{
+  "_leewayHeader": {
+    "file": "package-generation-receipt.json",
+    "path": "governance/receipts/package-generation-receipt.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Governance / Receipt",
+    "purpose": "Record package-generation scope and remaining compilation gate.",
+    "inputs": "Generated source tree and static validation.",
+    "outputs": "Package-generation receipt.",
+    "mutationScope": "Receipt only.",
+    "dependencies": "All source files.",
+    "tests": "JSON/XML parse, authority scan, and deployment build.",
+    "securityImpact": "Contains no secrets.",
+    "databaseImpact": "No database mutation occurred.",
+    "sovereignCycle": [
+      "Veritas",
+      "Echo",
+      "Synthesis"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "1.0.0"
+  },
+  "receiptId": "PACKAGE-GENERATION-1.0.3",
+  "recordedUtc": "2026-07-24T23:30:00Z",
+  "operation": "Generate corrected LeeWay Enterprise Transit Hub source package",
+  "status": "STATIC_VALIDATION_PASS_HOST_BUILD_REQUIRED",
+  "dotnetCompilation": "PENDING_USER_ENVIRONMENT_GATE",
+  "databaseMutation": "NONE",
+  "dockerMutation": "NONE",
+  "oracleMutation": "NONE",
+  "dynamicsMutation": "NONE",
+  "nextGate": "Deployment block creates solution, restores, builds, tests, scans governance, and publishes atomically.",
+  "corrections": [
+    "Added <Using Include=\"Xunit\" /> to all five test project files",
+    "Added explicit pre-build xUnit contract verification to the single foundation script",
+    "Changed solution project registration to one native dotnet sln add invocation"
+  ]
+}

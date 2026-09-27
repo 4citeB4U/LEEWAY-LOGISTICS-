@@ -1,0 +1,84 @@
+{
+  "_leewayHeader": {
+    "file": "tool-catalog.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/tool-catalog.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "LeeWay / Tool Catalog",
+    "purpose": "Declare tools Agent Lee may discover and their current implementation state.",
+    "inputs": "API endpoints, use cases, permissions, and release evidence.",
+    "outputs": "Versioned tool discovery catalog.",
+    "mutationScope": "Tool metadata only.",
+    "dependencies": "Capability and permission manifests.",
+    "tests": "Schema validation, endpoint verification, authorization tests, and tool contract tests.",
+    "securityImpact": "Only listed and authorized tools may be invoked.",
+    "databaseImpact": "Mutation tools remain deferred until persistence is active.",
+    "sovereignCycle": [
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "2.0.0"
+  },
+  "tools": [
+    {
+      "id": "transit.product.profile",
+      "operation": "GET /api/platform/profile",
+      "riskClass": "READ_ONLY",
+      "status": "IMPLEMENTED_FOUNDATION",
+      "tenantRequired": false
+    },
+    {
+      "id": "transit.tenant.context",
+      "operation": "GET /api/platform/tenant-context",
+      "riskClass": "READ_ONLY",
+      "status": "IMPLEMENTED_FOUNDATION",
+      "tenantRequired": false
+    },
+    {
+      "id": "transit.health",
+      "operation": "GET /health",
+      "riskClass": "READ_ONLY",
+      "status": "IMPLEMENTED_FOUNDATION",
+      "tenantRequired": false
+    },
+    {
+      "id": "transit.vehicles.read",
+      "operation": "GET /api/vehicles",
+      "riskClass": "READ_ONLY",
+      "status": "TRAINING_DATA_UNTENANTIZED",
+      "tenantRequired": false
+    },
+    {
+      "id": "transit.workorders.create",
+      "operation": "POST /api/workorders",
+      "riskClass": "CUSTOMER_DATA_MUTATION",
+      "status": "DEFERRED_UNTIL_IDENTITY_TENANCY_AND_PERSISTENCE",
+      "tenantRequired": true
+    },
+    {
+      "id": "transit.training.proctor",
+      "operation": "LeeWay training workflow",
+      "riskClass": "READ_ONLY",
+      "status": "CONTRACT_DEFINED_RUNTIME_DEFERRED",
+      "tenantRequired": true
+    },
+    {
+      "id": "transit.diagnose",
+      "operation": "Governed diagnostics",
+      "riskClass": "READ_ONLY",
+      "status": "CONTRACT_DEFINED_RUNTIME_DEFERRED",
+      "tenantRequired": true
+    },
+    {
+      "id": "transit.repair",
+      "operation": "Approval-bound repair runbook",
+      "riskClass": "CONFIGURATION",
+      "status": "CONTRACT_DEFINED_RUNTIME_DEFERRED",
+      "tenantRequired": true
+    }
+  ]
+}

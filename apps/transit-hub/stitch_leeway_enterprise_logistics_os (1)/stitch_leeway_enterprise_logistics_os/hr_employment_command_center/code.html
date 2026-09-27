@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Logistics OS | HR &amp; Employment Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#333539",
+                    "primary-container": "#30363d",
+                    "on-primary-fixed-variant": "#41474f",
+                    "surface": "#111318",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "surface-container-low": "#1a1c20",
+                    "on-primary-fixed": "#161c23",
+                    "tertiary-container": "#32353d",
+                    "secondary-fixed-dim": "#c2c7d0",
+                    "on-tertiary-fixed": "#191c23",
+                    "on-secondary-container": "#b1b5bf",
+                    "on-primary": "#2b3138",
+                    "tertiary-fixed-dim": "#c4c6d0",
+                    "on-background": "#e2e2e8",
+                    "surface-container-high": "#282a2e",
+                    "inverse-on-surface": "#2f3035",
+                    "secondary-fixed": "#dee2ec",
+                    "inverse-primary": "#595f67",
+                    "inverse-surface": "#e2e2e8",
+                    "on-secondary": "#2c3138",
+                    "error": "#ffb4ab",
+                    "secondary": "#c2c7d0",
+                    "primary-fixed": "#dde3ec",
+                    "on-secondary-fixed": "#171c23",
+                    "on-surface": "#e2e2e8",
+                    "on-tertiary-fixed-variant": "#44474f",
+                    "on-tertiary-container": "#9b9da7",
+                    "on-secondary-fixed-variant": "#42474f",
+                    "surface-container-lowest": "#0c0e12",
+                    "surface-container": "#1e2024",
+                    "primary-fixed-dim": "#c1c7d0",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-container": "#999fa7",
+                    "surface-tint": "#c1c7d0",
+                    "on-tertiary": "#2d3038",
+                    "tertiary": "#c4c6d0",
+                    "on-surface-variant": "#c5c6cb",
+                    "surface-container-highest": "#333539",
+                    "background": "#111318",
+                    "outline-variant": "#44474b",
+                    "surface-dim": "#111318",
+                    "primary": "#c1c7d0",
+                    "tertiary-fixed": "#e0e2ec",
+                    "surface-bright": "#37393e",
+                    "secondary-container": "#42474f",
+                    "outline": "#8f9195"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-lg": "20px",
+                    "stack-md": "12px",
+                    "gutter": "8px",
+                    "container-padding": "12px",
+                    "unit": "4px",
+                    "stack-sm": "4px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "data-mono": ["JetBrains Mono"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "data-mono": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                    "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #111318;
+            color: #e2e2e8;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+        .ai-hud-border { border: 1px solid rgba(0, 255, 255, 0.3); }
+        .data-row:nth-child(even) { background-color: rgba(255, 255, 255, 0.02); }
+        .active-glow { box-shadow: inset 0 0 10px rgba(193, 199, 208, 0.1); }
+    </style>
+</head>
+<body class="flex overflow-hidden h-screen">
+<!-- Navigation Drawer (Desktop) -->
+<aside class="hidden md:flex flex-col h-screen py-stack-lg bg-surface-container-low border-r border-outline-variant w-72 fixed left-0 z-50">
+<div class="px-container-padding mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface">Operational Modules</h2>
+</div>
+<nav class="flex-1 space-y-1 px-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-md text-body-md">Fleet Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-body-md text-body-md">Mapping</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-secondary-container text-on-secondary-container font-semibold" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-body-md text-body-md">Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">ROI Analysis</span>
+</a>
+</nav>
+<div class="mt-auto px-4">
+<div class="p-4 bg-surface-container-high rounded border border-outline-variant">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">System Health</span>
+</div>
+<div class="w-full bg-surface-container-lowest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-4/5"></div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-72 flex flex-col h-screen relative">
+<!-- Top App Bar -->
+<header class="flex items-center justify-between px-container-padding h-14 w-full z-50 bg-surface border-b border-outline-variant sticky top-0">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer active:opacity-80">menu</span>
+<h1 class="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface">Logistics OS</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded border border-outline-variant">
+<span class="material-symbols-outlined text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm font-body-sm w-48 outline-none" placeholder="Global Fleet Search..." type="text"/>
+</div>
+<div class="flex items-center gap-2 cursor-pointer hover:bg-surface-container-high transition-colors p-1 rounded">
+<div class="text-right hidden sm:block">
+<div class="font-body-sm text-body-sm text-on-surface font-semibold leading-tight">Agent Lee AI</div>
+<div class="font-label-caps text-label-caps text-primary uppercase">Security Lvl 4</div>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold border border-outline">AL</div>
+</div>
+</div>
+</header>
+<!-- Command Center Canvas -->
+<div class="flex-1 overflow-y-auto p-gutter custom-scrollbar space-y-stack-md">
+<!-- Dashboard Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Stat Card: Performance -->
+<div class="bg-surface-container-low border border-outline-variant p-container-padding rounded">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Fleet Performance</span>
+<span class="material-symbols-outlined text-primary">trending_up</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">88.4<span class="text-primary-fixed-dim text-body-sm ml-1">avg</span></div>
+<div class="mt-2 text-primary font-data-mono text-xs">+1.2% from prev. cycle</div>
+</div>
+<!-- Stat Card: Hiring -->
+<div class="bg-surface-container-low border border-outline-variant p-container-padding rounded">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Hiring Pipeline</span>
+<span class="material-symbols-outlined text-secondary">person_add</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">12 <span class="text-on-surface-variant text-body-sm ml-1">pending</span></div>
+<div class="mt-2 text-on-surface-variant font-data-mono text-xs">4 scheduled for final verification</div>
+</div>
+<!-- Stat Card: Expiry Alerts -->
+<div class="bg-surface-container-low border border-error p-container-padding rounded">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-error uppercase">Certification Alerts</span>
+<span class="material-symbols-outlined text-error">report</span>
+</div>
+<div class="font-headline-md text-headline-md text-error">03 <span class="text-error text-body-sm ml-1">critical</span></div>
+<div class="mt-2 text-error font-data-mono text-xs">Action required within 48h</div>
+</div>
+<!-- Stat Card: Background Status -->
+<div class="bg-surface-container-low border border-outline-variant p-container-padding rounded">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Background Verification</span>
+<span class="material-symbols-outlined text-on-surface">fingerprint</span>
+</div>
+<div class="font-headline-md text-headline-md text-on-surface">94% <span class="text-on-surface-variant text-body-sm ml-1">verified</span></div>
+<div class="mt-2 text-on-surface-variant font-data-mono text-xs">Agent Lee background batch running...</div>
+</div>
+</div>
+<!-- Agent Lee Intelligence Overlay (HUD) -->
+<div class="ai-hud-border bg-slate-800/20 backdrop-blur-sm p-4 rounded flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+
+</div>
+<div class="flex-shrink-0 relative">
+<div class="w-16 h-16 rounded-full border-2 border-primary/50 flex items-center justify-center animate-pulse">
+<span class="material-symbols-outlined text-3xl text-primary" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-primary text-on-primary text-[8px] font-bold px-1 rounded">LIVE</div>
+</div>
+<div class="flex-1 space-y-1 z-10">
+<div class="font-label-caps text-label-caps text-primary uppercase flex items-center gap-2">
+<span>Agent Lee Intelligence Insights</span>
+<span class="w-1 h-1 bg-primary rounded-full animate-ping"></span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                        Detected a synchronization anomaly in Operator #8292’s compliance logs. Hazmat certification evidence exists in the secondary vault but has not updated on the primary grid. Recommendation: Force re-validation of digital signatures.
+                    </p>
+</div>
+<div class="flex gap-2 z-10 w-full md:w-auto">
+<button class="flex-1 md:flex-none px-4 py-2 bg-primary-container text-on-primary-container font-label-caps text-label-caps border border-outline rounded hover:bg-surface-variant transition-colors">IGNORE</button>
+<button class="flex-1 md:flex-none px-4 py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded shadow-lg hover:opacity-90 transition-opacity">EXECUTE FIX</button>
+</div>
+</div>
+<!-- Personnel Performance Grid -->
+<div class="bg-surface-container-low border border-outline-variant rounded overflow-hidden">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">group</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Fleet Personnel Directory</h3>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-outline-variant rounded flex items-center gap-2 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span class="font-label-caps text-label-caps uppercase">Filter</span>
+</button>
+<button class="px-3 py-1.5 bg-on-primary-fixed text-primary-fixed border border-primary-fixed-dim rounded flex items-center gap-2 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-sm">download</span>
+<span class="font-label-caps text-label-caps uppercase">Export CSV</span>
+</button>
+</div>
+</div>
+<!-- High-Density Data Grid -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[1000px]">
+<thead>
+<tr class="bg-surface-container-lowest border-b border-outline-variant">
+<th class="p-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Operator ID</th>
+<th class="p-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Employee Profile</th>
+<th class="p-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Performance Score</th>
+<th class="p-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Verification Status</th>
+<th class="p-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Certifications</th>
+<th class="p-3 font-label-caps text-label-caps text-on-surface-variant uppercase">Last Training</th>
+<th class="p-3 font-label-caps text-label-caps text-on-surface-variant uppercase text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-data-mono text-sm">
+<!-- Data Row 1 -->
+<tr class="data-row border-b border-outline-variant hover:bg-surface-container-highest/50 transition-colors cursor-pointer">
+<td class="p-3">#8291-LK</td>
+<td class="p-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">person</span>
+</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface leading-none">James Thorne</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Lead Driver - Wing A</div>
+</div>
+</div>
+</td>
+<td class="p-3">
+<div class="flex items-center gap-2">
+<span class="font-bold text-primary">94.2</span>
+<div class="w-16 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[94%]"></div>
+</div>
+</div>
+</td>
+<td class="p-3">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/30 text-secondary font-label-caps text-[9px] uppercase border border-secondary/20">AGENT LEE VERIFIED</span>
+</td>
+<td class="p-3">
+<div class="flex gap-1">
+<span class="w-5 h-5 rounded border border-outline-variant flex items-center justify-center text-[10px] text-on-surface-variant" title="Class A CDL">C-A</span>
+<span class="w-5 h-5 rounded border border-outline-variant flex items-center justify-center text-[10px] text-on-surface-variant" title="Hazmat">HZ</span>
+<span class="w-5 h-5 rounded border border-outline-variant flex items-center justify-center text-[10px] text-primary" title="Safety Excellence">★</span>
+</div>
+</td>
+<td class="p-3 text-on-surface-variant">2023-11-14</td>
+<td class="p-3 text-right">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</td>
+</tr>
+<!-- Data Row 2 -->
+<tr class="data-row border-b border-outline-variant hover:bg-surface-container-highest/50 transition-colors cursor-pointer">
+<td class="p-3">#8292-MH</td>
+<td class="p-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">person</span>
+</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface leading-none">Elena Rodriguez</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Operator - Wing B</div>
+</div>
+</div>
+</td>
+<td class="p-3">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">81.5</span>
+<div class="w-16 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-on-surface-variant h-full w-[81%]"></div>
+</div>
+</div>
+</td>
+<td class="p-3">
+<span class="px-2 py-0.5 rounded-full bg-error-container/20 text-error font-label-caps text-[9px] uppercase border border-error/30">FLAGGED ANOMALY</span>
+</td>
+<td class="p-3">
+<div class="flex gap-1">
+<span class="w-5 h-5 rounded border border-outline-variant flex items-center justify-center text-[10px] text-on-surface-variant">C-B</span>
+<span class="w-5 h-5 rounded border border-error bg-error/10 flex items-center justify-center text-[10px] text-error">HZ!</span>
+</div>
+</td>
+<td class="p-3 text-on-surface-variant">2023-08-02</td>
+<td class="p-3 text-right">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</td>
+</tr>
+<!-- Data Row 3 -->
+<tr class="data-row border-b border-outline-variant hover:bg-surface-container-highest/50 transition-colors cursor-pointer">
+<td class="p-3">#8295-TX</td>
+<td class="p-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-highest flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">person</span>
+</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface leading-none">Marcus Sterling</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1">Junior Operator - Reserve</div>
+</div>
+</div>
+</td>
+<td class="p-3">
+<div class="flex items-center gap-2">
+<span class="font-bold text-primary">91.0</span>
+<div class="w-16 h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[91%]"></div>
+</div>
+</div>
+</td>
+<td class="p-3">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/30 text-secondary font-label-caps text-[9px] uppercase border border-secondary/20">AGENT LEE VERIFIED</span>
+</td>
+<td class="p-3">
+<div class="flex gap-1">
+<span class="w-5 h-5 rounded border border-outline-variant flex items-center justify-center text-[10px] text-on-surface-variant">C-A</span>
+</div>
+</td>
+<td class="p-3 text-on-surface-variant">2024-01-10</td>
+<td class="p-3 text-right">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-3 bg-surface-container-lowest border-t border-outline-variant flex justify-between items-center">
+<div class="font-body-sm text-body-sm text-on-surface-variant">Showing 1-25 of 1,248 operators</div>
+<div class="flex gap-1">
+<button class="p-1 w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="p-1 w-8 h-8 rounded bg-primary-container text-on-primary-container flex items-center justify-center font-data-mono text-xs">1</button>
+<button class="p-1 w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container-high transition-colors font-data-mono text-xs">2</button>
+<button class="p-1 w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container-high transition-colors font-data-mono text-xs">3</button>
+<button class="p-1 w-8 h-8 rounded border border-outline-variant flex items-center justify-center hover:bg-surface-container-high transition-colors"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Pipeline & Training Grid (Two Columns) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter pb-24 lg:pb-8">
+<!-- Hiring Pipeline Section -->
+<div class="bg-surface-container-low border border-outline-variant rounded p-4">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">person_search</span>
+                        Hiring Pipeline
+                    </h3>
+<div class="space-y-2">
+<div class="p-3 bg-surface-container-lowest border border-outline-variant rounded flex items-center justify-between hover:border-primary transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center font-bold text-secondary">SD</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface">Sarah Drumm</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant uppercase">Background: Pending Agent Lee</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">arrow_forward</span>
+</div>
+<div class="p-3 bg-surface-container-lowest border border-outline-variant rounded flex items-center justify-between hover:border-primary transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center font-bold text-secondary">RJ</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface">Robert Jenkins</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant uppercase">Interview: Scheduled (09:00)</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">arrow_forward</span>
+</div>
+<div class="p-3 bg-surface-container-lowest border border-outline-variant rounded flex items-center justify-between hover:border-primary transition-colors opacity-60">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center font-bold text-secondary">AM</div>
+<div>
+<div class="font-body-md text-body-md text-on-surface">Alisa Mayer</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant uppercase">Initial Review: Phase 1</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Training Evidence & Compliance -->
+<div class="bg-surface-container-low border border-outline-variant rounded p-4">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">history_edu</span>
+                        Evidence of Training
+                    </h3>
+<div class="grid grid-cols-2 gap-2">
+<div class="p-3 bg-surface-container border border-outline-variant rounded">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Course ID</span>
+<span class="material-symbols-outlined text-sm text-primary">verified</span>
+</div>
+<div class="font-data-mono text-xs text-on-surface">TRAIN-OS-822</div>
+<div class="mt-2 h-20 w-full bg-surface-container-lowest rounded overflow-hidden relative">
+<div class="bg-cover bg-center w-full h-full opacity-40" data-alt="A macro close-up of a digital certificate with complex guilloché patterns and high-security holograms on a dark slate background, professional and authoritative lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBl1MoeyB6Wo7UxWxK_24l03TLqr-78tjnIyrUJ6SYQmxtFb639ZvbWicS0a0O5A6N1irCteR82BKH4Z-3LMOGGo80cAJKO-msoX73cfOStrN4verGO46aU3qBq-3RpvAGyOxQB4J5rK6at7ey9rR9Bok8TWRDtnju124JP4Kl9WRKXPy8Ux2dy-qT3FInhhF7XaenByCUQHOoOzmpbxbfULNTnR-DFnkiI3xIgskvlzZSAdB1FZ7DcL4fVHTdh4vLvmVpNxkkmUAn9')"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">draft</span>
+</div>
+</div>
+<div class="mt-2 font-body-sm text-body-sm text-center">Safety Protocol V4</div>
+</div>
+<div class="p-3 bg-surface-container border border-outline-variant rounded">
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Course ID</span>
+<span class="material-symbols-outlined text-sm text-primary">verified</span>
+</div>
+<div class="font-data-mono text-xs text-on-surface">HAZMAT-X-90</div>
+<div class="mt-2 h-20 w-full bg-surface-container-lowest rounded overflow-hidden relative">
+<div class="bg-cover bg-center w-full h-full opacity-40" data-alt="A photographic scan of an official logistics training completion form with red 'COMPLETED' stamps and digital barcodes, technical and sterile corporate office aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3NgwAUC6VsQZlTCI9-aEN-hinBnvNs3TtIpbML4naSEqkR2Sdiv32b6DoVJEbDeuxVoT0BW7fTYFvLeb_cnC0ZabyMHGnnoVLYgoOYt_RbQHzxvUSaWcM0GKYV6E_ODxaKXLJUz6MhicBta5Y9UMiZoU_LQNz04dLl0PECVcsvRIhJpfJSeX8KWM6AWP7ui5UD_wiV5RvxefbfnUdAAmT0_aZY5xw_FnvB3R3xEJlbcyvVgkYcfHQ2fnVyzS-Q_xNueRmL3x-d9rZ')"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">draft</span>
+</div>
+</div>
+<div class="mt-2 font-body-sm text-body-sm text-center">Biological Hazards</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- FAB (Bottom Right) -->
+<button class="fixed bottom-20 md:bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-xl shadow-2xl flex items-center justify-center active:scale-95 transition-transform z-50">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- Bottom NavBar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center px-4 bg-surface-container border-t border-outline-variant z-50">
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 cursor-pointer hover:opacity-100 transition-transform active:scale-90">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Diagnostics</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl py-1 px-4 cursor-pointer scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Active Fleet</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 cursor-pointer hover:opacity-100 transition-transform active:scale-90">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Schedule</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 cursor-pointer hover:opacity-100 transition-transform active:scale-90">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Insights</span>
+</div>
+</nav>
+</main>
+<script>
+        // Micro-interactions and simulation logic
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hover effect on data grid rows
+            const rows = document.querySelectorAll('.data-row');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', () => {
+                    row.classList.add('active-glow');
+                });
+                row.addEventListener('mouseleave', () => {
+                    row.classList.remove('active-glow');
+                });
+            });
+
+            // Simulate Agent Lee's HUD pulse
+            const aiHud = document.querySelector('.ai-hud-border');
+            setInterval(() => {
+                aiHud.classList.add('brightness-110');
+                setTimeout(() => {
+                    aiHud.classList.remove('brightness-110');
+                }, 100);
+            }, 5000);
+
+            // Close logic placeholder
+            const fixButton = aiHud.querySelector('button.bg-primary');
+            fixButton.addEventListener('click', () => {
+                fixButton.innerHTML = '<span class="material-symbols-outlined animate-spin mr-2">refresh</span> PROCESSING';
+                setTimeout(() => {
+                    fixButton.innerHTML = 'SUCCESS';
+                    fixButton.classList.replace('bg-primary', 'bg-green-600');
+                    setTimeout(() => {
+                        aiHud.style.transition = 'all 0.5s ease-out';
+                        aiHud.style.opacity = '0';
+                        aiHud.style.transform = 'translateY(-20px)';
+                        setTimeout(() => aiHud.remove(), 500);
+                    }, 1000);
+                }, 2000);
+            });
+        });
+    </script>
+</body></html>

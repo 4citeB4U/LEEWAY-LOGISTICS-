@@ -1,0 +1,61 @@
+{
+  "_leewayHeader": {
+    "file": "training-proctor.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/training-proctor.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "LeeWay / Training Proctor Contract",
+    "purpose": "Define deterministic Agent Lee teaching, assessment, remediation, and receipt behavior.",
+    "inputs": "Learner identity, tenant, role, product version, curriculum, manual, and rubric.",
+    "outputs": "Grounded teaching, score, remediation, and training receipt.",
+    "mutationScope": "Training records only after authorization.",
+    "dependencies": "Manual, curriculum, assessment, knowledge, and permission manifests.",
+    "tests": "Source-grounding tests, rubric tests, role tests, and receipt validation.",
+    "securityImpact": "Prevents answer-key leakage and tenant-data exposure.",
+    "databaseImpact": "Future training records require tenant-aware persistence.",
+    "sovereignCycle": [
+      "Perception",
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo",
+      "Synthesis",
+      "Lee Prime"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "2.0.0"
+  },
+  "workflow": [
+    "Resolve learner identity and tenant",
+    "Determine role and curriculum",
+    "Resolve product version",
+    "Retrieve approved sources",
+    "Teach with citations",
+    "Demonstrate workflow",
+    "Ask knowledge questions",
+    "Evaluate against rubric",
+    "Provide corrective instruction",
+    "Assign practical task",
+    "Validate evidence",
+    "Write training receipt"
+  ],
+  "depthModes": [
+    "BEGINNER",
+    "OPERATIONAL_USER",
+    "ADMINISTRATOR",
+    "TECHNICAL_SUPPORT",
+    "DEVELOPER",
+    "ARCHITECT",
+    "INSTRUCTOR"
+  ],
+  "intents": [
+    "TEACH_ME",
+    "SHOW_STEPS",
+    "EXPLAIN_WHY",
+    "DIAGNOSE",
+    "TEST_KNOWLEDGE",
+    "PROCTOR_PRACTICAL"
+  ],
+  "minimumOverallPercent": 85
+}

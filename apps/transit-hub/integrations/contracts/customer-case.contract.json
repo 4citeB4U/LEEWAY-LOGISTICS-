@@ -1,0 +1,44 @@
+{
+  "_leewayHeader": {
+    "file": "customer-case.contract.json",
+    "path": "integrations/contracts/customer-case.contract.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Integration / Contract",
+    "purpose": "Define the versioned local-to-Dataverse customer-case mapping.",
+    "inputs": "Local CustomerCase and Dataverse incident entity.",
+    "outputs": "Machine-readable mapping contract.",
+    "mutationScope": "Contract metadata only.",
+    "dependencies": "CustomerCase domain entity and DataverseCaseRecord.",
+    "tests": "JSON parse and mapping review.",
+    "securityImpact": "Excludes personal customer data.",
+    "databaseImpact": "Maps local records to Dataverse fields.",
+    "sovereignCycle": [
+      "Origin",
+      "Structure",
+      "Veritas"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "1.0.0"
+  },
+  "contractVersion": "1.0.0",
+  "entity": "CustomerCase",
+  "fields": [
+    {
+      "local": "ReferenceNumber",
+      "dataverse": "ticketnumber",
+      "required": true
+    },
+    {
+      "local": "Subject",
+      "dataverse": "title",
+      "required": true
+    },
+    {
+      "local": "Status",
+      "dataverse": "statecode",
+      "required": true
+    }
+  ]
+}

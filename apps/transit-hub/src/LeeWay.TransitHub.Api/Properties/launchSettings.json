@@ -1,0 +1,35 @@
+{
+  "_leewayHeader": {
+    "file": "launchSettings.json",
+    "path": "src/LeeWay.TransitHub.Api/Properties/launchSettings.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "API / Launch Configuration",
+    "purpose": "Define the local API launch profile.",
+    "inputs": "dotnet run or Visual Studio launch.",
+    "outputs": "Local API URL and environment.",
+    "mutationScope": "Local launch metadata only.",
+    "dependencies": "ASP.NET Core hosting.",
+    "tests": "dotnet run.",
+    "securityImpact": "Local HTTP only.",
+    "databaseImpact": "Uses configured data mode.",
+    "sovereignCycle": [
+      "Structure",
+      "Execution"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "1.0.0"
+  },
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

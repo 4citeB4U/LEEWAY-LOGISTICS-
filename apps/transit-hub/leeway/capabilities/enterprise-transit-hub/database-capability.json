@@ -1,0 +1,66 @@
+{
+  "_leewayHeader": {
+    "file": "database-capability.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/database-capability.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Agent Lee Capability / Database",
+    "purpose": "Declare governed SQL Server diagnostic, migration, backup, and tenant-scope tools without embedding credentials.",
+    "inputs": "Authenticated service identity, tenant assignment, permissions, approvals, and tool parameters.",
+    "outputs": "Read-only diagnostics or approval-bound database operation receipts.",
+    "mutationScope": "Only tools explicitly allowed by policy.",
+    "dependencies": "External Agent Lee, Transit Hub API, SQL operations scripts, and evidence contracts.",
+    "tests": "JSON parse, permission review, tenant isolation, and runtime tool denial/approval.",
+    "securityImpact": "No unrestricted SQL or platform bypass; secrets remain outside capability data.",
+    "databaseImpact": "Describes tools; does not execute them.",
+    "sovereignCycle": [
+      "Perception",
+      "Origin",
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo",
+      "Synthesis",
+      "Lee Prime"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "5.0.0"
+  },
+  "agentLeeEmbedded": false,
+  "serviceRole": "AgentService",
+  "requiredCapability": "leeway.enterprise-transit-hub",
+  "tenantScopeRequired": true,
+  "tools": [
+    {
+      "name": "database.health",
+      "mutation": "none",
+      "approval": "policy_allowed"
+    },
+    {
+      "name": "database.schema.status",
+      "mutation": "none",
+      "approval": "policy_allowed"
+    },
+    {
+      "name": "database.backup.request",
+      "mutation": "backup_only",
+      "approval": "operator_approval"
+    },
+    {
+      "name": "database.migration.plan",
+      "mutation": "none",
+      "approval": "policy_allowed"
+    },
+    {
+      "name": "database.migration.execute",
+      "mutation": "schema",
+      "approval": "explicit_human_approval"
+    },
+    {
+      "name": "database.restore.execute",
+      "mutation": "destructive_or_replacement",
+      "approval": "exceptional_human_approval"
+    }
+  ]
+}

@@ -1,0 +1,279 @@
+{
+  "_leewayHeader": {
+    "file": "phase-04-artifact-manifest.json",
+    "path": "governance/registries/phase-04-artifact-manifest.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Governance / Phase Artifact Manifest",
+    "purpose": "Record deterministic Phase 04 identity, authorization, continuous-learning, manual, private-learning, and Agent Lee capability patch files.",
+    "inputs": "Generated Phase 04 patch files and SHA-256.",
+    "outputs": "Verifiable patch inventory.",
+    "mutationScope": "Manifest only.",
+    "dependencies": "Phase 04 direct-paste installer.",
+    "tests": "File existence, size, SHA-256, JSON parse, build, tests, runtime, learning gate, and governance.",
+    "securityImpact": "Provides patch integrity evidence.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Structure",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "PASS",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "4.0.0"
+  },
+  "phase": "04_IDENTITY_ROLES_AUTHORIZATION_AND_CONTINUOUS_LEARNING",
+  "generatedFileCount": 50,
+  "files": [
+    {
+      "path": ".github/workflows/dotnet-ci.yml",
+      "sha256": "C13890ABABC7BD383C564417353DA8369F234B41C71842AE37F31FC7ABC6B555",
+      "sizeBytes": 2344
+    },
+    {
+      "path": ".leeway/project.manifest.json",
+      "sha256": "949EFFC94556ED52BD37DD7B37918A33D9361F5514715032F2AF6BB5EBA404CD",
+      "sizeBytes": 4361
+    },
+    {
+      "path": "README.md",
+      "sha256": "57348DEC8822A36A3D84322A333C9F0F2807AE91DBD9A738CC831C7BE2CBB8AC",
+      "sizeBytes": 3670
+    },
+    {
+      "path": "docs/architecture/ADR-0006-IDENTITY-PROVIDER-NEUTRAL-AUTHORIZATION.md",
+      "sha256": "5A70A8D4D2ED88F9B44551A0C988253BC7C96FEA33371E05570474028F6754B1",
+      "sizeBytes": 2384
+    },
+    {
+      "path": "docs/evidence/PHASE-04-IDENTITY-AUTHORIZATION-AND-LEARNING-SOURCE-EVIDENCE.md",
+      "sha256": "32918BE1A4A139E907CE8C3CDA06FD08A09BC3B07CDD6EC14B42F078A629E87A",
+      "sizeBytes": 2817
+    },
+    {
+      "path": "docs/learning/LESSON-04-IDENTITY-ROLES-AUTHORIZATION-AND-CONTINUOUS-LEARNING.md",
+      "sha256": "37BD7ABB71FC7321C745D2EC372C9FF4C3D435A427D6E14C9B62FDB65C6D390A",
+      "sizeBytes": 5494
+    },
+    {
+      "path": "docs/learning/learning-phase-registry.json",
+      "sha256": "1783E51393185FA97B95A6FA76A9914BE4A30B26665CD97E851C97EAD179F1BC",
+      "sizeBytes": 3130
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/LESSON-04-WORKBOOK.md",
+      "sha256": "0EFEAE6AB549BD5311E5FE0541C160DBF2573E4DEDC46B85D242D01E56AF8B56",
+      "sizeBytes": 6395
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/MASTER-QUESTION-BANK.md",
+      "sha256": "5DA0AB1D37C76CC0F69FB1834209F3F3F3C3043BCB5E2642A3BA3B12C25F8338",
+      "sizeBytes": 15495
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/family-teaching/LESSON-04-FAMILY-TEACHING-PLAN.md",
+      "sha256": "0B9A56C86ACE528869008062392111BBD98102672A5541218E76F7543D1FDA81",
+      "sizeBytes": 1955
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/instructor/ANSWER-RUBRICS.md",
+      "sha256": "C664938D18E725B0BFB93D5D6784B9111BA1AB4483F9AF5FF779A53DA2AC3A38",
+      "sizeBytes": 18834
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/progress-tracker.json",
+      "sha256": "E18AD7DC8A383EE9610A8C8BEE30E90A26A492835A10971C6A14A62E2D3B7A3E",
+      "sizeBytes": 1517
+    },
+    {
+      "path": "docs/private-learning/leonard-lee/question-bank.json",
+      "sha256": "FE06BE1EE5EBE1E63B6FA925393B6B6C99DC32AC66461A4FB0A1F4EE6C5B1B5B",
+      "sizeBytes": 17397
+    },
+    {
+      "path": "docs/requirements/REQ-0004-IDENTITY-AUTHORIZATION-AND-CONTINUOUS-LEARNING.md",
+      "sha256": "A7335895AD0C361082549D1C383DF0F80F24A1BB44AAA9CC8B409A9375916A90",
+      "sizeBytes": 2514
+    },
+    {
+      "path": "docs/roadmap/TRAINING-MANUAL-CONTENT-ROADMAP.md",
+      "sha256": "0D428227208DD37FED770DED72124BA0CBC29FBF54E034F23384574DB09B1645",
+      "sizeBytes": 2435
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/CHAPTER-25-AUTHENTICATION-IDENTITY-AND-CLAIMS.md",
+      "sha256": "AA2E51ECB836028A8B8149BE270C9EABDAAEAEDC6D1C0F856DA7D385C3732768",
+      "sizeBytes": 9481
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/CHAPTER-26-ROLES-PERMISSIONS-AND-POLICIES.md",
+      "sha256": "B2EF05776CF6056D5DB7C942792C68B0BB98973296C630440F1EF6269BC62BA7",
+      "sizeBytes": 8298
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/CHAPTER-27-TENANT-AWARE-AUTHORIZATION-AND-FAIL-CLOSED-ACCESS.md",
+      "sha256": "96C632578A4A3DD62769DECBF62B45E1460E36B351A0ACD7400346969B59877A",
+      "sizeBytes": 7907
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/CHAPTER-28-AGENT-LEE-SERVICE-IDENTITY-AND-CONTINUOUS-LEARNING.md",
+      "sha256": "0D58F3ADBFE9D5E581ABFA2394C01E9A049EF0D1CC2AC260D9E3FF2A2F09E7D7",
+      "sizeBytes": 8223
+    },
+    {
+      "path": "docs/training-manual/curriculum-registry.json",
+      "sha256": "68CE5A4C3818D3ABEB880DBF1B5D0B14555B87BFEF65539E13E0110EAE0F949B",
+      "sizeBytes": 2986
+    },
+    {
+      "path": "docs/training-manual/manual.manifest.json",
+      "sha256": "E718DD11A1935FDC903BE9C1196B00F4906F4E6F567612839BA082296AEA9883",
+      "sizeBytes": 6058
+    },
+    {
+      "path": "governance/policies/CONTINUOUS-LEARNING-RELEASE-GATE.md",
+      "sha256": "4C1E38FE134F77713B0BDC9132FA9DF12B709DC8DC69A88733486CA86AD9C73E",
+      "sizeBytes": 2239
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/capability-manifest.json",
+      "sha256": "29FFA7AB26A1C15A9C7D008EA1054643A5D4ACE965447E465E5099C493F1431A",
+      "sizeBytes": 2897
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/question-bank-index.json",
+      "sha256": "71A67EC7EFB54D1EE4671B8F0FEA7E36D921E15C7FB98F1650C152F7E5EE8988",
+      "sizeBytes": 1269
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/education/training-knowledge-index.json",
+      "sha256": "14B871304FE22028E04A929D5EC914A6D624318057F41FEE94FE7FE325E81250",
+      "sizeBytes": 3047
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/identity-contract.json",
+      "sha256": "858740902DC1A3456865F6858A876689BA58C93B15D6E1F55B386C2DA892AEEB",
+      "sizeBytes": 1976
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/permissions.json",
+      "sha256": "FD163F94A2407919E3ABAE0E18D5B5BEBC65415A827D2A75F5008DBAFDBD153D",
+      "sizeBytes": 2869
+    },
+    {
+      "path": "operations/powershell/Build-All.ps1",
+      "sha256": "FD3385DA2733D30EC6EF2F33BFA2B2D09E20EEEB8CB6CCDD21B7C2FAF5A116D8",
+      "sizeBytes": 1667
+    },
+    {
+      "path": "operations/powershell/Build-LeeWayTrainingManual.ps1",
+      "sha256": "3071E04623ADCC3C9F98BE359ED10FFEAC89C00463CEDC21C8334CABF4534196",
+      "sizeBytes": 6355
+    },
+    {
+      "path": "operations/powershell/Verify-ContinuousLearningGate.ps1",
+      "sha256": "4A4C45B01C76CE4A86E7674835C4CACFC8F17EE3D5FE3BF303878FB519A277C0",
+      "sizeBytes": 6244
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/AccessControlController.cs",
+      "sha256": "7B5FE9CC56551F4CC16323322F6D17AD857AEAB4F664075933F03DED0341393D",
+      "sizeBytes": 3058
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Program.cs",
+      "sha256": "0373885496586D185073FE8E98EC7A5399F3BEC8AA64B1CC61F34B8F47B289B2",
+      "sizeBytes": 3575
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/DevelopmentHeaderAuthenticationHandler.cs",
+      "sha256": "33D18A859FA962CE73DED716C867A5DA2EF21F1B324E689600BD590D7B5CB080",
+      "sizeBytes": 6215
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/TenantAccessAuthorizationHandler.cs",
+      "sha256": "A75BD99DDC8DA0A61ACA76DE9B5B827EFF42F3D51499C485B7E96D9BCEED1631",
+      "sizeBytes": 2418
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/TenantAccessRequirement.cs",
+      "sha256": "7F085106EABD4BA3311D6864A579BB01CC20952311F77D86395F4779A4F97BC6",
+      "sizeBytes": 1100
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/TransitSecurityServiceCollectionExtensions.cs",
+      "sha256": "451069A590C75572CBC42E2138B35B9E68AE29BE4131E8654697A58D116D24FE",
+      "sizeBytes": 4424
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Security/_DIRECTORY.leeway.md",
+      "sha256": "C90AB962CCA563FE8D1A2E66DFB8F6430C056C3D3D234967013A298151A0D979",
+      "sizeBytes": 1145
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Product/TransitHubProductProfile.cs",
+      "sha256": "6EAB6370F4D0B8738915367E935C64213A1BADF6321BA0AACEC37E0435516FEF",
+      "sizeBytes": 1740
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Product/TransitHubProductProfileService.cs",
+      "sha256": "8C794D0E091AF1539FEA4BFD505D05B602AABA9941203AE7619AEB3015DE9678",
+      "sizeBytes": 2892
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitClaimTypes.cs",
+      "sha256": "7ECA37D24A7A46C1B7295CBBCEF21EB8B041165EFF9CDEA4BA77216BBFED7D15",
+      "sizeBytes": 1364
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitPermissions.cs",
+      "sha256": "C9F3066B4F01FD1402E96BBAEA71EE7416ECFD4F0CC671114E6AD9C41A9BB5EE",
+      "sizeBytes": 3888
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitPolicies.cs",
+      "sha256": "3240962E6BFC939697DB498028DBF24707DC2967356146DD17B47EF3E013AD18",
+      "sizeBytes": 1572
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/TransitRoles.cs",
+      "sha256": "84DACFE04EF5FE6E6EF01B2EA90EA97ABFE6C228016AEB54396EEF33C88B4507",
+      "sizeBytes": 2641
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Security/_DIRECTORY.leeway.md",
+      "sha256": "7CAF4F22FD1E078C13467875F70161B67F8B078FEE556735DB3D75E955D7B632",
+      "sizeBytes": 1119
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/ContinuousLearningArchitectureTests.cs",
+      "sha256": "BEF2085F1B98FF2604CE0618FA85E7E095B5584116C3B25BB97FEBE7CB3F636F",
+      "sizeBytes": 4578
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/TrainingDocumentationArchitectureTests.cs",
+      "sha256": "2D136D081E27BD9B1FA31FBAD5D276A7DD9B8C73C46E51A974FAFA3028D5DEF0",
+      "sizeBytes": 4249
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/AuthorizationBoundaryTests.cs",
+      "sha256": "6C9C09226039EE98AA4C907A467FED1739DCE17E455E294E5C46CA251196FEE2",
+      "sizeBytes": 1976
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/LeeWay.TransitHub.SecurityTests.csproj",
+      "sha256": "DB0710273F0B8D0A70135760EC72790FF0ED9D9E5B570BB760892E1650E06A32",
+      "sizeBytes": 1877
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/AuthorizationCatalogTests.cs",
+      "sha256": "A85396676819449D44F19BC03BCB3C3074ACD6E7481FB75892D23319B273CF03",
+      "sizeBytes": 2040
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/ProductProfileTests.cs",
+      "sha256": "D7C326D05D6537E9837ECB350D2171B962E453A7D342F1900C0C451FF307B6B0",
+      "sizeBytes": 1818
+    }
+  ]
+}

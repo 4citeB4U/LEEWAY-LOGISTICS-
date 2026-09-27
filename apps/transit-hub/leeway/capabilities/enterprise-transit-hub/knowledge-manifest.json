@@ -1,0 +1,96 @@
+{
+  "_leewayHeader": {
+    "file": "knowledge-manifest.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/knowledge-manifest.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "LeeWay / Knowledge Manifest",
+    "purpose": "Define approved versioned knowledge sources for Agent Lee answers, training, diagnosis, and repair.",
+    "inputs": "Product documentation, source, schemas, tests, receipts, and runbooks.",
+    "outputs": "Grounding and citation policy.",
+    "mutationScope": "Knowledge metadata only.",
+    "dependencies": "Capability manifest and current product release.",
+    "tests": "Source existence, version match, citation check, and tenant-boundary review.",
+    "securityImpact": "Forbids cross-tenant retrieval and unsupported answers.",
+    "databaseImpact": "Database sources become active only after approved persistence phases.",
+    "sovereignCycle": [
+      "Perception",
+      "Origin",
+      "Structure",
+      "Veritas",
+      "Synthesis"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "3.0.0"
+  },
+  "productVersion": "0.2.0",
+  "sources": [
+    {
+      "path": "README.md",
+      "classification": "PUBLIC_PRODUCT"
+    },
+    {
+      "path": "docs/product",
+      "classification": "PRODUCT_AUTHORITY"
+    },
+    {
+      "path": "docs/architecture",
+      "classification": "ARCHITECTURE_AUTHORITY"
+    },
+    {
+      "path": "docs/requirements",
+      "classification": "REQUIREMENTS_AUTHORITY"
+    },
+    {
+      "path": "docs/training-manual",
+      "classification": "TRAINING_AUTHORITY"
+    },
+    {
+      "path": "docs/operations",
+      "classification": "OPERATIONS_AUTHORITY"
+    },
+    {
+      "path": "docs/testing",
+      "classification": "TEST_AUTHORITY"
+    },
+    {
+      "path": "governance/receipts",
+      "classification": "EVIDENCE_AUTHORITY"
+    },
+    {
+      "path": "src",
+      "classification": "SOURCE_AUTHORITY"
+    },
+    {
+      "path": "database",
+      "classification": "DATABASE_AUTHORITY_DEFERRED"
+    }
+  ],
+  "retrievalRules": [
+    "Resolve product version before answering",
+    "Resolve learner or operator role",
+    "Resolve tenant before accessing tenant content",
+    "Never mix tenant knowledge",
+    "Prefer current governed source over model memory",
+    "Cite source paths and evidence",
+    "State when a capability is planned or deferred",
+    "Escalate unresolved safety or security questions"
+  ],
+  "tenantScopes": [
+    "GLOBAL_PRODUCT",
+    "TENANT_OPERATIONAL",
+    "USER_PRIVATE",
+    "VEHICLE_HISTORY",
+    "COMPLIANCE_EVIDENCE"
+  ],
+  "trainingSources": [
+    "docs/training-manual/MASTER-TRAINING-MANUAL.md",
+    "docs/training-manual/manual-progress.json",
+    "docs/training-manual/instructor/INSTRUCTOR-GUIDE.md",
+    "docs/training-manual/workbooks/COMMERCIAL-LEARNER-WORKBOOK.md"
+  ],
+  "privateLearningSource": "docs/private-learning/leonard-lee",
+  "privateLearningAccess": "OWNER_OR_EXPLICIT_FAMILY_DELEGATE_ONLY",
+  "answerRubricVisibility": "HIDDEN_UNTIL_ATTEMPT_OR_OWNER_OVERRIDE"
+}

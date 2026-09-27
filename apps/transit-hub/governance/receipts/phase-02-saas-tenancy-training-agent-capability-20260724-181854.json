@@ -1,0 +1,80 @@
+{
+  "_leewayHeader": {
+    "file": "phase-02-saas-tenancy-training-agent-capability-20260724-181854.json",
+    "path": "governance/receipts/phase-02-saas-tenancy-training-agent-capability-20260724-181854.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Governance / Receipt",
+    "purpose": "Record factual Phase 02 SaaS, tenancy, training, and external Agent Lee capability evidence.",
+    "inputs": [
+      "patch hashes",
+      "file hashes",
+      "manual manifest",
+      "capability manifest",
+      "build",
+      "tests",
+      "runtime contracts",
+      "governance"
+    ],
+    "outputs": [
+      "Phase 02 PASS receipt"
+    ],
+    "mutationScope": "Receipt only.",
+    "dependencies": [
+      "project manifest",
+      "phase artifact manifest",
+      "runtime evidence",
+      "file registry"
+    ],
+    "tests": [
+      "patch PASS",
+      "manual budget PASS",
+      "build PASS",
+      "tests PASS",
+      "runtime PASS",
+      "governance PASS"
+    ],
+    "securityImpact": "Records tenant and external-agent boundaries without secrets.",
+    "databaseImpact": "No database mutation; production tenant isolation remains deferred.",
+    "sovereignCycle": [
+      "Veritas",
+      "Echo",
+      "Synthesis"
+    ],
+    "status": "PASS",
+    "humanComprehension": "PENDING_LESSON_02",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "2.0.0"
+  },
+  "receiptId": "314473b7-65d4-4f87-ae99-7bd084ebd1db",
+  "recordedUtc": "2026-07-24T23:19:15.7404767+00:00",
+  "phase": "02_SAAS_TENANCY_TRAINING_AND_AGENT_CAPABILITY_FOUNDATION",
+  "canonicalRoot": "D:\\Leeway-Ecosystem v2.1.4\\LeeWay-Enterprise-Transit-Hub",
+  "patchPayloadSha256": "B1E0078383F4AB55417510876FED7DF5EA8EEEC7593B409EA66353F35A23DBDC",
+  "patchTarSha256": "38B53BD598A67F44461549E3A66599ACFF77AC9B3C820D37ADD8B62160B7B87C",
+  "patchManifestFileCount": 80,
+  "solutionProjectCount": 15,
+  "testProjectCount": 5,
+  "totalTests": 19,
+  "restore": "PASS",
+  "build": "PASS",
+  "tests": "PASS",
+  "runtimeContracts": "PASS",
+  "governance": "PASS",
+  "repairVersion": "2.0.1",
+  "windowsPathExclusion": "PASS",
+  "apiProcessShutdownBeforeFinalScan": "PASS",
+  "apiEvidenceLogRelease": "PASS",
+  "manualTargetPages": 300,
+  "manualCompletion": "FOUNDATION_ONLY_NOT_COMPLETE",
+  "tenantDomainFoundation": "PASS",
+  "tenantHttpContextFoundation": "PASS",
+  "tenantPersistenceIsolation": "DEFERRED",
+  "agentLeeIntegration": "EXTERNAL_LEEWAY_ORCHESTRATOR",
+  "agentLeeEmbedded": false,
+  "databaseMutation": "NONE",
+  "dockerMutation": "NONE",
+  "oracleMutation": "NONE",
+  "dynamicsMutation": "NONE",
+  "cloudMutation": "NONE",
+  "nextLearningGate": "Complete Lesson 02 knowledge check before identity or SQL Server activation."
+}

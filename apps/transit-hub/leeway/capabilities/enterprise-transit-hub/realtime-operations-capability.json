@@ -1,0 +1,40 @@
+{
+  "_leewayHeader": {
+    "file": "realtime-operations-capability.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/realtime-operations-capability.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Agent Lee Capability / Realtime Operations",
+    "purpose": "Declare read-only realtime observation and governed event-publish boundaries for Agent Lee.",
+    "inputs": "Tenant identity, delegated user authority, operations event schema, and tool policy.",
+    "outputs": "Capability metadata for retrieval and controlled tool routing.",
+    "mutationScope": "Capability metadata only.",
+    "dependencies": "Operations event API, SignalR hub, Shield authorization, and LeeWay receipts.",
+    "tests": "JSON parse, policy tests, tenant isolation, and architecture tests.",
+    "securityImpact": "AgentService may read authorized events but cannot publish without a separate delegated mutation tool.",
+    "databaseImpact": "No direct database access.",
+    "sovereignCycle": [
+      "Perception",
+      "Origin",
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo",
+      "Synthesis",
+      "Lee Prime"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "6.0.0"
+  },
+  "capabilityId": "leeway.enterprise-transit-hub.realtime-operations",
+  "agentLeeEmbedded": false,
+  "defaultDecision": "DENY",
+  "readPermission": "operations.read",
+  "publishPermission": "operations.publish",
+  "agentServiceDirectPublish": false,
+  "tenantMatchRequired": true,
+  "receiptRequiredForMutation": true,
+  "hubPath": "/hubs/operations",
+  "eventApiPath": "/api/operations/events"
+}

@@ -1,0 +1,32 @@
+<!--
+  LEEWAY ENTERPRISE FILE HEADER
+  File: Directory.Build.props
+  Path: Directory.Build.props
+  Project: LeeWay Enterprise Transit Hub
+  Layer: Build Governance
+  Purpose: Apply shared .NET compiler and quality settings.
+  Inputs: MSBuild project evaluation.
+  Outputs: Consistent compiler behavior.
+  Mutation Scope: Build configuration only.
+  Dependencies: .NET 10 SDK.
+  Tests: dotnet restore, build, and test.
+  Security Impact: Warnings-as-errors reduces ignored defects.
+  Database Impact: None.
+  Sovereign Cycle: Structure -> Execution -> Veritas
+  Status: ACTIVE / GOVERNED
+  Human Comprehension: REQUIRED
+  Owner: Leonard Lee / Leeway Industries
+  Version: 1.0.0
+-->
+
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>14.0</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>
+  </PropertyGroup>
+</Project>

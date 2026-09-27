@@ -1,0 +1,65 @@
+# LEEWAY ENTERPRISE FILE HEADER
+# File: dotnet-ci.yml
+# Path: .github/workflows/dotnet-ci.yml
+# Project: LeeWay Enterprise Transit Hub
+# Layer: GitHub Actions / CI
+# Purpose: Build training evidence, verify continuous learning, restore, build, test, and verify governance on pushes and pull requests.
+# Inputs: Repository source and .NET SDK 10.0.302.
+# Outputs: Build, test, and governance evidence.
+# Mutation Scope: CI workspace and uploaded artifacts only.
+# Dependencies: GitHub Actions, PowerShell 7, and .NET SDK 10.0.302.
+# Tests: dotnet restore, build, test, and governance verification.
+# Security Impact: Repository contents permission is read-only.
+# Database Impact: No database service is started.
+# Sovereign Cycle: Execution -> Veritas -> Echo
+# Status: ACTIVE / GOVERNED
+# Human Comprehension: REQUIRED
+# Owner: Leonard Lee / Leeway Industries
+# Version: 4.0.0
+
+name: LeeWay Transit Hub CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-governance:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.302'
+      - name: Build training manual
+        shell: pwsh
+        run: .\operations\powershell\Build-LeeWayTrainingManual.ps1
+      - name: Verify continuous learning
+        shell: pwsh
+        run: .\operations\powershell\Verify-ContinuousLearningGate.ps1 -ExpectedPhase PHASE-04
+      - name: Restore
+        run: dotnet restore .\LeeWay.EnterpriseTransitHub.sln
+      - name: Build
+        run: dotnet build .\LeeWay.EnterpriseTransitHub.sln -c Release --no-restore
+      - name: Test
+        run: dotnet test .\LeeWay.EnterpriseTransitHub.sln -c Release --no-build --logger "trx;LogFileName=leeway-tests.trx" --results-directory .\TestResults
+      - name: Verify governance
+        shell: pwsh
+        run: .\operations\powershell\Verify-LeeWayGovernance.ps1
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: leeway-test-evidence
+          path: |
+            TestResults
+            governance/registries/file-registry.json
+            docs/training-manual/manual-progress.json
+          if-no-files-found: warn

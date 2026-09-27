@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Personnel &amp; Crew Command | Logistics OS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#c1c7d0",
+                    "on-primary-fixed": "#161c23",
+                    "surface-container-high": "#282a2e",
+                    "tertiary-fixed": "#e0e2ec",
+                    "on-error": "#690005",
+                    "surface-container-highest": "#333539",
+                    "primary-container": "#30363d",
+                    "outline": "#8f9195",
+                    "error": "#ffb4ab",
+                    "surface-tint": "#c1c7d0",
+                    "on-secondary-container": "#b1b5bf",
+                    "on-error-container": "#ffdad6",
+                    "tertiary-container": "#32353d",
+                    "surface-container-low": "#1a1c20",
+                    "on-tertiary-fixed": "#191c23",
+                    "on-primary": "#2b3138",
+                    "secondary-fixed-dim": "#c2c7d0",
+                    "surface-container-lowest": "#0c0e12",
+                    "inverse-surface": "#e2e2e8",
+                    "secondary-fixed": "#dee2ec",
+                    "secondary": "#c2c7d0",
+                    "outline-variant": "#44474b",
+                    "on-primary-fixed-variant": "#41474f",
+                    "on-primary-container": "#999fa7",
+                    "inverse-on-surface": "#2f3035",
+                    "on-tertiary": "#2d3038",
+                    "surface-bright": "#37393e",
+                    "surface": "#111318",
+                    "primary-fixed-dim": "#c1c7d0",
+                    "on-tertiary-container": "#9b9da7",
+                    "tertiary-fixed-dim": "#c4c6d0",
+                    "secondary-container": "#42474f",
+                    "on-secondary-fixed": "#171c23",
+                    "surface-container": "#1e2024",
+                    "on-tertiary-fixed-variant": "#44474f",
+                    "error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#42474f",
+                    "on-secondary": "#2c3138",
+                    "inverse-primary": "#595f67",
+                    "background": "#111318",
+                    "surface-dim": "#111318",
+                    "on-surface-variant": "#c5c6cb",
+                    "tertiary": "#c4c6d0",
+                    "surface-variant": "#333539",
+                    "on-surface": "#e2e2e8",
+                    "on-background": "#e2e2e8",
+                    "primary-fixed": "#dde3ec"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-md": "12px",
+                    "stack-lg": "20px",
+                    "container-padding": "12px",
+                    "stack-sm": "4px",
+                    "gutter": "8px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "data-mono": ["JetBrains Mono"],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "data-mono": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                    "label-caps": ["10px", {"lineHeight": "12px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "headline-md": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #111318;
+            color: #e2e2e8;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #111318;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #30363d;
+        }
+        .hud-glow {
+            box-shadow: 0 0 15px rgba(193, 199, 208, 0.05);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md overflow-hidden h-screen flex flex-col">
+<!-- TopAppBar Component -->
+<header class="bg-surface dark:bg-surface text-primary dark:text-primary-fixed-dim w-full top-0 sticky border-b border-outline-variant flex items-center justify-between px-container-padding h-14 z-50">
+<div class="flex items-center gap-gutter">
+<span class="material-symbols-outlined cursor-pointer active:opacity-80 p-2 hover:bg-surface-container-high transition-colors rounded-full">menu</span>
+<h1 class="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface">Logistics OS</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex gap-4 items-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">System Status: Nominal</span>
+<div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+</div>
+<div class="flex items-center gap-2 cursor-pointer active:opacity-80 p-1 pr-3 hover:bg-surface-container-high transition-colors rounded-full">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a logistics executive in a dark slate grey suit, minimal lighting, sharp contrast, corporate photography style, high-end commercial aesthetic, muted tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxcR4hRopZlyMmRRi3wuWhar3403B3Ks3yKNbeMBri2UzJa5LPbT9uZN_L9w2RxN88jvYHKLG64irZhfOkXoCuZlMbl3AO-E7e_A8yQ6uVait5KOlGQfJlPoKlUPV8kcjBUADfAyAPX8WFnc9LJHyP_RJiSh6B0U2AKc5uauqPY31tsJghd4dC-QusuhRSBbOO7_hb9U7b2Iy8PTXAR2goaV_uuguKCBHpU8qW_ZZKjtumK7eN6NrutLomFWT71RFOS0Jfo6xh6MFt"/>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">Agent Lee AI</span>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- NavigationDrawer Component -->
+<aside class="hidden md:flex flex-col h-full w-72 left-0 bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant py-stack-lg transition-all duration-150">
+<div class="px-6 mb-stack-lg">
+<p class="font-headline-md text-headline-md text-on-surface font-bold">Operational Modules</p>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-secondary-container text-on-secondary-container font-semibold transition-all duration-150" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-md text-body-md">Fleet Management</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-body-md text-body-md">Mapping</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-body-md text-body-md">Maintenance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-body-md text-body-md">Compliance</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-highest transition-all duration-150" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-body-md text-body-md">ROI Analysis</span>
+</a>
+</nav>
+<div class="px-6 pt-stack-lg border-t border-outline-variant/30 mt-auto">
+<div class="bg-primary-container p-3 rounded-lg border border-outline-variant">
+<p class="font-label-caps text-label-caps text-on-primary-container mb-1">TERMINAL 4 LOG</p>
+<p class="font-data-mono text-data-mono text-[11px] opacity-70">SESS_ID: 99x-K21<br/>LOCAL: 14:22:01</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col overflow-hidden relative">
+<!-- Dashboard Header -->
+<div class="px-container-padding py-stack-md flex justify-between items-end border-b border-outline-variant bg-surface">
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Personnel &amp; Crew Command</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Real-time operator status and compliance monitoring.</p>
+</div>
+<div class="flex gap-2">
+<div class="flex border border-outline-variant rounded overflow-hidden">
+<button class="bg-surface-container-highest px-3 py-1 font-label-caps text-label-caps border-r border-outline-variant">ALL</button>
+<button class="bg-surface px-3 py-1 font-label-caps text-label-caps border-r border-outline-variant text-on-surface-variant">ACTIVE</button>
+<button class="bg-surface px-3 py-1 font-label-caps text-label-caps text-on-surface-variant">OFF-DUTY</button>
+</div>
+<button class="bg-on-surface text-surface px-3 py-1 rounded font-label-caps text-label-caps flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">download</span> EXPORT
+                    </button>
+</div>
+</div>
+<!-- Agent Lee Intelligence Overlay (HUD) -->
+<div class="absolute top-24 right-container-padding w-80 z-40 animate-in fade-in slide-in-from-right-4 duration-500">
+<div class="bg-[#30363d]/90 backdrop-blur-md border-l-4 border-primary p-stack-md rounded-lg hud-glow border border-outline-variant">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="font-label-caps text-label-caps text-primary tracking-widest">AGENT LEE INTELLIGENCE</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mb-3 leading-relaxed">
+<span class="font-bold text-error">CRITICAL FATIGUE RISK:</span> Operator <span class="font-data-mono bg-surface-container-highest px-1">OPS-4421</span> has exceeded 9.5 continuous hours. Compliance risk detected within 30m.
+                    </p>
+<div class="bg-surface-container-lowest border border-outline-variant p-2 mb-3">
+<p class="font-label-caps text-[9px] text-on-surface-variant mb-1 uppercase">Recommended Action</p>
+<p class="font-body-sm text-body-sm font-semibold">Initiate Shift Swap with OPS-9912</p>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-primary text-on-primary-fixed py-1.5 rounded font-label-caps text-label-caps">EXECUTE SWAP</button>
+<button class="flex-1 border border-outline px-2 py-1.5 rounded font-label-caps text-label-caps">DISMISS</button>
+</div>
+</div>
+</div>
+<!-- High-Density Data Grid -->
+<div class="flex-1 overflow-auto custom-scrollbar bg-surface-container-lowest">
+<table class="w-full border-collapse">
+<thead class="sticky top-0 bg-surface-container border-b border-outline-variant z-10">
+<tr>
+<th class="text-left py-2 px-container-padding font-label-caps text-label-caps text-on-surface-variant border-r border-outline-variant w-40">OPERATOR ID</th>
+<th class="text-left py-2 px-container-padding font-label-caps text-label-caps text-on-surface-variant border-r border-outline-variant w-32">DUTY STATUS</th>
+<th class="text-left py-2 px-container-padding font-label-caps text-label-caps text-on-surface-variant border-r border-outline-variant w-40">COMPLIANCE SCORE</th>
+<th class="text-left py-2 px-container-padding font-label-caps text-label-caps text-on-surface-variant border-r border-outline-variant w-40">NEXT HOS LIMIT</th>
+<th class="text-left py-2 px-container-padding font-label-caps text-label-caps text-on-surface-variant">ASSIGNED VEHICLE</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 (The Critical One) -->
+<tr class="hover:bg-surface-container transition-colors group bg-error-container/10">
+<td class="py-2 px-container-padding font-data-mono text-data-mono text-on-surface border-r border-outline-variant">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+                                    OPS-4421
+                                </div>
+</td>
+<td class="py-2 px-container-padding border-r border-outline-variant">
+<span class="bg-surface-container-highest text-on-surface px-1.5 py-0.5 rounded text-[10px] font-bold border border-outline-variant">ACTIVE</span>
+</td>
+<td class="py-2 px-container-padding border-r border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="flex-1 h-1 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-error w-[68%]"></div>
+</div>
+<span class="font-data-mono text-data-mono text-error">68%</span>
+</div>
+</td>
+<td class="py-2 px-container-padding font-data-mono text-data-mono text-error border-r border-outline-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">timer</span>
+                                    00:28:14
+                                </div>
+</td>
+<td class="py-2 px-container-padding font-body-sm text-body-sm text-on-surface-variant italic">
+                                FRT-X99 "Vigilant"
+                            </td>
+</tr>
+<!-- Repeatable Rows -->
+<script>
+                            const names = ["OPS-9912", "OPS-1202", "OPS-8843", "OPS-2119", "OPS-0032", "OPS-7761", "OPS-3345", "OPS-1100", "OPS-5562", "OPS-4481", "OPS-2910", "OPS-6672", "OPS-3921", "OPS-8181", "OPS-9001"];
+                            const statuses = ["ACTIVE", "REST", "TRAINING", "ACTIVE", "ACTIVE"];
+                            const vehicles = ["KW-P300", "PETER-88", "VOLVO-VNL", "TESLA-SEMI", "FRT-CASC"];
+                            
+                            names.forEach((name, i) => {
+                                const status = statuses[i % statuses.length];
+                                const score = Math.floor(Math.random() * 20) + 80;
+                                const hos = `0${Math.floor(Math.random()*8)}:12:00`;
+                                const vehicle = vehicles[i % vehicles.length];
+                                
+                                document.write(`
+                                    <tr class="hover:bg-surface-container transition-colors group">
+                                        <td class="py-2 px-container-padding font-data-mono text-data-mono text-on-surface border-r border-outline-variant">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-2 h-2 rounded-full ${status === 'ACTIVE' ? 'bg-green-500' : status === 'REST' ? 'bg-blue-400' : 'bg-yellow-500'}"></div>
+                                                ${name}
+                                            </div>
+                                        </td>
+                                        <td class="py-2 px-container-padding border-r border-outline-variant">
+                                            <span class="bg-surface-container-high text-on-surface-variant px-1.5 py-0.5 rounded text-[10px] font-bold border border-outline-variant">${status}</span>
+                                        </td>
+                                        <td class="py-2 px-container-padding border-r border-outline-variant">
+                                            <div class="flex items-center gap-3">
+                                                <div class="flex-1 h-1 bg-surface-container-high rounded-full overflow-hidden">
+                                                    <div class="h-full ${score > 90 ? 'bg-green-500' : 'bg-primary'} w-[${score}%]"></div>
+                                                </div>
+                                                <span class="font-data-mono text-data-mono text-on-surface">${score}%</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-2 px-container-padding font-data-mono text-data-mono text-on-surface-variant border-r border-outline-variant">
+                                            ${status === 'ACTIVE' ? hos : '--:--:--'}
+                                        </td>
+                                        <td class="py-2 px-container-padding font-body-sm text-body-sm text-on-surface-variant italic">
+                                            ${status === 'ACTIVE' ? vehicle : 'N/A'}
+                                        </td>
+                                    </tr>
+                                `);
+                            });
+                        </script>
+</tbody>
+</table>
+</div>
+<!-- Bottom Data Footer / Summary -->
+<div class="h-10 bg-surface-container-high border-t border-outline-variant flex items-center px-container-padding justify-between">
+<div class="flex gap-4">
+<p class="font-label-caps text-label-caps text-on-surface-variant">TOTAL OPERATORS: <span class="text-on-surface">142</span></p>
+<p class="font-label-caps text-label-caps text-on-surface-variant">ON-DUTY: <span class="text-on-surface">88</span></p>
+<p class="font-label-caps text-label-caps text-on-surface-variant">COMPLIANCE AVG: <span class="text-green-400">94.2%</span></p>
+</div>
+<div class="flex gap-2 items-center">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+<p class="font-label-caps text-label-caps text-on-surface-variant">LIVE SYNC ACTIVE</p>
+</div>
+</div>
+</main>
+</div>
+<!-- BottomNavBar Component (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 flex justify-around items-center px-4 bg-surface-container border-t border-outline-variant z-50">
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-caps text-label-caps uppercase">Diagnostics</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl py-1 px-4 transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-label-caps text-label-caps uppercase">Active Fleet</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase">Schedule</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-label-caps text-label-caps uppercase">Insights</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Remove highlight from all rows
+                document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('bg-primary-container/20'));
+                // Add highlight to current
+                row.classList.add('bg-primary-container/20');
+            });
+        });
+
+        // Simple countdown logic for the fatigue alert
+        let timeLeft = 1694; // seconds
+        setInterval(() => {
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            // Update UI if it were dynamic (placeholder for real logic)
+        }, 1000);
+    </script>
+</body></html>

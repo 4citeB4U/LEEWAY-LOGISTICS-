@@ -1,0 +1,53 @@
+{
+  "_leewayHeader": {
+    "file": "evidence-schema.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/evidence-schema.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "LeeWay / Evidence Contract",
+    "purpose": "Define minimum evidence fields for Agent Lee operations, training, diagnosis, and repair.",
+    "inputs": "Tool execution, tests, approvals, tenant context, and outcomes.",
+    "outputs": "Auditable receipt requirements.",
+    "mutationScope": "Evidence metadata only.",
+    "dependencies": "Governance receipt policy.",
+    "tests": "Receipt schema validation and negative tests.",
+    "securityImpact": "Preserves provenance without exposing secrets.",
+    "databaseImpact": "Future receipt persistence is tenant-aware and append-oriented.",
+    "sovereignCycle": [
+      "Execution",
+      "Veritas",
+      "Echo",
+      "Synthesis"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "2.0.0"
+  },
+  "requiredFields": [
+    "receiptId",
+    "productId",
+    "productVersion",
+    "tenantIdOrGlobal",
+    "actorIdentity",
+    "actorType",
+    "requestedBy",
+    "toolId",
+    "riskClass",
+    "approvalIdOrNotRequired",
+    "inputsHash",
+    "startedUtc",
+    "completedUtc",
+    "outcome",
+    "evidenceLocations",
+    "rollbackState",
+    "veritasScore"
+  ],
+  "outcomes": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "DEGRADED",
+    "ROLLED_BACK"
+  ],
+  "secretPolicy": "Receipts store hashes and references, not plaintext credentials or protected payloads."
+}

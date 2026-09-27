@@ -1,0 +1,52 @@
+# LEEWAY ENTERPRISE FILE HEADER
+# File: .gitignore
+# Path: .gitignore
+# Project: LeeWay Enterprise Transit Hub
+# Layer: Source Control Policy
+# Purpose: Prevent generated output, credentials, and database runtime files from entering Git.
+# Inputs: Local build and runtime artifacts.
+# Outputs: Git exclusion rules.
+# Mutation Scope: Source-control inclusion boundaries only.
+# Dependencies: Git.
+# Tests: git status and secret scan.
+# Security Impact: Blocks common secret and local-data files.
+# Database Impact: Blocks database data and backup files.
+# Sovereign Cycle: Structure -> Veritas
+# Status: ACTIVE / GOVERNED
+# Human Comprehension: REQUIRED
+# Owner: Leonard Lee / Leeway Industries
+# Version: 1.0.0
+
+# Build output
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Generated evidence
+_evidence/
+TestResults/
+coverage/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+secrets.json
+appsettings.Local.json
+
+# Database runtime files
+*.mdf
+*.ldf
+*.bak
+*.dmp
+
+# OS
+Thumbs.db
+.DS_Store
+
+*.trn
+operations/docker/sqlserver/.env

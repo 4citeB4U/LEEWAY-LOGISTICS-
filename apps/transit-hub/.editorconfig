@@ -1,0 +1,35 @@
+# LEEWAY ENTERPRISE FILE HEADER
+# File: .editorconfig
+# Path: .editorconfig
+# Project: LeeWay Enterprise Transit Hub
+# Layer: Development Standards
+# Purpose: Define consistent editor and code formatting behavior.
+# Inputs: Editor and analyzer configuration.
+# Outputs: Consistent formatting diagnostics.
+# Mutation Scope: Formatting policy only.
+# Dependencies: .NET-compatible editor.
+# Tests: Editor inspection and build.
+# Security Impact: None.
+# Database Impact: None.
+# Sovereign Cycle: Structure -> Veritas
+# Status: ACTIVE / GOVERNED
+# Human Comprehension: REQUIRED
+# Owner: Leonard Lee / Leeway Industries
+# Version: 1.0.0
+
+root = true
+
+[*.cs]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+dotnet_sort_system_directives_first = true
+csharp_style_namespace_declarations = file_scoped:warning
+
+[*.{json,yml,yaml,md,sql,ps1,html,css,js}]
+charset = utf-8
+insert_final_newline = true
+indent_style = space
+indent_size = 2

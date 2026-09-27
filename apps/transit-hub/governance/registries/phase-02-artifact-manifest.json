@@ -1,0 +1,429 @@
+{
+  "_leewayHeader": {
+    "file": "phase-02-artifact-manifest.json",
+    "path": "governance/registries/phase-02-artifact-manifest.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Governance / Phase Artifact Registry",
+    "purpose": "Record every deterministic file delivered by the Phase 02 patch payload.",
+    "inputs": "Generated Phase 02 patch files and SHA-256.",
+    "outputs": "Auditable patch artifact registry.",
+    "mutationScope": "Registry only.",
+    "dependencies": "Phase 02 script and product source.",
+    "tests": "Payload hash, file hash, build, test, runtime, and governance verification.",
+    "securityImpact": "Provides integrity evidence.",
+    "databaseImpact": "No database mutation.",
+    "sovereignCycle": [
+      "Structure",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "PASS",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "2.0.0"
+  },
+  "phase": "02_SAAS_TENANCY_TRAINING_AND_AGENT_CAPABILITY_FOUNDATION",
+  "generatedFileCount": 80,
+  "files": [
+    {
+      "path": ".leeway/project.manifest.json",
+      "sha256": "CF902989CBBF5077FC5F73B1B94632E58E7DA4C9FB52EFB7BB32DFCCF9863A96",
+      "sizeBytes": 3804
+    },
+    {
+      "path": "README.md",
+      "sha256": "0BB8838D1BCB645C3CCB698045DC998D1E628A7D06ADCAFE0581F62DB88E55AF",
+      "sizeBytes": 3234
+    },
+    {
+      "path": "docs/architecture/ADR-0002-MULTITENANT-SAAS-ARCHITECTURE.md",
+      "sha256": "12EE9FF27A35BBA662A38256768691ADDF735F81FB98C0F9D5DE380A5DB8EFA1",
+      "sizeBytes": 1803
+    },
+    {
+      "path": "docs/architecture/ADR-0003-AGENT-LEE-EXTERNAL-ORCHESTRATOR.md",
+      "sha256": "D021C2036FC309F55224C7844F49ED8B9B477B415E015CEF39D2C728E0049A03",
+      "sizeBytes": 1798
+    },
+    {
+      "path": "docs/architecture/ADR-0004-MODULAR-MONOLITH-FIRST.md",
+      "sha256": "4467DECE3CE786F031077A4FA0C76AD44C2EFE44661E764D0AB275A8C81D84E8",
+      "sizeBytes": 1683
+    },
+    {
+      "path": "docs/evidence/PHASE-02-SOURCE-AND-COMPATIBILITY-EVIDENCE.md",
+      "sha256": "608C5B92DD428E183E67DD95272AFD6CA26132FADC1641791B00A9D791D3166D",
+      "sizeBytes": 2019
+    },
+    {
+      "path": "docs/learning/LESSON-02-SAAS-TENANCY-TRAINING-AND-AGENT-BOUNDARIES.md",
+      "sha256": "F60175773C3679A6B0D1241CE1BE568549DD7375FEDD28183B52A4A23B8CAC79",
+      "sizeBytes": 3253
+    },
+    {
+      "path": "docs/product/PRODUCT-CHARTER.md",
+      "sha256": "1493169B13027A7574F89DA529BCA7A008EC641740F25E4BA08836C24324D64C",
+      "sizeBytes": 3085
+    },
+    {
+      "path": "docs/product/SAAS-CAPABILITY-MAP.md",
+      "sha256": "C83F0945A61BE2CAD22AB1E7530E451A3334BC4AB2D4D55A7CE886EBD669946F",
+      "sizeBytes": 2183
+    },
+    {
+      "path": "docs/product/TRANSPORTATION-VERTICALS.md",
+      "sha256": "F31989F1EDEC332531FDB87F27FF9267CF9AB9315E218EB667E912E9D8B34A8F",
+      "sizeBytes": 2167
+    },
+    {
+      "path": "docs/product/_DIRECTORY.leeway.md",
+      "sha256": "F3861FBF3FFB061F706B46B9921773764CB7C98FB17D75107BE2B4B0D08CA05D",
+      "sizeBytes": 1637
+    },
+    {
+      "path": "docs/requirements/REQ-0002-SAAS-TENANCY-TRAINING-AND-AGENT-CAPABILITY.md",
+      "sha256": "8B48C05F46F10BADA2E9834DF2C2A8C927834D1EA2376935C3757DFA73F72712",
+      "sizeBytes": 2239
+    },
+    {
+      "path": "docs/roadmap/COMMERCIAL-PRODUCT-ROADMAP.md",
+      "sha256": "AF440EB0E9CBFA5EFD0505FDAB9B07CEEB87D1473B813647B8EBEEC14054D8AB",
+      "sizeBytes": 2339
+    },
+    {
+      "path": "docs/roadmap/_DIRECTORY.leeway.md",
+      "sha256": "A305F70DDCEECDDED02BF04F19E0C49BD610B5AF004B1157414CDE2E7F0C352D",
+      "sizeBytes": 1647
+    },
+    {
+      "path": "docs/training-manual/01-product-orientation/PART-OVERVIEW.md",
+      "sha256": "AE12B79559AA66B1169D921265219A80EEDE941AF6736B97DCB6D109E258CA0D",
+      "sizeBytes": 2114
+    },
+    {
+      "path": "docs/training-manual/01-product-orientation/_DIRECTORY.leeway.md",
+      "sha256": "776768724826BF30C001903DF3092DB54945ADF5D8A53E815CD9B31C3B18BFCF",
+      "sizeBytes": 1792
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/PART-OVERVIEW.md",
+      "sha256": "1E5C51206A7BD8181ED5000253DE041AF593FA7C7E57DF6C87162C2BFAB01C89",
+      "sizeBytes": 2064
+    },
+    {
+      "path": "docs/training-manual/02-roles-and-workflows/_DIRECTORY.leeway.md",
+      "sha256": "8B32E8E68ECEB24EBDCDC78E558EE6781D60E5DC76A6B4F419DB03A4D7A6A8D0",
+      "sizeBytes": 1780
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/PART-OVERVIEW.md",
+      "sha256": "FDF5A189B400B0B29AE69FA5C6745D43275C8CC7814F5F9F68FFB58D38C3AA6C",
+      "sizeBytes": 2094
+    },
+    {
+      "path": "docs/training-manual/03-tenant-administration/_DIRECTORY.leeway.md",
+      "sha256": "BC30CF251759FB805BBCB999C79F24AEBF31C9CC340D3C983F904323D2272D8F",
+      "sizeBytes": 1796
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/PART-OVERVIEW.md",
+      "sha256": "8120A76E50CEB6A66E7BE7226006857BE899DA6DD5E590F6752849DA8B93FC3E",
+      "sizeBytes": 2024
+    },
+    {
+      "path": "docs/training-manual/04-fleet-operations/_DIRECTORY.leeway.md",
+      "sha256": "1CCA512CD6E0DD7BF03CEA9D0A1324E9CC0CB0FB17C0A71DDB01F43E4C0B305E",
+      "sizeBytes": 1764
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/PART-OVERVIEW.md",
+      "sha256": "0B813D6492344BFAD83CDC655787513EC8BB3AC06BD25F2BAC6217DED0D4BF4F",
+      "sizeBytes": 2080
+    },
+    {
+      "path": "docs/training-manual/05-dispatch-and-routing/_DIRECTORY.leeway.md",
+      "sha256": "596D874C6B8E8B28072BE49307DE501A249453F7E4D1AAA946D004D89E35B458",
+      "sizeBytes": 1788
+    },
+    {
+      "path": "docs/training-manual/06-maintenance-and-inspections/PART-OVERVIEW.md",
+      "sha256": "334D921F1439E8514F9AF3DAF5B1D039AD68B682CDAAA77997CAE416A4856F4A",
+      "sizeBytes": 2084
+    },
+    {
+      "path": "docs/training-manual/06-maintenance-and-inspections/_DIRECTORY.leeway.md",
+      "sha256": "18761773310C49D065103D04BFF361A3EAD6B2399345715CF86CFF0C388681F0",
+      "sizeBytes": 1810
+    },
+    {
+      "path": "docs/training-manual/07-safety-and-compliance/PART-OVERVIEW.md",
+      "sha256": "98957E583A9528658E6729BD6F38A05B6EFFB7AC86360A961640B62CFF4F3059",
+      "sizeBytes": 2083
+    },
+    {
+      "path": "docs/training-manual/07-safety-and-compliance/_DIRECTORY.leeway.md",
+      "sha256": "24722DDD3CECB261D120BCD2354F601CF7A85B2ADD64187F818436EAB4F781FD",
+      "sizeBytes": 1794
+    },
+    {
+      "path": "docs/training-manual/08-driver-voice-and-vision/PART-OVERVIEW.md",
+      "sha256": "4E264500D2E8F60E7939845534A41C5AF7A1EB2D7978584D27E4D947AED9AA18",
+      "sizeBytes": 2103
+    },
+    {
+      "path": "docs/training-manual/08-driver-voice-and-vision/_DIRECTORY.leeway.md",
+      "sha256": "9FAEE2113AFE0C89F2E3C7504EC25618F1873753B31DA1CDA3C3B9809405E00A",
+      "sizeBytes": 1800
+    },
+    {
+      "path": "docs/training-manual/09-reporting-and-integrations/PART-OVERVIEW.md",
+      "sha256": "57D112BEFCEEF24A7AA9B7146C59F6571DE43AF5414F412355BD1370F733378B",
+      "sizeBytes": 2100
+    },
+    {
+      "path": "docs/training-manual/09-reporting-and-integrations/_DIRECTORY.leeway.md",
+      "sha256": "F05AFDC5F9F1CA199FE37C96298112AF06B9B1CC57AC61B5EAACD57AC21BE79E",
+      "sizeBytes": 1808
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/PART-OVERVIEW.md",
+      "sha256": "C5F5F8D15D21774AA1BA816BFC1C3413C2E1AA9B297850156D2D5F09FFA85E9A",
+      "sizeBytes": 2095
+    },
+    {
+      "path": "docs/training-manual/10-agent-lee/_DIRECTORY.leeway.md",
+      "sha256": "3E304C70280CE3123D88501525F316F13AA12F1CD1CC3D4E17AD75D0D16C6F4B",
+      "sizeBytes": 1763
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/PART-OVERVIEW.md",
+      "sha256": "5CAA7508E67C0FD23AA204D929FD65EDFB6009C82F6019DFA60F285FB66478A4",
+      "sizeBytes": 2112
+    },
+    {
+      "path": "docs/training-manual/11-technical-administration/_DIRECTORY.leeway.md",
+      "sha256": "DE15CB15098CF94AD3244CA1B01386BF5B27F000847E1E2E3786BE0CDFD36926",
+      "sizeBytes": 1810
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/PART-OVERVIEW.md",
+      "sha256": "5BF42BFAFEA4ED501E00E9CE5B25DCFFE33ECD6D9993852A32B5893E6C4C6E3E",
+      "sizeBytes": 2106
+    },
+    {
+      "path": "docs/training-manual/12-troubleshooting-reference/_DIRECTORY.leeway.md",
+      "sha256": "A4CD8E372B0B431CCA1DE57DBD2750AB72DB1C8298758927074AAB3E059A445C",
+      "sizeBytes": 1813
+    },
+    {
+      "path": "docs/training-manual/README.md",
+      "sha256": "8236F4924C1C8E98344389ADC2C3A715C7DDF72DAA74A057E8BFF1A41FE68554",
+      "sizeBytes": 1905
+    },
+    {
+      "path": "docs/training-manual/_DIRECTORY.leeway.md",
+      "sha256": "51EDFEE9BE28D7476DB4CC3CCD53A1A8E7862A7DA2F9AA22D5DB4E0DECD37092",
+      "sizeBytes": 1755
+    },
+    {
+      "path": "docs/training-manual/assessment-schema.json",
+      "sha256": "79641425E90D38B93E247BEBF64DECA2A8D28BA26B2BF7A853C5580734B33688",
+      "sizeBytes": 1882
+    },
+    {
+      "path": "docs/training-manual/curriculum-registry.json",
+      "sha256": "EC75E50F4C7392D3F4F19B5846B9E20F299EE63E02481D9D1E2D2350E8BB0364",
+      "sizeBytes": 2546
+    },
+    {
+      "path": "docs/training-manual/manual.manifest.json",
+      "sha256": "341875536B006C863D8F9DFE3DEB952569DD4609D0267F79940970E2395CFD32",
+      "sizeBytes": 5083
+    },
+    {
+      "path": "leeway/_DIRECTORY.leeway.md",
+      "sha256": "C3BE9D38FE5FCE95B771243706FE6B878EA04DDD07C4F92CF2251C16C6364332",
+      "sizeBytes": 1686
+    },
+    {
+      "path": "leeway/capabilities/_DIRECTORY.leeway.md",
+      "sha256": "600D51D79F29B64066F9504DCC3855B92924123480600E5DB121B1C3454CD61B",
+      "sizeBytes": 1624
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/AGENT-LEE-EMPLOYMENT-AND-BOUNDARY.md",
+      "sha256": "DA2107FEB595CC1DBF3004D553866C375EF4D75DB78E77C9979CF9180A7B58D6",
+      "sizeBytes": 1600
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/DEGRADED-MODE.md",
+      "sha256": "66AC843CAE440B7889FDA08A0B72886B153529563313FA33AE51CF7091B7AB04",
+      "sizeBytes": 1570
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/README.md",
+      "sha256": "429167939C4922D3233B32E1E6F8D65201D5C06C5E8888EA284E7FBF266AAC79",
+      "sizeBytes": 1585
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/REPAIR-RUNBOOK-STANDARD.md",
+      "sha256": "F18DC6C774DA2CE626CC9AC25BA701B09C1B340DA7561E573BA959009F8E1A44",
+      "sizeBytes": 1576
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/_DIRECTORY.leeway.md",
+      "sha256": "CC335C47DCAB98B2394C674D9F57AD0359777CBADC65BE5942B2DC942C3E8BAE",
+      "sizeBytes": 1844
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/capability-manifest.json",
+      "sha256": "AD53BAF0B732D4524FC8B59E60C0D544E54D42CE6B667BF1B09F9BE3DBBF717D",
+      "sizeBytes": 2491
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/evidence-schema.json",
+      "sha256": "0B023F14B0485E6379AB8E833737A5FEC3A1112A22A81A1F72FE6BD648D2B9B1",
+      "sizeBytes": 1599
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/health-checks.json",
+      "sha256": "5227DF55F92CDB05841D729D95C82A6006A5DDCE34C99EEA1D9FF52409AFA8C0",
+      "sizeBytes": 1953
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/knowledge-manifest.json",
+      "sha256": "3B5D418AE7C76BCADD5E92E3523A5416D6982DF2C95352D0FC41EA1764F2FC6E",
+      "sizeBytes": 2646
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/permissions.json",
+      "sha256": "16852313F0630770CF93A772FB26AD02D9517B467139063A8C07A24146B2D9FE",
+      "sizeBytes": 2292
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/tool-catalog.json",
+      "sha256": "66C1F164871ED951D1F6038A78CABC71B007CA720CDB39646AAB4E6CAAE3956B",
+      "sizeBytes": 2733
+    },
+    {
+      "path": "leeway/capabilities/enterprise-transit-hub/training-proctor.json",
+      "sha256": "2254CDF2C59902ABFEC849C5CE33842D1F2EBB3891C0238DE8C450AF14E0661C",
+      "sizeBytes": 1967
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Controllers/PlatformController.cs",
+      "sha256": "368A6D184C4BB14FE0A4AF3BD3E5F50DB4D0D9CD387AF3FCBE5B0E9EBAC1E5C0",
+      "sizeBytes": 1840
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Program.cs",
+      "sha256": "FF658DFFA3458CD95C06E3355FE4242F0194A0171F1121FA36477D3B28850765",
+      "sizeBytes": 2946
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Tenancy/HeaderTenantContext.cs",
+      "sha256": "95CFBD50A74546051D6C679A8AFE2E29194BBC2A4DDF8261872448E435F4A739",
+      "sizeBytes": 1845
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Tenancy/TenantResolutionMiddleware.cs",
+      "sha256": "DD4ED99A8924363424DB221B087AB1C80F104A0D9536C8AC39D753BB5AD00E9A",
+      "sizeBytes": 2698
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Api/Tenancy/_DIRECTORY.leeway.md",
+      "sha256": "A80579027D9DF9F28D579B4F78DFDA1E516799A711A3944C5E5678DEB1D53281",
+      "sizeBytes": 1727
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Product/TransitHubProductProfile.cs",
+      "sha256": "8964C3371BAF467917659926582C1FFFE5645CE5AFE483382ABDC90D14D6D0E2",
+      "sizeBytes": 1422
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Product/TransitHubProductProfileService.cs",
+      "sha256": "8074BDB2BB89BE5A0BB6BA7832C30964442CF31D84F52F0BA610AD6B12F60B0B",
+      "sizeBytes": 2494
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Product/_DIRECTORY.leeway.md",
+      "sha256": "1E5B0D1F15C16D32373F3A269675F7618785BB866F39D0EDD62018AAA9112284",
+      "sizeBytes": 1727
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Tenancy/FeatureEntitlement.cs",
+      "sha256": "50E89148D112AFD47990A558B40000AFD342EC475980E475A4EC594DC85E1E92",
+      "sizeBytes": 983
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Tenancy/ITenantContext.cs",
+      "sha256": "AFCC8CAFC1F90912521A43CCC801427A3DEFFC944DBDCDC3982838D0BCC90926",
+      "sizeBytes": 1055
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Tenancy/TenantContextSnapshot.cs",
+      "sha256": "E7AB3D2BD806C9B68438E1B406DAAD35A03E3D059C3A88958F144909F9EA9BF2",
+      "sizeBytes": 962
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Application/Tenancy/_DIRECTORY.leeway.md",
+      "sha256": "9D2A51D9D246559FD321108C4C84AB46887EC774C826C95C9DA821D37C7C342C",
+      "sizeBytes": 1755
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/ITenantOwned.cs",
+      "sha256": "FCC692AFB9E094D642E36A695A932A85EC8791E3590E99C2F62C16596A74C137",
+      "sizeBytes": 859
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/OrganizationUnit.cs",
+      "sha256": "29A3296E4F6548C7253E9C187A33FB9D7D06D32EDDD03DA7E3B06BF5323A090A",
+      "sizeBytes": 2570
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/OrganizationUnitType.cs",
+      "sha256": "D9B61173F50FB3C90CEE316E1C2DDF768FDED8370A245856D147E39F6C2E1E32",
+      "sizeBytes": 1014
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/SaaSDeploymentProfile.cs",
+      "sha256": "AFB32ECDBC797F4F9C32EE53E465EAD65368DCD8A41D876D1959B56A91203CCE",
+      "sizeBytes": 972
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/Tenant.cs",
+      "sha256": "0A3836828B3C7BD4502A3DE0CC3917C00B2F2FA4A46C57F28BB1FE59E5BF89D5",
+      "sizeBytes": 3440
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/TenantStatus.cs",
+      "sha256": "A0CC126FB2C1CC701B647D302B7D9B31F96648781DEDDA46207B5EDBA916F788",
+      "sizeBytes": 881
+    },
+    {
+      "path": "src/LeeWay.TransitHub.Domain/Tenancy/_DIRECTORY.leeway.md",
+      "sha256": "19883D065DB37EC70AC09BC82208F2D0281E2CB36EBD5EC23C96DC13B191BA28",
+      "sizeBytes": 1717
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.ArchitectureTests/TenancyArchitectureTests.cs",
+      "sha256": "F4249D67E89BFCD3600769EC4C5CB17C22C88B5B8C99C6EEB039C52572C06A9D",
+      "sizeBytes": 1629
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.SecurityTests/TenantSecurityTests.cs",
+      "sha256": "EC2F796BC7F5E86848A27E6924B55F2B9AD808A07B8A9A587E3442B38A3BDB4D",
+      "sizeBytes": 1409
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/ProductProfileTests.cs",
+      "sha256": "E586B207E570F9673ABC4C5C1A8A60564B9CF69C9555E5B6E3A4C7A64E4AB2E5",
+      "sizeBytes": 1547
+    },
+    {
+      "path": "tests/LeeWay.TransitHub.UnitTests/TenantTests.cs",
+      "sha256": "A2CBFC2F3A90D87E3C41924A6F8C864F2255AF79AEA98BF86AB9D6EE208A5109",
+      "sizeBytes": 2233
+    }
+  ]
+}

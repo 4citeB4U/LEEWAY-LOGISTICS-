@@ -1,0 +1,71 @@
+{
+  "_leewayHeader": {
+    "file": "capability-manifest.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/capability-manifest.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "LeeWay / Capability Manifest",
+    "purpose": "Declare Transit Hub as an external governed tool package for Agent Lee and the LeeWay agent fleet.",
+    "inputs": "Product APIs, knowledge, permissions, training, health, and evidence contracts.",
+    "outputs": "Discoverable capability identity and compatibility rules.",
+    "mutationScope": "Capability metadata only.",
+    "dependencies": "LeeWay Standards and Transit Hub product charter.",
+    "tests": "JSON parse, endpoint verification, permissions review, and compatibility check.",
+    "securityImpact": "Declares least privilege, tenant context, approvals, and non-embedding.",
+    "databaseImpact": "No direct database authority; tools call governed application APIs.",
+    "sovereignCycle": [
+      "Origin",
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo",
+      "Synthesis"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "4.0.0"
+  },
+  "capabilityId": "leeway.enterprise-transit-hub",
+  "displayName": "LeeWay Enterprise Transit Hub",
+  "version": "0.4.0",
+  "integrationMode": "EXTERNAL_LEEWAY_ORCHESTRATOR",
+  "agentLeeEmbedded": false,
+  "agentLeeRole": "Assigned LeeWay employee, orchestrator, instructor, proctor, diagnostician, and approval-bound operator",
+  "applicationRemainsOperationalWithoutAgentLee": true,
+  "tenantContextRequiredForTenantDataTools": true,
+  "approvalRequiredForMutations": true,
+  "receiptRequired": true,
+  "veritasMinimumScore": 85,
+  "capabilityGroups": [
+    "knowledge",
+    "operations",
+    "training",
+    "diagnosis",
+    "repair",
+    "governance"
+  ],
+  "endpoints": {
+    "productProfile": "GET /api/platform/profile",
+    "tenantContext": "GET /api/platform/tenant-context",
+    "health": "GET /health",
+    "identityEvidence": "GET /api/security/whoami",
+    "tenantMemberEvidence": "GET /api/security/tenant-member",
+    "fleetManageEvidence": "GET /api/security/fleet-manage",
+    "agentToolEvidence": "GET /api/security/agent-tool"
+  },
+  "contracts": {
+    "toolCatalog": "tool-catalog.json",
+    "permissions": "permissions.json",
+    "knowledge": "knowledge-manifest.json",
+    "proctor": "training-proctor.json",
+    "health": "health-checks.json",
+    "evidence": "evidence-schema.json",
+    "repairStandard": "REPAIR-RUNBOOK-STANDARD.md",
+    "degradedMode": "DEGRADED-MODE.md",
+    "identity": "identity-contract.json"
+  },
+  "modelBindings": [],
+  "modelBindingStatus": "NOT_BOUND_NO_HUGGING_FACE_MODEL_USED_IN_THIS_PHASE",
+  "productionIdentityStatus": "NOT_BOUND_PHASE_04_DEVELOPMENT_EVIDENCE_ONLY",
+  "continuousLearningGate": "REQUIRED_EVERY_PHASE"
+}

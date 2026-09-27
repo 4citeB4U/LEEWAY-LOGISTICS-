@@ -1,0 +1,57 @@
+{
+  "_leewayHeader": {
+    "file": "identity-contract.json",
+    "path": "leeway/capabilities/enterprise-transit-hub/identity-contract.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "LeeWay / Identity Contract",
+    "purpose": "Define human and Agent Lee service identity claims, production boundary, tenant matching, and approval separation.",
+    "inputs": "Canonical roles, claims, permissions, policies, and capability manifest.",
+    "outputs": "Machine-readable external identity mapping contract.",
+    "mutationScope": "Capability metadata only.",
+    "dependencies": "Phase 04 security contracts and future trusted identity provider.",
+    "tests": "JSON parse, runtime policy checks, and security review.",
+    "securityImpact": "Prevents embedded agent bypass and development-authentication overclaim.",
+    "databaseImpact": "None.",
+    "sovereignCycle": [
+      "Origin",
+      "Structure",
+      "Execution",
+      "Veritas",
+      "Echo"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "4.0.0"
+  },
+  "productionIdentityBound": false,
+  "developmentEvidenceScheme": "LeeWayDevelopmentHeaders",
+  "developmentSchemeAllowedEnvironment": "Development",
+  "requiredClaims": [
+    "subject",
+    "name",
+    "role",
+    "leeway:tenant_id",
+    "leeway:tenant_code"
+  ],
+  "agentServiceAdditionalRequirements": [
+    "role=AgentService",
+    "permission=agent.tool.execute",
+    "capability=leeway.enterprise-transit-hub",
+    "identity tenant matches request tenant"
+  ],
+  "humanApprovalSeparateFromAuthentication": true,
+  "productionRequirements": [
+    "trusted issuer",
+    "issuer and audience validation",
+    "signature validation",
+    "expiration",
+    "revocation",
+    "account lifecycle",
+    "role assignment persistence",
+    "tenant membership administration",
+    "credential rotation",
+    "monitoring",
+    "security testing"
+  ]
+}

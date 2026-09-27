@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "product": "LeeWay Logistics",
+  "domains": [
+    {"id":"spatial-world","name":"Transit World","status":"CANDIDATE_IMPLEMENTED","authority":"apps/transit-world","views":["globe","map","route","facility","vehicle"]},
+    {"id":"transit-hub","name":"Enterprise Transit Hub","status":"PROMOTED_SOURCE","authority":"apps/transit-hub","capabilities":["fleet","municipal-transit","school-transit","paratransit","delivery","service-fleet","maintenance","safety","incidents"]},
+    {"id":"crm","name":"Logistics CRM","status":"ARCHITECTURE_DEFINED","records":["account","contact","broker","shipper","consignee","facility","activity","case","communication","task","reminder"]},
+    {"id":"loads","name":"Load Board and Brokerage","status":"ARCHITECTURE_DEFINED","records":["load","offer","rate-confirmation","assignment","appointment","proof-of-delivery","detention"]},
+    {"id":"dispatch","name":"Dispatch Operations","status":"PARTIAL_EXISTING_SOURCES","records":["driver-assignment","route","trip","communication","exception","availability"]},
+    {"id":"driver","name":"Driver Operations","status":"CANDIDATE_IMPLEMENTED","records":["driver","hos","dvir","bol","fuel","roadside-inspection","incident","cargo-damage"]},
+    {"id":"fleet","name":"Fleet and Maintenance","status":"TRANSIT_HUB_EXISTING","records":["vehicle","trailer","telemetry","inspection","work-order","service-hub","maintenance-event"]},
+    {"id":"hr","name":"Human Resources","status":"ARCHITECTURE_DEFINED","records":["employee","position","credential","training","review","discipline","safety-record","leave","offboarding"]},
+    {"id":"employment","name":"Employment Board and Recruiting","status":"ARCHITECTURE_DEFINED","records":["job","candidate","application","interview","offer","background-step","onboarding-case"]},
+    {"id":"documents","name":"Contracts and Documents","status":"PARTIAL_EXISTING_SOURCES","records":["contract","rate-confirmation","bol","trip-sheet","dvir","receipt","insurance","medical-certificate"]},
+    {"id":"formula","name":"Formula and Veritas","status":"NOT_YET_BOUND","claims":["formulaExecuted=false","truckSafeRouting=false"]}
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "_leewayHeader": {
+    "file": "manual.manifest.json",
+    "path": "docs/training-manual/manual.manifest.json",
+    "project": "LeeWay Enterprise Transit Hub",
+    "layer": "Training / Manual Manifest",
+    "purpose": "Control the 300-page training-manual scope, continuous phase updates, page budget, release state, and Agent Lee proctor requirements.",
+    "inputs": "Product modules, learner roles, and release evidence.",
+    "outputs": "Machine-readable manual plan and release gate.",
+    "mutationScope": "Training metadata only.",
+    "dependencies": "Product charter, current implementation, chapter source, and assessments.",
+    "tests": "JSON parse, 300-page total validation, source existence, and release review.",
+    "securityImpact": "Requires tenant, privacy, and safety warnings in applicable chapters.",
+    "databaseImpact": "Documents database behavior without storing credentials.",
+    "sovereignCycle": [
+      "Structure",
+      "Veritas",
+      "Echo",
+      "Synthesis"
+    ],
+    "status": "ACTIVE_GOVERNED",
+    "humanComprehension": "REQUIRED",
+    "owner": "Leonard Lee / Leeway Industries",
+    "version": "6.0.0"
+  },
+  "targetPages": 300,
+  "completedCommercialPages": 0,
+  "completionStatus": "PHASE_06_REALTIME_AND_SECRET_SAFETY_CONTENT_IN_PROGRESS_NOT_FINAL_300_PAGE_RELEASE",
+  "sourceFormat": "Markdown",
+  "releaseOutputs": [
+    "Searchable HTML documentation",
+    "Versioned PDF manual",
+    "In-product help",
+    "Agent Lee knowledge package",
+    "Instructor guide",
+    "Learner workbook",
+    "Assessment package",
+    "Release change guide"
+  ],
+  "requiredChapterElements": [
+    "Purpose",
+    "Audience",
+    "Prerequisites",
+    "Learning objectives",
+    "Business context",
+    "Vocabulary",
+    "Explanation",
+    "Procedure",
+    "Screenshots or diagrams",
+    "Practice exercise",
+    "Guided lab",
+    "Common mistakes",
+    "Troubleshooting",
+    "Security and tenant warning",
+    "Knowledge check",
+    "Practical assessment",
+    "Answer key",
+    "Agent Lee proctor instructions",
+    "Sources and version references",
+    "Completion evidence"
+  ],
+  "sections": [
+    {
+      "part": 1,
+      "directory": "01-product-orientation",
+      "title": "Product Orientation and Transportation Concepts",
+      "targetPages": 20,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 2,
+      "directory": "02-roles-and-workflows",
+      "title": "User Roles and End-to-End Workflows",
+      "targetPages": 35,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 3,
+      "directory": "03-tenant-administration",
+      "title": "Tenant, Organization, and SaaS Administration",
+      "targetPages": 30,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 4,
+      "directory": "04-fleet-operations",
+      "title": "Fleet and Vehicle Operations",
+      "targetPages": 35,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 5,
+      "directory": "05-dispatch-and-routing",
+      "title": "Dispatch, Routes, Trips, and Assignments",
+      "targetPages": 30,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 6,
+      "directory": "06-maintenance-and-inspections",
+      "title": "Maintenance, Inspections, and Work Orders",
+      "targetPages": 30,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 7,
+      "directory": "07-safety-and-compliance",
+      "title": "Safety, Compliance, Incidents, and Evidence",
+      "targetPages": 25,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 8,
+      "directory": "08-driver-voice-and-vision",
+      "title": "Driver, Mobile, Voice, and Vision Workflows",
+      "targetPages": 25,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 9,
+      "directory": "09-reporting-and-integrations",
+      "title": "Reporting, Integrations, and Data Exchange",
+      "targetPages": 20,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 10,
+      "directory": "10-agent-lee",
+      "title": "Agent Lee Operation, Training, and Orchestration",
+      "targetPages": 25,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 11,
+      "directory": "11-technical-administration",
+      "title": "Technical Administration, Security, and Deployment",
+      "targetPages": 15,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    },
+    {
+      "part": 12,
+      "directory": "12-troubleshooting-reference",
+      "title": "Troubleshooting, Recovery, Glossary, and Reference",
+      "targetPages": 10,
+      "status": "FOUNDATION_CREATED_CONTENT_EXPANSION_REQUIRED"
+    }
+  ],
+  "releaseGate": {
+    "targetPageBudgetMustEqual": 300,
+    "allChaptersVersionMatched": true,
+    "labsExecutable": true,
+    "assessmentsReviewed": true,
+    "agentLeeKnowledgeUpdated": true,
+    "screenshotsCurrent": true,
+    "commercialReleaseBlockedUntilComplete": true,
+    "lessonPlanUpdatedEveryPhase": true,
+    "privateQuestionBankUpdatedEveryPhase": true,
+    "continuousLearningVerifierPass": true,
+    "privateInterviewAssessmentUpdatedEveryPhase": true,
+    "privateAnswerKeysExcludedFromCommercialPackages": true
+  },
+  "estimatedDraftPages": 0,
+  "initialChapterCount": 36,
+  "privateLearningExcludedFromCommercialRelease": true,
+  "documentationFramework": {
+    "tutorials": "learning-oriented",
+    "howTo": "goal-oriented",
+    "reference": "information-oriented",
+    "explanation": "understanding-oriented",
+    "source": "Diataxis"
+  },
+  "buildAutomation": "operations/powershell/Build-LeeWayTrainingManual.ps1",
+  "masterOutput": "docs/training-manual/MASTER-TRAINING-MANUAL.md",
+  "progressOutput": "docs/training-manual/manual-progress.json",
+  "continuousLearningRegistry": "docs/learning/learning-phase-registry.json",
+  "continuousLearningVerifier": "operations/powershell/Verify-ContinuousLearningGate.ps1",
+  "privateInterviewAssessmentExcludedFromCommercialRelease": true,
+  "privateInterviewAssessmentManifest": "docs/private-learning/leonard-lee/interview-assessment/assessment-manifest.json"
+}

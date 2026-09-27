@@ -1,0 +1,43 @@
+<!--
+  LEEWAY ENTERPRISE FILE HEADER
+  File: LeeWay.TransitHub.ArchitectureTests.csproj
+  Path: tests/LeeWay.TransitHub.ArchitectureTests/LeeWay.TransitHub.ArchitectureTests.csproj
+  Project: LeeWay Enterprise Transit Hub
+  Layer: MSBuild Project Definition
+  Purpose: Declare compilation, dependencies, and project identity.
+  Inputs: Source files, project references, and package references.
+  Outputs: Compiled .NET assembly.
+  Mutation Scope: Build metadata only.
+  Dependencies: Directory.Build.props, Directory.Packages.props, xUnit, and referenced projects.
+  Tests: dotnet restore and build.
+  Security Impact: References affect supply-chain trust.
+  Database Impact: As declared by owning project.
+  Sovereign Cycle: Structure -> Execution -> Veritas
+  Status: ACTIVE / GOVERNED
+  Human Comprehension: REQUIRED
+  Owner: Leonard Lee / Leeway Industries
+  Version: 5.0.0
+-->
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>LeeWay.TransitHub.ArchitectureTests</RootNamespace>
+    <AssemblyName>LeeWay.TransitHub.ArchitectureTests</AssemblyName>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\LeeWay.TransitHub.Domain\LeeWay.TransitHub.Domain.csproj" />
+    <ProjectReference Include="..\..\src\LeeWay.TransitHub.Application\LeeWay.TransitHub.Application.csproj" />
+    <ProjectReference Include="..\..\src\LeeWay.TransitHub.Infrastructure.SqlServer\LeeWay.TransitHub.Infrastructure.SqlServer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+    <PackageReference Include="coverlet.collector" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,24 @@
+# LeeWay Logistics repository hygiene
+**/node_modules/
+**/dist/
+**/bin/
+**/obj/
+**/.vs/
+**/.gev-cache/
+**/TestResults/
+**/artifacts/
+apps/transit-hub/_evidence/
+apps/transit-hub/*.zip
+apps/transit-world/docs/media/
+apps/transit-world/public/events/
+apps/transit-world/public/models/
+*.user
+*.suo
+.env
+.env.*
+!.env.example
+apps/transit-world/src/data/local_data/telegeography_submarine_cables/
+apps/transit-hub/07R7*.ps1
+apps/transit-hub/07R7*.json
+apps/transit-hub/docs/private-learning/
+apps/transit-world/scripts/fixtures/
