@@ -1,7 +1,7 @@
 import * as Cesium from 'cesium';
 
 const DEFAULT_MODEL = 'gemma4:e4b';
-const DEFAULT_ENDPOINT = 'http://127.0.0.1:11434';
+const DEFAULT_ENDPOINT = 'http://127.0.0.1:11435';
 
 function loadSetting(key, fallback) {
   try {
