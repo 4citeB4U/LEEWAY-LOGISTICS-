@@ -1,0 +1,47 @@
+{
+  "receipt": "LEEWAY-PAGES-CHICAGO-LIVE-WORLD-ACCEPTANCE",
+  "timestampUtc": "2026-09-27T20:22:00Z",
+  "pagesCommit": "72e6202195331566430d9f38109b2df71d52f5ec",
+  "pagesUrl": "https://4citeb4u.github.io/LEEWAY-LOGISTICS-/",
+  "worldProvider": "http://127.0.0.1:4176",
+  "status": "PASS_CHICAGO_LIVE_WORLD_BROWSER_ACCEPTANCE",
+  "browser": {
+    "loaded": true,
+    "layerCount": 30,
+    "cameraAfterSearch": {
+      "lat": 41.833796950682824,
+      "lon": -87.73210595000003,
+      "heightMeters": 81792.58357776963
+    }
+  },
+  "cctv": {
+    "selectedCameraId": "il-gateway-il-idotd1-ik08",
+    "selectedCameraText": "Chicago / Illinois Gateway · TSC HD",
+    "sourceBadge": "SNAPSHOT · OK",
+    "metadata": "Chicago / Illinois Gateway · HDG 135° · FOV 44° · RANGE 145m · MONITOR · RAW PRIOR · Illinois Department of Transportation / Travel Midwest · Gateway traffic information courtesy of the Illinois Department of Transportation · 0 MIN OLD · Upstream snapshot active",
+    "frameUrlUsesLeeWayProvider": true,
+    "catalogRequests": 1,
+    "frameRequests": 15
+  },
+  "pipelines": {
+    "requests": 1,
+    "count": 1,
+    "countLabel": "1 mapped",
+    "status": "ready",
+    "stale": false,
+    "saturated": false,
+    "error": null
+  },
+  "providerStatusesObserved": [200, 403, 204],
+  "knownNonBlockingFailure": {
+    "url": "http://127.0.0.1:4176/api/setup/status",
+    "error": "net::ERR_ABORTED",
+    "acceptanceImpact": "none"
+  },
+  "notes": [
+    "This is an end-to-end browser proof against the public GitHub Pages deployment.",
+    "Illinois Gateway/Travel Midwest reuse remains subject to IDOT registration, attribution, and access-frequency policy.",
+    "The Chicago camera image is a current snapshot feed, not archived video.",
+    "Pipeline data is viewport-bounded OpenStreetMap/Overpass context and not a utility-locate authority."
+  ]
+}

@@ -61,6 +61,14 @@ function ensureStyles(documentRef) {
     body.leeway-enterprise-shell #leeway-transit-world .ltw-section { padding:11px 14px; }
     body.leeway-enterprise-shell #leeway-transit-world .ltw-section h3 { font-size:9px; }
     body.leeway-enterprise-shell #leeway-transit-world [data-action="world-awareness"] { display:none; }
+    body.leeway-enterprise-shell.leeway-cctv-inspecting #leeway-transit-world { display:none !important; }
+    .lws-context-inspector { pointer-events:auto; position:absolute; top:76px; right:12px; width:min(425px,calc(100vw - 106px)); max-height:calc(100vh - 94px); display:none; z-index:9790; }
+    .lws-context-inspector.open { display:block; }
+    .lws-context-inspector #cctv-panel { position:relative !important; inset:auto !important; top:auto !important; left:auto !important; right:auto !important; bottom:auto !important; width:100% !important; max-height:calc(100vh - 94px) !important; z-index:auto !important; margin:0 !important; transform:none !important; }
+    .lws-context-inspector #cctv-panel.collapsed { display:none !important; }
+    .lws-context-inspector .cctv-panel-inner { max-height:calc(100vh - 94px) !important; border-radius:15px !important; background:rgba(3,15,24,.96) !important; border-color:rgba(71,225,242,.24) !important; box-shadow:0 18px 55px rgba(0,0,0,.42) !important; }
+    .lws-context-inspector #cctv-frame-wrap { border-radius:12px; overflow:hidden; }
+    .lws-context-inspector #cctv-source-badge { font-size:9px; letter-spacing:.08em; }
     .lws-toast { position:absolute; top:76px; left:50%; transform:translateX(-50%); opacity:0; pointer-events:none; padding:9px 14px; border-radius:10px; background:#071722; border:1px solid rgba(64,221,238,.24); transition:opacity .2s; }
     .lws-toast.show { opacity:1; }
     @media(max-width:1000px){.lws-top{grid-template-columns:270px 1fr}.lws-top-actions .hide-sm{display:none}.lws-brand strong{font-size:13px}.lws-brand span{display:none}.lws-dock-btn{min-width:58px}.lws-live{display:none}}
@@ -145,6 +153,7 @@ export function mountEnterpriseShell(application) {
       <button class="lws-ai" data-action="ai"><strong>Ask LeeWay</strong><span>Gemma 4 E4B</span></button>
       ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D'],['locate','Locate']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
     </nav>
+    <aside class="lws-context-inspector" data-context-inspector></aside>
     <div class="lws-toast" role="status" aria-live="polite"></div>
   `;
   document.body.appendChild(shell);
@@ -154,7 +163,30 @@ export function mountEnterpriseShell(application) {
   const layerList = shell.querySelector('[data-layer-list]');
   const worldLed = shell.querySelector('[data-world-led]');
   const worldStatus = shell.querySelector('[data-world-status]');
+  const contextInspector = shell.querySelector('[data-context-inspector]');
+  const cctvPanel = document.getElementById('cctv-panel');
+  const cctvOriginalParent = cctvPanel?.parentNode || null;
+  const cctvOriginalNextSibling = cctvPanel?.nextSibling || null;
+  let cctvObserver = null;
   let toastTimer;
+
+  function syncCctvInspector() {
+    const open = Boolean(
+      cctvPanel && !cctvPanel.classList.contains('collapsed'),
+    );
+    contextInspector.classList.toggle('open', open);
+    document.body.classList.toggle('leeway-cctv-inspecting', open);
+  }
+
+  if (cctvPanel) {
+    contextInspector.appendChild(cctvPanel);
+    cctvObserver = new MutationObserver(syncCctvInspector);
+    cctvObserver.observe(cctvPanel, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    syncCctvInspector();
+  }
 
   function renderLayerMenu() {
     const rows = (dataManager?.getAll?.() || []).map((row) => ({
@@ -376,9 +408,24 @@ export function mountEnterpriseShell(application) {
     closeAgent: () => toggleAgent(false),
     notify: say,
     destroy() {
+      cctvObserver?.disconnect();
+      cctvObserver = null;
+      if (cctvPanel && cctvOriginalParent) {
+        if (
+          cctvOriginalNextSibling &&
+          cctvOriginalNextSibling.parentNode === cctvOriginalParent
+        ) {
+          cctvOriginalParent.insertBefore(cctvPanel, cctvOriginalNextSibling);
+        } else {
+          cctvOriginalParent.appendChild(cctvPanel);
+        }
+      }
+      document.body.classList.remove(
+        'leeway-enterprise-shell',
+        'leeway-cctv-inspecting',
+      );
       workspace.destroy();
       shell.remove();
-      document.body.classList.remove('leeway-enterprise-shell');
     },
   };
 }
