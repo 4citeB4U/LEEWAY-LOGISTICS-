@@ -1,0 +1,30 @@
+{
+  "receipt": "LEEWAY-WORLD-PROVIDER-MATRIX",
+  "date": "2026-09-27",
+  "providerRuntime": "http://127.0.0.1:4176",
+  "pagesOrigin": "https://4citeb4u.github.io",
+  "providers": [
+    {"name":"CCTV","state":"LIVE","httpStatus":200,"notes":"3,499-camera merged catalog in current runtime; Chicago/Illinois pack present. Provider-specific terms apply; Illinois Gateway organizational reuse requires registration/attribution."},
+    {"name":"Transit Catalog","state":"LIVE","httpStatus":200,"notes":"Public registered transit feed catalog is available."},
+    {"name":"CelesTrak Satellites","state":"LIVE","httpStatus":200,"notes":"TLE provider and cache are operating."},
+    {"name":"Launch Library","state":"LIVE","httpStatus":200,"notes":"Recent launch feed is operating; optional token can improve provider access."},
+    {"name":"OpenSky Civil Aircraft","state":"LIVE","httpStatus":200,"notes":"Anonymous/public mode currently returned data; upstream rate limits/auth policy still apply."},
+    {"name":"adsb.lol Military Aircraft","state":"LIVE","httpStatus":200,"notes":"Military aircraft feed returned data."},
+    {"name":"TomTom Live Traffic Flow","state":"KEY_REQUIRED","httpStatus":200,"notes":"Provider route healthy; status reports hasKey=false. OSM/Overpass road context remains available without TomTom."},
+    {"name":"NASA FIRMS Active Fires","state":"KEY_REQUIRED","httpStatus":200,"notes":"Provider route healthy; status reports hasKey=false."},
+    {"name":"GFS Wind","state":"LIVE","httpStatus":200,"notes":"Wind forecast provider returned a current manifest."},
+    {"name":"NOAA Cyclones","state":"LIVE","httpStatus":200,"notes":"NHC/CPHC cyclone provider returned current data."},
+    {"name":"Fire Perimeters","state":"LIVE","httpStatus":200,"notes":"Wildfire perimeter provider returned data."},
+    {"name":"Radio Browser","state":"LIVE","httpStatus":200,"notes":"Public radio/scanner directory provider returned a usable catalog."},
+    {"name":"AISStream Vessels","state":"KEY_REQUIRED","httpStatus":503,"notes":"Provider runtime healthy but AISSTREAM_API_KEY is not configured."},
+    {"name":"Nominatim Geocoding","state":"LIVE","httpStatus":200,"notes":"Chicago forward geocoding returned a result; public-service usage policy and pacing apply."},
+    {"name":"Mapped Military Installations","state":"LIVE","httpStatus":200,"notes":"Bounded Chicago Overpass-backed context returned data."},
+    {"name":"OSM Pipelines","state":"LIVE","httpStatus":200,"notes":"Bounded Chicago Overpass query previously returned mapped pipeline elements; layer is registered in the application catalog."}
+  ],
+  "truthRules": [
+    "A healthy proxy route is not equivalent to a configured upstream credential.",
+    "A visible layer toggle is not equivalent to live data until the provider reports a usable state.",
+    "Provider-specific terms, attribution, rate limits, and registration requirements remain enforceable.",
+    "Training/private LeeWay data remains separate from public world providers."
+  ]
+}
