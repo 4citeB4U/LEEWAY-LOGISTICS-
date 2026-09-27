@@ -12,11 +12,83 @@ export function createNavigation({
    * @returns {string|null} Camera ID of the nearest camera, or null.
    */
 
+  function viewCenterLatLon() {
+    const viewer = layerState._viewer;
+    const canvas = viewer?.scene?.canvas;
+    if (!viewer?.camera || !canvas) return null;
+    try {
+      const picked = viewer.camera.pickEllipsoid(
+        new Cesium.Cartesian2(canvas.clientWidth / 2, canvas.clientHeight / 2),
+        viewer.scene.globe?.ellipsoid,
+      );
+      if (picked) {
+        const carto = Cesium.Cartographic.fromCartesian(picked);
+        return {
+          lat: Cesium.Math.toDegrees(carto.latitude),
+          lon: Cesium.Math.toDegrees(carto.longitude),
+        };
+      }
+    } catch {}
+    const carto = viewer.camera.positionCartographic;
+    if (!carto) return null;
+    return {
+      lat: Cesium.Math.toDegrees(carto.latitude),
+      lon: Cesium.Math.toDegrees(carto.longitude),
+    };
+  }
+
+  function scopeRadiusKm() {
+    const height = Number(layerState._viewer?.camera?.positionCartographic?.height);
+    if (!Number.isFinite(height)) return Number.POSITIVE_INFINITY;
+    if (height <= 120_000) return 60;
+    if (height <= 350_000) return 100;
+    if (height <= 900_000) return 180;
+    return Number.POSITIVE_INFINITY;
+  }
+
+  function scopedRecordsNearViewer() {
+    if (!layerState._records.length) return [];
+    const center = viewCenterLatLon();
+    const radiusKm = scopeRadiusKm();
+    if (!center || !Number.isFinite(radiusKm)) return [...layerState._records];
+    const local = layerState._records.filter((record) => {
+      const distanceKm = parts.model.haversineKm(
+        center.lat,
+        center.lon,
+        record.camera.lat,
+        record.camera.lon,
+      );
+      return distanceKm <= radiusKm;
+    });
+    if (local.length) return local;
+
+    let nearest = null;
+    for (const record of layerState._records) {
+      const distanceKm = parts.model.haversineKm(
+        center.lat,
+        center.lon,
+        record.camera.lat,
+        record.camera.lon,
+      );
+      if (!nearest || distanceKm < nearest.distanceKm)
+        nearest = { record, distanceKm };
+    }
+    if (!nearest) return [];
+    const cityId = String(nearest.record.camera.cityId || '').trim();
+    const city = String(nearest.record.camera.city || '').trim();
+    return layerState._records.filter((record) =>
+      cityId
+        ? record.camera.cityId === cityId
+        : city
+          ? record.camera.city === city
+          : record === nearest.record,
+    );
+  }
+
   function nearestCameraIdToViewer() {
-    const carto = layerState._viewer?.camera?.positionCartographic;
-    if (!carto || !layerState._records.length) return null;
-    const lat = Cesium.Math.toDegrees(carto.latitude);
-    const lon = Cesium.Math.toDegrees(carto.longitude);
+    const center = viewCenterLatLon();
+    if (!center || !layerState._records.length) return null;
+    const { lat, lon } = center;
 
     let best = null;
     for (const record of layerState._records) {
@@ -148,6 +220,9 @@ export function createNavigation({
     return (((Math.floor(currentIdx) + delta) % total) + total) % total;
   }
   return {
+    viewCenterLatLon,
+    scopeRadiusKm,
+    scopedRecordsNearViewer,
     nearestCameraIdToViewer,
     focusCctvRecord,
     focusCamera,
