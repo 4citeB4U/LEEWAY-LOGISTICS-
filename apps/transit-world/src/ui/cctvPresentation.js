@@ -55,18 +55,39 @@ export function _renderCctvState(state) {
   }
 
   if (this._cctvSelect) {
+    const cityGroups = new Map();
+    for (const camera of cameras) {
+      const city = String(camera.city || 'Other cameras').trim() || 'Other cameras';
+      if (!cityGroups.has(city)) cityGroups.set(city, []);
+      cityGroups.get(city).push(camera);
+    }
+    const orderedGroups = [...cityGroups.entries()].sort(([a], [b]) =>
+      a.localeCompare(b),
+    );
+    const orderedCameras = orderedGroups.flatMap(([, rows]) =>
+      [...rows].sort((a, b) =>
+        String(a.name || a.id).localeCompare(String(b.name || b.id)),
+      ),
+    );
     const shouldRebuild =
-      this._cctvSelect.options.length !== cameras.length ||
-      cameras.some(
+      this._cctvSelect.options.length !== orderedCameras.length ||
+      orderedCameras.some(
         (cam, idx) => this._cctvSelect.options[idx]?.value !== cam.id,
       );
     if (shouldRebuild) {
       this._cctvSelect.innerHTML = '';
-      for (const camera of cameras) {
-        const option = document.createElement('option');
-        option.value = camera.id;
-        option.textContent = `${camera.city} · ${camera.name}`;
-        this._cctvSelect.appendChild(option);
+      for (const [city, rows] of orderedGroups) {
+        const group = document.createElement('optgroup');
+        group.label = `${city} (${rows.length})`;
+        for (const camera of [...rows].sort((a, b) =>
+          String(a.name || a.id).localeCompare(String(b.name || b.id)),
+        )) {
+          const option = document.createElement('option');
+          option.value = camera.id;
+          option.textContent = camera.name || camera.id;
+          group.appendChild(option);
+        }
+        this._cctvSelect.appendChild(group);
       }
     }
     this._cctvSelect.disabled = !enabled || cameras.length === 0;
