@@ -35,6 +35,7 @@ export class MapSourceController {
     this._credits = createMapCredits(viewer);
     this._abort = new AbortController();
     this._imageryProviders = new Map();
+    this._referenceImageryProviders = new Map();
     this._terrainProviders = new Map();
     this._tilesets = new Map();
     this._ownedTilesets = new Set();
@@ -45,7 +46,9 @@ export class MapSourceController {
     this._isSwitching = false;
     this._lastError = null;
     this._imageryLayer = null;
+    this._referenceImageryLayers = [];
     this._activeImageryProvider = null;
+    this._activeReferenceImageryProviders = [];
     this._removeImageryErrorListener = null;
     this._terrainMode = null;
     this._subscribers = new Set();
@@ -260,6 +263,9 @@ export class MapSourceController {
   async _activateGlobeStack(stack, gen) {
     const resolution = await this._getImageryProvider(stack);
     if (gen !== this._switchGen) return;
+    const source = this._sources.get(resolution.effectiveStackId);
+    const referenceProviders = await this._getReferenceImageryProviders(source);
+    if (gen !== this._switchGen) return;
     // Scene shots reapply their map stack at every handoff. Keep the live
     // layer (and its loaded tiles) when the resolved provider is unchanged;
     // rebuilding it exposes the bare globe while imagery loads again.
@@ -272,7 +278,22 @@ export class MapSourceController {
       this._activeImageryProvider = resolution.provider;
       this.viewer.imageryLayers.add(this._imageryLayer, 0);
     }
-    const source = this._sources.get(resolution.effectiveStackId);
+    const referencesChanged =
+      referenceProviders.length !== this._activeReferenceImageryProviders.length ||
+      referenceProviders.some(
+        (provider, index) => provider !== this._activeReferenceImageryProviders[index],
+      );
+    if (referencesChanged) {
+      for (const layer of this._referenceImageryLayers) {
+        this.viewer.imageryLayers.remove(layer, true);
+      }
+      this._referenceImageryLayers = referenceProviders.map((provider) => {
+        const layer = this._createImageryLayer(provider);
+        this.viewer.imageryLayers.add(layer);
+        return layer;
+      });
+      this._activeReferenceImageryProviders = [...referenceProviders];
+    }
     this._credits.show(source?.credit || null);
     // A repeated request still owns a new switch generation. Rebind its
     // failure listener so fallback remains live without accumulating listeners.
@@ -295,6 +316,27 @@ export class MapSourceController {
       this._terrainMode = terrain.id;
     }
     return resolution;
+  }
+
+  async _getReferenceImageryProviders(source) {
+    const factories = Array.isArray(source?.referenceImagery)
+      ? source.referenceImagery
+      : source?.referenceImagery
+        ? [source.referenceImagery]
+        : [];
+    if (!factories.length) return [];
+    const providers = [];
+    for (let index = 0; index < factories.length; index += 1) {
+      const factory = factories[index];
+      const cacheKey = `${source.descriptor.id}:reference:${index}`;
+      const provider = await this._cached(
+        this._referenceImageryProviders,
+        cacheKey,
+        () => factory({ signal: this._abort.signal }),
+      );
+      providers.push(provider);
+    }
+    return providers;
   }
 
   _cached(cache, id, create) {
@@ -383,8 +425,13 @@ export class MapSourceController {
     this._removeImageryErrorListener = null;
     if (this._imageryLayer)
       this.viewer.imageryLayers.remove(this._imageryLayer, true);
+    for (const layer of this._referenceImageryLayers) {
+      this.viewer.imageryLayers.remove(layer, true);
+    }
+    this._referenceImageryLayers = [];
     this._imageryLayer = null;
     this._activeImageryProvider = null;
+    this._activeReferenceImageryProviders = [];
   }
   _dispose(value) {
     if (!value || this._disposed.has(value)) return;
@@ -406,6 +453,11 @@ export class MapSourceController {
         (value) => this._dispose(value.provider),
         () => {},
       );
+    for (const promise of this._referenceImageryProviders.values())
+      void Promise.resolve(promise).then(
+        (value) => this._dispose(value),
+        () => {},
+      );
     for (const promise of this._terrainProviders.values())
       void Promise.resolve(promise).then(
         (value) => this._dispose(value.provider),
@@ -421,6 +473,7 @@ export class MapSourceController {
         () => {},
       );
     this._imageryProviders.clear();
+    this._referenceImageryProviders.clear();
     this._terrainProviders.clear();
     this._tilesets.clear();
     this._ownedTilesets.clear();
