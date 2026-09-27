@@ -205,6 +205,9 @@ export function mountEnterpriseShell(application) {
       <div class="lws-route-grid">
         <label>FROM<input data-route-from placeholder="Starting address, city, terminal..." /></label>
         <label>TO<input data-route-to placeholder="Destination address, city, terminal..." /></label>
+        <label>TRUCK HEIGHT (FT)<input data-truck-height type="number" min="0" step="0.1" value="13.5" /></label>
+        <label>GROSS WEIGHT (LB)<input data-truck-weight type="number" min="0" step="1000" value="80000" /></label>
+        <div class="lws-truck-status" data-truck-status data-state="unverified">TRUCK GATE · UNVERIFIED — base road route is not automatically truck-safe.</div>
       </div>
       <div class="lws-route-actions">
         <button class="lws-chip" data-action="swap-route">⇄ Swap</button>
@@ -214,15 +217,19 @@ export function mountEnterpriseShell(application) {
     <button class="lws-live" data-action="connect-world" type="button"><b data-world-led>● CHECK</b><span data-world-status>Connect live world data</span></button>
     <nav class="lws-dock">
       ${[['layers','Layers'],['traffic','Traffic'],['weather','Weather']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
-      <button class="lws-dock-btn" data-action="labels"><span class="i">Aa</span>Labels</button>
-      <button class="lws-ai" data-action="ai"><strong>Ask LeeWay</strong><span>Gemma 4 E4B</span></button>
+      <button class="lws-dock-btn" data-action="view-map"><span class="i">▤</span>Map</button>
+      <button class="lws-dock-btn" data-action="view-satellite"><span class="i">◫</span>Satellite</button>
+      <button class="lws-ai" data-action="ai"><strong>Agent Lee</strong><span>VOICE + LOGISTICS AI</span></button>
       ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D'],['locate','Locate']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
     </nav>
+    <div class="lws-location-badge" data-location-badge><strong>WORLD</strong><span>Geographic identification loading…</span></div>
     <aside class="lws-context-inspector" data-context-inspector></aside>
     <div class="lws-right-tabs" aria-label="Right-side information panels">
       <button class="lws-right-tab" data-action="right-ops" type="button">OPS</button>
       <button class="lws-right-tab" data-action="right-cctv" type="button">CCTV</button>
+      <button class="lws-right-tab" data-action="right-weather" type="button">WEATHER</button>
     </div>
+    <button class="lws-ui-restore" data-action="restore-ui" type="button">SHOW CONTROLS</button>
     <button class="lws-inspector-toggle" data-action="collapse-inspector" type="button" aria-label="Collapse inspector">‹</button>
     <div class="lws-toast" role="status" aria-live="polite"></div>
   `;
