@@ -10,9 +10,11 @@ export function createBrowserViteConfig({
   host = 'localhost',
   port = 4173,
   command,
+  base,
 } = {}) {
   return {
     plugins: [cesium(), applicationHtmlPlugin(), ...plugins],
+    ...(base ? { base } : {}),
     ...(publicDir === undefined ? {} : { publicDir }),
     // A production build must not clean the dependency cache a running dev
     // server is still serving optimized module URLs from.
