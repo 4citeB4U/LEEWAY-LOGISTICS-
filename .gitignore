@@ -20,3 +20,5 @@ apps/transit-world/public/models/
 apps/transit-world/src/data/local_data/telegeography_submarine_cables/
 apps/transit-hub/07R7*.ps1
 apps/transit-hub/07R7*.json
+apps/transit-hub/docs/private-learning/
+apps/transit-world/scripts/fixtures/
