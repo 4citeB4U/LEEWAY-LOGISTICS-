@@ -235,13 +235,13 @@ export function mountAgentLeeGemma(application, shell = null) {
   root.id = 'leeway-agent-lee';
   root.innerHTML = `
     <div class="lal-head">
-      <div class="lal-kicker">LEEWAY LOGISTICS · LOCAL AI</div>
-      <div class="lal-title">Agent Lee · Gemma 4 E4B</div>
-      <div class="lal-status" data-state="disconnected">LOCAL MODEL: DISCONNECTED</div>
+      <div class="lal-kicker">LEEWAY LOGISTICS · OPERATIONS AI</div>
+      <div class="lal-title">Agent Lee</div>
+      <div class="lal-status" data-state="disconnected">LOCAL RUNTIME: DISCONNECTED</div>
     </div>
     <div class="lal-body">
       <div class="lal-log">
-        <div class="lal-entry"><strong>AGENT LEE</strong>\nI can operate Transit World, inspect map context, control layers and CCTV, locate records, and guide CRM, employee, equipment, and company onboarding. Local Gemma 4 provides the reasoning engine.</div>
+        <div class="lal-entry"><strong>AGENT LEE</strong>\nI can operate Transit World, inspect routes and truck restrictions, control map and weather layers, work with CCTV, locate records, and support logistics operations.</div>
       </div>
       <div class="lal-row">
         <input class="lal-input" aria-label="Ask Agent Lee" placeholder="Ask about a load, route, driver, facility, maintenance, CRM, or fleet..." />
@@ -252,7 +252,7 @@ export function mountAgentLeeGemma(application, shell = null) {
         <input data-setting="model" aria-label="Gemma model" />
         <input data-setting="endpoint" aria-label="Ollama endpoint" />
       </div>
-      <div class="lal-note">Default model: gemma4:e4b · Local Ollama only · no cloud API required. The browser never treats a disconnected model as active.</div>
+      <div class="lal-note">Local LeeWay runtime · voice-enabled · source and connection state remain explicit.</div>
     </div>
   `;
   document.body.appendChild(root);
@@ -355,7 +355,7 @@ export function mountAgentLeeGemma(application, shell = null) {
       return state;
     } catch {
       status.dataset.state = 'disconnected';
-      status.textContent = 'LOCAL MODEL: DISCONNECTED';
+      status.textContent = 'LOCAL RUNTIME: DISCONNECTED';
       return { reachable: false, modelInstalled: false, models: [] };
     }
   }
@@ -388,14 +388,14 @@ export function mountAgentLeeGemma(application, shell = null) {
       );
       appendEntry(log, 'assistant', response.content);
       status.dataset.state = 'connected';
-      status.textContent = `CONNECTED · ${model} · LOCAL VOICE`;
+      status.textContent = 'CONNECTED · LOCAL VOICE';
       void speakAgentLee(response.content);
     } catch (error) {
       const message =
         'Local Gemma 4 is not reachable from this browser. Start Ollama on this device and allow this LeeWay Pages origin, then ask again. No AI answer was fabricated.';
       appendEntry(log, 'assistant', message);
       status.dataset.state = 'disconnected';
-      status.textContent = 'LOCAL MODEL: DISCONNECTED';
+      status.textContent = 'LOCAL RUNTIME: DISCONNECTED';
       console.warn('Agent Lee local Gemma connection failed:', error);
     } finally {
       sendButton.disabled = false;
