@@ -33,6 +33,22 @@ export function createBrowserViteConfig({
     server: {
       host: host || 'localhost',
       port: parseInt(port, 10) || 4173,
+      cors: {
+        origin: [
+          'https://4citeb4u.github.io',
+          'http://localhost:4173',
+          'http://127.0.0.1:4173',
+        ],
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'Range'],
+        exposedHeaders: [
+          'Content-Range',
+          'Accept-Ranges',
+          'X-CCTV-Source',
+          'X-Overpass-Cache',
+          'X-Overpass-Upstream',
+        ],
+      },
       allowedHosts:
         host === '0.0.0.0' || host === '::'
           ? true

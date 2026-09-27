@@ -1,0 +1,37 @@
+{
+    "cctvStatus":  200,
+    "allowOrigin":  "https://4citeb4u.github.io",
+    "allowPrivateNetwork":  "true",
+    "cameraCount":  3499,
+    "chicagoCameraCount":  457,
+    "firstChicagoCamera":  {
+                               "id":  "il-gateway-il-idotd1-dr0a",
+                               "name":  "Polk St.",
+                               "lat":  41.8699,
+                               "lon":  -87.6449
+                           },
+    "frameStatus":  200,
+    "frameType":  "image/jpeg",
+    "frameSource":  "upstream-image",
+    "frameBytes":  27805,
+    "pipelineStatus":  200,
+    "pipelineElements":  25,
+    "pipelineCache":  "DISK",
+    "celestrak":  {
+                      "status":  200,
+                      "bytes":  3360,
+                      "body":  null
+                  },
+    "transit":  {
+                    "status":  200,
+                    "bytes":  2561,
+                    "body":  null
+                },
+    "tomtom":  {
+                   "status":  200,
+                   "bytes":  65,
+                   "body":  "{\"hasKey\":false,\"dailyCount\":0,\"budget\":6000,\"date\":\"2026-09-27\"}"
+               },
+    "timestampUtc":  "2026-09-27T19:16:24.8084387Z",
+    "status":  "PASS_LIVE_WORLD_PROVIDER"
+}

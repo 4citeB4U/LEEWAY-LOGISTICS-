@@ -119,6 +119,14 @@ export const TFL_IMAGE_ORIGIN =
   'https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/';
 export const DEFAULT_TFL_MAX_SOURCES = 250;
 export const LONDON_CENTER = { lat: 51.5074, lon: -0.1278 };
+/** Illinois Gateway / Travel Midwest public traffic-camera FeatureServer. */
+export const ILLINOIS_GATEWAY_CAMERAS_URL =
+  'https://services2.arcgis.com/aIrBD8yn1TDTEXoz/arcgis/rest/services/TrafficCamerasTM_Public/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&f=json';
+export const ILLINOIS_GATEWAY_IMAGE_ORIGIN =
+  'https://cctv.travelmidwest.com/snapshots/';
+export const DEFAULT_ILLINOIS_GATEWAY_MAX_SOURCES = 500;
+export const CHICAGO_CENTER = { lat: 41.8781, lon: -87.6298 };
+
 /** Ontario 511: keyless CARS/511 camera catalog; frame URLs are still images. */
 export const ONTARIO_511_CAMERAS_URL =
   'https://511on.ca/api/v2/get/cameras?format=json&lang=en';

@@ -8,6 +8,7 @@ import {
   loadAustinSourcesFromOpenData,
   loadCaltransSourcesFromOpenData,
   loadTflSourcesFromOpenData,
+  loadIllinoisGatewaySourcesFromOpenData,
   loadOntarioSourcesFromOpenData,
   loadFintrafficSourcesFromOpenData,
   loadDriveBcSourcesFromOpenData,
@@ -41,6 +42,11 @@ const LIVE_PACKS = [
     name: 'tfl',
     enabled: () => envEnabled('CCTV_TFL_ENABLED'),
     load: loadTflSourcesFromOpenData,
+  },
+  {
+    name: 'illinois-gateway',
+    enabled: () => envEnabled('CCTV_ILLINOIS_ENABLED'),
+    load: loadIllinoisGatewaySourcesFromOpenData,
   },
   {
     name: 'ontario',

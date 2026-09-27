@@ -12,6 +12,10 @@ import {
   TFL_IMAGE_ORIGIN,
   DEFAULT_TFL_MAX_SOURCES,
   LONDON_CENTER,
+  ILLINOIS_GATEWAY_CAMERAS_URL,
+  ILLINOIS_GATEWAY_IMAGE_ORIGIN,
+  DEFAULT_ILLINOIS_GATEWAY_MAX_SOURCES,
+  CHICAGO_CENTER,
   ONTARIO_511_CAMERAS_URL,
   ONTARIO_511_IMAGE_ORIGIN,
   DEFAULT_ONTARIO_MAX_SOURCES,
@@ -389,6 +393,112 @@ export async function loadTflSourcesFromOpenData() {
     return prioritized;
   } catch (error) {
     console.warn('[CCTV] TfL JamCam download error:', error?.message || error);
+    return [];
+  }
+}
+
+/**
+ * Fetch Illinois Gateway / Travel Midwest public traffic cameras.
+ *
+ * The ArcGIS FeatureServer publishes WGS84 coordinates, public snapshot URLs,
+ * direction, and image-age flags. Rows explicitly marked TooOld are omitted so
+ * a city-scale camera layer does not present a dead snapshot as current.
+ */
+export async function loadIllinoisGatewaySourcesFromOpenData() {
+  try {
+    const resp = await fetch(ILLINOIS_GATEWAY_CAMERAS_URL, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(CCTV_SOURCE_FETCH_TIMEOUT_MS),
+    });
+    if (!resp.ok) {
+      console.warn('[CCTV] Illinois Gateway camera download failed:', resp.status);
+      return [];
+    }
+
+    const payload = await resp.json();
+    const rows = Array.isArray(payload?.features) ? payload.features : [];
+    const cameras = [];
+
+    for (const feature of rows) {
+      const row = feature?.attributes || {};
+      if (String(row.TooOld || '').trim().toLowerCase() === 'true') continue;
+
+      const lat = toFiniteNumber(row.y);
+      const lon = toFiniteNumber(row.x);
+      if (!isPlausibleLatLon(lat, lon)) continue;
+      // Illinois/Chicago operating envelope. The Gateway layer is regional, not global.
+      if (lat < 36.8 || lat > 43.8 || lon < -92.0 || lon > -86.0) continue;
+
+      const snapshotUrl = String(row.SnapShot || '').trim();
+      if (!snapshotUrl.startsWith(ILLINOIS_GATEWAY_IMAGE_ORIGIN)) continue;
+
+      const imgPath = String(row.ImgPath || '').trim();
+      let upstreamId = '';
+      try {
+        upstreamId = new URL(imgPath).searchParams.get('id') || '';
+      } catch {}
+      const objectId = String(row.OBJECTID ?? '').trim();
+      const stable = (upstreamId || objectId || String(cameras.length + 1))
+        .replace(/[^A-Za-z0-9_.-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      if (!stable) continue;
+
+      const cameraId = `il-gateway-${stable.toLowerCase()}`;
+      const direction = String(row.CameraDirection || '').trim();
+      const heading = directionToHeading(direction, true);
+      const hasHeading = Number.isFinite(heading);
+      const location = String(row.CameraLocation || '').trim();
+      const ageMinutes = Number(row.AgeInMinutes);
+      const warningAge =
+        String(row.WarningAge || '').trim().toLowerCase() === 'true';
+
+      cameras.push({
+        id: cameraId,
+        name: location || `Illinois Gateway Camera ${stable}`,
+        city: 'Chicago / Illinois Gateway',
+        cityId: 'chicago-illinois',
+        provider: 'Illinois Gateway / Travel Midwest',
+        lat,
+        lon,
+        headingDeg: hasHeading ? heading : fallbackHeadingFromId(cameraId),
+        headingConfidence: hasHeading ? 'high' : 'low',
+        pitchDeg: hasHeading ? -22 : -18,
+        fovDeg: hasHeading ? 55 : 44,
+        rangeM: hasHeading ? 200 : 145,
+        mountHeightM: 9,
+        groundElevationM: 181,
+        feedType: 'image',
+        url: snapshotUrl,
+        snapshotUrl,
+        sourceKind: 'illinois-gateway-open-data',
+        license: 'Illinois Gateway / Travel Midwest public traffic camera snapshot',
+        credit: 'Illinois Gateway / Travel Midwest',
+        code: upstreamId || objectId,
+        ageMinutes: Number.isFinite(ageMinutes) ? ageMinutes : null,
+        warningAge,
+      });
+    }
+
+    const unique = Array.from(
+      new Map(cameras.map((camera) => [camera.id, camera])).values(),
+    );
+    const maxRaw = Number(
+      process.env.CCTV_ILLINOIS_MAX_SOURCES ||
+        DEFAULT_ILLINOIS_GATEWAY_MAX_SOURCES,
+    );
+    const maxCount = Number.isFinite(maxRaw)
+      ? Math.max(8, Math.min(1000, Math.floor(maxRaw)))
+      : DEFAULT_ILLINOIS_GATEWAY_MAX_SOURCES;
+    const prioritized = prioritizeSources(unique, maxCount, [CHICAGO_CENTER]);
+    console.log(
+      `[CCTV] Loaded Illinois Gateway sources: ${unique.length} fresh cameras (using nearest ${prioritized.length})`,
+    );
+    return prioritized;
+  } catch (error) {
+    console.warn(
+      '[CCTV] Illinois Gateway camera download error:',
+      error?.message || error,
+    );
     return [];
   }
 }

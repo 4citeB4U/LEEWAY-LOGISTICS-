@@ -54,6 +54,8 @@ function ensureStyles(documentRef) {
     .lws-layer-state { font-size:8px; letter-spacing:.08em; opacity:.58; }
     .lws-layer-row.on .lws-layer-state { color:#54efae; opacity:1; }
     .lws-layer-row.unavailable { opacity:.38; cursor:default; }
+    .lws-layer-group { margin:10px 6px 4px; font-size:8px; letter-spacing:.14em; color:#69e9f7; opacity:.72; }
+    .lws-layer-id { display:block; margin-top:2px; font-size:7px; opacity:.38; }
     body.leeway-enterprise-shell #leeway-transit-world { top:76px; right:12px; width:min(425px,calc(100vw - 106px)); max-height:calc(100vh - 94px); border-radius:15px; z-index:9780; }
     body.leeway-enterprise-shell #leeway-transit-world .ltw-title { font-size:15px; }
     body.leeway-enterprise-shell #leeway-transit-world .ltw-section { padding:11px 14px; }
@@ -81,18 +83,39 @@ export function mountEnterpriseShell(application) {
   const mapStackController = components.scene?.mapStackController;
   const operations = components.scene?.operations;
   const agentPanel = () => document.getElementById('leeway-agent-lee');
-  const layerOptions = [
-    ['traffic', 'Traffic'],
-    ['transit', 'Public Transit'],
-    ['cctv', 'CCTV'],
-    ['ais-live-vessels', 'Vessels / AIS'],
-    ['flights', 'Aircraft'],
-    ['satellites', 'Satellites'],
-    ['weather-radar', 'Weather Radar'],
-    ['weather-lightning', 'Lightning'],
-    ['earthquakes', 'Earthquakes'],
-    ['local-firms', 'Active Fires'],
-  ];
+  const layerCategoryOrder = ['Transportation', 'World Awareness', 'Infrastructure', 'Weather', 'Media / Context', 'Special'];
+  const layerCategories = {
+    traffic: 'Transportation',
+    transit: 'Transportation',
+    bikeshare: 'Transportation',
+    directions: 'Transportation',
+    flights: 'Transportation',
+    military: 'Transportation',
+    'local-adsb': 'Transportation',
+    'ais-live-vessels': 'Transportation',
+    cctv: 'World Awareness',
+    earthquakes: 'World Awareness',
+    'fire-perimeters': 'World Awareness',
+    'local-firms': 'World Awareness',
+    satellites: 'World Awareness',
+    'rocket-launches': 'World Awareness',
+    'military-awareness': 'World Awareness',
+    'local-datacenters': 'Infrastructure',
+    'local-dams': 'Infrastructure',
+    'military-installations': 'Infrastructure',
+    'osm-pipelines': 'Infrastructure',
+    'telegeography-submarine-cables': 'Infrastructure',
+    'alpr-cameras': 'Infrastructure',
+    wind: 'Weather',
+    'weather-radar': 'Weather',
+    'weather-satellite': 'Weather',
+    'weather-lightning': 'Weather',
+    'weather-cyclones': 'Weather',
+    radio: 'Media / Context',
+    'recent-imagery': 'Media / Context',
+    'bhote-koshi-2026': 'Special',
+    'bhote-koshi-locator': 'Special',
+  };
 
   const shell = document.createElement('div');
   shell.id = 'leeway-world-shell';
@@ -132,18 +155,31 @@ export function mountEnterpriseShell(application) {
   let toastTimer;
 
   function renderLayerMenu() {
-    const current = new Map(
-      (dataManager?.getAll?.() || []).map((row) => [row.id, row]),
-    );
-    layerList.innerHTML = layerOptions
-      .map(([id, label]) => {
-        const row = current.get(id);
-        const available = Boolean(row);
-        const enabled = Boolean(row?.enabled);
-        return `<button class="lws-layer-row ${enabled ? 'on' : ''} ${available ? '' : 'unavailable'}" data-shell-layer="${id}" ${available ? '' : 'disabled'}>
-          <span>${label}</span>
-          <span class="lws-layer-state">${available ? (enabled ? 'ON' : 'OFF') : 'UNAVAILABLE'}</span>
-        </button>`;
+    const rows = (dataManager?.getAll?.() || []).map((row) => ({
+      ...row,
+      category: layerCategories[row.id] || 'Special',
+    }));
+
+    const groups = new Map(layerCategoryOrder.map((name) => [name, []]));
+    for (const row of rows) {
+      if (!groups.has(row.category)) groups.set(row.category, []);
+      groups.get(row.category).push(row);
+    }
+
+    layerList.innerHTML = [...groups.entries()]
+      .filter(([, items]) => items.length)
+      .map(([category, items]) => {
+        const body = items
+          .sort((a, b) => String(a.name || a.id).localeCompare(String(b.name || b.id)))
+          .map((row) => {
+            const enabled = Boolean(row.enabled);
+            return `<button class="lws-layer-row ${enabled ? 'on' : ''}" data-shell-layer="${row.id}">
+              <span>${row.name || row.id}<small class="lws-layer-id">${row.id}</small></span>
+              <span class="lws-layer-state">${enabled ? 'ON' : 'OFF'}</span>
+            </button>`;
+          })
+          .join('');
+        return `<div class="lws-layer-group">${category}</div>${body}`;
       })
       .join('');
   }

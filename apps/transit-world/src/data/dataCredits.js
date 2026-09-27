@@ -102,6 +102,13 @@ export const DATA_CREDITS = [
       '(ODbL 1.0)',
   },
   {
+    key: 'osm-pipelines',
+    html:
+      'Mapped pipeline infrastructure: ' +
+      '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> ' +
+      '(ODbL 1.0; community-mapped coverage)',
+  },
+  {
     key: 'photon-geocoder',
     html:
       'Keyless place search: ' +
@@ -180,6 +187,13 @@ export const DATA_CREDITS = [
       'CCTV cameras &amp; frames (London): ' +
       '<a href="https://tfl.gov.uk/info-for/open-data-users/" target="_blank" rel="noopener">Powered by TfL Open Data</a>. ' +
       'Contains OS data © Crown copyright and database rights.',
+  },
+  {
+    key: 'illinois-gateway-cctv',
+    html:
+      'Traffic cameras (Illinois / Chicago): ' +
+      '<a href="https://www.travelmidwest.com/" target="_blank" rel="noopener">Illinois Gateway / Travel Midwest</a> · ' +
+      'public camera locations and snapshots distributed through Illinois Gateway open data',
   },
   {
     key: 'ontario-511-cctv',

@@ -3,6 +3,9 @@ import { describeError } from './standalone/errors.js';
 import { mountLeeWayTransitWorld } from './leeway/transitWorldCockpit.js';
 import { mountAgentLeeGemma } from './leeway/agentLeeGemma.js';
 import { mountEnterpriseShell } from './leeway/enterpriseShell.js';
+import { installWorldApiBridge } from './leeway/worldApiBridge.js';
+
+installWorldApiBridge();
 
 const application = createStandaloneApplication({
   googleApiKey: import.meta.env.GOOGLE_MAPS_API_KEY,
