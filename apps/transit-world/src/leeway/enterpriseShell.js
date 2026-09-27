@@ -188,6 +188,7 @@ export function mountEnterpriseShell(application) {
         <button class="lws-chip" data-action="route">↗ Plan Route</button>
         <button class="lws-chip hide-sm" data-action="layers">▱ Layers⌄</button>
         <button class="lws-chip hide-sm" data-action="workspace">CRM</button>
+        <button class="lws-chip hide-sm" data-action="map-only">MAP ONLY</button>
         <div class="lws-avatar">AL</div><div class="lws-agent-status">Agent Lee<br>LOCAL AI</div>
       </div>
     </header>
@@ -241,6 +242,10 @@ export function mountEnterpriseShell(application) {
   const routePlanner = shell.querySelector('[data-route-planner]');
   const routeFrom = shell.querySelector('[data-route-from]');
   const routeTo = shell.querySelector('[data-route-to]');
+  const truckHeight = shell.querySelector('[data-truck-height]');
+  const truckWeight = shell.querySelector('[data-truck-weight]');
+  const truckStatus = shell.querySelector('[data-truck-status]');
+  const locationBadge = shell.querySelector('[data-location-badge]');
   const worldLed = shell.querySelector('[data-world-led]');
   const worldStatus = shell.querySelector('[data-world-status]');
   const contextInspector = shell.querySelector('[data-context-inspector]');
@@ -253,12 +258,18 @@ export function mountEnterpriseShell(application) {
   let recenteringDistantGlobe = false;
   const rightOpsTab = shell.querySelector('[data-action="right-ops"]');
   const rightCctvTab = shell.querySelector('[data-action="right-cctv"]');
+  const rightWeatherTab = shell.querySelector('[data-action="right-weather"]');
+  const weatherPanel = document.getElementById('weather-panel');
+  let locationCell = '';
+  let locationRequestGeneration = 0;
 
   function syncRightTabs() {
     document.body.classList.toggle('leeway-right-ops-open', activeRightPanel === 'ops');
     document.body.classList.toggle('leeway-right-cctv-open', activeRightPanel === 'cctv');
+    document.body.classList.toggle('leeway-right-weather-open', activeRightPanel === 'weather');
     rightOpsTab?.classList.toggle('active', activeRightPanel === 'ops');
     rightCctvTab?.classList.toggle('active', activeRightPanel === 'cctv');
+    rightWeatherTab?.classList.toggle('active', activeRightPanel === 'weather');
   }
 
   function setRightPanel(panel = null) {
@@ -268,6 +279,12 @@ export function mountEnterpriseShell(application) {
       cctvPanel?.classList.remove('collapsed');
     } else if (cctvPanel && !cctvPanel.classList.contains('collapsed')) {
       cctvPanel.classList.add('collapsed');
+    }
+    if (next === 'weather') {
+      weatherPanel?.removeAttribute('hidden');
+      weatherPanel?.classList.remove('collapsed');
+    } else if (weatherPanel && !weatherPanel.classList.contains('collapsed')) {
+      weatherPanel.classList.add('collapsed');
     }
     contextInspector.classList.remove('minimized');
     syncRightTabs();
