@@ -19,5 +19,6 @@ export default defineConfig(({ command, mode }) => {
     host: process.env.HOST,
     port: process.env.PORT,
     command,
+    base: process.env.VITE_BASE_PATH,
   });
 });
