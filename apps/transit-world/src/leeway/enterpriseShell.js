@@ -116,6 +116,7 @@ export function mountEnterpriseShell(application) {
   const dataManager = components.data?.dataManager;
   const mapStackController = components.scene?.mapStackController;
   const operations = components.scene?.operations;
+  let labeledWorldStackRequested = false;
   const agentPanel = () => document.getElementById('leeway-agent-lee');
   const layerCategoryOrder = ['Transportation', 'World Awareness', 'Infrastructure', 'Weather', 'Media / Context', 'Special'];
   const layerCategories = {
@@ -189,6 +190,7 @@ export function mountEnterpriseShell(application) {
     <button class="lws-live" data-action="connect-world" type="button"><b data-world-led>● CHECK</b><span data-world-status>Connect live world data</span></button>
     <nav class="lws-dock">
       ${[['layers','Layers'],['traffic','Traffic'],['weather','Weather']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
+      <button class="lws-dock-btn" data-action="labels"><span class="i">Aa</span>Labels</button>
       <button class="lws-ai" data-action="ai"><strong>Ask LeeWay</strong><span>Gemma 4 E4B</span></button>
       ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D'],['locate','Locate']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
     </nav>
@@ -381,6 +383,40 @@ export function mountEnterpriseShell(application) {
     return true;
   }
 
+  async function ensureLabeledWorldStack({ announce = false } = {}) {
+    if (!mapStackController) return false;
+    const stacks = mapStackController.getStacks?.() || [];
+    const available = (id) => {
+      const row = stacks.find((stack) => stack.id === id);
+      return row ? row.available !== false : mapStackController.isStackAvailable?.(id) === true;
+    };
+    const preferred = available('bing-labels')
+      ? 'bing-labels'
+      : available('osm')
+        ? 'osm'
+        : null;
+    if (!preferred) {
+      if (announce) say('Labeled basemap is unavailable');
+      return false;
+    }
+    try {
+      const current = mapStackController.getActiveId?.();
+      if (current !== preferred) await mapStackController.setStack(preferred);
+      labeledWorldStackRequested = true;
+      if (announce) {
+        say(
+          preferred === 'bing-labels'
+            ? 'Aerial map labels enabled'
+            : 'OpenStreetMap labels enabled',
+        );
+      }
+      return true;
+    } catch {
+      if (announce) say('Could not enable map labels');
+      return false;
+    }
+  }
+
   function showWorld() {
     workspace.close();
     toggleAgent(false);
@@ -500,6 +536,7 @@ export function mountEnterpriseShell(application) {
     if (action === 'map') { workspace.close(); setNav('map'); return; }
     if (action === 'world') { showWorld(); setNav('map'); return; }
     if (action === 'route') { toggleRoutePlanner(); return; }
+    if (action === 'labels') { await ensureLabeledWorldStack({ announce: true }); return; }
     if (action === 'close-route') { toggleRoutePlanner(false); return; }
     if (action === 'swap-route') { const hold = routeFrom.value; routeFrom.value = routeTo.value; routeTo.value = hold; return; }
     if (action === 'generate-route') { await generateAddressRoute(); return; }
@@ -534,6 +571,14 @@ export function mountEnterpriseShell(application) {
         () => say('Location permission was not granted'),
       );
     }
+  });
+
+  /* Geographic identity is on by default. Prefer the aerial-with-labels
+     stack for cities, roads, airports and place names, then fall back to OSM
+     labels when the token-backed aerial source is unavailable. Live world
+     layers remain independent and continue to follow the camera globally. */
+  queueMicrotask(() => {
+    if (!labeledWorldStackRequested) void ensureLabeledWorldStack();
   });
 
   return {
