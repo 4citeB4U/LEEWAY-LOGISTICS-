@@ -16,6 +16,13 @@ import {
   ILLINOIS_GATEWAY_IMAGE_ORIGIN,
   DEFAULT_ILLINOIS_GATEWAY_MAX_SOURCES,
   CHICAGO_CENTER,
+  NYC_DOT_CAMERAS_URL,
+  NYC_DOT_IMAGE_ORIGIN,
+  DEFAULT_NYC_DOT_MAX_SOURCES,
+  NYC_CENTER,
+  DDOT_CCTV_LOCATIONS_URL,
+  DEFAULT_DDOT_MAX_SOURCES,
+  WASHINGTON_DC_CENTER,
   ONTARIO_511_CAMERAS_URL,
   ONTARIO_511_IMAGE_ORIGIN,
   DEFAULT_ONTARIO_MAX_SOURCES,
@@ -500,6 +507,159 @@ export async function loadIllinoisGatewaySourcesFromOpenData() {
       '[CCTV] Illinois Gateway camera download error:',
       error?.message || error,
     );
+    return [];
+  }
+}
+
+
+/**
+ * Fetch NYC DOT Traffic Management Center cameras.
+ *
+ * The public endpoint returns the current five-borough camera catalog and one
+ * current-frame URL per camera. Offline rows stay out of the active catalog so
+ * the map never promotes a known-dead camera as live.
+ */
+export async function loadNycDotSourcesFromOpenData() {
+  try {
+    const resp = await fetch(NYC_DOT_CAMERAS_URL, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(CCTV_SOURCE_FETCH_TIMEOUT_MS),
+    });
+    if (!resp.ok) {
+      console.warn('[CCTV] NYC DOT camera download failed:', resp.status);
+      return [];
+    }
+    const rows = await resp.json();
+    if (!Array.isArray(rows)) return [];
+    const cameras = [];
+    for (const row of rows) {
+      if (String(row?.isOnline || '').trim().toLowerCase() !== 'true') continue;
+      const lat = toFiniteNumber(row?.latitude);
+      const lon = toFiniteNumber(row?.longitude);
+      if (!isPlausibleLatLon(lat, lon)) continue;
+      if (lat < 40.45 || lat > 40.95 || lon < -74.30 || lon > -73.65) continue;
+      const rawId = String(row?.id || '').trim();
+      if (!rawId) continue;
+      const imageUrl = String(row?.imageUrl || '').trim();
+      if (!imageUrl.startsWith(NYC_DOT_IMAGE_ORIGIN)) continue;
+      const cameraId = `nyc-dot-${rawId.toLowerCase()}`;
+      const area = String(row?.area || '').trim();
+      const name = String(row?.name || '').trim() || `NYC DOT Camera ${rawId}`;
+      cameras.push({
+        id: cameraId,
+        name,
+        city: area ? `New York City · ${area}` : 'New York City',
+        cityId: 'new-york-city',
+        provider: 'New York City Department of Transportation / Traffic Management Center',
+        lat,
+        lon,
+        headingDeg: fallbackHeadingFromId(cameraId),
+        headingConfidence: 'low',
+        pitchDeg: -18,
+        fovDeg: 44,
+        rangeM: 145,
+        mountHeightM: 9,
+        groundElevationM: 10,
+        feedType: 'image',
+        url: imageUrl,
+        snapshotUrl: imageUrl,
+        sourceKind: 'nyc-dot-public-camera',
+        license: 'NYC DOT public traffic-camera imagery; provider terms and data-sharing conditions apply',
+        credit: 'New York City Department of Transportation',
+        frameRefreshMs: 15 * 1000,
+      });
+    }
+    const unique = Array.from(
+      new Map(cameras.map((camera) => [camera.id, camera])).values(),
+    );
+    const maxRaw = Number(
+      process.env.CCTV_NYC_DOT_MAX_SOURCES || DEFAULT_NYC_DOT_MAX_SOURCES,
+    );
+    const maxCount = Number.isFinite(maxRaw)
+      ? Math.max(8, Math.min(1200, Math.floor(maxRaw)))
+      : DEFAULT_NYC_DOT_MAX_SOURCES;
+    const prioritized = prioritizeSources(unique, maxCount, [NYC_CENTER]);
+    console.log(
+      `[CCTV] Loaded NYC DOT sources: ${unique.length} online cameras (using nearest ${prioritized.length})`,
+    );
+    return prioritized;
+  } catch (error) {
+    console.warn('[CCTV] NYC DOT camera download error:', error?.message || error);
+    return [];
+  }
+}
+
+/**
+ * Fetch DDOT's public active traffic-CCTV inventory.
+ *
+ * DDOT exposes camera locations and operational status through Open Data, but
+ * this dataset does not publish public image URLs. These records are therefore
+ * mapped as camera-location context only. The existing CCTV frame route will
+ * truthfully fall back to Street View (when configured) or a synthetic
+ * placeholder instead of pretending a live DDOT picture exists.
+ */
+export async function loadDdotSourcesFromOpenData() {
+  try {
+    const resp = await fetch(DDOT_CCTV_LOCATIONS_URL, {
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(CCTV_SOURCE_FETCH_TIMEOUT_MS),
+    });
+    if (!resp.ok) {
+      console.warn('[CCTV] DDOT camera inventory download failed:', resp.status);
+      return [];
+    }
+    const payload = await resp.json();
+    const rows = Array.isArray(payload?.features) ? payload.features : [];
+    const cameras = [];
+    for (const feature of rows) {
+      const row = feature?.attributes || {};
+      if (Number(row.Operation_Status) !== 1) continue;
+      const lat = toFiniteNumber(row.Latitude);
+      const lon = toFiniteNumber(row.Longitude);
+      if (!isPlausibleLatLon(lat, lon)) continue;
+      if (lat < 38.75 || lat > 39.05 || lon < -77.20 || lon > -76.85) continue;
+      const stable = String(row.CameraID ?? row.OBJECTID ?? '').trim();
+      if (!stable) continue;
+      const cameraId = `ddot-${stable.replace(/[^A-Za-z0-9_.-]+/g, '-').toLowerCase()}`;
+      cameras.push({
+        id: cameraId,
+        name: String(row.Location || `DDOT Camera ${stable}`),
+        city: 'Washington, DC',
+        cityId: 'washington-dc',
+        provider: 'District Department of Transportation',
+        lat,
+        lon,
+        headingDeg: fallbackHeadingFromId(cameraId),
+        headingConfidence: 'low',
+        pitchDeg: -18,
+        fovDeg: 44,
+        rangeM: 145,
+        mountHeightM: 9,
+        groundElevationM: 7,
+        feedType: 'image',
+        url: '',
+        snapshotUrl: '',
+        sourceKind: 'ddot-open-data-location',
+        license: 'DDOT/DC GIS open-data camera-location inventory; no public frame URL in this dataset',
+        credit: 'District Department of Transportation / DC GIS',
+      });
+    }
+    const unique = Array.from(
+      new Map(cameras.map((camera) => [camera.id, camera])).values(),
+    );
+    const maxRaw = Number(
+      process.env.CCTV_DDOT_MAX_SOURCES || DEFAULT_DDOT_MAX_SOURCES,
+    );
+    const maxCount = Number.isFinite(maxRaw)
+      ? Math.max(8, Math.min(500, Math.floor(maxRaw)))
+      : DEFAULT_DDOT_MAX_SOURCES;
+    const prioritized = prioritizeSources(unique, maxCount, [WASHINGTON_DC_CENTER]);
+    console.log(
+      `[CCTV] Loaded DDOT sources: ${unique.length} active mapped cameras (using nearest ${prioritized.length})`,
+    );
+    return prioritized;
+  } catch (error) {
+    console.warn('[CCTV] DDOT camera inventory download error:', error?.message || error);
     return [];
   }
 }
