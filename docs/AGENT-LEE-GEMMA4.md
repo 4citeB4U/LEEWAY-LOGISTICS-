@@ -50,7 +50,7 @@ https://4citeb4u.github.io
 The default browser endpoint is:
 
 ```text
-http://127.0.0.1:11434
+http://127.0.0.1:11435
 ```
 
 ## Governance
