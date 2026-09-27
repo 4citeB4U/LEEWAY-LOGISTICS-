@@ -52,6 +52,23 @@ function systemPrompt(context) {
     .join('\n');
 }
 
+async function probeOllama({ endpoint, model }) {
+  const base = endpoint.replace(/\/$/, '');
+  const response = await fetch(`${base}/api/tags`, {
+    headers: { Accept: 'application/json' },
+  });
+  if (!response.ok) throw new Error(`Ollama HTTP ${response.status}`);
+  const body = await response.json();
+  const names = Array.isArray(body?.models)
+    ? body.models.map((row) => String(row?.name || row?.model || ''))
+    : [];
+  return {
+    reachable: true,
+    modelInstalled: names.includes(model),
+    models: names,
+  };
+}
+
 async function callOllama({ endpoint, model, messages, context }) {
   const base = endpoint.replace(/\/$/, '');
   const response = await fetch(`${base}/api/chat`, {
@@ -191,6 +208,27 @@ export function mountAgentLeeGemma(application) {
     saveSetting('leeway.agentLee.endpoint', endpointInput.value.trim() || DEFAULT_ENDPOINT);
   }
 
+  async function probe() {
+    persist();
+    const model = modelInput.value.trim() || DEFAULT_MODEL;
+    const endpoint = endpointInput.value.trim() || DEFAULT_ENDPOINT;
+    try {
+      const state = await probeOllama({ endpoint, model });
+      if (state.modelInstalled) {
+        status.dataset.state = 'connected';
+        status.textContent = `READY · ${model}`;
+      } else {
+        status.dataset.state = 'disconnected';
+        status.textContent = `MODEL MISSING · ${model}`;
+      }
+      return state;
+    } catch {
+      status.dataset.state = 'disconnected';
+      status.textContent = 'LOCAL MODEL: DISCONNECTED';
+      return { reachable: false, modelInstalled: false, models: [] };
+    }
+  }
+
   async function ask() {
     const content = input.value.trim();
     if (!content) return;
@@ -233,12 +271,21 @@ export function mountAgentLeeGemma(application) {
   input.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') ask();
   });
-  modelInput.addEventListener('change', persist);
-  endpointInput.addEventListener('change', persist);
+  modelInput.addEventListener('change', () => {
+    persist();
+    void probe();
+  });
+  endpointInput.addEventListener('change', () => {
+    persist();
+    void probe();
+  });
+
+  void probe();
 
   return {
     root,
     ask,
+    probe,
     destroy() {
       root.remove();
     },
