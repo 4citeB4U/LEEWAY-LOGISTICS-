@@ -387,8 +387,11 @@ export function mountEnterpriseShell(application) {
     if (!mapStackController) return false;
     const stacks = mapStackController.getStacks?.() || [];
     const available = (id) => {
+      if (typeof mapStackController.isStackAvailable === 'function') {
+        return mapStackController.isStackAvailable(id) === true;
+      }
       const row = stacks.find((stack) => stack.id === id);
-      return row ? row.available !== false : mapStackController.isStackAvailable?.(id) === true;
+      return Boolean(row && row.available !== false);
     };
     const preferred = available('bing-labels')
       ? 'bing-labels'
