@@ -251,6 +251,10 @@ export function createLifecycle({
           layerState._cameraMoving = false;
           parts.rendering.refreshHorizonCulling();
           parts.cards.refreshAmbientCards();
+          // The enterprise selector is viewport-scoped: a settled pan/zoom
+          // republishes UI state so Milwaukee stays Milwaukee, New York stays
+          // New York, etc., instead of retaining the prior city's catalog.
+          parts.presentation.notifyListeners();
         };
         layerState._viewer.camera.moveEnd.addEventListener(
           layerState._horizonCullListener,
