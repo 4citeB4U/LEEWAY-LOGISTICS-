@@ -22,6 +22,27 @@ export function createEsriImagery() {
   );
 }
 
+export function createEsriReferenceLabelsImagery() {
+  return Cesium.ArcGisMapServerImageryProvider.fromUrl(
+    'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer',
+    {
+      credit:
+        'Reference labels: Esri, HERE, Garmin, FAO, NOAA, USGS, OpenStreetMap contributors, and the GIS User Community',
+      enablePickFeatures: false,
+    },
+  );
+}
+
+export function createEsriTransportationReferenceImagery() {
+  return Cesium.ArcGisMapServerImageryProvider.fromUrl(
+    'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer',
+    {
+      credit: 'Transportation reference: Esri and data contributors',
+      enablePickFeatures: false,
+    },
+  );
+}
+
 export function createIonImagery(style, accessToken) {
   accessToken = String(accessToken || '').trim();
   if (!accessToken) throw new Error('Ion imagery requires an explicit token');
