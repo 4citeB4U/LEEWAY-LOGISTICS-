@@ -518,10 +518,10 @@ export function mountEnterpriseShell(application) {
       const restrictionResponse = await fetch('/api/overpass', {
         method: 'POST',
         headers: {
-          'Content-Type': 'text/plain;charset=UTF-8',
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
           Accept: 'application/json',
         },
-        body: query,
+        body: `data=${encodeURIComponent(query)}`,
       });
       if (!restrictionResponse.ok)
         throw new Error('Truck restriction evidence unavailable');
