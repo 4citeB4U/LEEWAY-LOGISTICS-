@@ -1,6 +1,7 @@
 import * as Cesium from 'cesium';
 import { mountEnterpriseWorkspace } from './enterpriseWorkspace.js';
 import { readEnterpriseState } from './enterpriseStore.js';
+import { summarizeTruckRouteSafety } from './truckRoutePolicy.js';
 
 function ensureStyles(documentRef) {
   if (documentRef.getElementById('leeway-enterprise-shell-styles')) return;
@@ -41,7 +42,7 @@ function ensureStyles(documentRef) {
     .lws-avatar { width:36px; height:36px; border:1px solid rgba(72,227,241,.55); border-radius:50%; display:grid; place-items:center; font-weight:700; }
     .lws-agent-status { font-size:9px; color:#59f0ac; margin-left:-3px; }
     .lws-rail { pointer-events:auto; position:absolute; top:78px; left:10px; bottom:18px; width:72px; padding:8px; border-radius:15px; background:rgba(3,14,23,.92); border:1px solid rgba(78,217,238,.22); backdrop-filter:blur(14px); display:flex; flex-direction:column; gap:4px; }
-    .lws-nav { border:0; background:transparent; color:#c8dbe2; border-radius:10px; padding:9px 4px; min-height:60px; display:grid; place-items:center; gap:4px; cursor:pointer; font:inherit; font-size:9px; }
+    .lws-nav { border:1px solid rgba(91,193,211,.18); background:rgba(8,24,34,.55); color:#e5f4f7; border-radius:10px; padding:9px 4px; min-height:60px; display:grid; place-items:center; gap:4px; cursor:pointer; font:inherit; font-size:10px; font-weight:650; }
     .lws-nav .i { font-size:19px; line-height:1; }
     .lws-nav:hover,.lws-nav.active { color:#70f2ff; background:rgba(52,219,239,.10); box-shadow:inset 3px 0 0 #2ce3f3; }
     .lws-spacer { flex:1; }
@@ -64,7 +65,7 @@ function ensureStyles(documentRef) {
     .lws-context-inspector.minimized { width:54px; height:54px; overflow:hidden; }
     .lws-context-inspector.minimized > * { visibility:hidden; pointer-events:none; }
     .lws-dock { pointer-events:auto; position:absolute; left:50%; bottom:18px; transform:translateX(-50%); min-height:66px; display:flex; align-items:center; gap:3px; padding:7px 10px; border-radius:23px; background:rgba(3,15,24,.94); border:1px solid rgba(74,215,236,.20); backdrop-filter:blur(16px); box-shadow:0 18px 55px rgba(0,0,0,.35); }
-    .lws-dock-btn { min-width:70px; border:0; background:transparent; color:#d7e8ed; padding:8px 8px; border-radius:12px; cursor:pointer; font:inherit; font-size:9px; }
+    .lws-dock-btn { min-width:70px; border:1px solid rgba(91,193,211,.18); background:rgba(8,24,34,.62); color:#effbff; padding:8px 8px; border-radius:12px; cursor:pointer; font:inherit; font-size:10px; font-weight:650; }
     .lws-dock-btn .i { display:block; color:#7feeff; font-size:18px; margin-bottom:4px; }
     .lws-dock-btn:hover { background:rgba(66,225,242,.08); }
     .lws-ai { width:88px; height:88px; margin:-18px 4px; border-radius:50%; border:1px solid #43ecfa; background:radial-gradient(circle at 50% 35%,rgba(61,226,245,.20),rgba(4,20,31,.96) 62%); box-shadow:0 0 25px rgba(42,223,241,.22); color:#fff; cursor:pointer; display:grid; place-items:center; align-content:center; }
@@ -109,7 +110,7 @@ function ensureStyles(documentRef) {
 }
 
 function icon(name) {
-  return ({map:'⌖',loads:'▣',drivers:'♙',fleet:'▰',transit:'▤',rail:'▥',facilities:'⌂',crm:'◇',intel:'▥',ai:'✦',layers:'▱',traffic:'▥',weather:'☁',freight:'▰',three:'◆',locate:'⌾'})[name] || '•';
+  return ({map:'▦',loads:'▣',drivers:'♙',fleet:'▰',transit:'▤',rail:'▥',facilities:'⌂',crm:'◇',intel:'▥',ai:'✦',layers:'▱',traffic:'▥',weather:'☁',freight:'▰',three:'◆',locate:'⌾'})[name] || '•';
 }
 
 export function mountEnterpriseShell(application) {
