@@ -321,14 +321,15 @@ export function createControls({ state: layerState, services, parts, source }) {
      * @returns {string|null} The newly active camera ID, or null if catalog is empty.
      */
     cycleCamera(step = 1, options = {}) {
-      if (!layerState._records.length) return null;
+      const scoped = parts.navigation.scopedRecordsNearViewer();
+      if (!scoped.length) return null;
       const current = parts.selection.getActiveRecord();
       const nextIdx = parts.navigation.cctvCycleIndex(
-        layerState._records.findIndex((record) => record === current),
+        scoped.findIndex((record) => record === current),
         step,
-        layerState._records.length,
+        scoped.length,
       );
-      const nextId = layerState._records[nextIdx].camera.id;
+      const nextId = scoped[nextIdx].camera.id;
       parts.selection.setActiveCamera(nextId);
       if (options.focus) {
         parts.navigation.focusCamera(nextId, options.durationSec || 1.8);
