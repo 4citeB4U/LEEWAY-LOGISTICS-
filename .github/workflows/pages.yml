@@ -44,6 +44,9 @@ jobs:
       - name: Run LeeWay targeted tests
         run: >
           node --test
+          ./src/app/application.test.mjs
+          ./src/data/infrastructure.test.mjs
+          ./src/tooling/viteBuild.test.mjs
           ./src/leeway/truckRoutePolicy.test.mjs
           ./server/providers/leeway-driver-cockpit.test.mjs
           ./src/sources/leewayTransit.test.mjs
