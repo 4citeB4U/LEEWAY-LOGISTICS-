@@ -24,11 +24,13 @@ export async function createApplicationScene({
   MapController = MapStackController,
   mapOptions = {},
   loaderStatus,
+  placeSearch,
   signal,
   defer,
 }) {
   const operations = createApplicationOperations({
     requests: requestServices,
+    placeSearch,
     signal,
   });
   defer(initLogoGaze());

@@ -46,6 +46,7 @@ jobs:
         run: >
           node --test
           ./src/app/application.test.mjs
+          ./src/app/operations.placeSearch.test.mjs
           ./src/data/infrastructure.test.mjs
           ./src/data/cctvLod.test.mjs
           ./src/tooling/viteBuild.test.mjs

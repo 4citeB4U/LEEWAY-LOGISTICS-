@@ -41,6 +41,7 @@ export function createStandaloneApplication({
         googleApiKey,
         cesiumToken,
         loaderStatus,
+        placeSearch,
       });
       catalog = createStandaloneCatalog({
         nepalBoundaryResolver: (signal) =>
