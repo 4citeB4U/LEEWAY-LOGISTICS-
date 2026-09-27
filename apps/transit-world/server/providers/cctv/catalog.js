@@ -9,6 +9,8 @@ import {
   loadCaltransSourcesFromOpenData,
   loadTflSourcesFromOpenData,
   loadIllinoisGatewaySourcesFromOpenData,
+  loadNycDotSourcesFromOpenData,
+  loadDdotSourcesFromOpenData,
   loadOntarioSourcesFromOpenData,
   loadFintrafficSourcesFromOpenData,
   loadDriveBcSourcesFromOpenData,
@@ -47,6 +49,16 @@ const LIVE_PACKS = [
     name: 'illinois-gateway',
     enabled: () => envEnabled('CCTV_ILLINOIS_ENABLED'),
     load: loadIllinoisGatewaySourcesFromOpenData,
+  },
+  {
+    name: 'nyc-dot',
+    enabled: () => envEnabled('CCTV_NYC_DOT_ENABLED'),
+    load: loadNycDotSourcesFromOpenData,
+  },
+  {
+    name: 'ddot',
+    enabled: () => envEnabled('CCTV_DDOT_ENABLED'),
+    load: loadDdotSourcesFromOpenData,
   },
   {
     name: 'ontario',
