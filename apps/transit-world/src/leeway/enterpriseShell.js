@@ -440,6 +440,212 @@ export function mountEnterpriseShell(application) {
     return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon } : null;
   }
 
+  function truckProfileFromInputs() {
+    const heightFt = Number(truckHeight?.value);
+    const grossLb = Number(truckWeight?.value);
+    return {
+      heightM: Number.isFinite(heightFt) && heightFt > 0 ? heightFt * 0.3048 : null,
+      grossWeightKg: Number.isFinite(grossLb) && grossLb > 0 ? grossLb * 0.45359237 : null,
+    };
+  }
+
+  function parseOsmLengthMeters(value) {
+    const text = String(value || '').trim().toLowerCase();
+    if (!text) return null;
+    const feetInches = /^(\d+)\s*'\s*(\d+)?/.exec(text);
+    if (feetInches) {
+      const feet = Number(feetInches[1]);
+      const inches = Number(feetInches[2] || 0);
+      return feet * 0.3048 + inches * 0.0254;
+    }
+    const numeric = Number.parseFloat(text);
+    if (!Number.isFinite(numeric)) return null;
+    if (/\bft\b|feet/.test(text)) return numeric * 0.3048;
+    if (/\bin\b|inch/.test(text)) return numeric * 0.0254;
+    return numeric;
+  }
+
+  function parseOsmWeightKg(value) {
+    const text = String(value || '').trim().toLowerCase();
+    const numeric = Number.parseFloat(text);
+    if (!Number.isFinite(numeric)) return null;
+    if (/lb|lbs|pound/.test(text)) return numeric * 0.45359237;
+    if (/kg/.test(text)) return numeric;
+    return numeric * 1000;
+  }
+
+  function truckRestrictionFromTags(tags = {}) {
+    return {
+      maxheightM: parseOsmLengthMeters(tags.maxheight),
+      maxweightKg: parseOsmWeightKg(tags.maxweight),
+      maxwidthM: parseOsmLengthMeters(tags.maxwidth),
+      maxlengthM: parseOsmLengthMeters(tags.maxlength),
+      hgv: tags.hgv,
+      access: tags.access,
+      name: tags.name || tags.ref || tags.highway || 'road restriction',
+    };
+  }
+
+  function sampledRoutePoints(geometry, maxPoints = 40) {
+    const rows = Array.isArray(geometry) ? geometry : [];
+    if (!rows.length) return [];
+    const step = Math.max(1, Math.ceil(rows.length / maxPoints));
+    const sampled = rows.filter((_, index) => index % step === 0);
+    const last = rows.at(-1);
+    if (last && sampled.at(-1) !== last) sampled.push(last);
+    return sampled;
+  }
+
+  async function inspectTruckRestrictions(a, b) {
+    truckStatus.dataset.state = 'unverified';
+    truckStatus.textContent = 'TRUCK GATE · CHECKING OSM HEIGHT / WEIGHT / HGV RESTRICTIONS…';
+    try {
+      const coords =
+        `${a.lon.toFixed(6)},${a.lat.toFixed(6)};${b.lon.toFixed(6)},${b.lat.toFixed(6)}`;
+      const routeResponse = await fetch(
+        `/api/route?profile=car&coords=${encodeURIComponent(coords)}&steps=0`,
+        { headers: { Accept: 'application/json' } },
+      );
+      if (!routeResponse.ok) throw new Error('Base route unavailable');
+      const route = await routeResponse.json();
+      const points = sampledRoutePoints(route?.geometry, 40);
+      if (!points.length) throw new Error('Route geometry unavailable');
+
+      const clauses = points
+        .map(([lon, lat]) => `way(around:15,${lat},${lon})["highway"];`)
+        .join('');
+      const query = `[out:json][timeout:15];(${clauses});out tags center;`;
+      const restrictionResponse = await fetch('/api/overpass', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=UTF-8',
+          Accept: 'application/json',
+        },
+        body: query,
+      });
+      if (!restrictionResponse.ok)
+        throw new Error('Truck restriction evidence unavailable');
+      const payload = await restrictionResponse.json();
+      const restrictions = (payload?.elements || [])
+        .map((element) => truckRestrictionFromTags(element.tags || {}))
+        .filter((row) =>
+          [
+            row.maxheightM,
+            row.maxweightKg,
+            row.maxwidthM,
+            row.maxlengthM,
+            row.hgv,
+            row.access,
+          ].some((value) => value !== null && value !== undefined && value !== ''),
+        );
+      const summary = summarizeTruckRouteSafety(
+        truckProfileFromInputs(),
+        restrictions,
+      );
+      if (summary.status === 'BLOCKED') {
+        truckStatus.dataset.state = 'blocked';
+        truckStatus.textContent =
+          `TRUCK GATE · BLOCKED — known route restriction conflict: ${summary.reasons.join(', ')}`;
+      } else if (summary.status === 'NO_CONFLICT_FOUND') {
+        truckStatus.dataset.state = 'checked';
+        truckStatus.textContent =
+          `TRUCK GATE · PARTIAL CHECK — ${summary.evidenceCount} mapped restriction records checked; route is still not certified truck-safe.`;
+      } else {
+        truckStatus.dataset.state = 'unverified';
+        truckStatus.textContent =
+          'TRUCK GATE · UNVERIFIED — no mapped truck-restriction evidence found along the sampled route. Do not treat this as truck clearance.';
+      }
+      return summary;
+    } catch (error) {
+      truckStatus.dataset.state = 'unverified';
+      truckStatus.textContent =
+        'TRUCK GATE · UNVERIFIED — restriction evidence could not be completed. Base route remains a visual road route only.';
+      return null;
+    }
+  }
+
+  function viewCenterPoint() {
+    const canvas = viewer?.scene?.canvas;
+    if (!viewer?.camera || !canvas) return null;
+    try {
+      const picked = viewer.camera.pickEllipsoid(
+        new Cesium.Cartesian2(canvas.clientWidth / 2, canvas.clientHeight / 2),
+        viewer.scene.globe?.ellipsoid,
+      );
+      if (picked) {
+        const carto = Cesium.Cartographic.fromCartesian(picked);
+        return {
+          lat: Cesium.Math.toDegrees(carto.latitude),
+          lon: Cesium.Math.toDegrees(carto.longitude),
+        };
+      }
+    } catch {}
+    const carto = viewer.camera.positionCartographic;
+    return carto
+      ? {
+          lat: Cesium.Math.toDegrees(carto.latitude),
+          lon: Cesium.Math.toDegrees(carto.longitude),
+        }
+      : null;
+  }
+
+  async function updateLocationBadge() {
+    const point = viewCenterPoint();
+    if (!point || !locationBadge) return;
+    const cell = `${point.lat.toFixed(1)},${point.lon.toFixed(1)}`;
+    if (cell === locationCell) return;
+    locationCell = cell;
+    const generation = ++locationRequestGeneration;
+    locationBadge.querySelector('strong').textContent = 'LOCATING…';
+    try {
+      const response = await fetch(
+        `/api/regional-brief?latitude=${encodeURIComponent(point.lat)}&longitude=${encodeURIComponent(point.lon)}`,
+        { headers: { Accept: 'application/json' } },
+      );
+      if (!response.ok) return;
+      const payload = await response.json();
+      if (generation !== locationRequestGeneration) return;
+      const place = payload?.place;
+      const strong = locationBadge.querySelector('strong');
+      const detail = locationBadge.querySelector('span');
+      strong.textContent = place?.locality || place?.region || place?.country || 'WORLD';
+      detail.textContent = [place?.region, place?.country]
+        .filter((value, index, values) => value && values.indexOf(value) === index)
+        .join(' · ') || 'Geographic context';
+    } catch {
+      if (generation !== locationRequestGeneration) return;
+      locationBadge.querySelector('strong').textContent = 'MAP';
+      locationBadge.querySelector('span').textContent = 'Geographic context unavailable';
+    }
+  }
+
+  async function switchMapMode(mode) {
+    const target =
+      mode === 'map'
+        ? 'osm'
+        : mode === 'satellite'
+          ? 'esri-labeled'
+          : 'photoreal';
+    if (!mapStackController?.isStackAvailable?.(target)) {
+      if (mode === '3d') {
+        await ensureLabeledWorldStack({ announce: true });
+        return false;
+      }
+      say(`${mode} map source is unavailable`);
+      return false;
+    }
+    await mapStackController.setStack(target);
+    say(
+      mode === '3d'
+        ? '3D world view'
+        : mode === 'satellite'
+          ? 'Satellite + labels view'
+          : '2D road map view',
+    );
+    void updateLocationBadge();
+    return true;
+  }
+
   async function generateAddressRoute() {
     const from = routeFrom.value.trim();
     const to = routeTo.value.trim();
