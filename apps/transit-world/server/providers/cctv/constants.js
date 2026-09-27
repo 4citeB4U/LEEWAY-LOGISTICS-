@@ -11,7 +11,7 @@ export const DEFAULT_AUSTIN_MAX_SOURCES = 250;
  * cap.js) so no region is silently dropped. Sized above the sum of the
  * default per-pack caps so a default install never trims.
  */
-export const DEFAULT_CCTV_MAX_SOURCES = 4000;
+export const DEFAULT_CCTV_MAX_SOURCES = 5000;
 /** Hard upper bound for CCTV_MAX_SOURCES; also sizes the health map. */
 export const CCTV_MAX_SOURCES_CEILING = 5000;
 /** Reference point for Austin camera prioritization (Congress & 6th). */
@@ -126,6 +126,18 @@ export const ILLINOIS_GATEWAY_IMAGE_ORIGIN =
   'https://cctv.travelmidwest.com/snapshots/';
 export const DEFAULT_ILLINOIS_GATEWAY_MAX_SOURCES = 500;
 export const CHICAGO_CENTER = { lat: 41.8781, lon: -87.6298 };
+
+/** NYC DOT Traffic Management Center: public current-frame cameras across all five boroughs. */
+export const NYC_DOT_CAMERAS_URL = 'https://webcams.nyctmc.org/api/cameras/';
+export const NYC_DOT_IMAGE_ORIGIN = 'https://webcams.nyctmc.org/api/cameras/';
+export const DEFAULT_NYC_DOT_MAX_SOURCES = 1000;
+export const NYC_CENTER = { lat: 40.7128, lon: -74.006 };
+
+/** DDOT open-data traffic CCTV inventory. Public locations; no public frame URL is claimed. */
+export const DDOT_CCTV_LOCATIONS_URL =
+  'https://maps2.dcgis.dc.gov/dcgis/rest/services/DDOT/TrafficOperations/FeatureServer/2/query?where=Operation_Status%3D1&outFields=*&returnGeometry=false&f=json';
+export const DEFAULT_DDOT_MAX_SOURCES = 300;
+export const WASHINGTON_DC_CENTER = { lat: 38.9072, lon: -77.0369 };
 
 /** Ontario 511: keyless CARS/511 camera catalog; frame URLs are still images. */
 export const ONTARIO_511_CAMERAS_URL =
