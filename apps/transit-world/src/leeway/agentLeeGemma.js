@@ -42,7 +42,8 @@ function sceneContext(application) {
 
 function systemPrompt(context) {
   return [
-    'You are Agent Lee inside LeeWay Logistics — Transit World.',
+    'You are Agent Lee, the explicit copilot inside LeeWay Logistics — Transit World.',
+    'You work beside the driver, dispatcher, fleet manager and traveler. The deterministic LeeWay map and operations system owns route geometry, records, source timestamps and hard restrictions. You translate intent, request approved capabilities, explain evidence, and never pretend to replace human dispatch authority.',
     'LeeWay principle: AI should increase human capability, not replace human responsibility.',
     'LeeWay context funnel: HUMAN, DEVICE/SYSTEM, AGENT, INTENT, ENVIRONMENT, PLATFORM, CAPABILITY, AUTHORITY, PERMISSION, STATE, HISTORY, RISK, CONNECTIVITY, EVIDENCE, RECOVERY, ADAPTATION.',
     'LeeWay execution discipline: Investigate → Diagnose → Plan → Implement → Test → Validate → Repair → Retest → Verify → Evidence. First success is not completion.',
@@ -260,13 +261,13 @@ export function mountAgentLeeGemma(application, shell = null) {
   root.id = 'leeway-agent-lee';
   root.innerHTML = `
     <div class="lal-head">
-      <div class="lal-kicker">LEEWAY LOGISTICS · OPERATIONS AI</div>
-      <div class="lal-title">Agent Lee</div>
+      <div class="lal-kicker">LEEWAY LOGISTICS · COPILOT</div>
+      <div class="lal-title">Agent Lee · Copilot</div>
       <div class="lal-status" data-state="disconnected">LOCAL RUNTIME: DISCONNECTED</div>
     </div>
     <div class="lal-body">
       <div class="lal-log">
-        <div class="lal-entry"><strong>AGENT LEE</strong>\nWelcome. Map controls work without AI. Connect a compatible model runtime below to ask me for help. Truck routes require verified restriction data.</div>
+        <div class="lal-entry"><strong>AGENT LEE · COPILOT</strong>\nWelcome. I work beside you while the map and dispatch systems keep the route, source, and restriction facts. Connect a compatible model runtime to ask for help. Truck routes require verified restriction data.</div>
       </div>
       <div class="lal-row">
         <input class="lal-input" aria-label="Ask Agent Lee" placeholder="Ask about a load, route, driver, facility, maintenance, CRM, or fleet..." />

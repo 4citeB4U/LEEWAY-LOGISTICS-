@@ -12,6 +12,7 @@ import { mountPeerComms } from './peerComms.js';
 import { mountNationalCameraCatalog } from './nationalCameraCatalog.js';
 import { mountOfflineTrip } from './offlineTrip.js';
 import { mountFuelLedger } from './fuelLedger.js';
+import { mountLoadComparison } from './loadComparison.js';
 
 function ensureStyles(documentRef) {
   if (documentRef.getElementById('leeway-enterprise-shell-styles')) return;
@@ -131,6 +132,9 @@ function ensureStyles(documentRef) {
     .lws-truck-status[data-state="checked"] { border-color:rgba(100,230,190,.32); color:#9df1cf; background:rgba(80,220,170,.06); }
     .lws-toast { position:absolute; top:76px; left:50%; transform:translateX(-50%); opacity:0; pointer-events:none; padding:9px 14px; border-radius:10px; background:#071722; border:1px solid rgba(64,221,238,.24); transition:opacity .2s; }
     .lws-toast.show { opacity:1; }
+    #leeway-load-comparison { position:fixed; z-index:10020; left:98px; top:76px; width:min(560px,calc(100vw - 122px)); max-height:calc(100vh - 100px); overflow:auto; padding:16px; border:1px solid rgba(75,231,255,.30); border-radius:18px; background:rgba(3,15,24,.97); color:#edffff; box-shadow:0 22px 68px rgba(0,0,0,.55); backdrop-filter:blur(16px); }
+    #leeway-load-comparison header { display:flex; gap:14px; justify-content:space-between; } #leeway-load-comparison h2 { margin:3px 0; font-size:20px; } #leeway-load-comparison small { color:#8eeefa; letter-spacing:.1em; } #leeway-load-comparison p { margin:6px 0; color:#b9d5db; font-size:12px; line-height:1.4; } #leeway-load-comparison textarea { width:100%; min-height:100px; box-sizing:border-box; padding:10px; border-radius:10px; border:1px solid rgba(119,210,229,.30); background:#06141d; color:#efffff; font:12px/1.35 ui-monospace,monospace; resize:vertical; } #leeway-load-comparison label { display:grid; gap:4px; font-size:10px; color:#a9d7dd; } #leeway-load-comparison input { min-width:0; box-sizing:border-box; height:38px; padding:0 9px; border-radius:9px; border:1px solid rgba(119,210,229,.30); background:#06141d; color:#efffff; font:inherit; } #leeway-load-comparison button { border:1px solid rgba(75,231,255,.32); border-radius:9px; padding:7px 10px; color:#eaffff; background:#0b2733; font:inherit; cursor:pointer; } #leeway-load-comparison button:hover { background:#124151; } .llc-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0; } .llc-actions { display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; } .llc-status { padding:8px; border-left:3px solid #4be7ff; background:rgba(75,231,255,.08); } .llc-offers { display:grid; gap:8px; margin-top:10px; } .llc-offer { --offer-color:#4be7ff; padding:10px; border-left:4px solid var(--offer-color); border-radius:10px; background:rgba(255,255,255,.04); } .llc-offer strong { display:block; color:var(--offer-color); } .llc-offer span { font-size:11px; color:#bddce2; } .llc-offer b { color:var(--offer-color); } .llc-offer small { display:block; margin-top:4px; color:#d2e7ea; letter-spacing:0; } .llc-note { opacity:.78; } .llc-file { display:inline-flex !important; place-items:center; gap:5px; min-height:34px; padding:7px 10px; border:1px solid rgba(75,231,255,.32); border-radius:9px; background:#0b2733; color:#eaffff !important; cursor:pointer; } .llc-file input { position:absolute; inline-size:1px; block-size:1px; opacity:0; pointer-events:none; } .llc-triangle { margin-top:14px; padding-top:12px; border-top:1px solid rgba(75,231,255,.18); } .llc-triangle-summary { margin-top:10px; padding:10px; border:1px solid rgba(255,182,89,.30); border-radius:10px; background:rgba(255,182,89,.07); color:#e7f5f7; } .llc-triangle-summary strong { color:#ffca78; } .llc-triangle-summary small { color:#bcd9de; } .llc-select { display:flex !important; grid-template-columns:none !important; align-items:center; gap:7px; margin-bottom:7px; color:#e5f8fa !important; } .llc-select input { width:15px !important; height:15px !important; accent-color:#4be7ff; }
+    @media(max-width:720px){ #leeway-load-comparison { left:12px; top:64px; width:calc(100vw - 24px); max-height:calc(100vh - 78px); } .llc-grid { grid-template-columns:1fr; } }
     @media(max-width:1000px){.lws-top{grid-template-columns:270px 1fr}.lws-top-actions .hide-sm{display:none}.lws-brand strong{font-size:13px}.lws-brand span{display:none}.lws-dock-btn{min-width:58px}.lws-live{display:none}}
   `;
   documentRef.head.appendChild(style);
@@ -199,7 +203,7 @@ export function mountEnterpriseShell(application) {
         <button class="lws-chip hide-sm" data-action="layers">▱ Layers⌄</button>
         <button class="lws-chip hide-sm" data-action="workspace">CRM</button>
         <button class="lws-chip" data-action="roadside">Road stops</button><button class="lws-chip" data-action="workspace-menu">Business</button><button class="lws-chip hide-sm" data-action="map-only">Hide controls</button>
-        <div class="lws-avatar">AL</div><div class="lws-agent-status">Agent Lee<br>Open to connect</div>
+        <div class="lws-avatar">AL</div><div class="lws-agent-status">Agent Lee · Copilot<br>Open to connect</div>
       </div>
     </header>
     <nav class="lws-rail" aria-label="Business workspace">
@@ -219,7 +223,7 @@ export function mountEnterpriseShell(application) {
       <button class="lws-dock-btn" data-action="view-map"><span class="i">▤</span>Map</button>
       <button class="lws-dock-btn" data-action="view-satellite"><span class="i">◫</span>Satellite</button>
       <button class="lws-dock-btn" data-action="report-hazard"><span class="i">⚠</span>Report</button>
-      <button class="lws-ai" data-action="ai"><strong>Agent Lee</strong><span>VOICE + LOGISTICS AI</span></button>
+      <button class="lws-ai" data-action="ai"><strong>Agent Lee · Copilot</strong><span>VOICE + LOGISTICS AI</span></button>
       ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
     </nav>
     <button class="lws-my-location" data-dock="locate" aria-label="My Location">⌾ My Location</button>
@@ -413,6 +417,7 @@ export function mountEnterpriseShell(application) {
   const driveMode = mountDriveMode({ planner: routing, viewer });
   const fuelAdvisor = mountFuelAdvisor({ planner: routing });
   const fuelLedger = mountFuelLedger({ planner: routing });
+  const loadComparison = mountLoadComparison({ viewer, onStatus: say });
   const peerComms = mountPeerComms({ viewer });
   let hazardEntities = [];
   const hazardReports = mountHazardReports({ container: document.body, getMapPoint: viewCenterPoint, onReports: (rows) => {
@@ -714,7 +719,7 @@ export function mountEnterpriseShell(application) {
       if (id === 'drivers') { workspace.openPeople(); return; }
       if (id === 'fleet') { workspace.openEquipment(); return; }
       if (id === 'facilities' || id === 'crm') { workspace.openCrm(); return; }
-      if (id === 'loads') { workspace.open('overview'); say('Load board domain opened from enterprise command'); return; }
+      if (id === 'loads') { workspace.close(); loadComparison.open(); say('Dispatch load comparison opened. Add up to three offers to map their separate pickup and delivery paths.'); return; }
       if (id === 'transit') { workspace.close(); await toggleLayer('transit'); return; }
       if (id === 'rail') { workspace.close(); say('Rail operating view ready for rail provider binding'); return; }
       if (id === 'intel') { workspace.close(); toggleLayerMenu(true); return; }
@@ -774,7 +779,7 @@ export function mountEnterpriseShell(application) {
     if (dock === 'traffic') { await toggleLayer('traffic'); return; }
     if (dock === 'weather') { openWeather(); return; }
     if (dock === 'transit') { await toggleLayer('transit'); return; }
-    if (dock === 'freight') { workspace.open('overview'); say('Freight command workspace opened'); return; }
+    if (dock === 'freight') { workspace.close(); loadComparison.open(); say('Freight load comparison opened'); return; }
     if (dock === 'rail') { say('Rail provider binding is not yet verified'); return; }
     if (dock === 'three') {
       try { await switchMapMode('3d'); } catch { say('3D map stack unavailable'); }
@@ -832,6 +837,7 @@ export function mountEnterpriseShell(application) {
       offlineTrip.destroy();
       fuelAdvisor.destroy();
       fuelLedger.destroy();
+      loadComparison.destroy();
       hazardReports.destroy();
       peerComms.destroy();
       routing.destroy();
