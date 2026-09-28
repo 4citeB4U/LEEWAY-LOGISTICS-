@@ -10,6 +10,8 @@ import { mountFuelAdvisor } from './fuelAdvisor.js';
 import { mountHazardReports } from './hazardReports.js';
 import { mountPeerComms } from './peerComms.js';
 import { mountNationalCameraCatalog } from './nationalCameraCatalog.js';
+import { mountOfflineTrip } from './offlineTrip.js';
+import { mountFuelLedger } from './fuelLedger.js';
 
 function ensureStyles(documentRef) {
   if (documentRef.getElementById('leeway-enterprise-shell-styles')) return;
@@ -407,8 +409,10 @@ export function mountEnterpriseShell(application) {
   }
 
   const routing = mountRoutePlanner({ viewer, container: routePlanner });
+  const offlineTrip = mountOfflineTrip({ planner: routing });
   const driveMode = mountDriveMode({ planner: routing, viewer });
   const fuelAdvisor = mountFuelAdvisor({ planner: routing });
+  const fuelLedger = mountFuelLedger({ planner: routing });
   const peerComms = mountPeerComms({ viewer });
   let hazardEntities = [];
   const hazardReports = mountHazardReports({ container: document.body, getMapPoint: viewCenterPoint, onReports: (rows) => {
@@ -825,7 +829,9 @@ export function mountEnterpriseShell(application) {
         'leeway-map-only',
       );
       driveMode.destroy();
+      offlineTrip.destroy();
       fuelAdvisor.destroy();
+      fuelLedger.destroy();
       hazardReports.destroy();
       peerComms.destroy();
       routing.destroy();

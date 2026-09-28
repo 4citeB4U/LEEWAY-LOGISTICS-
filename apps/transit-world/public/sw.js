@@ -1,15 +1,17 @@
 /* Cache only the offline landing screen. Never intercept live APIs, tiles,
    locations, model files, TTS or route responses with stale data. */
-const CACHE = 'leeway-logistics-offline-v2';
+const CACHE = 'leeway-logistics-offline-v3';
 const base = self.registration.scope;
 const offline = new URL('offline.html', base).href;
+const offlineAssets = [
+  'offline.html',
+  'icon-192.png',
+  'offlineTripCore.js',
+  'offlineTripPage.js',
+].map((path) => new URL(path, base).href);
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches
-      .open(CACHE)
-      .then((cache) =>
-        cache.addAll([offline, new URL('icon-192.png', base).href]),
-      ),
+    caches.open(CACHE).then((cache) => cache.addAll(offlineAssets)),
   );
 });
 self.addEventListener('activate', (event) => {
@@ -32,8 +34,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (
     event.request.method === 'GET' &&
-    (event.request.url === new URL('icon-192.png', base).href ||
-      event.request.url === offline)
+    offlineAssets.includes(event.request.url)
   ) {
     event.respondWith(
       caches
@@ -51,6 +52,8 @@ self.addEventListener('fetch', (event) => {
   // A cached online HTML shell without its bundles cannot start offline.
   // Bypass the HTTP cache; only the explicit offline document is the fallback.
   event.respondWith(
-    fetch(event.request, { cache: 'no-store' }).catch(() => caches.match(offline)),
+    fetch(event.request, { cache: 'no-store' }).catch(() =>
+      caches.match(offline),
+    ),
   );
 });

@@ -4,6 +4,14 @@ Open Directions without signing in or enabling Agent Lee. Search and select real
 
 Go opens Drive Mode with GPS speed, remaining distance, next maneuver and optional camera following. Poor, stale or off-route fixes pause guidance; automatic rerouting and background Android navigation are not qualified. Exit or route changes stop the watcher. The custom install button is removed; installation uses the browser's standard PWA menu. The header uses the exact supplied Gemini logo asset; see public/LOGO-PROVENANCE.md.
 
+## Android address sharing and offline trips
+
+After Chrome installs LeeWay Logistics, it registers as an Android share target. From a compatible map or address app, use **Share** and choose **LeeWay Logistics**. A supplied street address, or a Google Maps link containing an address query, is placed in LeeWay’s destination field. The driver still selects the matching address and requests the route. Android does not let a web PWA take over Google Maps' private `geo:`/navigation intent or replace Google Maps as the system default; a native Android wrapper with verified intent filters would be required for that exact chooser behavior.
+
+When a road route is calculated, one bounded local copy of its geometry, stop labels and turn directions is saved on that browser profile. If the app is reopened without a connection, the offline trip view shows the saved path, stop sequence and directions and can use fresh GPS only after the driver presses **Use GPS on saved trip**. It deliberately has no street basemap, traffic, CCTV, weather, price data, fresh hazard data or automatic rerouting. It does not store GPS history. The driver can delete the saved trip on the normal planner or offline trip page.
+
+New arbitrary offline road routing, street-address search and a live offline basemap require an installed regional map/geocoder/routing pack such as a maintained Valhalla graph plus offline tiles. The browser PWA currently does not ship a nationwide road pack; the locally verified Valhalla build covers Washington, DC only. A phone model does not contain road geometry or current road data by itself.
+
 ## Routing and vehicle settings
 
 Passenger preview uses public OSRM. Commercial profiles require a configured Valhalla endpoint; they do not silently fall back to passenger routing. Set the HTTPS endpoint in Directions or build with `VITE_LEEWAY_VALHALLA_URL`. HTTP is accepted only for loopback development. Route and matrix requests carry the same vehicle dimensions, weight, axle load/count, hazmat and toll preferences. Human-facing kg values become metric tonnes in Valhalla payloads.
@@ -33,6 +41,8 @@ Static hosting can fetch NOAA radar, satellite clouds/infrared and GOES lightnin
 Install the HTTPS app using Chrome's Install app/Add to Home screen menu. Maps and new routes require connectivity; the offline screen is not offline navigation. The service worker does not cache live route/weather responses as current data.
 
 Follow [Phone and voice setup](PHONE-PWA-ADAPTER.md) to pair LeeWay Device Bridge through the existing Leeway-live relay. Enter the pairing token in the app, not a chat. The bridge reports models owned by its runtime; a website cannot inventory arbitrary models in other Android apps. Compatible verified models are reused. Chatterbox is an explicit optional browser download of about 1.5 GB, with cache reuse, cancellation and unloading. Physical Android pairing, model inference and acoustic voice quality still require device verification.
+
+The Device Bridge application is the model authority. The currently inspected bridge contract exposes its configured runtime model and does not scan every Android app or private model file. A Gemma model can be used only after the bridge itself reports it as a compatible, verified runtime. Do not re-download or replace a verified phone model merely to connect Logistics.
 
 ## Validation and release status
 

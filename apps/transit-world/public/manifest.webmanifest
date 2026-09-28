@@ -8,6 +8,10 @@
   "display": "standalone",
   "background_color": "#07121b",
   "theme_color": "#07121b",
+  "share_target": {
+    "action": "./?sharedTitle={title}&sharedText={text}&sharedUrl={url}",
+    "method": "GET"
+  },
   "icons": [
     {
       "src": "icon-192.png",

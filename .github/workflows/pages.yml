@@ -57,6 +57,9 @@ jobs:
           ./src/leeway/logisticsKnowledge.test.mjs
           ./src/leeway/worldApiBridge.test.mjs
           ./src/leeway/routePlannerCore.test.mjs
+          ./src/leeway/incomingAddress.test.mjs
+          ./src/leeway/offlineTrip.test.mjs
+          ./src/leeway/fuelLedgerCore.test.mjs
           ./src/leeway/addressStore.test.mjs
           ./src/leeway/driveMode.test.mjs
           ./src/leeway/fuelAdvisor.test.mjs

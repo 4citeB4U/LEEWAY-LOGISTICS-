@@ -25,6 +25,7 @@ import {
   importAddresses,
   exportAddresses,
 } from './addressStore.js';
+import { readIncomingSharedAddress, clearIncomingSharedAddress } from './incomingAddress.js';
 
 /** A standalone planner; container controls whether it is visible. No business login required. */
 export function mountRoutePlanner({
@@ -851,6 +852,15 @@ export function mountRoutePlanner({
   }
   renderStops();
   renderAddressBook();
+  // Android's installed-PWA share target arrives as a URL. Keep the normal
+  // address search/selection flow intact; only prefill the destination.
+  const sharedAddress = readIncomingSharedAddress(globalThis.location?.search);
+  if (sharedAddress) {
+    stops[stops.length - 1] = { text: sharedAddress };
+    renderStops();
+    clearIncomingSharedAddress();
+    status('Shared address added as destination. Select the matching address, then get a road route.');
+  }
   close();
   return {
     root,
