@@ -220,7 +220,7 @@ function buildPanel(documentRef) {
     <section class="ltw-section">
       <div class="ltw-actions">
         <button type="button" data-action="driver-view">DRIVER VIEW</button>
-        <button type="button" data-action="route-view">ROUTE VIEW</button>
+        <button type="button" data-action="route-view">SHOW LOAD ROUTE (DEMO)</button>
         <button type="button" data-action="world-awareness">WORLD AWARENESS</button>
         <button type="button" data-action="refresh">REFRESH</button>
       </div>
@@ -241,7 +241,7 @@ export async function mountLeeWayTransitWorld(application) {
   let fleet;
   let routeEntity;
 
-  async function refresh() {
+  async function refresh({ showRoute = false } = {}) {
     const staticPagesMode = isStaticPagesMode();
     if (staticPagesMode) {
       cockpit = buildStaticCockpit();
@@ -254,12 +254,12 @@ export async function mountLeeWayTransitWorld(application) {
     }
     const safety = summarizeTruckRouteSafety(cockpit.truckProfile, []);
     const routeUrl = routeRequestUrl(cockpit.route);
-    const routePayload = staticPagesMode
+    const routePayload = !showRoute ? null : staticPagesMode
       ? await fetchStaticRoute(cockpit.route)
       : routeUrl
         ? await fetchJson(routeUrl)
         : null;
-    routeEntity = renderRoute(viewer, routePayload, cockpit);
+    if (showRoute) routeEntity = renderRoute(viewer, routePayload, cockpit);
 
     setText(root, 'mode', cockpit.mode);
     setText(root, 'vehicle', cockpit.vehicle?.fleetNumber || cockpit.driver?.vehicleFleetNumber);
@@ -319,7 +319,9 @@ export async function mountLeeWayTransitWorld(application) {
       setText(root, 'world-status', `Requested: ${results.join(', ') || 'no layers'}${isStaticPagesMode() ? ' · GitHub Pages demo mode' : ''}`);
       return;
     }
-    if (action === 'route-view' && routeEntity) {
+    if (action === 'route-view') {
+      if (!routeEntity) await refresh({ showRoute: true });
+      if (!routeEntity) return;
       await viewer.flyTo(routeEntity, { duration: 1.8 });
       return;
     }
@@ -340,7 +342,6 @@ export async function mountLeeWayTransitWorld(application) {
     }
   });
 
-  await dataManager.setEnabled('transit', true, { origin: 'tool' });
   await refresh();
   return {
     root,

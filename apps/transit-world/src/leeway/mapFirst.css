@@ -1,0 +1,44 @@
+/* Map controls stay usable without opening the enterprise workspace. */
+#leeway-world-shell .lws-top { height:72px; grid-template-columns:240px minmax(180px,1fr) auto; gap:14px; padding:8px 16px; }
+#leeway-world-shell .lws-brand>div { display:none; }
+.lws-logo { width:210px; height:62px; object-fit:contain; }
+#leeway-world-shell .lws-top-actions { gap:4px; }
+#leeway-world-shell .lws-chip { min-height:44px; padding:10px 12px; font-size:13px; }
+#leeway-world-shell [data-action="route"] { background:#2bdef0; color:#03151e; font-weight:750; }
+#leeway-world-shell .lws-avatar,#leeway-world-shell .lws-agent-status { display:none; }
+#leeway-world-shell .lws-rail { display:none; left:12px; top:84px; bottom:100px; width:94px; overflow:auto; }
+#leeway-world-shell.business-open .lws-rail { display:flex; }
+#leeway-world-shell .lws-nav { min-height:58px; flex-shrink:0; font-size:12px; }
+#leeway-world-shell .lws-location-badge { top:84px; left:16px; max-width:calc(100vw - 110px); }
+#leeway-world-shell.business-open .lws-location-badge { display:none; }
+#leeway-world-shell .lws-dock { max-width:calc(100vw - 28px); bottom:28px; border-radius:16px; padding:6px; overflow-x:auto; justify-content:flex-start; }
+#leeway-world-shell .lws-dock-btn { min-width:68px; min-height:52px; font-size:12px; }
+#leeway-world-shell [data-dock="transit"],#leeway-world-shell [data-dock="freight"],#leeway-world-shell [data-dock="rail"] { display:none; }
+#leeway-world-shell .lws-ai { flex-shrink:0; width:86px; height:56px; margin:0 4px; border-radius:12px; }
+#leeway-world-shell .lws-ai strong { font-size:12px; }
+#leeway-world-shell .lws-ai span { display:none; }
+#leeway-world-shell .lws-layer-menu { left:16px; top:126px; max-height:calc(100dvh - 235px); overflow:auto; width:310px; }
+#leeway-world-shell .lws-layer-row { min-height:44px; font-size:13px; }
+#leeway-world-shell .lws-live { display:none; }
+#leeway-world-shell .lw-route-planner { top:126px;left:16px;width:min(430px,calc(100vw - 60px));max-height:calc(100dvh - 234px); }
+#leeway-world-shell .lws-right-tabs { top:132px; gap:6px; }
+#leeway-world-shell .lws-right-tab { width:36px; min-height:64px; font-size:10px; }
+#leeway-world-shell .lws-toast { top:82px; max-width:calc(100vw - 24px); z-index:10050; font-size:14px; }
+#leeway-world-shell button:focus-visible, #leeway-world-shell input:focus-visible { outline:3px solid #ffe09a; outline-offset:2px; }
+body.leeway-enterprise-shell #leeway-agent-lee.leeway-open { left:16px; bottom:98px; width:min(460px,calc(100vw - 32px)); max-height:calc(100dvh - 186px); overflow:auto; }
+@media(max-width:1100px) { #leeway-world-shell .lws-top { grid-template-columns:190px minmax(140px,1fr) auto; } .lws-logo{width:180px} #leeway-world-shell .lws-top-actions [data-action="world"],#leeway-world-shell .lws-top-actions [data-action="map"]{display:none} }
+@media(max-width:700px) {
+  #leeway-world-shell .lw-route-planner {top:174px;left:10px;width:calc(100vw - 50px);max-height:calc(100dvh - 280px)}
+  #leeway-world-shell .lws-top { height:124px; grid-template-columns:130px 1fr; gap:4px 8px; padding:4px 10px; padding-top:env(safe-area-inset-top,4px); }
+  .lws-logo{width:130px;height:44px} #leeway-world-shell .lws-search{grid-row:2;grid-column:1/-1}
+  #leeway-world-shell .lws-search input{height:44px;font-size:16px;padding-left:36px;padding-right:10px} #leeway-world-shell .lws-search kbd{display:none}
+  #leeway-world-shell .lws-top-actions{grid-column:2;grid-row:1;gap:2px} #leeway-world-shell .lws-top-actions .lws-chip{padding:8px;font-size:12px}
+  #leeway-world-shell .lws-location-badge{top:132px;left:10px;max-width:calc(100vw - 55px)} #leeway-world-shell .lws-location-badge span{display:none}
+  #leeway-world-shell .lws-right-tabs{top:178px} #leeway-world-shell .lws-right-tab{min-height:54px;width:32px}
+  #leeway-world-shell .lws-dock { width:calc(100vw - 16px); max-width:none; bottom:calc(24px + env(safe-area-inset-bottom,0px)); border-radius:14px; }
+  #leeway-world-shell .lws-dock-btn {min-width:60px} #leeway-world-shell .lws-rail{top:132px;bottom:100px}
+  #leeway-world-shell .lws-layer-menu {left:10px;top:170px;width:calc(100vw - 52px);max-height:calc(100dvh - 270px)}
+  body.leeway-enterprise-shell #leeway-transit-world,body.leeway-enterprise-shell #right-context-rail, #leeway-world-shell .lws-context-inspector {top:170px!important;right:40px!important;width:calc(100vw - 50px)!important;max-height:calc(100dvh - 270px)!important;overflow:auto}
+  body.leeway-enterprise-shell #leeway-agent-lee.leeway-open{left:10px;bottom:102px;width:calc(100vw - 20px);max-height:calc(100dvh - 238px)}
+  #leeway-world-shell .lws-toast{top:132px;width:max-content;max-width:calc(100vw - 20px)}
+}

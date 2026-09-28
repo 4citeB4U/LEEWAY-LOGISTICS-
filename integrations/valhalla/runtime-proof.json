@@ -1,0 +1,91 @@
+{
+  "observedAt": "2026-09-28T07:09:57.976Z",
+  "endpoint": "http://127.0.0.1:8002",
+  "coverage": "District of Columbia regional extract only",
+  "status": {
+    "http": 200,
+    "cors": "*",
+    "body": {
+      "version": "3.9.0-f56b53a1c",
+      "tileset_last_modified": 1790579243,
+      "available_actions": [
+        "route",
+        "locate",
+        "sources_to_targets",
+        "optimized_route",
+        "isochrone",
+        "trace_route",
+        "trace_attributes",
+        "height",
+        "transit_available",
+        "expansion",
+        "centroid",
+        "status",
+        "tile"
+      ]
+    }
+  },
+  "truckOptionsSent": {
+    "height": 4.1,
+    "width": 2.6,
+    "length": 21,
+    "weight": 36.28,
+    "axle_load": 9,
+    "axle_count": 5,
+    "hazmat": true,
+    "hgv_no_access_penalty": 43200,
+    "ignore_restrictions": false
+  },
+  "baseline": {
+    "http": 200,
+    "cors": "*",
+    "code": "Ok",
+    "distanceM": 7772.034,
+    "durationS": 598.073,
+    "geometryPoints": 285,
+    "warnings": []
+  },
+  "hardExclusions": {
+    "http": 400,
+    "cors": "*",
+    "code": "NoRoute",
+    "message": "Impossible route between points",
+    "warnings": []
+  },
+  "exclusionChangedPathOrBlocked": true,
+  "outsideCoverage": {
+    "http": 400,
+    "cors": "*",
+    "code": "NoSegment",
+    "message": "One of the supplied input coordinates could not snap to street segment.",
+    "warnings": []
+  },
+  "boundary": "Engine acceptance and regional behavior proof; not a certification of road restrictions, permits, live closures, or truck safety.",
+  "deployment": {
+    "image": "ghcr.io/valhalla/valhalla-scripted@sha256:43693ca35a2c38d15adc25149d8bb34ea68bd8250904c7efa4ce6e5c2dc5ae24",
+    "imageId": "sha256:43693ca35a2c38d15adc25149d8bb34ea68bd8250904c7efa4ce6e5c2dc5ae24",
+    "architecture": "amd64",
+    "os": "linux",
+    "portBindings": {
+      "8002/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "8002"
+        }
+      ]
+    },
+    "memoryLimitBytes": 2147483648,
+    "nanoCpus": 2000000000,
+    "platformTested": "Windows host / Docker Desktop Linux amd64",
+    "hardExclusionsEnabled": true,
+    "timezoneDatabaseBuilt": false,
+    "liveTrafficConnected": false
+  },
+  "datasetProof": "./dataset-proof.json",
+  "transport": {
+    "body": "JSON",
+    "contentType": "text/plain",
+    "browserPreflightOptionsSupported": false,
+    "browserConnectionVerified": false
+  }
+}

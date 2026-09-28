@@ -1,7 +1,10 @@
 import * as Cesium from 'cesium';
 import { mountEnterpriseWorkspace } from './enterpriseWorkspace.js';
 import { readEnterpriseState } from './enterpriseStore.js';
-import { summarizeTruckRouteSafety } from './truckRoutePolicy.js';
+import { mountRoutePlanner } from './routePlanner.js';
+import { createRouteClient } from './routePlannerCore.js';
+import './mapFirst.css';
+import { mountRoadsidePlaces } from './roadsidePlaces.js';
 import { mountNationalCameraCatalog } from './nationalCameraCatalog.js';
 
 function ensureStyles(documentRef) {
@@ -181,19 +184,19 @@ export function mountEnterpriseShell(application) {
   shell.id = 'leeway-world-shell';
   shell.innerHTML = `
     <header class="lws-top">
-      <div class="lws-brand"><div class="lws-mark">LW</div><div><strong>LEEWAY LOGISTICS</strong><span>WORLD-FIRST LOGISTICS OPERATING SYSTEM</span></div></div>
+      <div class="lws-brand"><img class="lws-logo" src="${import.meta.env.BASE_URL}logo.svg" alt="LeeWay Logistics" /><div><strong>LEEWAY LOGISTICS</strong><span>YOUR ROAD. YOUR ROUTE.</span></div></div>
       <div class="lws-search"><input aria-label="Global search" placeholder="Search locations, loads, drivers, equipment, facilities..." /><kbd>⌘ K</kbd></div>
       <div class="lws-top-actions">
-        <button class="lws-chip" data-action="map">◎ Transit World⌄</button>
+        <button class="lws-chip" data-action="map">Map</button>
         <button class="lws-chip" data-action="world">◉ World</button>
-        <button class="lws-chip" data-action="route">↗ Plan Route</button>
+        <button class="lws-chip" data-action="route">Directions</button>
         <button class="lws-chip hide-sm" data-action="layers">▱ Layers⌄</button>
         <button class="lws-chip hide-sm" data-action="workspace">CRM</button>
-        <button class="lws-chip hide-sm" data-action="map-only">MAP ONLY</button>
-        <div class="lws-avatar">AL</div><div class="lws-agent-status">Agent Lee<br>LOCAL AI</div>
+        <button class="lws-chip" data-action="roadside">Road stops</button><button class="lws-chip" data-action="workspace-menu">Business</button><button class="lws-chip hide-sm" data-action="map-only">Hide controls</button>
+        <div class="lws-avatar">AL</div><div class="lws-agent-status">Agent Lee<br>Open to connect</div>
       </div>
     </header>
-    <nav class="lws-rail">
+    <nav class="lws-rail" aria-label="Business workspace">
       ${[['map','Map'],['loads','Loads'],['drivers','Drivers'],['fleet','Fleet'],['transit','Transit'],['rail','Rail'],['facilities','Facilities'],['crm','CRM'],['intel','Intelligence'],['ai','AI']].map(([id,label],i)=>`<button class="lws-nav ${i===0?'active':''}" data-nav="${id}"><span class="i">${icon(id)}</span><span>${label}</span></button>`).join('')}
       <div class="lws-spacer"></div>
       <button class="lws-nav" data-action="collapse"><span class="i">«</span><span>Collapse</span></button>
@@ -202,20 +205,7 @@ export function mountEnterpriseShell(application) {
       <div class="lws-layer-head"><strong>WORLD LAYERS</strong><button class="lws-chip" data-action="close-layers">×</button></div>
       <div data-layer-list></div>
     </aside>
-    <section class="lws-route-planner" data-route-planner>
-      <div class="lws-route-head"><strong>PLAN A ROUTE</strong><button class="lws-chip" data-action="close-route">×</button></div>
-      <div class="lws-route-grid">
-        <label>FROM<input data-route-from placeholder="Starting address, city, terminal..." /></label>
-        <label>TO<input data-route-to placeholder="Destination address, city, terminal..." /></label>
-        <label>TRUCK HEIGHT (FT)<input data-truck-height type="number" min="0" step="0.1" value="13.5" /></label>
-        <label>GROSS WEIGHT (LB)<input data-truck-weight type="number" min="0" step="1000" value="80000" /></label>
-        <div class="lws-truck-status" data-truck-status data-state="unverified">TRUCK GATE · UNVERIFIED — base road route is not automatically truck-safe.</div>
-      </div>
-      <div class="lws-route-actions">
-        <button class="lws-chip" data-action="swap-route">⇄ Swap</button>
-        <button class="lws-chip lws-primary" data-action="generate-route">Generate Route</button>
-      </div>
-    </section>
+    <div data-route-planner></div>
     <button class="lws-live" data-action="connect-world" type="button"><b data-world-led>● CHECK</b><span data-world-status>Connect live world data</span></button>
     <nav class="lws-dock">
       ${[['layers','Layers'],['traffic','Traffic'],['weather','Weather']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
@@ -242,11 +232,6 @@ export function mountEnterpriseShell(application) {
   const layerMenu = shell.querySelector('[data-layer-menu]');
   const layerList = shell.querySelector('[data-layer-list]');
   const routePlanner = shell.querySelector('[data-route-planner]');
-  const routeFrom = shell.querySelector('[data-route-from]');
-  const routeTo = shell.querySelector('[data-route-to]');
-  const truckHeight = shell.querySelector('[data-truck-height]');
-  const truckWeight = shell.querySelector('[data-truck-weight]');
-  const truckStatus = shell.querySelector('[data-truck-status]');
   const locationBadge = shell.querySelector('[data-location-badge]');
   const worldLed = shell.querySelector('[data-world-led]');
   const worldStatus = shell.querySelector('[data-world-status]');
@@ -414,158 +399,13 @@ export function mountEnterpriseShell(application) {
     return false;
   }
 
+  const routing = mountRoutePlanner({ viewer, container: routePlanner });
+  const roadside = mountRoadsidePlaces({ viewer, getCenter: viewCenterPoint, onAdd: (point) => { routing.addMapStop(point); routing.open(); }, onFuel:(price,source)=>{routing.setFuelPrice(price,source);routing.open();} });
   function toggleRoutePlanner(open = null) {
-    const next = open == null ? !routePlanner.classList.contains('open') : open;
-    routePlanner.classList.toggle('open', next);
-    if (next) {
-      toggleLayerMenu(false);
-      routeFrom.focus();
-    }
-  }
-
-  async function geocodeAddress(query) {
-    const q = String(query || '').trim();
-    if (!q) return null;
-    const bridge = globalThis.__leewayWorldApiBridge;
-    const url = `/api/geocode?q=${encodeURIComponent(q)}`;
-    let response;
-    try {
-      response = bridge?.installed && typeof bridge.fetch === 'function'
-        ? await bridge.fetch(url, { headers: { Accept: 'application/json' } })
-        : await fetch(url, { headers: { Accept: 'application/json' } });
-    } catch {
-      return null;
-    }
-    if (!response?.ok) return null;
-    const payload = await response.json();
-    const location = payload?.results?.[0]?.geometry?.location;
-    const lat = Number(location?.lat);
-    const lon = Number(location?.lng);
-    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon } : null;
-  }
-
-  function truckProfileFromInputs() {
-    const heightFt = Number(truckHeight?.value);
-    const grossLb = Number(truckWeight?.value);
-    return {
-      heightM: Number.isFinite(heightFt) && heightFt > 0 ? heightFt * 0.3048 : null,
-      grossWeightKg: Number.isFinite(grossLb) && grossLb > 0 ? grossLb * 0.45359237 : null,
-    };
-  }
-
-  function parseOsmLengthMeters(value) {
-    const text = String(value || '').trim().toLowerCase();
-    if (!text) return null;
-    const feetInches = /^(\d+)\s*'\s*(\d+)?/.exec(text);
-    if (feetInches) {
-      const feet = Number(feetInches[1]);
-      const inches = Number(feetInches[2] || 0);
-      return feet * 0.3048 + inches * 0.0254;
-    }
-    const numeric = Number.parseFloat(text);
-    if (!Number.isFinite(numeric)) return null;
-    if (/\bft\b|feet/.test(text)) return numeric * 0.3048;
-    if (/\bin\b|inch/.test(text)) return numeric * 0.0254;
-    return numeric;
-  }
-
-  function parseOsmWeightKg(value) {
-    const text = String(value || '').trim().toLowerCase();
-    const numeric = Number.parseFloat(text);
-    if (!Number.isFinite(numeric)) return null;
-    if (/lb|lbs|pound/.test(text)) return numeric * 0.45359237;
-    if (/kg/.test(text)) return numeric;
-    return numeric * 1000;
-  }
-
-  function truckRestrictionFromTags(tags = {}) {
-    return {
-      maxheightM: parseOsmLengthMeters(tags.maxheight),
-      maxweightKg: parseOsmWeightKg(tags.maxweight),
-      maxwidthM: parseOsmLengthMeters(tags.maxwidth),
-      maxlengthM: parseOsmLengthMeters(tags.maxlength),
-      hgv: tags.hgv,
-      access: tags.access,
-      name: tags.name || tags.ref || tags.highway || 'road restriction',
-    };
-  }
-
-  function sampledRoutePoints(geometry, maxPoints = 40) {
-    const rows = Array.isArray(geometry) ? geometry : [];
-    if (!rows.length) return [];
-    const step = Math.max(1, Math.ceil(rows.length / maxPoints));
-    const sampled = rows.filter((_, index) => index % step === 0);
-    const last = rows.at(-1);
-    if (last && sampled.at(-1) !== last) sampled.push(last);
-    return sampled;
-  }
-
-  async function inspectTruckRestrictions(a, b) {
-    truckStatus.dataset.state = 'unverified';
-    truckStatus.textContent = 'TRUCK GATE · CHECKING OSM HEIGHT / WEIGHT / HGV RESTRICTIONS…';
-    try {
-      const coords =
-        `${a.lon.toFixed(6)},${a.lat.toFixed(6)};${b.lon.toFixed(6)},${b.lat.toFixed(6)}`;
-      const routeResponse = await fetch(
-        `/api/route?profile=car&coords=${encodeURIComponent(coords)}&steps=0`,
-        { headers: { Accept: 'application/json' } },
-      );
-      if (!routeResponse.ok) throw new Error('Base route unavailable');
-      const route = await routeResponse.json();
-      const points = sampledRoutePoints(route?.geometry, 40);
-      if (!points.length) throw new Error('Route geometry unavailable');
-
-      const clauses = points
-        .map(([lon, lat]) => `way(around:15,${lat},${lon})["highway"];`)
-        .join('');
-      const query = `[out:json][timeout:15];(${clauses});out tags center;`;
-      const restrictionResponse = await fetch('/api/overpass', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-          Accept: 'application/json',
-        },
-        body: `data=${encodeURIComponent(query)}`,
-      });
-      if (!restrictionResponse.ok)
-        throw new Error('Truck restriction evidence unavailable');
-      const payload = await restrictionResponse.json();
-      const restrictions = (payload?.elements || [])
-        .map((element) => truckRestrictionFromTags(element.tags || {}))
-        .filter((row) =>
-          [
-            row.maxheightM,
-            row.maxweightKg,
-            row.maxwidthM,
-            row.maxlengthM,
-            row.hgv,
-            row.access,
-          ].some((value) => value !== null && value !== undefined && value !== ''),
-        );
-      const summary = summarizeTruckRouteSafety(
-        truckProfileFromInputs(),
-        restrictions,
-      );
-      if (summary.status === 'BLOCKED') {
-        truckStatus.dataset.state = 'blocked';
-        truckStatus.textContent =
-          `TRUCK GATE · BLOCKED — known route restriction conflict: ${summary.reasons.join(', ')}`;
-      } else if (summary.status === 'NO_CONFLICT_FOUND') {
-        truckStatus.dataset.state = 'checked';
-        truckStatus.textContent =
-          `TRUCK GATE · PARTIAL CHECK — ${summary.evidenceCount} mapped restriction records checked; route is still not certified truck-safe.`;
-      } else {
-        truckStatus.dataset.state = 'unverified';
-        truckStatus.textContent =
-          'TRUCK GATE · UNVERIFIED — no mapped truck-restriction evidence found along the sampled route. Do not treat this as truck clearance.';
-      }
-      return summary;
-    } catch (error) {
-      truckStatus.dataset.state = 'unverified';
-      truckStatus.textContent =
-        'TRUCK GATE · UNVERIFIED — restriction evidence could not be completed. Base route remains a visual road route only.';
-      return null;
-    }
+    if (open === false) routing.close();
+    else if (open === true) routing.open();
+    else routing.toggle();
+    toggleLayerMenu(false);
   }
 
   function viewCenterPoint() {
@@ -606,7 +446,7 @@ export function mountEnterpriseShell(application) {
         `/api/regional-brief?latitude=${encodeURIComponent(point.lat)}&longitude=${encodeURIComponent(point.lon)}`,
         { headers: { Accept: 'application/json' } },
       );
-      if (!response.ok) return;
+      if (!response.ok) throw new Error('Regional context unavailable');
       const payload = await response.json();
       if (generation !== locationRequestGeneration) return;
       const place = payload?.place;
@@ -647,32 +487,6 @@ export function mountEnterpriseShell(application) {
           : '2D road map view',
     );
     void updateLocationBadge();
-    return true;
-  }
-
-  async function generateAddressRoute() {
-    const from = routeFrom.value.trim();
-    const to = routeTo.value.trim();
-    if (!from || !to) {
-      say('Enter both a starting point and destination');
-      return false;
-    }
-    const directions = dataManager?.layers?.get('directions')?.module;
-    if (!directions?.placeEndpoint) {
-      say('Directions layer is not available in this build');
-      return false;
-    }
-    say('Resolving route endpoints…');
-    const [a, b] = await Promise.all([geocodeAddress(from), geocodeAddress(to)]);
-    if (!a || !b) {
-      say(!a ? `Could not resolve ${from}` : `Could not resolve ${to}`);
-      return false;
-    }
-    await dataManager.setEnabled('directions', true, { origin: 'user' });
-    directions.placeEndpoint('a', a);
-    directions.placeEndpoint('b', b);
-    say(`Routing ${from} → ${to} · checking truck restrictions`);
-    void inspectTruckRestrictions(a, b);
     return true;
   }
 
@@ -772,17 +586,21 @@ export function mountEnterpriseShell(application) {
     viewer?.camera?.moveEnd?.addEventListener?.(() => void updateLocationBadge()) || null;
 
   async function locate(query) {
-    if (!query || !viewer || !operations?.searchAndFlyTo) return false;
+    if (!query || !viewer) return false;
     try {
-      const result = await operations.searchAndFlyTo(viewer, query, { waitForArrival: true });
-      if (result?.ok === false) throw new Error(result.error || 'Location unavailable');
-      say(`Flying to ${query}`);
+      const matches = await locationSearch.search(query);
+      const point = matches[0];
+      if (!point) throw new Error('No matching location');
+      await viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(point.lon,point.lat,6000),duration:1.2});
+      say(`Showing ${point.label}${matches.length>1?' · use Directions to select an exact address':''}`);
       return true;
     } catch (error) {
       say(`Could not locate ${query}`);
       return false;
     }
   }
+
+  const locationSearch = createRouteClient();
 
   const workspace = mountEnterpriseWorkspace({
     onLocate: ({ query, name }) => locate(query || name),
@@ -802,6 +620,20 @@ export function mountEnterpriseShell(application) {
     const next = open == null ? !panel.classList.contains('leeway-open') : open;
     panel.classList.toggle('leeway-open', next);
     if (next) panel.querySelector('.lal-input')?.focus();
+  }
+
+  function openWeather() {
+    nationalCatalog.close();
+    setRightPanel('weather');
+    say('Loading weather observations…');
+    // One slow wind feed must never prevent radar, clouds or controls from opening.
+    for (const id of ['weather-radar','weather-satellite','weather-lightning']) {
+      if (!dataManager?.layers?.has(id)) continue;
+      void dataManager.setEnabled(id, true, { origin:'user' }).catch((error) => {
+        console.warn('Weather layer unavailable', id, error);
+        say('Some weather data is unavailable; inspect layer status');
+      });
+    }
   }
 
   async function toggleLayer(id) {
@@ -833,11 +665,6 @@ export function mountEnterpriseShell(application) {
   shell.querySelector('.lws-search input').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') { void handleSearch(event.currentTarget.value); event.currentTarget.select(); }
   });
-  for (const field of [routeFrom, routeTo]) {
-    field.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') void generateAddressRoute();
-    });
-  }
 
   document.addEventListener('keydown', (event) => {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
@@ -871,7 +698,9 @@ export function mountEnterpriseShell(application) {
 
     if (action === 'ai') { toggleAgent(); return; }
     if (action === 'connect-world') { await probeWorldProvider({ explain: true }); return; }
-    if (action === 'map') { workspace.close(); setNav('map'); return; }
+    if (action === 'workspace-menu') { shell.classList.toggle('business-open'); return; }
+    if (action === 'roadside') { roadside.toggle(); return; }
+    if (action === 'map') { workspace.close(); shell.classList.remove('business-open'); setNav('map'); return; }
     if (action === 'world') { showWorld(); setNav('map'); return; }
     if (action === 'route') { toggleRoutePlanner(); return; }
     if (action === 'view-map') { await switchMapMode('map'); return; }
@@ -880,8 +709,6 @@ export function mountEnterpriseShell(application) {
     if (action === 'map-only') { document.body.classList.add('leeway-map-only'); return; }
     if (action === 'restore-ui') { document.body.classList.remove('leeway-map-only'); return; }
     if (action === 'close-route') { toggleRoutePlanner(false); return; }
-    if (action === 'swap-route') { const hold = routeFrom.value; routeFrom.value = routeTo.value; routeTo.value = hold; return; }
-    if (action === 'generate-route') { await generateAddressRoute(); return; }
     if (action === 'right-ops') { nationalCatalog.close(); setRightPanel('ops'); return; }
     if (action === 'right-cctv') {
       nationalCatalog.close();
@@ -904,20 +731,7 @@ export function mountEnterpriseShell(application) {
       syncRightTabs();
       return;
     }
-    if (action === 'right-weather') {
-      nationalCatalog.close();
-      const enabled = [];
-      for (const id of ['wind','weather-radar','weather-satellite','weather-lightning','weather-cyclones']) {
-        if (!dataManager?.layers?.has(id)) continue;
-        try {
-          await dataManager.setEnabled(id, true, { origin: 'user' });
-          enabled.push(id);
-        } catch {}
-      }
-      setRightPanel('weather');
-      say(`Weather map opened · ${enabled.length} layers active`);
-      return;
-    }
+    if (action === 'right-weather') { openWeather(); return; }
     if (action === 'collapse-inspector') {
       const minimized = contextInspector.classList.toggle('minimized');
       const button = shell.querySelector('[data-action="collapse-inspector"]');
@@ -931,19 +745,7 @@ export function mountEnterpriseShell(application) {
 
     if (dock === 'layers') { toggleLayerMenu(); return; }
     if (dock === 'traffic') { await toggleLayer('traffic'); return; }
-    if (dock === 'weather') {
-      const enabled = [];
-      for (const id of ['wind','weather-radar','weather-satellite','weather-lightning','weather-cyclones']) {
-        if (!dataManager?.layers?.has(id)) continue;
-        try {
-          await dataManager.setEnabled(id, true, { origin:'tool' });
-          enabled.push(id);
-        } catch {}
-      }
-      setRightPanel('weather');
-      say(`Weather map opened · ${enabled.length} layers active`);
-      return;
-    }
+    if (dock === 'weather') { openWeather(); return; }
     if (dock === 'transit') { await toggleLayer('transit'); return; }
     if (dock === 'freight') { workspace.open('overview'); say('Freight command workspace opened'); return; }
     if (dock === 'rail') { say('Rail provider binding is not yet verified'); return; }
@@ -960,11 +762,12 @@ export function mountEnterpriseShell(application) {
     }
   });
 
-  /* Preserve the application's real 3D startup when available. Geographic
+  /* Preserve the application's 3D option. Geographic
      identity is independent through the location badge, while Map and
      Satellite are explicit operator-selectable labeled views. */
   queueMicrotask(() => {
     syncRightTabs();
+    void switchMapMode('map');
     recenterDistantGlobe();
     void updateLocationBadge();
   });
@@ -972,6 +775,7 @@ export function mountEnterpriseShell(application) {
   return {
     root: shell,
     workspace,
+    routePlanner: routing,
     locate,
     openWorkspace: (tab='overview') => workspace.open(tab),
     openAgent: () => toggleAgent(true),
@@ -1000,6 +804,8 @@ export function mountEnterpriseShell(application) {
         'leeway-right-weather-open',
         'leeway-map-only',
       );
+      routing.destroy();
+      roadside.destroy();
       nationalCatalog.destroy();
       workspace.destroy();
       shell.remove();

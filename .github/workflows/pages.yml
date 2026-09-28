@@ -26,7 +26,8 @@ jobs:
     env:
       PUPPETEER_SKIP_DOWNLOAD: 'true'
       VITE_LEEWAY_STATIC_PAGES: '1'
-      VITE_LEEWAY_WORLD_API_URL: 'http://127.0.0.1:4176'
+      VITE_LEEWAY_WORLD_API_URL: ${{ vars.LEEWAY_WORLD_API_URL }}
+      VITE_LEEWAY_VALHALLA_URL: ${{ vars.LEEWAY_VALHALLA_URL }}
       VITE_BASE_PATH: '/LEEWAY-LOGISTICS-/'
     steps:
       - name: Checkout
@@ -55,6 +56,15 @@ jobs:
           ./src/leeway/onboardingRequirements.test.mjs
           ./src/leeway/logisticsKnowledge.test.mjs
           ./src/leeway/worldApiBridge.test.mjs
+          ./src/leeway/routePlannerCore.test.mjs
+          ./src/leeway/valhallaRouting.test.mjs
+          ./src/leeway/roadsidePlaces.test.mjs
+          ./src/leeway/stationPrices.test.mjs
+          ./src/leeway/fuelBenchmark.test.mjs
+          ./src/leeway/agentRuntime.test.mjs
+          ./src/leeway/browserVoiceAdapter.test.mjs
+          ./src/layers/weather/publicWms.test.mjs
+          ./src/layers/perimeters/source.test.mjs
           ./src/layers/pipelines/source.test.mjs
           ./server/standalone/provider-cors.test.mjs
           ./server/providers/cctv/illinoisGateway.test.mjs
@@ -65,6 +75,10 @@ jobs:
           ./src/sources/leewayTransit.test.mjs
           ./server/providers/leeway-transit.test.mjs
           ./src/data/transitFeeds.test.mjs
+
+      - name: Refresh dated EIA regional diesel benchmark
+        continue-on-error: true
+        run: node scripts/refresh-fuel-benchmark.mjs
 
       - name: Build Pages site
         run: npm run build

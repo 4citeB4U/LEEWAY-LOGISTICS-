@@ -1,17 +1,8 @@
-const DEFAULT_LOCAL_WORLD_API = 'http://127.0.0.1:4176';
-
 function configuredBase() {
   const explicit = String(
     import.meta.env?.VITE_LEEWAY_WORLD_API_URL || '',
   ).trim();
   if (explicit) return explicit.replace(/\/$/, '');
-
-  const hostname = String(
-    globalThis.location?.hostname || globalThis.window?.location?.hostname || '',
-  );
-  if (hostname.endsWith('github.io')) {
-    return DEFAULT_LOCAL_WORLD_API;
-  }
 
   return '';
 }
@@ -74,7 +65,8 @@ export function installWorldApiBridge({
       ...init,
       // Chromium Local Network Access: mark 127.0.0.1 as an intentional
       // loopback destination so the browser can request the proper permission.
-      targetAddressSpace: 'loopback',
+      ...(new URL(base).hostname === '127.0.0.1' || new URL(base).hostname === 'localhost'
+        ? { targetAddressSpace: 'loopback' } : {}),
     };
   }
 
@@ -107,10 +99,9 @@ export function installWorldApiBridge({
     originalFetch,
     async probe() {
       try {
-        const response = await originalFetch(`${base}/api/cctv/sources`, {
+        const response = await originalFetch(`${base}/api/cctv/sources`, localRequestInit({
           cache: 'no-store',
-          targetAddressSpace: 'loopback',
-        });
+        }));
         return {
           ok: response.ok,
           status: response.status,

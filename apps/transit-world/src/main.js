@@ -4,8 +4,10 @@ import { mountLeeWayTransitWorld } from './leeway/transitWorldCockpit.js';
 import { mountAgentLeeGemma } from './leeway/agentLeeGemma.js';
 import { mountEnterpriseShell } from './leeway/enterpriseShell.js';
 import { installWorldApiBridge } from './leeway/worldApiBridge.js';
+import { mountInstallControls } from './leeway/pwa.js';
 
 installWorldApiBridge();
+mountInstallControls();
 
 const application = createStandaloneApplication({
   googleApiKey: import.meta.env.GOOGLE_MAPS_API_KEY,
@@ -16,9 +18,12 @@ const application = createStandaloneApplication({
 application
   .start()
   .then(async () => {
-    await mountLeeWayTransitWorld(application);
     const enterpriseShell = mountEnterpriseShell(application);
     mountAgentLeeGemma(application, enterpriseShell);
+    void mountLeeWayTransitWorld(application).catch((error) => {
+      console.error('Operations panel unavailable', error);
+      enterpriseShell.notify('Operations data unavailable; map remains usable');
+    });
   })
   .catch((error) => {
     console.error('LeeWay Logistics Transit World initialization failed:', error);
