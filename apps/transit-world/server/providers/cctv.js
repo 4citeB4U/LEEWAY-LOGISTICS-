@@ -19,6 +19,11 @@ import {
 import { sanitizeCctvRangeHeader } from './cctv/range.js';
 import { createHlsPuller } from './cctv/stream.js';
 import { googleServerApiKey } from './places/google-key.js';
+import {
+  nationalTrafficCameraJurisdictions,
+  nationalTrafficCameraSummary,
+  nationalTrafficCameraJurisdiction,
+} from './cctv/nationalRegistry.js';
 export { CCTV_FRAME_FETCH_TIMEOUT_MS, fetchCctvImageFromUpstream };
 /**
  * Vite plugin: CCTV camera proxy with source registry, frame/media serving,
@@ -140,6 +145,22 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
           sources.map((source) => [source.id, source]),
         );
         const url = new URL(req.url || '/', 'http://localhost');
+
+        if (url.pathname === '/jurisdictions') {
+          const code = String(url.searchParams.get('code') || '').trim();
+          const body = code
+            ? { jurisdiction: nationalTrafficCameraJurisdiction(code) }
+            : {
+                summary: nationalTrafficCameraSummary(),
+                jurisdictions: nationalTrafficCameraJurisdictions(),
+              };
+          res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'public, max-age=300',
+          });
+          res.end(JSON.stringify(body));
+          return;
+        }
 
         if (url.pathname === '/sources') {
           const body = {
