@@ -2,15 +2,59 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   createPlannerRequests,
+  currentLocationPoint,
   optimizeStopOrder,
   routeCapability,
   DEFAULT_VEHICLE,
+  VEHICLE_MPG_ASSUMPTIONS,
   fuelEstimate,
   formatFuelPriceProvenance,
   moveStop,
   parseCoordinate,
   createRouteClient,
 } from './routePlannerCore.js';
+
+test('My Location refuses stale, invalid and unmeasured device fixes', () => {
+  const now = 200000,
+    position = {
+      timestamp: now,
+      coords: { latitude: 38.9, longitude: -77.03, accuracy: 15 },
+    };
+  assert.equal(currentLocationPoint(position, now).lat, 38.9);
+  assert.throws(
+    () => currentLocationPoint({ ...position, timestamp: now - 30001 }, now),
+    /fresh valid/,
+  );
+  assert.throws(
+    () =>
+      currentLocationPoint(
+        { ...position, coords: { ...position.coords, latitude: 91 } },
+        now,
+      ),
+    /fresh valid/,
+  );
+  assert.throws(
+    () =>
+      currentLocationPoint(
+        { ...position, coords: { ...position.coords, accuracy: NaN } },
+        now,
+      ),
+    /accuracy/,
+  );
+});
+
+test('vehicle MPG assumptions distinguish passenger and commercial fuel estimates', () => {
+  assert.deepEqual(VEHICLE_MPG_ASSUMPTIONS, {
+    car: 25,
+    van: 18,
+    truck: 8,
+    semi: 6.5,
+  });
+  assert.ok(
+    fuelEstimate(160934.4, VEHICLE_MPG_ASSUMPTIONS.semi, 4).cost >
+      fuelEstimate(160934.4, VEHICLE_MPG_ASSUMPTIONS.car, 4).cost,
+  );
+});
 
 test('fuel provenance distinguishes regional benchmarks from unverified station reports', () => {
   assert.match(
@@ -232,7 +276,7 @@ test('route transport preserves street geometry and refuses invalid response', a
     /No usable/,
   );
 });
-test('cancel signal reaches provider; coordinate lookup needs no network', async () => {
+test('cancel signal reaches provider; coordinate text is rejected without a network request', async () => {
   let calls = 0;
   const client = createRouteClient({
     fetchImpl: async (_, init) => {
@@ -241,7 +285,7 @@ test('cancel signal reaches provider; coordinate lookup needs no network', async
       return { ok: true, json: async () => ({}) };
     },
   });
-  assert.equal((await client.search('41,-87'))[0].lat, 41);
+  await assert.rejects(() => client.search('41,-87'), /not coordinates/);
   assert.equal(calls, 0);
   const controller = new AbortController();
   controller.abort();
@@ -256,4 +300,24 @@ test('cancel signal reaches provider; coordinate lookup needs no network', async
       ),
     { name: 'AbortError' },
   );
+});
+
+test('internal GPS reverse lookup keeps the fix and retrieves a readable street address', async () => {
+  let requested;
+  const client = createRouteClient({
+    fetchImpl: async (url) => {
+      requested = url;
+      return {
+        ok: true,
+        json: async () => ({
+          display_name: '1600 Pennsylvania Avenue NW, Washington, DC',
+        }),
+      };
+    },
+  });
+  const point = await client.reverse({ lat: 38.8977, lon: -77.0365 });
+  assert.match(requested, /\/reverse\?/);
+  assert.equal(point.label, '1600 Pennsylvania Avenue NW, Washington, DC');
+  assert.equal(point.lat, 38.8977);
+  assert.equal(point.lon, -77.0365);
 });

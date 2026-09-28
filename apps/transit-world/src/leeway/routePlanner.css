@@ -47,8 +47,33 @@
   margin: 9px 8px 9px 0;
 }
 .lrp-stop {
+  position: relative;
   padding: 10px 0;
   border-bottom: 1px solid #354957;
+}
+.lrp-stop-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #43d9ff;
+  color: #061724;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+.lw-route-planner [data-map-confirm] {
+  padding: 12px;
+  border: 2px solid #43d9ff;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.lw-route-planner [data-map-confirm][hidden] {
+  display: none;
+}
+.lw-route-planner.is-picking {
+  max-height: 190px;
 }
 .lrp-actions {
   display: flex;

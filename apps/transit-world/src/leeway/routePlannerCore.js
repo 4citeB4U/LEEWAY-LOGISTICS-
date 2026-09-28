@@ -1,4 +1,5 @@
 import { normalizeOsrmSteps } from '../data/routeSteps.js';
+import { addressText } from './addressStore.js';
 import {
   normalizeValhallaUrl,
   valhallaCosting,
@@ -9,6 +10,12 @@ import {
 } from './valhallaRouting.js';
 
 export const MAX_STOPS = 12; // origin, ten deliveries, destination
+export const VEHICLE_MPG_ASSUMPTIONS = Object.freeze({
+  car: 25,
+  van: 18,
+  truck: 8,
+  semi: 6.5,
+});
 
 // Abort saves provider work; revision ownership also rejects providers that finish
 // despite cancellation. All stop, profile, clear and destroy mutations invalidate.
@@ -56,6 +63,30 @@ export function validPoint(p) {
     Math.abs(p.lat) <= 90 &&
     Math.abs(p.lon) <= 180
   );
+}
+export function currentLocationPoint(position, now = Date.now()) {
+  const point = {
+    lat: position?.coords?.latitude,
+    lon: position?.coords?.longitude,
+    label: 'Current location — finding street address',
+  };
+  if (
+    !validPoint(point) ||
+    !Number.isFinite(position?.timestamp) ||
+    now - position.timestamp > 30000 ||
+    position.timestamp > now + 5000
+  )
+    throw new Error(
+      'The device did not return a fresh valid location. Try My Location again.',
+    );
+  if (
+    !Number.isFinite(position.coords.accuracy) ||
+    position.coords.accuracy < 0
+  )
+    throw new Error(
+      'The device could not determine location accuracy. Try My Location again.',
+    );
+  return point;
 }
 export function parseCoordinate(text) {
   const m = String(text).match(
@@ -188,6 +219,8 @@ export function createRouteClient({
     'https://router.project-osrm.org',
   geocodingUrl = import.meta.env?.VITE_LEEWAY_GEOCODING_URL ||
     'https://nominatim.openstreetmap.org/search',
+  reverseGeocodingUrl = import.meta.env?.VITE_LEEWAY_REVERSE_GEOCODING_URL ||
+    geocodingUrl.replace(/\/search\/?$/, '/reverse'),
   valhallaUrl = import.meta.env?.VITE_LEEWAY_VALHALLA_URL || '',
 } = {}) {
   let nextGeocode = 0;
@@ -215,10 +248,7 @@ export function createRouteClient({
   }
   return {
     async search(query, { signal } = {}) {
-      const key = String(query).trim();
-      if (!key) throw new Error('Enter an address.');
-      const coordinate = parseCoordinate(key);
-      if (coordinate) return [coordinate];
+      const key = addressText(query);
       if (cache.has(key)) return cache.get(key);
       const now = Date.now(),
         slot = Math.max(now, nextGeocode);
@@ -240,6 +270,28 @@ export function createRouteClient({
         .filter(validPoint);
       cache.set(key, points);
       return points;
+    },
+    async reverse(point, { signal } = {}) {
+      if (!validPoint(point)) throw new Error('Location is unavailable.');
+      if (reverseGeocodingUrl === geocodingUrl)
+        throw new Error('Reverse-address provider is not configured.');
+      const key = `reverse:${point.lat.toFixed(6)},${point.lon.toFixed(6)}`;
+      if (cache.has(key)) return cache.get(key);
+      const now = Date.now(),
+        slot = Math.max(now, nextGeocode);
+      nextGeocode = slot + 1100;
+      if (slot > now)
+        await new Promise((resolve) => setTimeout(resolve, slot - now));
+      signal?.throwIfAborted();
+      const row = await json(
+        `${reverseGeocodingUrl}?${new URLSearchParams({ lat: String(point.lat), lon: String(point.lon), format: 'jsonv2', zoom: '18' })}`,
+        signal,
+      );
+      if (!row?.display_name)
+        throw new Error('No street address was found for that location.');
+      const result = { ...point, label: addressText(row.display_name) };
+      cache.set(key, result);
+      return result;
     },
     async route(
       stops,

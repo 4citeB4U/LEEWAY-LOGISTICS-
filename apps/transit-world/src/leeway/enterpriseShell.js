@@ -5,6 +5,10 @@ import { mountRoutePlanner } from './routePlanner.js';
 import { createRouteClient } from './routePlannerCore.js';
 import './mapFirst.css';
 import { mountRoadsidePlaces } from './roadsidePlaces.js';
+import { mountDriveMode } from './driveMode.js';
+import { mountFuelAdvisor } from './fuelAdvisor.js';
+import { mountHazardReports } from './hazardReports.js';
+import { mountPeerComms } from './peerComms.js';
 import { mountNationalCameraCatalog } from './nationalCameraCatalog.js';
 
 function ensureStyles(documentRef) {
@@ -184,7 +188,7 @@ export function mountEnterpriseShell(application) {
   shell.id = 'leeway-world-shell';
   shell.innerHTML = `
     <header class="lws-top">
-      <div class="lws-brand"><img class="lws-logo" src="${import.meta.env.BASE_URL}logo.svg" alt="LeeWay Logistics" /><div><strong>LEEWAY LOGISTICS</strong><span>YOUR ROAD. YOUR ROUTE.</span></div></div>
+      <div class="lws-brand"><img class="lws-logo" src="${import.meta.env.BASE_URL}leeway-approved-logo.jpg" alt="LeeWay Logistics — approved blue circular logo" /><div><strong>LEEWAY LOGISTICS</strong><span>YOUR ROAD. YOUR ROUTE.</span></div></div>
       <div class="lws-search"><input aria-label="Global search" placeholder="Search locations, loads, drivers, equipment, facilities..." /><kbd>⌘ K</kbd></div>
       <div class="lws-top-actions">
         <button class="lws-chip" data-action="map">Map</button>
@@ -208,12 +212,15 @@ export function mountEnterpriseShell(application) {
     <div data-route-planner></div>
     <button class="lws-live" data-action="connect-world" type="button"><b data-world-led>● CHECK</b><span data-world-status>Connect live world data</span></button>
     <nav class="lws-dock">
+      <button class="lws-dock-btn" data-action="peer-comms"><span class="i">↔</span>Talk</button>
       ${[['layers','Layers'],['traffic','Traffic'],['weather','Weather']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
       <button class="lws-dock-btn" data-action="view-map"><span class="i">▤</span>Map</button>
       <button class="lws-dock-btn" data-action="view-satellite"><span class="i">◫</span>Satellite</button>
+      <button class="lws-dock-btn" data-action="report-hazard"><span class="i">⚠</span>Report</button>
       <button class="lws-ai" data-action="ai"><strong>Agent Lee</strong><span>VOICE + LOGISTICS AI</span></button>
-      ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D'],['locate','Locate']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
+      ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
     </nav>
+    <button class="lws-my-location" data-dock="locate" aria-label="My Location">⌾ My Location</button>
     <div class="lws-location-badge" data-location-badge><strong>WORLD</strong><span>Geographic identification loading…</span></div>
     <aside class="lws-context-inspector" data-context-inspector></aside>
     <div class="lws-right-tabs" aria-label="Right-side information panels">
@@ -400,6 +407,20 @@ export function mountEnterpriseShell(application) {
   }
 
   const routing = mountRoutePlanner({ viewer, container: routePlanner });
+  const driveMode = mountDriveMode({ planner: routing, viewer });
+  const fuelAdvisor = mountFuelAdvisor({ planner: routing });
+  const peerComms = mountPeerComms({ viewer });
+  let hazardEntities = [];
+  const hazardReports = mountHazardReports({ container: document.body, getMapPoint: viewCenterPoint, onReports: (rows) => {
+    for (const entity of hazardEntities) viewer.entities.remove(entity);
+    hazardEntities = rows.map(row => viewer.entities.add({
+      name: `${row.kind} · community report · unverified`,
+      position: Cesium.Cartesian3.fromDegrees(row.lon, row.lat),
+      point: { pixelSize: 14, color: Cesium.Color.ORANGE, outlineColor: Cesium.Color.BLACK, outlineWidth: 2, heightReference: Cesium.HeightReference.CLAMP_TO_GROUND },
+    }));
+    viewer.scene.requestRender?.();
+  } });
+  hazardReports.root.hidden = true;
   const roadside = mountRoadsidePlaces({ viewer, getCenter: viewCenterPoint, onAdd: (point) => { routing.addMapStop(point); routing.open(); }, onFuel:(price,source)=>{routing.setFuelPrice(price,source);routing.open();} });
   function toggleRoutePlanner(open = null) {
     if (open === false) routing.close();
@@ -700,6 +721,8 @@ export function mountEnterpriseShell(application) {
     if (action === 'connect-world') { await probeWorldProvider({ explain: true }); return; }
     if (action === 'workspace-menu') { shell.classList.toggle('business-open'); return; }
     if (action === 'roadside') { roadside.toggle(); return; }
+    if (action === 'peer-comms') { peerComms.toggle(); return; }
+    if (action === 'report-hazard') { hazardReports.root.hidden = !hazardReports.root.hidden; return; }
     if (action === 'map') { workspace.close(); shell.classList.remove('business-open'); setNav('map'); return; }
     if (action === 'world') { showWorld(); setNav('map'); return; }
     if (action === 'route') { toggleRoutePlanner(); return; }
@@ -754,11 +777,8 @@ export function mountEnterpriseShell(application) {
       return;
     }
     if (dock === 'locate') {
-      if (!navigator.geolocation) { say('Device location unavailable'); return; }
-      navigator.geolocation.getCurrentPosition(
-        (position) => viewer?.camera?.flyTo?.({ destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 1800), duration:1.4 }),
-        () => say('Location permission was not granted'),
-      );
+      routing.open();
+      await routing.useMyLocation();
     }
   });
 
@@ -804,6 +824,10 @@ export function mountEnterpriseShell(application) {
         'leeway-right-weather-open',
         'leeway-map-only',
       );
+      driveMode.destroy();
+      fuelAdvisor.destroy();
+      hazardReports.destroy();
+      peerComms.destroy();
       routing.destroy();
       roadside.destroy();
       nationalCatalog.destroy();

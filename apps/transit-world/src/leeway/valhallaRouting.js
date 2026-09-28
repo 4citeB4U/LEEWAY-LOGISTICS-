@@ -175,6 +175,8 @@ export function normalizeValhallaRoute(body, profile) {
         instruction: String(step.instruction || 'Continue'),
         distanceM: Number(step.length || 0) * 1000,
         durationS: Number(step.time || 0),
+        lon: points[step.begin_shape_index]?.[0],
+        lat: points[step.begin_shape_index]?.[1],
       });
   }
   if (geometry.length < 2)

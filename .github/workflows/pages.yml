@@ -57,6 +57,14 @@ jobs:
           ./src/leeway/logisticsKnowledge.test.mjs
           ./src/leeway/worldApiBridge.test.mjs
           ./src/leeway/routePlannerCore.test.mjs
+          ./src/leeway/addressStore.test.mjs
+          ./src/leeway/driveMode.test.mjs
+          ./src/leeway/fuelAdvisor.test.mjs
+          ./src/leeway/peerComms.test.mjs
+          ./src/leeway/hazardReportsClient.test.mjs
+          ./server/providers/peerSignaling.test.mjs
+          ./server/providers/hazardReports.test.mjs
+          ./server/deployment/redisState.test.mjs
           ./src/leeway/valhallaRouting.test.mjs
           ./src/leeway/roadsidePlaces.test.mjs
           ./src/leeway/stationPrices.test.mjs
