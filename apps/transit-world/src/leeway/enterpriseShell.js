@@ -2,6 +2,7 @@ import * as Cesium from 'cesium';
 import { mountEnterpriseWorkspace } from './enterpriseWorkspace.js';
 import { readEnterpriseState } from './enterpriseStore.js';
 import { summarizeTruckRouteSafety } from './truckRoutePolicy.js';
+import { mountNationalCameraCatalog } from './nationalCameraCatalog.js';
 
 function ensureStyles(documentRef) {
   if (documentRef.getElementById('leeway-enterprise-shell-styles')) return;
@@ -229,6 +230,7 @@ export function mountEnterpriseShell(application) {
       <button class="lws-right-tab" data-action="right-ops" type="button">OPS</button>
       <button class="lws-right-tab" data-action="right-cctv" type="button">CCTV</button>
       <button class="lws-right-tab" data-action="right-weather" type="button">WEATHER</button>
+      <button class="lws-right-tab" data-action="right-national" type="button">NATION</button>
     </div>
     <button class="lws-ui-restore" data-action="restore-ui" type="button">SHOW CONTROLS</button>
     <button class="lws-inspector-toggle" data-action="collapse-inspector" type="button" aria-label="Collapse inspector">‹</button>
@@ -259,6 +261,7 @@ export function mountEnterpriseShell(application) {
   const rightOpsTab = shell.querySelector('[data-action="right-ops"]');
   const rightCctvTab = shell.querySelector('[data-action="right-cctv"]');
   const rightWeatherTab = shell.querySelector('[data-action="right-weather"]');
+  const rightNationalTab = shell.querySelector('[data-action="right-national"]');
   const weatherPanel = document.getElementById('weather-panel');
   let locationCell = '';
   let locationRequestGeneration = 0;
@@ -270,6 +273,7 @@ export function mountEnterpriseShell(application) {
     rightOpsTab?.classList.toggle('active', activeRightPanel === 'ops');
     rightCctvTab?.classList.toggle('active', activeRightPanel === 'cctv');
     rightWeatherTab?.classList.toggle('active', activeRightPanel === 'weather');
+    rightNationalTab?.classList.toggle('active', activeRightPanel === 'national');
   }
 
   function setRightPanel(panel = null) {
@@ -783,6 +787,10 @@ export function mountEnterpriseShell(application) {
   const workspace = mountEnterpriseWorkspace({
     onLocate: ({ query, name }) => locate(query || name),
   });
+  const nationalCatalog = mountNationalCameraCatalog({
+    host: shell,
+    notify: say,
+  });
 
   function setNav(id) {
     shell.querySelectorAll('[data-nav]').forEach((button) => button.classList.toggle('active', button.dataset.nav === id));
@@ -874,15 +882,30 @@ export function mountEnterpriseShell(application) {
     if (action === 'close-route') { toggleRoutePlanner(false); return; }
     if (action === 'swap-route') { const hold = routeFrom.value; routeFrom.value = routeTo.value; routeTo.value = hold; return; }
     if (action === 'generate-route') { await generateAddressRoute(); return; }
-    if (action === 'right-ops') { setRightPanel('ops'); return; }
+    if (action === 'right-ops') { nationalCatalog.close(); setRightPanel('ops'); return; }
     if (action === 'right-cctv') {
+      nationalCatalog.close();
       if (dataManager?.layers?.has('cctv') && !dataManager.isEnabled?.('cctv')) {
         await dataManager.setEnabled('cctv', true, { origin: 'user' });
       }
       setRightPanel('cctv');
       return;
     }
+    if (action === 'right-national') {
+      const next = activeRightPanel === 'national' ? null : 'national';
+      activeRightPanel = next;
+      if (next === 'national') {
+        nationalCatalog.open();
+        if (cctvPanel && !cctvPanel.classList.contains('collapsed')) cctvPanel.classList.add('collapsed');
+        if (weatherPanel && !weatherPanel.classList.contains('collapsed')) weatherPanel.classList.add('collapsed');
+      } else {
+        nationalCatalog.close();
+      }
+      syncRightTabs();
+      return;
+    }
     if (action === 'right-weather') {
+      nationalCatalog.close();
       const enabled = [];
       for (const id of ['wind','weather-radar','weather-satellite','weather-lightning','weather-cyclones']) {
         if (!dataManager?.layers?.has(id)) continue;
@@ -977,6 +1000,7 @@ export function mountEnterpriseShell(application) {
         'leeway-right-weather-open',
         'leeway-map-only',
       );
+      nationalCatalog.destroy();
       workspace.destroy();
       shell.remove();
     },
