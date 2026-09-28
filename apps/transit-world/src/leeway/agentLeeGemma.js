@@ -3,6 +3,7 @@ import { discoverModels, prepareModel, runtimeBase } from './agentRuntime.js';
 import { PhoneRelay } from './phoneRelay.js';
 import { loadBrowserVoiceLibrary, voiceStorageStatus } from './browserVoice.js';
 import { createAgentLeeToolRuntime } from './agentLeeTools.js';
+import { BrowserCopilotMedia } from './browserCopilotMedia.js';
 
 const DEFAULT_MODEL = 'gemma4:e4b';
 const DEFAULT_ENDPOINT = '';
@@ -227,6 +228,11 @@ function ensureStyles(documentRef) {
       border-color:rgba(134,255,168,.42);
       background:rgba(134,255,168,.08);
     }
+    .lal-btn[data-action="talk"][aria-pressed="true"] {
+      color:#07131b;
+      border-color:#a7ffbf;
+      background:#86ffa8;
+    }
     .lal-settings { margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:6px; }
     .lal-settings input { width:100%; padding:7px; background:#07121b; color:#efffff; border:1px solid rgba(255,255,255,.12); font:inherit; }
     .lal-note { margin-top:7px; opacity:.58; font-size:9px; }
@@ -272,6 +278,7 @@ export function mountAgentLeeGemma(application, shell = null) {
       <div class="lal-row">
         <input class="lal-input" aria-label="Ask Agent Lee" placeholder="Ask about a load, route, driver, facility, maintenance, CRM, or fleet..." />
         <button class="lal-btn" type="button" data-action="send">ASK</button>
+        <button class="lal-btn" type="button" data-action="talk" aria-pressed="false">TALK</button>
         <button class="lal-btn" type="button" data-action="voice" aria-pressed="true">VOICE ON</button>
       </div>
       <div class="lal-row"><button class="lal-btn" data-action="route-review">Review route</button><button class="lal-btn" data-action="route-optimize">Optimize stops</button></div>
@@ -295,6 +302,7 @@ export function mountAgentLeeGemma(application, shell = null) {
       <p class="lal-note">Optional Chatterbox download uses this browser's storage and network. Complete cached model files are reused. Voice One · calm delivery · 1.1× pace. Phone speed and voice quality require an audition. Mapping never requires this download.</p>
       <details><summary>External voice adapter</summary><label>Audio endpoint<input class="lal-input" data-setting="tts" aria-label="External speech adapter URL" placeholder="https://your-adapter.example/api/agent-lee/tts" /></label><p class="lal-note">POST {text} must return audio. The existing desktop LeeWay voice kernel is XTTS-v2, not Chatterbox. Selecting an endpoint does not verify its engine or voice identity.</p></details>
       <div class="lal-note" data-voice-status>Browser Chatterbox is available to prepare. No voice model has been downloaded by this page.</div></details>
+      <p class="lal-note" data-talk-status>Talk is push-to-talk. It requests this browser’s microphone only when pressed, puts the transcript in the text field, and then asks Agent Lee. Recognition availability depends on the browser and its permission.</p>
     </div>
   `;
   document.body.appendChild(root);
@@ -306,6 +314,8 @@ export function mountAgentLeeGemma(application, shell = null) {
   const endpointInput = root.querySelector('[data-setting="endpoint"]');
   const sendButton = root.querySelector('[data-action="send"]');
   const voiceButton = root.querySelector('[data-action="voice"]');
+  const talkButton = root.querySelector('[data-action="talk"]');
+  const talkStatus = root.querySelector('[data-talk-status]');
   const ttsInput = root.querySelector('[data-setting="tts"]');
   const voiceStatus = root.querySelector('[data-voice-status]');
   const runtimeNote = root.querySelector('[data-runtime-note]');
@@ -325,6 +335,16 @@ export function mountAgentLeeGemma(application, shell = null) {
   let activeAudio = null;
   let activeAudioUrl = null;
   let queuedAudio = null;
+  const copilotMedia = new BrowserCopilotMedia((event) =>
+    console.info('Agent Lee media:', event),
+  );
+  let talking = false;
+  let talkEpoch = 0;
+
+  function syncTalkButton(state = '') {
+    talkButton.setAttribute('aria-pressed', String(talking));
+    talkButton.textContent = state || (talking ? 'LISTENING…' : 'TALK');
+  }
 
   function syncVoiceButton(state = '') {
     voiceButton.setAttribute('aria-pressed', String(voiceEnabled));
@@ -459,6 +479,7 @@ export function mountAgentLeeGemma(application, shell = null) {
   }
 
   syncVoiceButton();
+  syncTalkButton();
 
   modelInput.value = loadSetting('leeway.agentLee.model', DEFAULT_MODEL);
   endpointInput.value = loadSetting(
@@ -579,9 +600,59 @@ export function mountAgentLeeGemma(application, shell = null) {
     }
   }
 
+  function stopTalking(message = '') {
+    talkEpoch++;
+    talking = false;
+    copilotMedia.stopRecognition();
+    syncTalkButton();
+    if (message) talkStatus.textContent = message;
+  }
+
+  function beginTalking() {
+    if (talking) {
+      stopTalking('Talk stopped. You can type or press TALK again.');
+      return;
+    }
+    stopVoicePlayback();
+    const epoch = ++talkEpoch;
+    talking = true;
+    syncTalkButton();
+    talkStatus.textContent = 'Listening… Speak your logistics request.';
+    try {
+      copilotMedia.startRecognition({
+        onInterim: (transcript) => {
+          if (epoch !== talkEpoch) return;
+          input.value = transcript;
+          talkStatus.textContent = `Listening: ${transcript}`;
+        },
+        onFinal: (transcript) => {
+          if (epoch !== talkEpoch || !transcript) return;
+          input.value = transcript;
+          stopTalking('Voice request captured. Agent Lee is responding.');
+          void ask();
+        },
+        onError: (error) => {
+          if (epoch === talkEpoch)
+            stopTalking(`Microphone transcription: ${error.message}. Type your request instead.`);
+        },
+        onEnd: () => {
+          if (epoch !== talkEpoch || !talking) return;
+          talking = false;
+          syncTalkButton();
+          talkStatus.textContent = input.value.trim()
+            ? 'Transcript ready. Press ASK to send.'
+            : 'No speech captured. Type your request or try TALK again.';
+        },
+      });
+    } catch (error) {
+      stopTalking(error.message);
+    }
+  }
+
   root.querySelector('[data-action="stop"]').addEventListener('click', () => {
     generation++;
     replyController?.abort();
+    stopTalking();
     stopVoicePlayback();
     syncVoiceButton();
     sendButton.disabled = false;
@@ -754,6 +825,7 @@ export function mountAgentLeeGemma(application, shell = null) {
       }
     });
   sendButton.addEventListener('click', ask);
+  talkButton.addEventListener('click', beginTalking);
   voiceButton.addEventListener('click', () => {
     if (queuedAudio && voiceEnabled) {
       const audio = queuedAudio;
@@ -803,6 +875,7 @@ export function mountAgentLeeGemma(application, shell = null) {
       replyController?.abort();
       downloadController?.abort();
       phone.disconnect();
+      stopTalking();
       stopVoicePlayback();
       voicePreparationEpoch++;
       void browserVoice?.dispose();
