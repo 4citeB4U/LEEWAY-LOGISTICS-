@@ -104,6 +104,20 @@ const SEEDED_SOURCES = Object.freeze({
         'Official camera directory exposes snapshots/streaming video; machine-readable reuse path still requires verification.',
     },
   ],
+  GA: [
+    {
+      operator: 'Georgia Department of Transportation',
+      system: '511GA',
+      accessMethod: 'documented_api',
+      integrationStatus: 'integrated',
+      mediaStatus: 'integrated',
+      authRequired: true,
+      evidenceState: 'VERIFIED',
+      sourceUrl: 'https://511ga.org/developers/doc',
+      notes:
+        'LeeWay contains the keyed statewide 511GA camera adapter; developer key and published throttling apply.',
+    },
+  ],
   IA: [
     {
       operator: 'Iowa Department of Transportation',
@@ -137,8 +151,8 @@ const SEEDED_SOURCES = Object.freeze({
       operator: 'New York State 511',
       system: '511NY',
       accessMethod: 'documented_api',
-      integrationStatus: 'key-required',
-      mediaStatus: 'official-public',
+      integrationStatus: 'integrated',
+      mediaStatus: 'integrated',
       authRequired: true,
       evidenceState: 'VERIFIED',
       sourceUrl: 'https://511ny.org/developers/help',
