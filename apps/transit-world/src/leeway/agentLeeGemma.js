@@ -213,6 +213,8 @@ function ensureStyles(documentRef) {
     .lal-entry { margin: 0 0 9px; }
     .lal-entry strong { color: #91edff; }
     .lal-row { display:flex; gap:7px; margin-top:8px; }
+    .lal-quick { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+    .lal-quick button { padding:6px 8px; font-size:10px; }
     .lal-input {
       flex:1; min-width:0; padding:9px;
       background:#07121b; color:#efffff;
@@ -284,6 +286,7 @@ export function mountAgentLeeGemma(application, shell = null) {
         <button class="lal-btn" type="button" data-action="voice" aria-pressed="true">VOICE ON</button>
       </div>
       <div class="lal-row"><button class="lal-btn" data-action="route-review">Review route</button><button class="lal-btn" data-action="route-optimize">Optimize stops</button></div>
+      <div class="lal-quick" aria-label="System copilot controls"><button class="lal-btn" data-command="Open directions">Directions</button><button class="lal-btn" data-command="Use personal map">Personal map</button><button class="lal-btn" data-command="Open dispatch load planning">Load triangle</button><button class="lal-btn" data-command="Show weather radar">Weather</button><button class="lal-btn" data-command="Show CCTV cameras">CCTV</button></div>
       <button class="lal-btn" type="button" data-action="stop">Stop reply</button><details><summary>Model and voice setup</summary>
       <label>Reasoning connection <select class="lal-input" data-setting="provider"><option value="phone">LeeWay Device Bridge phone</option><option value="ollama">Ollama runtime</option></select></label>
       <p class="lal-note">Reuse the model already verified inside your LeeWay Android runtime. Pairing permits requests through the LeeWay relay; credentials stay in this tab.</p>
@@ -841,6 +844,12 @@ export function mountAgentLeeGemma(application, shell = null) {
       }
     });
   sendButton.addEventListener('click', ask);
+  root.querySelectorAll('[data-command]').forEach((button) => {
+    button.addEventListener('click', () => {
+      input.value = button.dataset.command || '';
+      void ask();
+    });
+  });
   talkButton.addEventListener('click', beginTalking);
   voiceButton.addEventListener('click', () => {
     if (queuedAudio && voiceEnabled) {
