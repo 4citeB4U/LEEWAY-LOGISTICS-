@@ -561,7 +561,8 @@ function wisconsin511City(row = {}) {
  */
 export async function loadWisconsin511SourcesFromOpenData() {
   const key = String(
-    process.env.CCTV_WISCONSIN_511_KEY ||
+    process.env.WISCONSIN_511_API_KEY ||
+      process.env.CCTV_WISCONSIN_511_KEY ||
       process.env.WI511_API_KEY ||
       process.env.WISDOT_API_KEY ||
       '',
@@ -911,7 +912,9 @@ function pickOntarioCctvView(views) {
 }
 
 export function ontario511CatalogUrl(env = process.env) {
-  const key = String(env.CCTV_ONTARIO_511_KEY || '').trim();
+  const key = String(
+    env.ONTARIO_511_API_KEY || env.CCTV_ONTARIO_511_KEY || '',
+  ).trim();
   if (!key) return '';
   const url = new URL(ONTARIO_511_CAMERAS_URL);
   url.searchParams.set('key', key);
