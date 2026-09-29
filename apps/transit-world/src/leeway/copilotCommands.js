@@ -1,3 +1,5 @@
+import { routeBriefing } from './routeBriefing.js';
+
 function words(value) {
   return String(value || '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 }
@@ -9,6 +11,11 @@ function words(value) {
 export function classifyCopilotCommand(value) {
   const input = words(value);
   if (!input) return null;
+  // Negated and conditional requests belong to conversation.
+  // A keyword match must never reverse the user's instruction.
+  if (/\b(no|not|never|don t|dont|do not|without|instead|if|unless|except)\b/.test(input)) return null;
+  if (/\b(review|summari[sz]e|explain)\b.*\b(route|trip)\b/.test(input))
+    return { action: 'route-review' };
   if (/\b(personal|public|civilian)\b.*\b(map|mode|view)\b/.test(input))
     return { action: 'personal-map' };
   if (/\b(business|dispatch|logistics)\b.*\b(map|mode|view)\b/.test(input))
@@ -31,6 +38,21 @@ export function classifyCopilotCommand(value) {
 export async function executeCopilotCommand(value, shell) {
   const command = classifyCopilotCommand(value);
   if (!command || !shell) return { handled: false };
+  const target = {
+    'personal-map': [shell, 'setPersonalMode'],
+    'business-map': [shell, 'setPersonalMode'],
+    'load-planning': [shell, 'openLoadPlanning'],
+    weather: [shell, 'openWeather'],
+    cctv: [shell, 'openCctv'],
+    'my-location': [shell.routePlanner, 'useMyLocation'],
+    'optimize-stops': [shell.routePlanner, 'optimize'],
+    directions: [shell.routePlanner, 'open'],
+    'route-review': [shell.routePlanner, 'getState'],
+  }[command.action];
+  if (!target || typeof target[0]?.[target[1]] !== 'function')
+    return { handled: true, ok: false, message: 'This map control is unavailable in the current application. No action was performed.' };
+  if (command.action === 'route-review')
+    return { handled: true, message: routeBriefing(shell.routePlanner.getState()) };
   if (command.action === 'personal-map') {
     shell.setPersonalMode?.(true);
     return { handled: true, message: 'Personal Map is open. Directions, weather, roadside places, safety reports, and Agent Lee remain available.' };
@@ -53,12 +75,14 @@ export async function executeCopilotCommand(value, shell) {
   }
   if (command.action === 'my-location') {
     shell.routePlanner?.open?.();
-    await shell.routePlanner?.useMyLocation?.();
-    return { handled: true, message: 'I asked the route planner to use your current location as a route stop. Check the address shown by the planner before routing.' };
+    const point = await shell.routePlanner.useMyLocation();
+    return point
+      ? { handled: true, message: 'Your current device location is set as the route origin. Check the address and accuracy shown by the planner before routing.' }
+      : { handled: true, ok: false, message: 'The route origin was not set. Check the location permission or GPS message in Directions, then try My Location again.' };
   }
   if (command.action === 'optimize-stops') {
     const result = await shell.routePlanner?.optimize?.();
-    return { handled: true, message: result ? 'Stop optimization finished. Review the route order, road distance, and restriction status in the route planner.' : 'Stop optimization needs a completed route plan or more route stops.' };
+    return { handled: true, ok: !!result, message: result ? 'Stop optimization finished. Review the route order, road distance, and restriction status in the route planner.' : 'Stop optimization did not complete. Check the address selection, vehicle settings or provider error shown in Directions.' };
   }
   if (command.action === 'directions') {
     shell.routePlanner?.open?.();

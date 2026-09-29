@@ -273,6 +273,7 @@ export function mountAgentLeeGemma(application, shell = null) {
     <div class="lal-head">
       <div class="lal-kicker">LEEWAY LOGISTICS · COPILOT</div>
       <div class="lal-title">Agent Lee · Copilot</div>
+      <button class="lal-btn" type="button" data-action="close" aria-label="Close Agent Lee">Close</button>
       <div class="lal-status" data-state="disconnected">LOCAL RUNTIME: DISCONNECTED</div>
     </div>
     <div class="lal-body">
@@ -306,7 +307,7 @@ export function mountAgentLeeGemma(application, shell = null) {
       <div class="lal-row"><button class="lal-btn" data-action="voice-check">Check voice storage</button><button class="lal-btn" data-action="voice-load">Prepare Chatterbox (~1.5 GB)</button><button class="lal-btn" data-action="voice-unload">Unload / cancel</button></div>
       <p class="lal-note">Optional Chatterbox download uses this browser's storage and network. Complete cached model files are reused. Voice One · calm delivery · 1.1× pace. Phone speed and voice quality require an audition. Mapping never requires this download.</p>
       <details><summary>External voice adapter</summary><label>Audio endpoint<input class="lal-input" data-setting="tts" aria-label="External speech adapter URL" placeholder="https://your-adapter.example/api/agent-lee/tts" /></label><p class="lal-note">POST {text} must return audio. The existing desktop LeeWay voice kernel is XTTS-v2, not Chatterbox. Selecting an endpoint does not verify its engine or voice identity.</p></details>
-      <div class="lal-note" data-voice-status>Browser Chatterbox is available to prepare. No voice model has been downloaded by this page.</div></details>
+      </details><div class="lal-note" data-voice-status>Browser Chatterbox is available to prepare. No voice model has been downloaded by this page.</div>
       <p class="lal-note" data-talk-status>Talk is push-to-talk. It requests this browser’s microphone only when pressed, puts the transcript in the text field, and then asks Agent Lee. Recognition availability depends on the browser and its permission.</p>
     </div>
   `;
@@ -572,8 +573,8 @@ export function mountAgentLeeGemma(application, shell = null) {
         );
         if (history.length > 24) history.splice(0, history.length - 24);
         appendEntry(log, 'assistant', systemAction.message);
-        status.dataset.state = 'connected';
-        status.textContent = 'SYSTEM COPILOT ACTION COMPLETE';
+        status.dataset.state = systemAction.ok === false ? 'disconnected' : 'connected';
+        status.textContent = systemAction.ok === false ? 'SYSTEM COPILOT · ACTION INCOMPLETE' : 'SYSTEM COPILOT · RESPONSE READY';
         void speakAgentLee(systemAction.message);
         return;
       }
@@ -614,7 +615,7 @@ export function mountAgentLeeGemma(application, shell = null) {
     } finally {
       if (epoch === generation) {
         sendButton.disabled = false;
-        input.focus();
+        if (!document.body.classList.contains('leeway-drive-mode')) input.focus();
       }
     }
   }
@@ -851,6 +852,11 @@ export function mountAgentLeeGemma(application, shell = null) {
     });
   });
   talkButton.addEventListener('click', beginTalking);
+  root.querySelector('[data-action="close"]').addEventListener('click', () => {
+    stopTalking();
+    if (shell?.closeAgent) shell.closeAgent();
+    else root.classList.remove('leeway-open');
+  });
   voiceButton.addEventListener('click', () => {
     if (queuedAudio && voiceEnabled) {
       const audio = queuedAudio;

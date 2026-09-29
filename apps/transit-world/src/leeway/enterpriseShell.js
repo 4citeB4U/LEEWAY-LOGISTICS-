@@ -452,7 +452,12 @@ export function mountEnterpriseShell(application) {
 
   const routing = mountRoutePlanner({ viewer, container: routePlanner });
   const offlineTrip = mountOfflineTrip({ planner: routing });
-  const driveMode = mountDriveMode({ planner: routing, viewer });
+  const driveMode = mountDriveMode({
+    planner: routing,
+    viewer,
+    onCopilot: () => toggleAgent(),
+    onCloseCopilot: () => toggleAgent(false),
+  });
   const fuelAdvisor = mountFuelAdvisor({ planner: routing });
   const fuelLedger = mountFuelLedger({ planner: routing });
   const loadComparison = mountLoadComparison({ viewer, onStatus: say });
@@ -687,7 +692,8 @@ export function mountEnterpriseShell(application) {
     if (!panel) return;
     const next = open == null ? !panel.classList.contains('leeway-open') : open;
     panel.classList.toggle('leeway-open', next);
-    if (next) panel.querySelector('.lal-input')?.focus();
+    if (next && !document.body.classList.contains('leeway-drive-mode'))
+      panel.querySelector('.lal-input')?.focus();
   }
 
   function openWeather() {

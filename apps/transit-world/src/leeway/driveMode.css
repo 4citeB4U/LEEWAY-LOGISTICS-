@@ -50,6 +50,12 @@
   font-weight: 800;
   letter-spacing: 0.12em;
 }
+.lw-drive-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
 .lw-drive-header p {
   font-size: 12px;
   margin: 5px 0 0;
@@ -127,10 +133,29 @@ body.leeway-drive-mode #leeway-world-shell .lws-right-tabs,
 body.leeway-drive-mode #leeway-world-shell .lws-location-badge,
 body.leeway-drive-mode #leeway-world-shell .lws-rail,
 body.leeway-drive-mode #leeway-world-shell .lws-layer-menu,
-body.leeway-drive-mode #leeway-agent-lee,
 body.leeway-drive-mode #leeway-transit-world,
 body.leeway-drive-mode #leeway-world-shell .lws-context-inspector {
   display: none !important;
+}
+body.leeway-enterprise-shell.leeway-drive-mode #leeway-agent-lee.leeway-open {
+  display: block !important;
+  z-index: 11010;
+  left: auto;
+  right: 12px;
+  bottom: calc(134px + env(safe-area-inset-bottom, 0px));
+  width: min(430px, calc(100vw - 24px));
+  max-height: calc(100dvh - 270px);
+  overflow: auto;
+  border-radius: 16px;
+}
+body.leeway-drive-mode #leeway-agent-lee .lal-quick,
+body.leeway-drive-mode #leeway-agent-lee .lal-body > details {
+  display: none;
+}
+@media (max-width: 950px) and (min-height: 600px) {
+  body.leeway-enterprise-shell.leeway-drive-mode #leeway-agent-lee.leeway-open {
+    max-height: max(0px, calc(100dvh - var(--leeway-drive-guidance-bottom, 340px) - 134px - env(safe-area-inset-bottom, 0px)));
+  }
 }
 @media (max-width: 600px) {
   .lw-drive {

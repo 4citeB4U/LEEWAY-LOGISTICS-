@@ -13,10 +13,8 @@ import {
   createPlannerRequests,
   routeCapability,
 } from './routePlannerCore.js';
-import {
-  formatRouteDistance,
-  formatRouteDuration,
-} from '../data/routeSteps.js';
+import { formatRouteDuration } from '../data/routeSteps.js';
+import { formatDriverDistance as formatRouteDistance } from './driverUnits.js';
 import './routePlanner.css';
 import { normalizeValhallaUrl } from './valhallaRouting.js';
 import {
@@ -862,6 +860,7 @@ export function mountRoutePlanner({
     status('Shared address added as destination. Select the matching address, then get a road route.');
   }
   close();
+  if (sharedAddress) open();
   return {
     root,
     open,

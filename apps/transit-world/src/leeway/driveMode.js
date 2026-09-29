@@ -15,13 +15,15 @@ export function mountDriveMode({
   viewer = null,
   documentRef = document,
   geolocation = navigator.geolocation,
+  onCopilot = () => {},
+  onCloseCopilot = () => {},
 } = {}) {
   if (!planner?.root) throw new Error('Drive Mode needs a route planner.');
   const root = documentRef.createElement('section');
   root.className = 'lw-drive';
   root.hidden = true;
   root.setAttribute('aria-label', 'Drive Mode');
-  root.innerHTML = `<div class="lw-drive-header"><div><span class="lw-drive-eyebrow">DRIVE MODE</span><p data-drive-authority></p></div><button type="button" data-drive-exit>Exit Drive</button></div>
+  root.innerHTML = `<div class="lw-drive-header"><div><span class="lw-drive-eyebrow">DRIVE MODE</span><p data-drive-authority></p></div><div class="lw-drive-actions"><button type="button" data-drive-copilot>Agent Lee</button><button type="button" data-drive-exit>Exit Drive</button></div></div>
     <div class="lw-drive-instruction" role="status" aria-live="polite"><div data-drive-distance>Waiting for GPS</div><h1 data-drive-maneuver>Allow location access</h1><p data-drive-status></p></div>
     <div class="lw-drive-bottom"><div class="lw-drive-speed"><strong data-drive-speed>—</strong><span>MPH · GPS</span></div><div class="lw-drive-remaining"><strong data-drive-remaining>—</strong><span>remaining · estimate</span></div><button type="button" data-drive-follow aria-pressed="true">Follow on</button></div>`;
   documentRef.body.append(root);
@@ -37,6 +39,17 @@ export function mountDriveMode({
     follow = true,
     positionEntity = null;
   const query = (selector) => root.querySelector(selector);
+  // Reserve the actual instruction height: long maneuvers and GPS errors wrap
+  // differently on phones. Keep the copilot below that protected region.
+  function measureGuidance() {
+    if (!active) return;
+    const bottom = query('.lw-drive-instruction').getBoundingClientRect().bottom;
+    documentRef.body.style.setProperty('--leeway-drive-guidance-bottom', `${Math.ceil(bottom + 12)}px`);
+  }
+  const ResizeObserverClass = documentRef.defaultView?.ResizeObserver;
+  const layoutObserver = ResizeObserverClass ? new ResizeObserverClass(measureGuidance) : null;
+  layoutObserver?.observe(query('.lw-drive-header'));
+  layoutObserver?.observe(query('.lw-drive-instruction'));
   function removeMarker() {
     if (positionEntity) {
       try {
@@ -68,6 +81,7 @@ export function mountDriveMode({
         : state.instruction
           ? 'GPS route estimate · observe road signs and conditions'
           : 'Speed and instructions require a current, accurate GPS fix.';
+    measureGuidance();
     if (!state.point || !viewer) {
       if (!state.point) removeMarker();
       return;
@@ -108,10 +122,12 @@ export function mountDriveMode({
   const session = createDriveSession({ geolocation, onUpdate: update });
   function stop() {
     active = false;
+    onCloseCopilot();
     session.stop();
     removeMarker();
     root.hidden = true;
     documentRef.body.classList.remove('leeway-drive-mode');
+    documentRef.body.style.removeProperty('--leeway-drive-guidance-bottom');
   }
   function start(route = planner.getState?.().route) {
     stop();
@@ -136,6 +152,7 @@ export function mountDriveMode({
     }
   }
   go.addEventListener('click', () => start());
+  query('[data-drive-copilot]').addEventListener('click', onCopilot);
   query('[data-drive-exit]').addEventListener('click', () => {
     stop();
     planner.open?.();
@@ -156,6 +173,7 @@ export function mountDriveMode({
     destroy() {
       stop();
       unsubscribe?.();
+      layoutObserver?.disconnect();
       root.remove();
       go.remove();
     },
