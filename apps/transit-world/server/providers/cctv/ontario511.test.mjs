@@ -18,6 +18,14 @@ test('Ontario 511 catalog URL requires and encodes the server-side key', () => {
     new URL(aliasValue).searchParams.get('key'),
     'friendly proof key',
   );
+  const precedenceValue = ontario511CatalogUrl({
+    ONTARIO_511_API_KEY: 'preferred key',
+    CCTV_ONTARIO_511_KEY: 'legacy key',
+  });
+  assert.equal(
+    new URL(precedenceValue).searchParams.get('key'),
+    'preferred key',
+  );
   assert.equal(url.origin, 'https://511on.ca');
   assert.equal(url.pathname, '/api/v2/get/cameras');
   assert.equal(url.searchParams.get('key'), 'proof key');
