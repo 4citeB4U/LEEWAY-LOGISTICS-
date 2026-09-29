@@ -41,6 +41,13 @@ function Get-EnvValue($Map, [string]$Key) {
     return ''
 }
 
+function Get-PropertyValue($Object, [string]$Name) {
+    if ($null -eq $Object) { return '' }
+    $property = $Object.PSObject.Properties[$Name]
+    if ($null -eq $property) { return '' }
+    return [string]$property.Value
+}
+
 function New-VercelUri([string]$Path, [hashtable]$Query) {
     $builder = [System.UriBuilder]::new("https://api.vercel.com$Path")
     $pairs = @()
@@ -87,6 +94,10 @@ function Invoke-VercelJson(
 $envMap = Read-DotEnv $EnvFile
 $projectName = Get-EnvValue $envMap 'VERCEL_PROJECT_NAME'
 if ([string]::IsNullOrWhiteSpace($projectName)) { $projectName = 'leeway-world-runtime' }
+$githubRepoId = 1204608230
+$expectedOrg = '4citeB4U'
+$expectedRepo = 'LEEWAY-LOGISTICS-'
+$expectedRoot = 'apps/transit-world'
 $teamId = Get-EnvValue $envMap 'VERCEL_TEAM_ID'
 $teamSlug = Get-EnvValue $envMap 'VERCEL_TEAM_SLUG'
 $script:Token = Get-EnvValue $envMap 'VERCEL_TOKEN'
@@ -153,7 +164,24 @@ if ($null -eq $project) {
     }
     $project = Invoke-VercelJson POST '/v11/projects' $query $createBody
 } else {
-    Write-Host 'Using existing dedicated LeeWay World Runtime project.'
+    Write-Host 'Validating existing dedicated LeeWay World Runtime project.'
+    $linkProperty = $project.PSObject.Properties['link']
+    $link = if ($null -ne $linkProperty) { $linkProperty.Value } else { $null }
+    $linkType = Get-PropertyValue $link 'type'
+    $linkOrg = Get-PropertyValue $link 'org'
+    $linkRepo = Get-PropertyValue $link 'repo'
+    if (
+        $linkType -ne 'github' -or
+        $linkOrg -ne $expectedOrg -or
+        $linkRepo -ne $expectedRepo
+    ) {
+        throw "Existing Vercel project '$projectName' is linked to a different repository. Refusing to repurpose it."
+    }
+    $project = Invoke-VercelJson PATCH "/v9/projects/$($project.id)" $query @{
+        rootDirectory = $expectedRoot
+        framework = 'vite'
+        installCommand = 'npm ci'
+    }
 }
 if (-not $project.id) { throw 'Vercel project ID was not returned.' }
 
@@ -164,8 +192,8 @@ foreach ($key in $configured) {
         key = $key
         value = [string]$envMap[$key]
         type = $type
-        target = @('production','preview')
-        comment = 'Managed from LeeWay Logistics private .env.local'
+        target = @('production')
+        comment = 'Managed from LeeWay Logistics private .env.local; production only'
     }
 }
 if ($envRows.Count -gt 0) {
@@ -182,8 +210,7 @@ $deployBody = @{
     target = 'production'
     gitSource = @{
         type = 'github'
-        org = '4citeB4U'
-        repo = 'LEEWAY-LOGISTICS-'
+        repoId = $githubRepoId
         ref = 'main'
     }
 }
