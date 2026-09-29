@@ -838,6 +838,86 @@ export function mountRoutePlanner({
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     }
   });
+  async function routeFromVoice({
+    origin = 'current',
+    destination,
+  } = {}) {
+    open();
+    let destinationText;
+    try {
+      destinationText = addressText(destination);
+    } catch (error) {
+      status(`Destination unavailable: ${error.message}`);
+      return { ok: false, reason: 'invalid-destination' };
+    }
+    invalidate();
+    disarmMap();
+    if (origin && origin !== 'current') {
+      try {
+        stops[0] = { text: addressText(origin) };
+      } catch (error) {
+        status(`Route origin unavailable: ${error.message}`);
+        return { ok: false, reason: 'invalid-origin' };
+      }
+    }
+    stops[stops.length - 1] = { text: destinationText };
+    renderStops();
+
+    if (!origin || origin === 'current') {
+      const point = await useMyLocation();
+      if (!point)
+        return {
+          ok: false,
+          reason: 'current-location-unavailable',
+          state: snapshot(),
+        };
+    }
+
+    const nextRoute = await plan(false);
+    const unresolvedIndex = stops.findIndex(
+      (stop) => !stop.point && stop.candidates?.length,
+    );
+    return {
+      ok: !!nextRoute,
+      route: nextRoute,
+      needsSelection: unresolvedIndex >= 0,
+      locationIndex: unresolvedIndex,
+      candidates:
+        unresolvedIndex >= 0
+          ? stops[unresolvedIndex].candidates.map((point) => point.label)
+          : [],
+      state: snapshot(),
+    };
+  }
+
+  async function choosePendingCandidate(choice = 1) {
+    const index = stops.findIndex(
+      (stop) => !stop.point && stop.candidates?.length,
+    );
+    if (index < 0) {
+      status('There is no pending address choice.');
+      return { ok: false, reason: 'no-pending-address' };
+    }
+    const candidateIndex = Number(choice) - 1;
+    const point = stops[index].candidates?.[candidateIndex];
+    if (!point) {
+      status('That address option is unavailable.');
+      return {
+        ok: false,
+        reason: 'invalid-address-choice',
+        candidateCount: stops[index].candidates?.length || 0,
+      };
+    }
+    invalidate();
+    stops[index].point = point;
+    stops[index].text = point.label;
+    rememberAddress(stops[index]);
+    renderStops();
+    status(`Location ${index + 1} selected by voice. Finding the road route…`);
+    const nextRoute = await plan(false);
+    return { ok: !!nextRoute, route: nextRoute, state: snapshot() };
+  }
+
   function open() {
     root.hidden = false;
     root.classList.add('open');
@@ -876,6 +956,8 @@ export function mountRoutePlanner({
     addMapStop,
     insertMapStop: (point, index) => addMapStop(point, index),
     useMyLocation,
+    routeFromVoice,
+    choosePendingCandidate,
     subscribe(listener) {
       listeners.add(listener);
       return () => listeners.delete(listener);
