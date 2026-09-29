@@ -4,6 +4,7 @@ import { PhoneRelay } from './phoneRelay.js';
 import { loadBrowserVoiceLibrary, voiceStorageStatus } from './browserVoice.js';
 import { createAgentLeeToolRuntime } from './agentLeeTools.js';
 import { BrowserCopilotMedia } from './browserCopilotMedia.js';
+import { executeCopilotCommand } from './copilotCommands.js';
 
 const DEFAULT_MODEL = 'gemma4:e4b';
 const DEFAULT_ENDPOINT = '';
@@ -559,6 +560,20 @@ export function mountAgentLeeGemma(application, shell = null) {
     const context = sceneContext(application);
 
     try {
+      const systemAction = await executeCopilotCommand(content, shell);
+      if (systemAction.handled) {
+        if (epoch !== generation) return;
+        history.push(
+          { role: 'user', content },
+          { role: 'assistant', content: systemAction.message },
+        );
+        if (history.length > 24) history.splice(0, history.length - 24);
+        appendEntry(log, 'assistant', systemAction.message);
+        status.dataset.state = 'connected';
+        status.textContent = 'SYSTEM COPILOT ACTION COMPLETE';
+        void speakAgentLee(systemAction.message);
+        return;
+      }
       const phoneResult =
         provider.value === 'phone'
           ? await phone.infer(phonePrompt(content, shell, history))

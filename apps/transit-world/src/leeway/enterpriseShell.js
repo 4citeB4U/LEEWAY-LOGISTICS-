@@ -853,6 +853,14 @@ export function mountEnterpriseShell(application) {
       say('Dispatch loads and trip triangle opened.');
     },
     setPersonalMode,
+    openWeather,
+    async openCctv() {
+      nationalCatalog.close();
+      if (dataManager?.layers?.has('cctv') && !dataManager.isEnabled?.('cctv')) {
+        await dataManager.setEnabled('cctv', true, { origin: 'tool' });
+      }
+      setRightPanel('cctv');
+    },
     openAgent: () => toggleAgent(true),
     closeAgent: () => toggleAgent(false),
     notify: say,
