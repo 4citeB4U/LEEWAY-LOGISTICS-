@@ -35,6 +35,15 @@ function ensureStyles(documentRef) {
     body.leeway-enterprise-shell .celestial-ring-overlay { display:none !important; }
     body.leeway-enterprise-shell #cesiumContainer { inset:0 !important; width:100vw !important; height:100vh !important; clip-path:none !important; border-radius:0 !important; }
     body.leeway-enterprise-shell #leeway-agent-lee.leeway-open { display:block; left:98px; bottom:92px; width:min(430px,calc(100vw - 120px)); }
+    body.leeway-personal-mode .lws-rail,
+    body.leeway-personal-mode .business-only,
+    body.leeway-personal-mode .lws-live { display:none !important; }
+    body.leeway-personal-mode #leeway-agent-lee.leeway-open { left:18px; }
+    body.leeway-personal-mode .lws-top-actions [data-action="workspace"],
+    body.leeway-personal-mode .lws-top-actions [data-action="workspace-menu"] { display:none; }
+    body.leeway-personal-mode .lws-top { grid-template-columns:minmax(180px,300px) minmax(220px,650px) 1fr; }
+    .lws-mode { min-width:76px; border-color:rgba(126,244,195,.35); color:#a8ffd0; }
+    body.leeway-personal-mode .lws-mode { background:rgba(126,244,195,.12); border-color:#9cffc7; }
     #leeway-world-shell { position:fixed; inset:0; z-index:9700; pointer-events:none; color:#edfaff; font:12px/1.35 Inter,ui-sans-serif,system-ui,sans-serif; }
     #leeway-world-shell * { box-sizing:border-box; }
     .lws-top { pointer-events:auto; position:absolute; top:0; left:0; right:0; height:64px; display:grid; grid-template-columns:390px minmax(280px,650px) 1fr; align-items:center; gap:18px; padding:0 20px; background:rgba(2,12,20,.94); border-bottom:1px solid rgba(62,211,236,.20); backdrop-filter:blur(16px); }
@@ -194,12 +203,13 @@ export function mountEnterpriseShell(application) {
   shell.id = 'leeway-world-shell';
   shell.innerHTML = `
     <header class="lws-top">
-      <div class="lws-brand"><img class="lws-logo" src="${import.meta.env.BASE_URL}leeway-approved-logo.jpg" alt="LeeWay Logistics — approved blue circular logo" /><div><strong>LEEWAY LOGISTICS</strong><span>YOUR ROAD. YOUR ROUTE.</span></div></div>
+      <div class="lws-brand"><img class="lws-logo" src="${import.meta.env.BASE_URL}leeway-approved-logo.jpg" alt="LeeWay Logistics — approved blue circular logo" /><div><strong data-brand-name>LEEWAY LOGISTICS</strong><span data-brand-tagline>YOUR ROAD. YOUR ROUTE.</span></div></div>
       <div class="lws-search"><input aria-label="Global search" placeholder="Search locations, loads, drivers, equipment, facilities..." /><kbd>⌘ K</kbd></div>
       <div class="lws-top-actions">
         <button class="lws-chip" data-action="map">Map</button>
         <button class="lws-chip" data-action="world">◉ World</button>
         <button class="lws-chip" data-action="route">Directions</button>
+        <button class="lws-chip lws-mode" data-action="personal-mode" aria-pressed="false">Personal map</button>
         <button class="lws-chip hide-sm" data-action="layers">▱ Layers⌄</button>
         <button class="lws-chip hide-sm" data-action="workspace">CRM</button>
         <button class="lws-chip" data-action="roadside">Road stops</button><button class="lws-chip" data-action="workspace-menu">Business</button><button class="lws-chip hide-sm" data-action="map-only">Hide controls</button>
@@ -224,7 +234,7 @@ export function mountEnterpriseShell(application) {
       <button class="lws-dock-btn" data-action="view-satellite"><span class="i">◫</span>Satellite</button>
       <button class="lws-dock-btn" data-action="report-hazard"><span class="i">⚠</span>Report</button>
       <button class="lws-ai" data-action="ai"><strong>Agent Lee · Copilot</strong><span>VOICE + LOGISTICS AI</span></button>
-      ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
+      ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D']].map(([id,label])=>`<button class="lws-dock-btn ${id === 'freight' || id === 'rail' ? 'business-only' : ''}" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
     </nav>
     <button class="lws-my-location" data-dock="locate" aria-label="My Location">⌾ My Location</button>
     <div class="lws-location-badge" data-location-badge><strong>WORLD</strong><span>Geographic identification loading…</span></div>
@@ -263,6 +273,34 @@ export function mountEnterpriseShell(application) {
   const weatherPanel = document.getElementById('weather-panel');
   let locationCell = '';
   let locationRequestGeneration = 0;
+  let personalMode = false;
+
+  function setPersonalMode(next = !personalMode) {
+    personalMode = Boolean(next);
+    document.body.classList.toggle('leeway-personal-mode', personalMode);
+    if (personalMode) {
+      workspace.close();
+      loadComparison.close();
+      shell.classList.remove('business-open');
+    }
+    const button = shell.querySelector('[data-action="personal-mode"]');
+    const name = shell.querySelector('[data-brand-name]');
+    const tagline = shell.querySelector('[data-brand-tagline]');
+    const search = shell.querySelector('.lws-search input');
+    if (button) {
+      button.setAttribute('aria-pressed', String(personalMode));
+      button.textContent = personalMode ? 'Business map' : 'Personal map';
+    }
+    if (name) name.textContent = personalMode ? 'LEEWAY MAPS' : 'LEEWAY LOGISTICS';
+    if (tagline) tagline.textContent = personalMode ? 'YOUR TRIP. YOUR VIEW.' : 'YOUR ROAD. YOUR ROUTE.';
+    if (search)
+      search.placeholder = personalMode
+        ? 'Search an address, place, airport, or stop...'
+        : 'Search locations, loads, drivers, equipment, facilities...';
+    say(personalMode
+      ? 'Personal map mode: directions, weather, safety, places, trip planning, and Agent Lee are ready.'
+      : 'Business map mode: dispatch, fleet, CRM, load planning, and operations are ready.');
+  }
 
   function syncRightTabs() {
     document.body.classList.toggle('leeway-right-ops-open', activeRightPanel === 'ops');
@@ -727,8 +765,9 @@ export function mountEnterpriseShell(application) {
     }
 
     if (action === 'ai') { toggleAgent(); return; }
+    if (action === 'personal-mode') { setPersonalMode(); return; }
     if (action === 'connect-world') { await probeWorldProvider({ explain: true }); return; }
-    if (action === 'workspace-menu') { shell.classList.toggle('business-open'); return; }
+    if (action === 'workspace-menu') { setPersonalMode(false); shell.classList.toggle('business-open'); return; }
     if (action === 'roadside') { roadside.toggle(); return; }
     if (action === 'peer-comms') { peerComms.toggle(); return; }
     if (action === 'report-hazard') { hazardReports.root.hidden = !hazardReports.root.hidden; return; }
@@ -807,6 +846,13 @@ export function mountEnterpriseShell(application) {
     routePlanner: routing,
     locate,
     openWorkspace: (tab='overview') => workspace.open(tab),
+    openLoadPlanning: () => {
+      setPersonalMode(false);
+      workspace.close();
+      loadComparison.open();
+      say('Dispatch loads and trip triangle opened.');
+    },
+    setPersonalMode,
     openAgent: () => toggleAgent(true),
     closeAgent: () => toggleAgent(false),
     notify: say,

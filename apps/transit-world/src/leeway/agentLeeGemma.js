@@ -54,6 +54,7 @@ function systemPrompt(context) {
     'For questions about what the operator is looking at, use get_entity_context or get_current_view_state before explaining the scene. For analytical counts or nearest/fastest/highest questions over loaded world data, use analyst_query.',
     'For domain-specific logistics, HR/onboarding, fleet, routing, municipal transit, rail, marine/intermodal, facilities, CRM, or evidence questions, call get_logistics_knowledge for the relevant topic before giving detailed operational guidance.',
     'Use open_enterprise_workspace and start_onboarding for CRM, HR, employee, equipment, document, integration, and company onboarding requests. Use locate_enterprise_record when the operator names an employee, unit, customer, broker, terminal, or facility.',
+    'Use open_dispatch_load_planning when a dispatcher needs to compare loads or build a home-base triangle. Use set_map_audience when the operator explicitly asks to switch between personal travel and business logistics views.',
     'Preserve source/provenance state when discussing live layers. Never turn stale, fallback, training, or unavailable data into a live-data claim.',
     'Never claim a route is truck-safe unless verified truck restriction evidence is present.',
     'Treat OSRM car routes as visual/base routes only.',

@@ -113,6 +113,21 @@ const enterpriseSchemas = Object.freeze([
       required: ['topic'],
     },
   },
+  {
+    name: 'open_dispatch_load_planning',
+    description: 'Open the dispatcher load-comparison and closed-loop trip-triangle planner. It prepares planning only and never books freight.',
+    parameters: { type: 'object', additionalProperties: false, properties: {} },
+  },
+  {
+    name: 'set_map_audience',
+    description: 'Switch between personal map mode and business logistics mode without changing saved route data.',
+    parameters: {
+      type: 'object',
+      additionalProperties: false,
+      properties: { audience: { type: 'string', enum: ['personal', 'business'] } },
+      required: ['audience'],
+    },
+  },
 ]);
 
 function toOllamaTool(schema) {
@@ -199,6 +214,16 @@ export function createAgentLeeToolRuntime(application, shell) {
         knowledge,
         error: knowledge ? null : 'Unknown logistics knowledge topic',
       };
+    }
+
+    if (name === 'open_dispatch_load_planning') {
+      shell.openLoadPlanning?.();
+      return { ok: true, action: name, externalWrite: false };
+    }
+
+    if (name === 'set_map_audience') {
+      shell.setPersonalMode?.(args.audience === 'personal');
+      return { ok: true, action: name, audience: args.audience };
     }
 
     if (name === 'locate_enterprise_record') {
