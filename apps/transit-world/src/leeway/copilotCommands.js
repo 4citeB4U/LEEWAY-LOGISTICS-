@@ -48,6 +48,16 @@ export function classifyCopilotCommand(value) {
     return { action: 'load-planning' };
   if (
     /\b(weather|radar|rain|storm|lightning|clouds?)\b/.test(input) &&
+    /\b(play|resume|animate|move|moving|start)\b/.test(input)
+  )
+    return { action: 'weather-playback', playing: true };
+  if (
+    /\b(weather|radar|rain|storm|lightning|clouds?)\b/.test(input) &&
+    /\b(pause|freeze|stop)\b/.test(input)
+  )
+    return { action: 'weather-playback', playing: false };
+  if (
+    /\b(weather|radar|rain|storm|lightning|clouds?)\b/.test(input) &&
     /\b(show|open|turn|check|see|look)\b/.test(input)
   )
     return { action: 'weather' };
@@ -137,6 +147,7 @@ export async function executeCopilotCommand(value, shell) {
   const target = {
     'load-planning': [shell, 'openLoadPlanning'],
     weather: [shell, 'openWeather'],
+    'weather-playback': [shell, 'setWeatherPlayback'],
     cctv: [shell, 'openCctv'],
     'camera-select': [shell, 'selectCctv'],
     navigate: [shell.routePlanner, 'routeFromVoice'],
@@ -172,6 +183,18 @@ export async function executeCopilotCommand(value, shell) {
       handled: true,
       message:
         'Weather layers are opening. Check their source status before treating a layer as current.',
+    };
+  }
+  if (command.action === 'weather-playback') {
+    const result = await shell.setWeatherPlayback?.(command.playing);
+    return {
+      handled: true,
+      ok: !!result?.ok,
+      message: result?.ok
+        ? command.playing
+          ? `Weather history playback is running across ${result.historyFrames || 'available'} observed frames.`
+          : 'Weather history playback is paused on the current observation.'
+        : 'Weather history playback is unavailable until at least two observed frames are loaded.',
     };
   }
   if (command.action === 'cctv') {
