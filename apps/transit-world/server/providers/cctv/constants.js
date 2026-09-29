@@ -153,7 +153,7 @@ export const DDOT_CCTV_LOCATIONS_URL =
 export const DEFAULT_DDOT_MAX_SOURCES = 300;
 export const WASHINGTON_DC_CENTER = { lat: 38.9072, lon: -77.0369 };
 
-/** Ontario 511: keyless CARS/511 camera catalog; frame URLs are still images. */
+/** Ontario 511: official keyed camera catalog; frame URLs are still images. */
 export const ONTARIO_511_CAMERAS_URL =
   'https://511on.ca/api/v2/get/cameras?format=json&lang=en';
 export const ONTARIO_511_IMAGE_ORIGIN = 'https://511on.ca/map/Cctv/';
