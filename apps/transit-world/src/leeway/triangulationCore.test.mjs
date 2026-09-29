@@ -26,11 +26,24 @@ test('does not silently produce a triangle without a home base', () => {
 
 test('calculates transparent fuel and rate planning math without an HOS claim', () => {
   const plan = buildTriangulation({ homeBase: 'Home', offers: [offer('a', 'Pickup', 'Delivery', 3000)] });
-  const estimate = estimateTriangleEconomics({ plan, distanceM: 650 * 1609.344, durationS: 13 * 3600, mpg: 6.5, fuelPrice: 4 });
+  const estimate = estimateTriangleEconomics({ plan, distanceM: 650 * 1609.344, durationS: 13 * 3600, mpg: 6.5, fuelPrice: 4, driverCostPerMile: 0.5, maintenanceCostPerMile: 0.2, fixedCostPerDay: 100, tollCost: 75, taxAndOtherCost: 25 });
   assert.equal(estimate.miles, 650);
   assert.equal(estimate.gallons, 100);
   assert.equal(estimate.fuelCost, 400);
   assert.equal(estimate.ratePerMile, 3000 / 650);
   assert.equal(estimate.elevenHourDrivingDays, 2);
+  assert.equal(estimate.driverCost, 325);
+  assert.equal(estimate.maintenanceCost, 130);
+  assert.equal(estimate.fixedCost, 200);
+  assert.equal(estimate.operatingCost, 1155);
+  assert.equal(estimate.estimatedNet, 1845);
   assert.match(estimate.status, /REQUIRES_DISPATCH/);
+});
+
+test('rejects a hidden negative cost from the rate worksheet', () => {
+  const plan = buildTriangulation({ homeBase: 'Home', offers: [offer('a', 'Pickup', 'Delivery')] });
+  assert.throws(
+    () => estimateTriangleEconomics({ plan, distanceM: 1000, durationS: 1, mpg: 8, fuelPrice: 4, tollCost: -1 }),
+    /Toll cost/,
+  );
 });

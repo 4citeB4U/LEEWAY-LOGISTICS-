@@ -45,7 +45,18 @@ export function buildTriangulation({ homeBase, offers } = {}) {
 }
 
 /** Returns transparent planning math; it is not a DOT/HOS compliance ruling. */
-export function estimateTriangleEconomics({ plan, distanceM, durationS, mpg, fuelPrice } = {}) {
+export function estimateTriangleEconomics({
+  plan,
+  distanceM,
+  durationS,
+  mpg,
+  fuelPrice,
+  driverCostPerMile = 0,
+  maintenanceCostPerMile = 0,
+  fixedCostPerDay = 0,
+  tollCost = 0,
+  taxAndOtherCost = 0,
+} = {}) {
   if (!plan?.stops?.length) throw new Error('Build a triangulation plan first.');
   if (!Number.isFinite(distanceM) || distanceM < 0)
     throw new Error('Road distance is required for an estimate.');
@@ -53,6 +64,19 @@ export function estimateTriangleEconomics({ plan, distanceM, durationS, mpg, fue
   if (!fuel) throw new Error('Enter a valid miles-per-gallon value.');
   const routeHours = Number.isFinite(durationS) && durationS >= 0 ? durationS / 3600 : null;
   const totalRate = Number(plan.totalRate) || 0;
+  const nonNegative = (value, label) => {
+    const number = Number(value);
+    if (!Number.isFinite(number) || number < 0)
+      throw new Error(`${label} must be a non-negative number.`);
+    return number;
+  };
+  const driver = nonNegative(driverCostPerMile, 'Driver cost per mile') * fuel.miles;
+  const maintenance = nonNegative(maintenanceCostPerMile, 'Maintenance cost per mile') * fuel.miles;
+  const tolls = nonNegative(tollCost, 'Toll cost');
+  const taxAndOther = nonNegative(taxAndOtherCost, 'Tax and other cost');
+  const days = routeHours == null ? null : Math.max(1, Math.ceil(routeHours / 11));
+  const fixed = days == null ? 0 : nonNegative(fixedCostPerDay, 'Fixed cost per day') * days;
+  const operatingCost = (fuel.cost ?? 0) + driver + maintenance + fixed + tolls + taxAndOther;
   return {
     miles: fuel.miles,
     gallons: fuel.gallons,
@@ -60,8 +84,15 @@ export function estimateTriangleEconomics({ plan, distanceM, durationS, mpg, fue
     totalRate,
     ratePerMile: totalRate > 0 && fuel.miles > 0 ? totalRate / fuel.miles : null,
     fuelMarginBeforeOtherCosts: fuel.cost != null && totalRate > 0 ? totalRate - fuel.cost : null,
+    driverCost: driver,
+    maintenanceCost: maintenance,
+    fixedCost: fixed,
+    tollCost: tolls,
+    taxAndOtherCost: taxAndOther,
+    operatingCost,
+    estimatedNet: totalRate > 0 ? totalRate - operatingCost : null,
     routeHours,
-    elevenHourDrivingDays: routeHours == null ? null : Math.max(1, Math.ceil(routeHours / 11)),
+    elevenHourDrivingDays: days,
     rateComplete: plan.rateComplete === true,
     status: 'PLANNING_ESTIMATE_REQUIRES_DISPATCH_AND_HOS_REVIEW',
   };
