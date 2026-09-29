@@ -910,17 +910,34 @@ function pickOntarioCctvView(views) {
   );
 }
 
+export function ontario511CatalogUrl(env = process.env) {
+  const key = String(env.CCTV_ONTARIO_511_KEY || '').trim();
+  if (!key) return '';
+  const url = new URL(ONTARIO_511_CAMERAS_URL);
+  url.searchParams.set('key', key);
+  return url.href;
+}
+
 /**
- * Fetch Ontario 511 CCTV cameras. Keyless: the catalog is exposed by the
- * public 511 API, while frame URLs are stable still-image endpoints under
- * 511on.ca/map/Cctv/. Only rows with finite Ontario coords and at least one
- * enabled official still view are kept.
+ * Fetch Ontario 511 CCTV cameras using the agency-issued developer key.
+ * The key is read only on the server and is never placed in camera records or
+ * returned to the browser. Frame URLs remain provider-owned still endpoints.
  *
  * @returns {Promise<Array<object>>} Normalized camera source objects.
  */
-export async function loadOntarioSourcesFromOpenData() {
+export async function loadOntarioSourcesFromOpenData({
+  env = process.env,
+  fetchImpl = fetch,
+} = {}) {
   try {
-    const resp = await fetch(ONTARIO_511_CAMERAS_URL, {
+    const catalogUrl = ontario511CatalogUrl(env);
+    if (!catalogUrl) {
+      console.warn(
+        '[CCTV] Ontario 511 developer key not configured; camera pack is disabled',
+      );
+      return [];
+    }
+    const resp = await fetchImpl(catalogUrl, {
       headers: { Accept: 'application/json' },
       signal: AbortSignal.timeout(CCTV_SOURCE_FETCH_TIMEOUT_MS),
     });
@@ -988,7 +1005,7 @@ export async function loadOntarioSourcesFromOpenData() {
       new Map(cameras.map((camera) => [camera.id, camera])).values(),
     );
     const maxRaw = Number(
-      process.env.CCTV_ONTARIO_MAX_SOURCES || DEFAULT_ONTARIO_MAX_SOURCES,
+      env.CCTV_ONTARIO_MAX_SOURCES || DEFAULT_ONTARIO_MAX_SOURCES,
     );
     const maxCount = Number.isFinite(maxRaw)
       ? Math.max(8, Math.min(1000, Math.floor(maxRaw)))

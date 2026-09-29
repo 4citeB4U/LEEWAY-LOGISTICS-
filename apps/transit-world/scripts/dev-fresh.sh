@@ -10,10 +10,10 @@ PORT="${PORT:-4173}"
 # should not be reachable from the network unless explicitly requested.
 # Set HOST=0.0.0.0 to opt in to LAN exposure (a warning is printed).
 HOST="${HOST:-localhost}"
-# CCTV source packs (all keyless): Austin (~815 live upstream), Caltrans
-# districts 4,7,11,3 = SF/LA/San Diego/Sacramento (~1,860 live upstream),
-# TfL London JamCams (~870 live upstream), Ontario 511 (~944 live upstream,
-# including Kitchener-area highways), and Fintraffic Finland weathercams
+# CCTV source packs: Austin, Caltrans districts 4,7,11,3,
+# TfL London JamCams and Fintraffic are keyless public packs. Ontario 511
+# requires CCTV_ONTARIO_511_KEY as of September 24, 2026; without it the
+# Ontario pack remains disabled rather than attempting an unauthenticated call.
 # (~2,260 live presets). Caps keep the densest cores per pack; override
 # per-run for lighter/heavier loads. Kill switches: CCTV_CALTRANS_DISTRICTS='',
 # CCTV_TFL_ENABLED=0, CCTV_ONTARIO_ENABLED=0, CCTV_FINTRAFFIC_ENABLED=0 and
