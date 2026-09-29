@@ -1,4 +1,5 @@
-import { createVercelSharedHandler } from '../server/deployment/vercelShared.js';
+import { createVercelWorldHandler } from '../server/deployment/vercelWorld.js';
 
-// Vercel Node function; service credentials remain server environment variables.
-export default createVercelSharedHandler();
+// Public LeeWay World Runtime for the static GitHub Pages clients.
+// Provider credentials remain server-side environment variables.
+export default createVercelWorldHandler();
