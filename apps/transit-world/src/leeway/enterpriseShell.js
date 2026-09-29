@@ -1203,6 +1203,56 @@ export function mountEnterpriseShell(
     }
   });
 
+  async function selectCctv(query) {
+    const requested = String(query || '').trim().toLowerCase();
+    if (!requested)
+      return { ok: false, reason: 'camera-query-required' };
+    nationalCatalog.close();
+    if (
+      dataManager?.layers?.has('cctv') &&
+      !dataManager.isEnabled?.('cctv')
+    ) {
+      await dataManager.setEnabled('cctv', true, { origin: 'copilot' });
+    }
+    setRightPanel('cctv', { toggle: false });
+    const cctv = dataManager?.layers?.get('cctv')?.module;
+    const cameras = cctv?.getUIState?.()?.cameras || [];
+    const match =
+      cameras.find(
+        (camera) => String(camera.id || '').toLowerCase() === requested,
+      ) ||
+      cameras.find(
+        (camera) => String(camera.name || '').toLowerCase() === requested,
+      ) ||
+      cameras.find((camera) =>
+        `${camera.id || ''} ${camera.name || ''}`
+          .toLowerCase()
+          .includes(requested),
+      );
+    if (!match) {
+      say(`No loaded CCTV camera matched ${query}.`);
+      return {
+        ok: false,
+        reason: 'camera-not-found',
+        cameraCount: cameras.length,
+      };
+    }
+    const selected = cctv?.selectCamera?.(match.id);
+    if (!selected) {
+      say(`Camera ${match.name || match.id} could not be selected.`);
+      return { ok: false, reason: 'camera-select-failed', id: match.id };
+    }
+    cctv?.focusCamera?.(match.id, 1.8);
+    say(`Showing ${match.name || match.id}.`);
+    return {
+      ok: true,
+      id: match.id,
+      name: match.name || match.id,
+      provider: match.provider || null,
+      city: match.city || null,
+    };
+  }
+
   return {
     root: shell,
     workspace,
@@ -1225,6 +1275,7 @@ export function mountEnterpriseShell(
       }
       setRightPanel('cctv', { toggle: false });
     },
+    selectCctv,
     openAgent: () => toggleAgent(true),
     closeAgent: () => toggleAgent(false),
     notify: say,
