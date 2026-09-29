@@ -41,7 +41,6 @@ test('does not manufacture a model action for ordinary questions', async () => {
   assert.deepEqual(result, { handled: false });
 });
 
-
 test('classifies deterministic voice navigation and CCTV selection', () => {
   assert.deepEqual(
     classifyCopilotCommand('Take me to 400 W Wisconsin Ave, Milwaukee, WI'),
