@@ -19,6 +19,18 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+function Convert-DotEnvValue([string]$Value) {
+    $value = $Value.Trim()
+    if ($value.Length -ge 2 -and $value[0] -eq [char]39 -and $value[$value.Length - 1] -eq [char]39) {
+        return $value.Substring(1, $value.Length - 2)
+    }
+    if ($value.Length -ge 2 -and $value[0] -eq [char]34 -and $value[$value.Length - 1] -eq [char]34) {
+        $inner = $value.Substring(1, $value.Length - 2)
+        return $inner.Replace('\"', '"').Replace('\\', '\')
+    }
+    return $value
+}
+
 function Read-DotEnv([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) {
         throw "Private env file not found: $Path"
@@ -30,7 +42,7 @@ function Read-DotEnv([string]$Path) {
         $eq = $text.IndexOf('=')
         if ($eq -lt 1) { continue }
         $key = $text.Substring(0, $eq).Trim()
-        $value = $text.Substring($eq + 1).Trim()
+        $value = Convert-DotEnvValue $text.Substring($eq + 1)
         if ($key -match '^[A-Z][A-Z0-9_]*$') { $map[$key] = $value }
     }
     return $map
@@ -102,22 +114,19 @@ $teamId = Get-EnvValue $envMap 'VERCEL_TEAM_ID'
 $teamSlug = Get-EnvValue $envMap 'VERCEL_TEAM_SLUG'
 $script:Token = Get-EnvValue $envMap 'VERCEL_TOKEN'
 
+# Only variables consumed by createVercelWorldHandler/createWorldPlugins
+# are promoted here. Credentials for providers not mounted in the public World
+# Runtime stay private in .env.local until their provider route is qualified.
 $serverKeys = @(
     'OPENSKY_AUTH_MODE',
     'OPENSKY_CLIENT_ID',
     'OPENSKY_CLIENT_SECRET',
     'OPENSKY_USERNAME',
     'OPENSKY_PASSWORD',
-    'LL2_API_TOKEN',
     'WISCONSIN_511_API_KEY',
     'CCTV_WISCONSIN_511_KEY',
     'ONTARIO_511_API_KEY',
     'CCTV_ONTARIO_511_KEY',
-    'GOOGLE_MAPS_SERVER_API_KEY',
-    'FIRMS_MAP_KEY',
-    'TOMTOM_API_KEY',
-    'AISSTREAM_API_KEY',
-    'OPENAI_API_KEY',
     'LEEWAY_ALLOWED_ORIGINS'
 )
 
