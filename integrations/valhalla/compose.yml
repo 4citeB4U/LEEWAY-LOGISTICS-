@@ -1,0 +1,33 @@
+name: leeway-valhalla-regional
+services:
+  valhalla:
+    # Official multi-architecture index, resolved 2026-09-28. Never floating latest.
+    image: ghcr.io/valhalla/valhalla-scripted@sha256:43693ca35a2c38d15adc25149d8bb34ea68bd8250904c7efa4ce6e5c2dc5ae24
+    ports:
+      - "127.0.0.1:${VALHALLA_PORT:-8002}:8002"
+    volumes:
+      - "${VALHALLA_DATA_DIR:?Set a dedicated absolute regional data directory}:/custom_files"
+      - "./start.sh:/leeway/start.sh:ro"
+    entrypoint: ["/bin/sh", "/leeway/start.sh"]
+    command: ["build_tiles"]
+    environment:
+      server_threads: "2"
+      build_elevation: "False"
+      build_admins: "True"
+      build_time_zones: "False"
+      build_transit: "False"
+      use_default_speeds_config: "False"
+      use_tiles_ignore_pbf: "True"
+      force_rebuild: "False"
+      update_existing_config: "False"
+      serve_tiles: "True"
+    cpus: 2.0
+    mem_limit: 2g
+    pids_limit: 256
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8002/status"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5m
+      retries: 3

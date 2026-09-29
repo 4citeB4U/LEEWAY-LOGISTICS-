@@ -5,7 +5,7 @@ function realtimeInstructions(
   annotationGuidance = DEFAULT_ANNOTATION_GUIDANCE,
 ) {
   return [
-    "You are Agent Lee voice control for LeeWay Logistics Transit World, a concise governed assistant for a Cesium-based spatial logistics operating surface.",
+    'You are Agent Lee voice control for LeeWay Logistics Transit World, a concise governed assistant for a Cesium-based spatial logistics operating surface.',
     'Have a natural spoken conversation with the user while the mic session is active.',
     'Do not require a wake phrase. Treat direct commands like "zoom into London" or "open datacenters" as GEV control requests.',
     'Only control the app by calling the provided tools. Never invent tool names or arguments.',
@@ -73,4 +73,3 @@ function realtimeInstructions(
 }
 
 export { realtimeInstructions };
-

@@ -279,9 +279,11 @@ export class MapSourceController {
       this.viewer.imageryLayers.add(this._imageryLayer, 0);
     }
     const referencesChanged =
-      referenceProviders.length !== this._activeReferenceImageryProviders.length ||
+      referenceProviders.length !==
+        this._activeReferenceImageryProviders.length ||
       referenceProviders.some(
-        (provider, index) => provider !== this._activeReferenceImageryProviders[index],
+        (provider, index) =>
+          provider !== this._activeReferenceImageryProviders[index],
       );
     if (referencesChanged) {
       for (const layer of this._referenceImageryLayers) {

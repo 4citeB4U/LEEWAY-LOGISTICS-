@@ -1,5 +1,6 @@
 function ensureStyles(documentRef) {
-  if (documentRef.getElementById('leeway-national-camera-catalog-styles')) return;
+  if (documentRef.getElementById('leeway-national-camera-catalog-styles'))
+    return;
   const style = documentRef.createElement('style');
   style.id = 'leeway-national-camera-catalog-styles';
   style.textContent = `
@@ -8,9 +9,10 @@ function ensureStyles(documentRef) {
       border:1px solid rgba(71,225,242,.28); border-radius:15px; background:rgba(3,15,24,.97);
       color:#eaffff; box-shadow:0 18px 55px rgba(0,0,0,.42); backdrop-filter:blur(16px); display:none; }
     .lnc-root.open { display:flex; flex-direction:column; }
-    .lnc-head { display:flex; align-items:center; gap:10px; padding:13px 14px; border-bottom:1px solid rgba(255,255,255,.08); }
+    .lnc-head { display:grid; grid-template-columns:1fr auto auto; align-items:center; gap:10px; padding:16px; border-bottom:1px solid rgba(255,255,255,.08); }
     .lnc-head strong { letter-spacing:.10em; font-size:12px; }
     .lnc-head span { margin-left:auto; font-size:9px; opacity:.65; }
+    .lnc-close { width:48px; height:48px; border:1px solid rgba(117,239,251,.35); border-radius:18px; background:linear-gradient(150deg,#294a58,#0b202b); color:#fff; font:700 25px/1 system-ui,sans-serif; cursor:pointer; box-shadow:inset 0 1px 0 #fff3,0 4px 0 #020a0f; }
     .lnc-toolbar { display:grid; grid-template-columns:1fr auto; gap:8px; padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.07); }
     .lnc-toolbar input { min-width:0; height:36px; border-radius:8px; border:1px solid rgba(71,225,242,.20);
       background:#071722; color:#efffff; padding:0 10px; font:inherit; outline:none; }
@@ -35,7 +37,10 @@ function ensureStyles(documentRef) {
   documentRef.head.appendChild(style);
 }
 
-export function mountNationalCameraCatalog({ host = document.body, notify = () => {} } = {}) {
+export function mountNationalCameraCatalog({
+  host = document.body,
+  notify = () => {},
+} = {}) {
   ensureStyles(document);
   const root = document.createElement('section');
   root.className = 'lnc-root';
@@ -44,6 +49,7 @@ export function mountNationalCameraCatalog({ host = document.body, notify = () =
     <div class="lnc-head">
       <strong>U.S. PUBLIC TRAFFIC CAMERA CATALOG</strong>
       <span data-status>NOT LOADED</span>
+      <button class="lnc-close" type="button" data-close aria-label="Close national camera catalog">×</button>
     </div>
     <div class="lnc-toolbar">
       <input data-search aria-label="Filter jurisdictions" placeholder="Filter state, territory, operator, system..." />
@@ -77,7 +83,12 @@ export function mountNationalCameraCatalog({ host = document.body, notify = () =
       [summary.seededJurisdictionCount ?? 0, 'SEEDED'],
       [summary.integratedSourceCount ?? 0, 'INTEGRATED SOURCES'],
       [summary.researchRequiredJurisdictionCount ?? 0, 'RESEARCH QUEUE'],
-    ].map(([value, label]) => `<div class="lnc-metric"><b>${escapeHtml(value)}</b><span>${label}</span></div>`).join('');
+    ]
+      .map(
+        ([value, label]) =>
+          `<div class="lnc-metric"><b>${escapeHtml(value)}</b><span>${label}</span></div>`,
+      )
+      .join('');
 
     const q = search.value.trim().toLowerCase();
     const rows = (payload?.jurisdictions || []).filter((row) => {
@@ -91,7 +102,9 @@ export function mountNationalCameraCatalog({ host = document.body, notify = () =
           source.system,
           source.integrationStatus,
         ]),
-      ].join(' ').toLowerCase();
+      ]
+        .join(' ')
+        .toLowerCase();
       return haystack.includes(q);
     });
 
@@ -100,16 +113,21 @@ export function mountNationalCameraCatalog({ host = document.body, notify = () =
       return;
     }
 
-    list.innerHTML = rows.map((row) => {
-      const state = row.integrated ? 'integrated' : row.researchStatus;
-      const sources = (row.sources || []).map((source) => `
+    list.innerHTML = rows
+      .map((row) => {
+        const state = row.integrated ? 'integrated' : row.researchStatus;
+        const sources = (row.sources || [])
+          .map(
+            (source) => `
         <div class="lnc-source">
           <strong>${escapeHtml(source.system || source.operator)}</strong>
           · ${escapeHtml(source.integrationStatus || 'unknown')}
           <small>${escapeHtml(source.operator || '')}${source.notes ? ' · ' + escapeHtml(source.notes) : ''}</small>
         </div>
-      `).join('');
-      return `
+      `,
+          )
+          .join('');
+        return `
         <article class="lnc-row">
           <div class="lnc-row-head">
             <span class="lnc-code">${escapeHtml(row.code)}</span>
@@ -119,7 +137,8 @@ export function mountNationalCameraCatalog({ host = document.body, notify = () =
           ${sources || '<div class="lnc-source"><small>Official source research not yet completed. No feed is implied.</small></div>'}
         </article>
       `;
-    }).join('');
+      })
+      .join('');
   }
 
   async function refresh() {
@@ -130,14 +149,16 @@ export function mountNationalCameraCatalog({ host = document.body, notify = () =
       const response = await fetch('/api/cctv/jurisdictions', {
         headers: { Accept: 'application/json' },
       });
-      if (!response.ok) throw new Error(`National catalog HTTP ${response.status}`);
+      if (!response.ok)
+        throw new Error(`National catalog HTTP ${response.status}`);
       payload = await response.json();
       status.textContent = `${payload?.summary?.jurisdictionCount || 0} JURISDICTIONS`;
       render();
       return true;
     } catch (error) {
       status.textContent = 'UNAVAILABLE';
-      list.innerHTML = '<div class="lnc-empty">National catalog provider is unavailable.</div>';
+      list.innerHTML =
+        '<div class="lnc-empty">National catalog provider is unavailable.</div>';
       notify(error?.message || 'National catalog unavailable');
       return false;
     } finally {
@@ -146,7 +167,15 @@ export function mountNationalCameraCatalog({ host = document.body, notify = () =
   }
 
   search.addEventListener('input', render);
-  root.querySelector('[data-refresh]').addEventListener('click', () => void refresh());
+  root
+    .querySelector('[data-refresh]')
+    .addEventListener('click', () => void refresh());
+  root.querySelector('[data-close]').addEventListener('click', () => {
+    root.classList.remove('open');
+    root.dispatchEvent(
+      new CustomEvent('leeway:right-panel-close', { bubbles: true }),
+    );
+  });
 
   return {
     root,

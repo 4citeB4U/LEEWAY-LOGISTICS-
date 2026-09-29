@@ -4,9 +4,11 @@ import { CctvControls } from './cctvControls.js';
 
 function element() {
   const classes = new Set();
-  return {
+  return Object.assign(new EventTarget(), {
     dataset: {},
     src: '',
+    hidden: true,
+    textContent: '',
     removeAttribute(name) {
       if (name === 'src') this.src = '';
     },
@@ -25,7 +27,7 @@ function element() {
         else classes.delete(value);
       },
     },
-  };
+  });
 }
 function fixture(t) {
   const prior = globalThis.Image;
@@ -39,13 +41,73 @@ function fixture(t) {
     globalThis.Image = prior;
   });
   const controls = new CctvControls({
-    elements: { _cctvFrame: element(), _cctvFrameWrap: element() },
+    elements: {
+      _cctvFrame: element(),
+      _cctvFrameWrap: element(),
+      _cctvFrameMessage: element(),
+    },
     cctv: {},
     actions: { isEnabled: () => true },
   });
   t.after(() => controls.destroy());
   return { controls, requests };
 }
+
+test('failed and working frames expose truthful recovery state', (t) => {
+  const { controls, requests } = fixture(t);
+  const events = [];
+  controls._cctvFrame.addEventListener('leeway:cctv-frame-unavailable', () =>
+    events.push('unavailable'),
+  );
+  controls._cctvFrame.addEventListener('leeway:cctv-frame-ready', () =>
+    events.push('ready'),
+  );
+  controls._queueCctvFrame('failed.jpg', 'a', true);
+  requests[0].onerror();
+  assert.equal(controls._cctvFrameMessage.hidden, false);
+  assert.match(controls._cctvFrameMessage.textContent, /did not return/);
+  controls._queueCctvFrame('working.jpg', 'b', true);
+  requests[1].onload();
+  assert.equal(controls._cctvFrameMessage.hidden, true);
+  assert.deepEqual(events, ['unavailable', 'ready']);
+});
+
+test('working frames expose native resolution and quality without inventing HD', (t) => {
+  const { controls, requests } = fixture(t);
+  controls._cctvSourceBadge = element();
+  controls._cctvState = {
+    enabled: true,
+    activeCamera: { sourceKind: 'snapshot', sourceStatus: 'ok' },
+  };
+  let detail = null;
+  controls._cctvFrame.addEventListener('leeway:cctv-frame-ready', (event) => {
+    detail = event.detail;
+  });
+  controls._queueCctvFrame('working.jpg', 'quality-camera', true);
+  requests[0].naturalWidth = 1280;
+  requests[0].naturalHeight = 720;
+  requests[0].onload();
+  assert.equal(controls._cctvFrame.dataset.nativeWidth, '1280');
+  assert.equal(controls._cctvFrame.dataset.nativeHeight, '720');
+  assert.equal(controls._cctvFrame.dataset.quality, 'hd');
+  assert.deepEqual(detail, {
+    cameraId: 'quality-camera',
+    width: 1280,
+    height: 720,
+    quality: 'hd',
+  });
+  assert.equal(
+    controls._cctvSourceBadge.textContent,
+    'SNAPSHOT · OK · 1280×720 · HD',
+  );
+
+  controls._queueCctvFrame('low.jpg', 'low-camera', true);
+  requests[1].naturalWidth = 352;
+  requests[1].naturalHeight = 240;
+  requests[1].onload();
+  assert.equal(controls._cctvFrame.dataset.quality, 'low');
+  assert.match(controls._cctvSourceBadge.textContent, /352×240 · LOW$/);
+});
 
 test('a late image completion cannot replace a newer camera preview', (t) => {
   const { controls, requests } = fixture(t);

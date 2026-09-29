@@ -202,7 +202,9 @@ test('no unchanged Realtime tool definition drifts silently', () => {
     .digest('hex')
     .slice(0, 16);
   // Analyst additions and ISS wording correction are explicitly excluded above; all other tool definitions retain their pin.
-  assert.equal(digest, '91935845ef2598b1', 'an unchanged Realtime tool definition drifted');
+  // Re-derived from the d700ab3 release payload. set_map_stack is excluded
+  // above, so the additive esri-labeled choice cannot mask unrelated drift.
+  assert.equal(digest, '527dec0a6b359808', 'an unchanged Realtime tool definition drifted');
 });
 
 test('Radio volume and mission speed share the Sharpen slider visual language', () => {

@@ -57,7 +57,8 @@ export function _renderCctvState(state) {
   if (this._cctvSelect) {
     const cityGroups = new Map();
     for (const camera of cameras) {
-      const city = String(camera.city || 'Other cameras').trim() || 'Other cameras';
+      const city =
+        String(camera.city || 'Other cameras').trim() || 'Other cameras';
       if (!cityGroups.has(city)) cityGroups.set(city, []);
       cityGroups.get(city).push(camera);
     }

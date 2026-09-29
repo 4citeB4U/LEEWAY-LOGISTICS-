@@ -133,7 +133,7 @@ test('every mirror is asked with a User-Agent that identifies the application', 
     );
     assert.match(
       agent,
-      /github\.com\/bilawalsidhu\/leeway-logistics-transit-world/,
+      /github\.com\/4citeB4U\/LEEWAY-LOGISTICS-/,
       `${request.url} must carry a route back to the project`,
     );
   }

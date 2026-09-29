@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-28T06:59:30Z",
+  "dataset": "Geofabrik District of Columbia OpenStreetMap extract",
+  "url": "https://download.geofabrik.de/north-america/us/district-of-columbia-260927.osm.pbf",
+  "bytes": 21006185,
+  "sha256": "3122c2eafe30d8653555750ca12210cb2e307af9ccfeeea894401e7a4ce05355",
+  "md5": "43dbc9c1109089d12b326e36b68fa9cf",
+  "publisherMd5Matched": true,
+  "publisherChecksumUrl": "https://download.geofabrik.de/north-america/us/district-of-columbia-260927.osm.pbf.md5",
+  "routingRuntimeVerified": false,
+  "boundary": "Verified download bytes only. Runtime and route behavior require a separate receipt. Regional coverage, not nationwide."
+}

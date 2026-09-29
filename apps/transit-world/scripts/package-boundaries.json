@@ -159,6 +159,7 @@
       "server/providers/cctv/constants.js",
       "server/providers/cctv/media.js",
       "server/providers/cctv/normalize.js",
+      "server/providers/cctv/nationalRegistry.js",
       "server/providers/cctv/range.js",
       "server/providers/cctv/sources.js",
       "server/providers/cctv/stream.js",
@@ -1092,7 +1093,8 @@
       "src/overlays/worldOverlayTokens.js",
       "src/data/cctvFootprint.js",
       "src/data/inputOwnership.js",
-      "src/layers/cctv/sourcePolicy.js"
+      "src/layers/cctv/sourcePolicy.js",
+      "src/leeway/worldApiBridge.js"
     ],
     "external": ["hls.js", "cesium"]
   },
@@ -1896,6 +1898,8 @@
       "src/layers/weather/infraredAlpha.js",
       "src/layers/weather/infraredImage.js",
       "src/layers/weather/source.js",
+      "src/layers/weather/publicWms.js",
+      "src/layers/weather/protocol.js",
       "src/director/clock.js",
       "src/director/timeline.js",
       "src/scenes/shotPresentation.js",
@@ -1955,7 +1959,8 @@
       "src/layers/recentImagery/thumbnails.js",
       "src/maps/imageryHost.js",
       "src/ui/recentImagery.js",
-      "src/ui/imageryBoxTool.js"
+      "src/ui/imageryBoxTool.js",
+      "src/leeway/worldApiBridge.js"
     ],
     "external": [
       "hls.js",
@@ -2384,6 +2389,8 @@
       "src/layers/weather/infraredAlpha.js",
       "src/layers/weather/infraredImage.js",
       "src/layers/weather/source.js",
+      "src/layers/weather/publicWms.js",
+      "src/layers/weather/protocol.js",
       "src/layers/weather/imageryOrder.js",
       "src/layers/weather/imageryHost.js",
       "src/layers/cyclones/index.js",
@@ -2415,7 +2422,8 @@
       "src/layers/recentImagery/catalog.js",
       "src/layers/recentImagery/rendering.js",
       "src/layers/recentImagery/thumbnails.js",
-      "src/maps/imageryHost.js"
+      "src/maps/imageryHost.js",
+      "src/leeway/worldApiBridge.js"
     ],
     "external": [
       "hls.js",
@@ -2664,7 +2672,11 @@
   },
   "cctv-source": {
     "exports": ["./layers/cctv/source"],
-    "modules": ["src/layers/cctv/source.js", "src/layers/cctv/sourcePolicy.js"],
+    "modules": [
+      "src/layers/cctv/source.js",
+      "src/layers/cctv/sourcePolicy.js",
+      "src/leeway/worldApiBridge.js"
+    ],
     "external": []
   },
   "earthquakes-source": {

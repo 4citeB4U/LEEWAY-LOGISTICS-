@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
 import { createBrowserViteConfig } from '../../build/vite.js';
 import { localProviderPlugins } from '../providers/local.js';
@@ -13,8 +14,12 @@ export default defineConfig(({ command, mode }) => {
   for (const [key, value] of Object.entries(loaded)) {
     if (process.env[key] === undefined) process.env[key] = value;
   }
-  return createBrowserViteConfig({
-    plugins: [providerCorsPlugin(), ...localProviderPlugins(), apiNotFoundPlugin()],
+  const config = createBrowserViteConfig({
+    plugins: [
+      providerCorsPlugin(),
+      ...localProviderPlugins(),
+      apiNotFoundPlugin(),
+    ],
     googleApiKey: process.env.GOOGLE_MAPS_API_KEY,
     cesiumToken: process.env.CESIUM_ION_TOKEN,
     host: process.env.HOST,
@@ -22,4 +27,17 @@ export default defineConfig(({ command, mode }) => {
     command,
     base: process.env.VITE_BASE_PATH,
   });
+  return {
+    ...config,
+    build: {
+      ...config.build,
+      rollupOptions: {
+        input: {
+          business: path.resolve(root, 'index.html'),
+          personal: path.resolve(root, 'personal/index.html'),
+          compare: path.resolve(root, 'compare.html'),
+        },
+      },
+    },
+  };
 });

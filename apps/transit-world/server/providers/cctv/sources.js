@@ -423,7 +423,10 @@ export async function loadIllinoisGatewaySourcesFromOpenData() {
       signal: AbortSignal.timeout(CCTV_SOURCE_FETCH_TIMEOUT_MS),
     });
     if (!resp.ok) {
-      console.warn('[CCTV] Illinois Gateway camera download failed:', resp.status);
+      console.warn(
+        '[CCTV] Illinois Gateway camera download failed:',
+        resp.status,
+      );
       return [];
     }
 
@@ -433,7 +436,12 @@ export async function loadIllinoisGatewaySourcesFromOpenData() {
 
     for (const feature of rows) {
       const row = feature?.attributes || {};
-      if (String(row.TooOld || '').trim().toLowerCase() === 'true') continue;
+      if (
+        String(row.TooOld || '')
+          .trim()
+          .toLowerCase() === 'true'
+      )
+        continue;
 
       const lat = toFiniteNumber(row.y);
       const lon = toFiniteNumber(row.x);
@@ -462,7 +470,9 @@ export async function loadIllinoisGatewaySourcesFromOpenData() {
       const location = String(row.CameraLocation || '').trim();
       const ageMinutes = Number(row.AgeInMinutes);
       const warningAge =
-        String(row.WarningAge || '').trim().toLowerCase() === 'true';
+        String(row.WarningAge || '')
+          .trim()
+          .toLowerCase() === 'true';
 
       cameras.push({
         id: cameraId,
@@ -483,8 +493,10 @@ export async function loadIllinoisGatewaySourcesFromOpenData() {
         url: snapshotUrl,
         snapshotUrl,
         sourceKind: 'illinois-gateway-open-data',
-        license: 'Illinois Gateway public traffic-camera data; CC BY-SA 2.0 item metadata; IDOT reuse policy applies',
-        credit: 'Gateway traffic information courtesy of the Illinois Department of Transportation',
+        license:
+          'Illinois Gateway public traffic-camera data; CC BY-SA 2.0 item metadata; IDOT reuse policy applies',
+        credit:
+          'Gateway traffic information courtesy of the Illinois Department of Transportation',
         code: upstreamId || objectId,
         frameRefreshMs: 5 * 60 * 1000,
         ageMinutes: Number.isFinite(ageMinutes) ? ageMinutes : null,
@@ -516,20 +528,29 @@ export async function loadIllinoisGatewaySourcesFromOpenData() {
   }
 }
 
-
-
 function wisconsin511City(row = {}) {
-  const county = String(row.County || '').trim().toLowerCase();
-  if (county === 'milwaukee') return { city: 'Milwaukee, WI', cityId: 'milwaukee-wi' };
+  const county = String(row.County || '')
+    .trim()
+    .toLowerCase();
+  if (county === 'milwaukee')
+    return { city: 'Milwaukee, WI', cityId: 'milwaukee-wi' };
   if (county === 'dane') return { city: 'Madison, WI', cityId: 'madison-wi' };
-  if (county === 'brown') return { city: 'Green Bay, WI', cityId: 'green-bay-wi' };
-  if (county === 'outagamie') return { city: 'Appleton, WI', cityId: 'appleton-wi' };
-  if (county === 'kenosha') return { city: 'Kenosha, WI', cityId: 'kenosha-wi' };
+  if (county === 'brown')
+    return { city: 'Green Bay, WI', cityId: 'green-bay-wi' };
+  if (county === 'outagamie')
+    return { city: 'Appleton, WI', cityId: 'appleton-wi' };
+  if (county === 'kenosha')
+    return { city: 'Kenosha, WI', cityId: 'kenosha-wi' };
   if (county === 'racine') return { city: 'Racine, WI', cityId: 'racine-wi' };
   const label = String(row.County || row.Region || 'Wisconsin').trim();
   return {
     city: label ? `${label}, WI` : 'Wisconsin',
-    cityId: `wisconsin-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'statewide'}`,
+    cityId: `wisconsin-${
+      label
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '') || 'statewide'
+    }`,
   };
 }
 
@@ -546,7 +567,9 @@ export async function loadWisconsin511SourcesFromOpenData() {
       '',
   ).trim();
   if (!key) {
-    console.warn('[CCTV] Wisconsin 511 catalog unavailable: developer key not configured');
+    console.warn(
+      '[CCTV] Wisconsin 511 catalog unavailable: developer key not configured',
+    );
     return [];
   }
   try {
@@ -570,9 +593,10 @@ export async function loadWisconsin511SourcesFromOpenData() {
       if (!isPlausibleLatLon(lat, lon)) continue;
       if (lat < 42.45 || lat > 47.35 || lon < -92.95 || lon > -86.2) continue;
       const views = Array.isArray(row?.Views) ? row.Views : [];
-      const view = views.find((item) =>
-        String(item?.Status || '').toLowerCase() === 'enabled',
-      ) || views[0];
+      const view =
+        views.find(
+          (item) => String(item?.Status || '').toLowerCase() === 'enabled',
+        ) || views[0];
       if (!view) continue;
       const stable = String(view.Id ?? row.Id ?? '').trim();
       if (!stable) continue;
@@ -598,7 +622,9 @@ export async function loadWisconsin511SourcesFromOpenData() {
       const hasHeading = Number.isFinite(heading);
       cameras.push({
         id: cameraId,
-        name: String(row.Location || row.Roadway || `Wisconsin 511 Camera ${stable}`),
+        name: String(
+          row.Location || row.Roadway || `Wisconsin 511 Camera ${stable}`,
+        ),
         city,
         cityId,
         provider: 'Wisconsin Department of Transportation / 511 Wisconsin',
@@ -615,13 +641,16 @@ export async function loadWisconsin511SourcesFromOpenData() {
         url: videoOk ? videoUrl : snapshotUrl,
         snapshotUrl: snapshotOk ? snapshotUrl : '',
         sourceKind: 'wisconsin-511-official',
-        license: '511 Wisconsin developer API and traveler-information terms apply',
+        license:
+          '511 Wisconsin developer API and traveler-information terms apply',
         credit: 'Wisconsin Department of Transportation / 511 Wisconsin',
         code: String(row.Roadway || row.SourceId || stable).trim(),
         frameRefreshMs: snapshotOk ? 15 * 1000 : undefined,
       });
     }
-    const unique = Array.from(new Map(cameras.map((camera) => [camera.id, camera])).values());
+    const unique = Array.from(
+      new Map(cameras.map((camera) => [camera.id, camera])).values(),
+    );
     const maxRaw = Number(
       process.env.CCTV_WISCONSIN_511_MAX_SOURCES ||
         DEFAULT_WISCONSIN_511_MAX_SOURCES,
@@ -629,13 +658,20 @@ export async function loadWisconsin511SourcesFromOpenData() {
     const maxCount = Number.isFinite(maxRaw)
       ? Math.max(8, Math.min(1000, Math.floor(maxRaw)))
       : DEFAULT_WISCONSIN_511_MAX_SOURCES;
-    const prioritized = prioritizeSources(unique, maxCount, WISCONSIN_511_ANCHORS);
+    const prioritized = prioritizeSources(
+      unique,
+      maxCount,
+      WISCONSIN_511_ANCHORS,
+    );
     console.log(
       `[CCTV] Loaded Wisconsin 511 sources: ${unique.length} cameras (using nearest ${prioritized.length})`,
     );
     return prioritized;
   } catch (error) {
-    console.warn('[CCTV] Wisconsin 511 camera download error:', error?.message || error);
+    console.warn(
+      '[CCTV] Wisconsin 511 camera download error:',
+      error?.message || error,
+    );
     return [];
   }
 }
@@ -661,11 +697,16 @@ export async function loadNycDotSourcesFromOpenData() {
     if (!Array.isArray(rows)) return [];
     const cameras = [];
     for (const row of rows) {
-      if (String(row?.isOnline || '').trim().toLowerCase() !== 'true') continue;
+      if (
+        String(row?.isOnline || '')
+          .trim()
+          .toLowerCase() !== 'true'
+      )
+        continue;
       const lat = toFiniteNumber(row?.latitude);
       const lon = toFiniteNumber(row?.longitude);
       if (!isPlausibleLatLon(lat, lon)) continue;
-      if (lat < 40.45 || lat > 40.95 || lon < -74.30 || lon > -73.65) continue;
+      if (lat < 40.45 || lat > 40.95 || lon < -74.3 || lon > -73.65) continue;
       const rawId = String(row?.id || '').trim();
       if (!rawId) continue;
       const imageUrl = String(row?.imageUrl || '').trim();
@@ -678,7 +719,8 @@ export async function loadNycDotSourcesFromOpenData() {
         name,
         city: area ? `New York City · ${area}` : 'New York City',
         cityId: 'new-york-city',
-        provider: 'New York City Department of Transportation / Traffic Management Center',
+        provider:
+          'New York City Department of Transportation / Traffic Management Center',
         lat,
         lon,
         headingDeg: fallbackHeadingFromId(cameraId),
@@ -692,7 +734,8 @@ export async function loadNycDotSourcesFromOpenData() {
         url: imageUrl,
         snapshotUrl: imageUrl,
         sourceKind: 'nyc-dot-public-camera',
-        license: 'NYC DOT public traffic-camera imagery; provider terms and data-sharing conditions apply',
+        license:
+          'NYC DOT public traffic-camera imagery; provider terms and data-sharing conditions apply',
         credit: 'New York City Department of Transportation',
         frameRefreshMs: 15 * 1000,
       });
@@ -712,7 +755,10 @@ export async function loadNycDotSourcesFromOpenData() {
     );
     return prioritized;
   } catch (error) {
-    console.warn('[CCTV] NYC DOT camera download error:', error?.message || error);
+    console.warn(
+      '[CCTV] NYC DOT camera download error:',
+      error?.message || error,
+    );
     return [];
   }
 }
@@ -733,7 +779,10 @@ export async function loadDdotSourcesFromOpenData() {
       signal: AbortSignal.timeout(CCTV_SOURCE_FETCH_TIMEOUT_MS),
     });
     if (!resp.ok) {
-      console.warn('[CCTV] DDOT camera inventory download failed:', resp.status);
+      console.warn(
+        '[CCTV] DDOT camera inventory download failed:',
+        resp.status,
+      );
       return [];
     }
     const payload = await resp.json();
@@ -745,7 +794,7 @@ export async function loadDdotSourcesFromOpenData() {
       const lat = toFiniteNumber(row.Latitude);
       const lon = toFiniteNumber(row.Longitude);
       if (!isPlausibleLatLon(lat, lon)) continue;
-      if (lat < 38.75 || lat > 39.05 || lon < -77.20 || lon > -76.85) continue;
+      if (lat < 38.75 || lat > 39.05 || lon < -77.2 || lon > -76.85) continue;
       const stable = String(row.CameraID ?? row.OBJECTID ?? '').trim();
       if (!stable) continue;
       const cameraId = `ddot-${stable.replace(/[^A-Za-z0-9_.-]+/g, '-').toLowerCase()}`;
@@ -768,7 +817,8 @@ export async function loadDdotSourcesFromOpenData() {
         url: '',
         snapshotUrl: '',
         sourceKind: 'ddot-open-data-location',
-        license: 'DDOT/DC GIS open-data camera-location inventory; no public frame URL in this dataset',
+        license:
+          'DDOT/DC GIS open-data camera-location inventory; no public frame URL in this dataset',
         credit: 'District Department of Transportation / DC GIS',
       });
     }
@@ -781,13 +831,18 @@ export async function loadDdotSourcesFromOpenData() {
     const maxCount = Number.isFinite(maxRaw)
       ? Math.max(8, Math.min(500, Math.floor(maxRaw)))
       : DEFAULT_DDOT_MAX_SOURCES;
-    const prioritized = prioritizeSources(unique, maxCount, [WASHINGTON_DC_CENTER]);
+    const prioritized = prioritizeSources(unique, maxCount, [
+      WASHINGTON_DC_CENTER,
+    ]);
     console.log(
       `[CCTV] Loaded DDOT sources: ${unique.length} active mapped cameras (using nearest ${prioritized.length})`,
     );
     return prioritized;
   } catch (error) {
-    console.warn('[CCTV] DDOT camera inventory download error:', error?.message || error);
+    console.warn(
+      '[CCTV] DDOT camera inventory download error:',
+      error?.message || error,
+    );
     return [];
   }
 }

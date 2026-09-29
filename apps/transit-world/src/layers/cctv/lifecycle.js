@@ -210,7 +210,12 @@ export function createLifecycle({
       if (layerState._records.length > 0) {
         // Projection runtime + first frame fetch are deferred to enable() so
         // initializing the catalog stays render-cheap.
-        layerState._activeCameraId = layerState._records[0].camera.id;
+        // Start with the camera nearest the current map view. The catalog is
+        // assembled provider-by-provider, so record zero can be thousands of
+        // miles from the operator and is never a meaningful default.
+        layerState._activeCameraId =
+          parts.navigation.nearestCameraIdToViewer() ||
+          layerState._records[0].camera.id;
       }
 
       // Task 5: if the prior batch lost init's bounded race, apply it post-hoc
@@ -360,7 +365,9 @@ export function createLifecycle({
         return Boolean(coverage && layerState._recordById.has(coverage[1]));
       });
       if (!layerState._activeCameraId && layerState._records.length) {
-        layerState._activeCameraId = layerState._records[0].camera.id;
+        layerState._activeCameraId =
+          parts.navigation.nearestCameraIdToViewer() ||
+          layerState._records[0].camera.id;
         layerState._autoHopSuspended = false;
       }
       const activeRecord = parts.selection.getActiveRecord();

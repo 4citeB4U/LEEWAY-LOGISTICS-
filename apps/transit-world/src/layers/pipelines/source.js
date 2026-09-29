@@ -10,7 +10,9 @@ export function normalizePipelineWay(element) {
   if (element?.type !== 'way' || !Array.isArray(element.geometry)) return null;
   const geometry = element.geometry
     .map((point) => ({ lat: Number(point?.lat), lon: Number(point?.lon) }))
-    .filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lon));
+    .filter(
+      (point) => Number.isFinite(point.lat) && Number.isFinite(point.lon),
+    );
   if (geometry.length < 2) return null;
   const tags = element.tags || {};
   return {
@@ -40,7 +42,12 @@ export function createPipelineSource({
         box.north - box.south > MAX_VIEWPORT_DEGREES ||
         box.east - box.west > MAX_VIEWPORT_DEGREES
       ) {
-        return { records: [], status: 'zoom-in', stale: false, saturated: false };
+        return {
+          records: [],
+          status: 'zoom-in',
+          stale: false,
+          saturated: false,
+        };
       }
       const response = await fetchImpl(OVERPASS_URL, {
         method: 'POST',
@@ -48,12 +55,15 @@ export function createPipelineSource({
         body: `data=${encodeURIComponent(buildPipelineQuery(box))}`,
         signal,
       });
-      if (!response.ok) throw new Error(`Pipeline Overpass HTTP ${response.status}`);
+      if (!response.ok)
+        throw new Error(`Pipeline Overpass HTTP ${response.status}`);
       const payload = await response.json();
       if (!Array.isArray(payload?.elements) || payload.remark) {
         throw new Error('Pipeline Overpass response incomplete');
       }
-      const records = payload.elements.map(normalizePipelineWay).filter(Boolean);
+      const records = payload.elements
+        .map(normalizePipelineWay)
+        .filter(Boolean);
       return {
         records,
         status: records.length ? 'ready' : 'empty',

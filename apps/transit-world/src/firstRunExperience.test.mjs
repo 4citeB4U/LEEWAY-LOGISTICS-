@@ -669,10 +669,15 @@ test('the voice TOOL SCHEMA matches the pinned release — the mission mapping i
   const block = JSON.stringify(legacyTools);
   // Re-derived for the additive `local-adsb` set_layer_visibility value and
   // its common-name mapping; the missions still ride existing tools.
-  assert.equal(block.length, 27432, 'serialized tool schema length drifted');
+  const stack = legacyTools.find((tool) => tool.name === 'set_map_stack')
+    .parameters.properties.stack;
+  assert.ok(stack.enum.includes('esri-labeled'));
+  assert.equal(block.length, 27531, 'serialized tool schema length drifted');
   assert.equal(
     crypto.createHash('sha256').update(block).digest('hex'),
-    'a2a4a787f4528f75b01f3f42caec636f29c37452c0d45b11f4f986171d6be57d',
+    // Re-derived from the d700ab3 payload plus the deliberate esri-labeled
+    // basemap choice used by the Logistics and Personal map experiences.
+    '3ba16e33c7a5ad804ab207e5e79b70ec01020c2e97a4de95baaf4ce7acf2ee1a',
     'the first-run missions must ride EXISTING tools: no schema edit, no cache bust',
   );
   const instructions = fs.readFileSync(new URL('../server/providers/openai/instructions.js', import.meta.url), 'utf8');

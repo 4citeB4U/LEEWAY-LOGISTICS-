@@ -30,11 +30,14 @@ function money(value) {
 
 function setText(root, id, value) {
   const node = root.querySelector(`[data-field="${id}"]`);
-  if (node) node.textContent = value == null || value === '' ? '—' : String(value);
+  if (node)
+    node.textContent = value == null || value === '' ? '—' : String(value);
 }
 
 async function fetchJson(url) {
-  const response = await fetch(url, { headers: { Accept: 'application/json' } });
+  const response = await fetch(url, {
+    headers: { Accept: 'application/json' },
+  });
   if (!response.ok) throw new Error(`${url} HTTP ${response.status}`);
   return response.json();
 }
@@ -55,7 +58,11 @@ function renderRoute(viewer, payload, cockpit) {
   removeEntity(viewer, 'leeway-active-load-route');
   removeEntity(viewer, 'leeway-active-load-pickup');
   removeEntity(viewer, 'leeway-active-load-delivery');
-  if (!payload?.ok || !Array.isArray(payload.geometry) || payload.geometry.length < 2) {
+  if (
+    !payload?.ok ||
+    !Array.isArray(payload.geometry) ||
+    payload.geometry.length < 2
+  ) {
     return null;
   }
   const positions = payload.geometry.flatMap(([lon, lat]) => [lon, lat]);
@@ -127,22 +134,26 @@ function ensureStyles(documentRef) {
       overflow: auto; border: 1px solid rgba(80,220,255,.45);
       background: rgba(3,12,20,.90); backdrop-filter: blur(14px);
       box-shadow: 0 18px 65px rgba(0,0,0,.48); color: #eaffff;
-      font: 12px/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font: 16px/1.5 Inter, ui-sans-serif, system-ui, sans-serif;
+      border-radius:24px;
     }
     #leeway-transit-world * { box-sizing: border-box; }
-    .ltw-head { padding: 14px 16px; border-bottom: 1px solid rgba(80,220,255,.25); }
-    .ltw-kicker { letter-spacing: .18em; font-size: 10px; opacity: .72; }
-    .ltw-title { font-size: 17px; font-weight: 800; margin-top: 3px; }
+    .ltw-head { padding: 18px; border-bottom: 1px solid rgba(80,220,255,.25); display:grid; grid-template-columns:1fr auto; gap:10px; align-items:start; }
+    .ltw-heading-copy { min-width:0; }
+    .ltw-kicker { letter-spacing: .12em; font-size: 13px; color:#8deef8; }
+    .ltw-title { font-size: 24px; line-height:1.15; font-weight: 850; margin-top: 5px; }
+    .ltw-close { width:48px; height:48px; border:1px solid rgba(130,235,247,.38); border-radius:18px; background:linear-gradient(150deg,#294a58,#0b202b); color:#fff; font:700 25px/1 system-ui,sans-serif; cursor:pointer; box-shadow:inset 0 1px 0 #fff3,0 4px 0 #020a0f; }
     .ltw-badges { display:flex; gap:6px; flex-wrap:wrap; margin-top:9px; }
-    .ltw-badge { border:1px solid rgba(255,255,255,.2); padding:3px 6px; border-radius:999px; font-size:10px; }
-    .ltw-section { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
-    .ltw-section h3 { margin:0 0 8px; font-size:11px; letter-spacing:.12em; opacity:.72; }
-    .ltw-grid { display:grid; grid-template-columns: 1fr 1fr; gap:8px 12px; }
-    .ltw-label { opacity:.58; font-size:9px; text-transform:uppercase; letter-spacing:.08em; }
-    .ltw-value { margin-top:2px; overflow-wrap:anywhere; }
-    .ltw-route { font-size:11px; padding:8px; border:1px solid rgba(80,220,255,.2); background:rgba(80,220,255,.05); }
+    .ltw-badge { border:1px solid rgba(151,235,244,.3); padding:6px 10px; border-radius:999px; font-size:13px; background:#8feefa0d; }
+    .ltw-section { margin:12px; padding:16px; border:1px solid rgba(133,224,236,.18); border-radius:20px; background:linear-gradient(145deg,rgba(40,79,92,.38),rgba(4,17,26,.72)); box-shadow:inset 0 1px 0 #fff1,0 7px 18px #0005; }
+    .ltw-section h3 { margin:0 0 12px; font-size:16px; letter-spacing:.06em; color:#a6f4fb; }
+    .ltw-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    .ltw-grid > div { min-width:0; padding:11px; border-radius:15px; background:rgba(1,12,19,.48); border:1px solid rgba(137,227,239,.12); }
+    .ltw-label { color:#a8ced5; font-size:13px; text-transform:uppercase; letter-spacing:.04em; }
+    .ltw-value { margin-top:4px; font-size:16px; color:#f3feff; overflow-wrap:anywhere; }
+    .ltw-route { font-size:17px; line-height:1.45; padding:13px; border-radius:16px; border:1px solid rgba(80,220,255,.25); background:rgba(80,220,255,.08); }
     .ltw-actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
-    .ltw-actions button { padding:8px; border:1px solid rgba(80,220,255,.35); background:rgba(80,220,255,.08); color:inherit; cursor:pointer; font:inherit; }
+    .ltw-actions button { min-height:48px; padding:10px; border:1px solid rgba(80,220,255,.35); border-radius:17px; background:linear-gradient(150deg,#274a59,#0b2330); box-shadow:inset 0 1px 0 #fff3,0 4px 0 #020a0f; color:inherit; cursor:pointer; font:700 15px/1.25 system-ui,sans-serif; }
     .ltw-actions button:hover { background:rgba(80,220,255,.16); }
     .ltw-status-unverified { color:#ffd877; }
     .ltw-status-blocked { color:#ff7a7a; }
@@ -151,19 +162,19 @@ function ensureStyles(documentRef) {
   `;
   documentRef.head.appendChild(style);
 }
-function buildPanel(documentRef) {
+function buildPanel(documentRef, { edition = 'business' } = {}) {
   ensureStyles(documentRef);
+  const isBusiness = edition !== 'personal';
   const root = documentRef.createElement('aside');
   root.id = 'leeway-transit-world';
-  root.innerHTML = `
+  root.dataset.edition = isBusiness ? 'business' : 'personal';
+  root.innerHTML = isBusiness
+    ? `
     <div class="ltw-head">
-      <div class="ltw-kicker">LEEWAY SPATIAL FABRIC · TRANSPORT</div>
-      <div class="ltw-title">Transit World · Driver Cockpit</div>
-      <div class="ltw-badges">
-        <span class="ltw-badge" data-field="mode">LOADING</span>
-        <span class="ltw-badge" data-field="vehicle">VEHICLE</span>
-        <span class="ltw-badge" data-field="route-safety">UNVERIFIED</span>
-      </div>
+      <div class="ltw-heading-copy"><div class="ltw-kicker">LEEWAY LOGISTICS · OPERATIONS</div>
+        <div class="ltw-title">Driver & Load Cockpit</div>
+        <div class="ltw-badges"><span class="ltw-badge" data-field="mode">LOADING</span><span class="ltw-badge" data-field="vehicle">VEHICLE</span><span class="ltw-badge" data-field="route-safety">UNVERIFIED</span><span class="ltw-badge" data-field="data-source">CONNECTING</span></div>
+      </div><button class="ltw-close" type="button" data-action="close" aria-label="Close operations">×</button>
     </div>
     <section class="ltw-section">
       <h3>ACTIVE LOAD / CONTRACT</h3>
@@ -220,49 +231,92 @@ function buildPanel(documentRef) {
     <section class="ltw-section">
       <div class="ltw-actions">
         <button type="button" data-action="driver-view">DRIVER VIEW</button>
-        <button type="button" data-action="route-view">ROUTE VIEW</button>
+        <button type="button" data-action="route-view">SHOW LOAD ROUTE (DEMO)</button>
         <button type="button" data-action="world-awareness">WORLD AWARENESS</button>
         <button type="button" data-action="refresh">REFRESH</button>
       </div>
     </section>
+  `
+    : `
+    <div class="ltw-head">
+      <div class="ltw-heading-copy"><div class="ltw-kicker">LEEWAY MAPS · TRIP OPERATIONS</div><div class="ltw-title">Travel Cockpit</div>
+        <div class="ltw-badges"><span class="ltw-badge" data-field="mode">PERSONAL</span><span class="ltw-badge">MAP READY</span><span class="ltw-badge">OFFLINE TRIP CACHE</span></div>
+      </div><button class="ltw-close" type="button" data-action="close" aria-label="Close trip operations">×</button>
+    </div>
+    <section class="ltw-section"><h3>ACTIVE TRIP</h3><div class="ltw-route">Enter real street addresses in Directions to begin a trip. Your active route remains visible when the network drops after it has been saved.</div></section>
+    <section class="ltw-section"><h3>ROAD AWARENESS</h3><div class="ltw-grid"><div><div class="ltw-label">Traffic</div><div class="ltw-value">Live when connected</div></div><div><div class="ltw-label">Weather</div><div class="ltw-value">Radar · clouds · lightning</div></div><div><div class="ltw-label">Cameras</div><div class="ltw-value">Public feeds · source labeled</div></div><div><div class="ltw-label">Flights</div><div class="ltw-value">Tail · origin · destination</div></div></div></section>
+    <section class="ltw-section"><h3>PRIVACY</h3><div class="ltw-value">Business loads, fleet, employees, CRM, and dispatch records are excluded from LeeWay Maps Personal.</div></section>
+    <section class="ltw-section"><div class="ltw-actions"><button type="button" data-action="world-awareness">TURN ON ROAD AWARENESS</button><button type="button" data-action="refresh">REFRESH MAP STATUS</button></div></section>
   `;
   documentRef.body.appendChild(root);
   return root;
 }
-export async function mountLeeWayTransitWorld(application) {
+export async function mountLeeWayTransitWorld(
+  application,
+  { edition = document.body?.dataset?.leewayEdition || 'business' } = {},
+) {
   if (document.getElementById('leeway-transit-world')) return null;
   const components = application.getComponents();
   const viewer = components.scene?.viewer;
   const dataManager = components.data?.dataManager;
-  if (!viewer || !dataManager) throw new Error('LeeWay Transit World requires scene and data manager');
+  if (!viewer || !dataManager)
+    throw new Error('LeeWay Transit World requires scene and data manager');
 
-  const root = buildPanel(document);
+  const isBusiness = edition !== 'personal';
+  const root = buildPanel(document, { edition });
   let cockpit;
   let fleet;
   let routeEntity;
 
-  async function refresh() {
+  async function refresh({ showRoute = false } = {}) {
+    if (!isBusiness) {
+      setText(
+        root,
+        'mode',
+        navigator.onLine ? 'PERSONAL · ONLINE' : 'PERSONAL · OFFLINE',
+      );
+      return { cockpit: null, fleet: null, routePayload: null, safety: null };
+    }
     const staticPagesMode = isStaticPagesMode();
+    let fallbackUsed = staticPagesMode;
     if (staticPagesMode) {
       cockpit = buildStaticCockpit();
       fleet = buildStaticFleet();
     } else {
-      [cockpit, fleet] = await Promise.all([
+      const [cockpitResult, fleetResult] = await Promise.allSettled([
         fetchJson('/api/leeway-transit/driver-cockpit'),
         fetchJson('/api/leeway-transit/vehicles'),
       ]);
+      cockpit =
+        cockpitResult.status === 'fulfilled'
+          ? cockpitResult.value
+          : buildStaticCockpit();
+      fleet =
+        fleetResult.status === 'fulfilled'
+          ? fleetResult.value
+          : buildStaticFleet();
+      fallbackUsed =
+        cockpitResult.status !== 'fulfilled' ||
+        fleetResult.status !== 'fulfilled';
     }
     const safety = summarizeTruckRouteSafety(cockpit.truckProfile, []);
     const routeUrl = routeRequestUrl(cockpit.route);
-    const routePayload = staticPagesMode
-      ? await fetchStaticRoute(cockpit.route)
-      : routeUrl
-        ? await fetchJson(routeUrl)
-        : null;
-    routeEntity = renderRoute(viewer, routePayload, cockpit);
+    const routePayload = !showRoute
+      ? null
+      : staticPagesMode
+        ? await fetchStaticRoute(cockpit.route)
+        : routeUrl
+          ? await fetchJson(routeUrl)
+          : null;
+    if (showRoute) routeEntity = renderRoute(viewer, routePayload, cockpit);
 
     setText(root, 'mode', cockpit.mode);
-    setText(root, 'vehicle', cockpit.vehicle?.fleetNumber || cockpit.driver?.vehicleFleetNumber);
+    setText(root, 'data-source', fallbackUsed ? 'TRAINING DATA' : 'LIVE HUB');
+    setText(
+      root,
+      'vehicle',
+      cockpit.vehicle?.fleetNumber || cockpit.driver?.vehicleFleetNumber,
+    );
     setText(root, 'load', cockpit.activeLoad?.loadNumber);
     setText(root, 'rate', money(cockpit.activeLoad?.rateUsd));
     setText(root, 'broker', cockpit.activeLoad?.brokerName);
@@ -287,9 +341,18 @@ export async function mountLeeWayTransitWorld(application) {
     setText(root, 'truck-gate', safety.status);
     setText(root, 'route-safety', safety.status);
     const safetyBadge = root.querySelector('[data-field="route-safety"]');
-    safetyBadge?.classList.toggle('ltw-status-blocked', safety.status === 'BLOCKED');
-    safetyBadge?.classList.toggle('ltw-status-clear', safety.status === 'NO_CONFLICT_FOUND');
-    safetyBadge?.classList.toggle('ltw-status-unverified', safety.status === 'UNVERIFIED');
+    safetyBadge?.classList.toggle(
+      'ltw-status-blocked',
+      safety.status === 'BLOCKED',
+    );
+    safetyBadge?.classList.toggle(
+      'ltw-status-clear',
+      safety.status === 'NO_CONFLICT_FOUND',
+    );
+    safetyBadge?.classList.toggle(
+      'ltw-status-unverified',
+      safety.status === 'UNVERIFIED',
+    );
     setText(root, 'drive', minutesLabel(cockpit.hos?.driveRemainingMinutes));
     setText(root, 'shift', minutesLabel(cockpit.hos?.shiftRemainingMinutes));
     setText(root, 'break', minutesLabel(cockpit.hos?.nextBreakDueMinutes));
@@ -304,6 +367,12 @@ export async function mountLeeWayTransitWorld(application) {
   root.addEventListener('click', async (event) => {
     const action = event.target?.closest?.('[data-action]')?.dataset?.action;
     if (!action) return;
+    if (action === 'close') {
+      root.dispatchEvent(
+        new CustomEvent('leeway:right-panel-close', { bubbles: true }),
+      );
+      return;
+    }
     if (action === 'refresh') {
       await refresh();
       return;
@@ -316,20 +385,34 @@ export async function mountLeeWayTransitWorld(application) {
           results.push(id);
         } catch {}
       }
-      setText(root, 'world-status', `Requested: ${results.join(', ') || 'no layers'}${isStaticPagesMode() ? ' · GitHub Pages demo mode' : ''}`);
+      setText(
+        root,
+        'world-status',
+        `Requested: ${results.join(', ') || 'no layers'}${isStaticPagesMode() ? ' · GitHub Pages demo mode' : ''}`,
+      );
       return;
     }
-    if (action === 'route-view' && routeEntity) {
+    if (action === 'route-view') {
+      if (!isBusiness) return;
+      if (!routeEntity) await refresh({ showRoute: true });
+      if (!routeEntity) return;
       await viewer.flyTo(routeEntity, { duration: 1.8 });
       return;
     }
     if (action === 'driver-view') {
+      if (!isBusiness) return;
       const vehicle = fleet?.vehicles?.find(
-        (row) => row?.leewayVehicle?.fleetNumber === cockpit?.driver?.vehicleFleetNumber,
+        (row) =>
+          row?.leewayVehicle?.fleetNumber ===
+          cockpit?.driver?.vehicleFleetNumber,
       );
       if (!vehicle) return;
       viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(vehicle.lon, vehicle.lat, 1150),
+        destination: Cesium.Cartesian3.fromDegrees(
+          vehicle.lon,
+          vehicle.lat,
+          1150,
+        ),
         orientation: {
           heading: Cesium.Math.toRadians(Number(vehicle.bearing) || 0),
           pitch: Cesium.Math.toRadians(-38),
@@ -340,7 +423,6 @@ export async function mountLeeWayTransitWorld(application) {
     }
   });
 
-  await dataManager.setEnabled('transit', true, { origin: 'tool' });
   await refresh();
   return {
     root,

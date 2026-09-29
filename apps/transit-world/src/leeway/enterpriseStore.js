@@ -21,6 +21,15 @@ const seed = Object.freeze({
       status: 'ACTIVE',
       onboarding: 'COMPLETE',
       location: 'Chicago, IL',
+      employeeNumber: 'LW-D-001',
+      preferredLanguage: 'English',
+      photoUrl: '',
+      cdlClass: 'Class A',
+      cdlState: 'IL',
+      medicalStatus: 'CURRENT',
+      assignedEquipmentId: 'veh-lw1001',
+      hoursAvailable: '8h 42m',
+      safetyScore: '96%',
       evidence: ['CDL', 'Medical Certificate', 'Policy Acknowledgement'],
     },
     {
@@ -50,6 +59,16 @@ const seed = Object.freeze({
       subtype: 'Class 8',
       status: 'ACTIVE',
       assignment: 'Marcus Williams',
+      manufacturer: 'Kenworth',
+      model: 'T680',
+      modelYear: 2024,
+      vinTail: '2841',
+      currentRoute: 'Chicago, IL → Milwaukee, WI',
+      eta: '16:35 CT',
+      fuelPercent: 68,
+      loadPercent: 82,
+      maintenanceStatus: 'SERVICE CURRENT',
+      workOrder: 'No open work order',
       evidence: ['Registration', 'Insurance', 'Inspection'],
     },
     {
@@ -59,6 +78,16 @@ const seed = Object.freeze({
       subtype: '53 ft Dry Van',
       status: 'ACTIVE',
       assignment: 'LW-1001',
+      manufacturer: 'Great Dane',
+      model: 'Champion CP',
+      modelYear: 2023,
+      vinTail: '9416',
+      currentRoute: 'Chicago, IL → Milwaukee, WI',
+      eta: '16:35 CT',
+      fuelPercent: null,
+      loadPercent: 82,
+      maintenanceStatus: 'INSPECTION CURRENT',
+      workOrder: 'No open work order',
       evidence: ['Registration', 'Inspection'],
     },
   ],
@@ -70,6 +99,13 @@ const seed = Object.freeze({
         type: 'Broker',
         status: 'ACTIVE',
         location: 'Chicago, IL',
+        stage: 'Negotiation',
+        priority: 'HIGH',
+        contact: 'Broker desk',
+        nextFollowUp: 'Today · 15:30 CT',
+        nextAction: 'Confirm rate and pickup window',
+        lane: 'Chicago, IL → Milwaukee, WI',
+        estimatedValue: 2800,
       },
       {
         id: 'acct-002',
@@ -77,6 +113,13 @@ const seed = Object.freeze({
         type: 'Customer / Facility',
         status: 'ACTIVE',
         location: 'Chicago, IL',
+        stage: 'Active customer',
+        priority: 'MEDIUM',
+        contact: 'Receiving office',
+        nextFollowUp: 'Tomorrow · 09:00 CT',
+        nextAction: 'Review recurring delivery cadence',
+        lane: 'Midwest regional',
+        estimatedValue: 7200,
       },
       {
         id: 'acct-003',
@@ -84,6 +127,13 @@ const seed = Object.freeze({
         type: 'Terminal',
         status: 'ACTIVE',
         location: 'Milwaukee, WI',
+        stage: 'Operational',
+        priority: 'MEDIUM',
+        contact: 'Terminal manager',
+        nextFollowUp: 'Friday · 11:00 CT',
+        nextAction: 'Confirm yard capacity',
+        lane: 'Milwaukee hub',
+        estimatedValue: 0,
       },
     ],
     activities: [],
@@ -120,7 +170,11 @@ const seed = Object.freeze({
         { id: 'identity', label: 'Organization identity', status: 'COMPLETE' },
         { id: 'operations', label: 'Operating profile', status: 'COMPLETE' },
         { id: 'admins', label: 'Admins and people', status: 'COMPLETE' },
-        { id: 'equipment', label: 'Equipment and fleet', status: 'IN_PROGRESS' },
+        {
+          id: 'equipment',
+          label: 'Equipment and fleet',
+          status: 'IN_PROGRESS',
+        },
         { id: 'documents', label: 'Documents and evidence', status: 'PENDING' },
         { id: 'integrations', label: 'Integrations', status: 'PENDING' },
         { id: 'activate', label: 'Review and activate', status: 'PENDING' },
@@ -131,6 +185,28 @@ const seed = Object.freeze({
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
+}
+
+function hydrateState(value) {
+  const next = clone(value);
+  const seededPeople = new Map(seed.people.map((row) => [row.id, row]));
+  const seededEquipment = new Map(seed.equipment.map((row) => [row.id, row]));
+  const seededAccounts = new Map(seed.crm.accounts.map((row) => [row.id, row]));
+  next.people = (next.people || []).map((row) => ({
+    ...(seededPeople.get(row.id) || {}),
+    ...row,
+  }));
+  next.equipment = (next.equipment || []).map((row) => ({
+    ...(seededEquipment.get(row.id) || {}),
+    ...row,
+  }));
+  next.crm ||= { accounts: [], activities: [] };
+  next.crm.accounts = (next.crm.accounts || []).map((row) => ({
+    ...(seededAccounts.get(row.id) || {}),
+    ...row,
+  }));
+  next.crm.activities ||= [];
+  return next;
 }
 
 function storage() {
@@ -153,7 +229,7 @@ export function readEnterpriseState() {
       return clone(seed);
     }
     const parsed = JSON.parse(raw);
-    return parsed?.schemaVersion === 1 ? parsed : clone(seed);
+    return parsed?.schemaVersion === 1 ? hydrateState(parsed) : clone(seed);
   } catch {
     return clone(memory);
   }
@@ -181,7 +257,9 @@ function mutate(mutator) {
 
 function id(prefix) {
   const cryptoId = globalThis.crypto?.randomUUID?.();
-  return cryptoId ? `${prefix}-${cryptoId}` : `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return cryptoId
+    ? `${prefix}-${cryptoId}`
+    : `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 export function addPerson(input = {}) {
@@ -213,6 +291,19 @@ export function addEquipment(input = {}) {
       subtype: String(input.subtype || '').trim(),
       status: String(input.status || 'ONBOARDING'),
       assignment: String(input.assignment || '').trim(),
+      manufacturer: String(input.manufacturer || '').trim(),
+      model: String(input.model || '').trim(),
+      modelYear: Number(input.modelYear) || null,
+      currentRoute: String(input.currentRoute || '').trim(),
+      eta: String(input.eta || '').trim(),
+      fuelPercent: Number.isFinite(Number(input.fuelPercent))
+        ? Number(input.fuelPercent)
+        : null,
+      loadPercent: Number.isFinite(Number(input.loadPercent))
+        ? Number(input.loadPercent)
+        : null,
+      maintenanceStatus: String(input.maintenanceStatus || 'PENDING REVIEW'),
+      workOrder: String(input.workOrder || 'No open work order'),
       evidence: Array.isArray(input.evidence) ? [...input.evidence] : [],
       createdAt: new Date().toISOString(),
     });
@@ -227,6 +318,13 @@ export function addAccount(input = {}) {
       type: String(input.type || 'Customer').trim(),
       status: String(input.status || 'ACTIVE'),
       location: String(input.location || '').trim(),
+      stage: String(input.stage || 'Prospect').trim(),
+      priority: String(input.priority || 'MEDIUM').trim(),
+      contact: String(input.contact || '').trim(),
+      nextFollowUp: String(input.nextFollowUp || '').trim(),
+      nextAction: String(input.nextAction || '').trim(),
+      lane: String(input.lane || '').trim(),
+      estimatedValue: Number(input.estimatedValue) || 0,
       createdAt: new Date().toISOString(),
     });
   });
@@ -262,14 +360,25 @@ export function updateOrganization(patch = {}) {
 
 export function advanceOrganizationOnboarding(step) {
   return mutate((state) => {
-    const caseItem = state.onboardingCases.find((item) => item.type === 'ORGANIZATION');
+    const caseItem = state.onboardingCases.find(
+      (item) => item.type === 'ORGANIZATION',
+    );
     if (!caseItem) return;
-    const next = Math.max(1, Math.min(caseItem.totalSteps, Number(step) || caseItem.step));
+    const next = Math.max(
+      1,
+      Math.min(caseItem.totalSteps, Number(step) || caseItem.step),
+    );
     caseItem.step = next;
-    caseItem.status = next >= caseItem.totalSteps ? 'READY_FOR_REVIEW' : 'IN_PROGRESS';
+    caseItem.status =
+      next >= caseItem.totalSteps ? 'READY_FOR_REVIEW' : 'IN_PROGRESS';
     caseItem.checklist = caseItem.checklist.map((item, index) => ({
       ...item,
-      status: index + 1 < next ? 'COMPLETE' : index + 1 === next ? 'IN_PROGRESS' : 'PENDING',
+      status:
+        index + 1 < next
+          ? 'COMPLETE'
+          : index + 1 === next
+            ? 'IN_PROGRESS'
+            : 'PENDING',
     }));
     state.organization.onboardingStep = next;
   });
@@ -287,11 +396,14 @@ export function summarizeEnterpriseState() {
   return {
     organization: state.organization,
     employeeCount: state.people.filter((row) => row.status === 'ACTIVE').length,
-    onboardingPeople: state.people.filter((row) => row.status === 'ONBOARDING').length,
+    onboardingPeople: state.people.filter((row) => row.status === 'ONBOARDING')
+      .length,
     equipmentCount: state.equipment.length,
     crmAccountCount: state.crm.accounts.length,
     documentCount: state.documents.length,
-    integrationsConnected: state.integrations.filter((row) => row.status === 'CONNECTED').length,
+    integrationsConnected: state.integrations.filter(
+      (row) => row.status === 'CONNECTED',
+    ).length,
     onboardingCases: state.onboardingCases,
   };
 }

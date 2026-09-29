@@ -104,7 +104,14 @@ function createGlobeRendering({
           )
             continue;
           urls.push(
-            template.replace('{z}', z).replace('{x}', x).replace('{y}', y),
+            template
+              .replace('{z}', z)
+              .replace('{x}', x)
+              .replace('{y}', y)
+              .replace('{westDegrees}', -180 + x * (180 / 2 ** z))
+              .replace('{eastDegrees}', -180 + (x + 1) * (180 / 2 ** z))
+              .replace('{northDegrees}', 90 - y * (180 / 2 ** z))
+              .replace('{southDegrees}', 90 - (y + 1) * (180 / 2 ** z)),
           );
           if (urls.length === MAX_PREFETCH_TILES) return urls;
         }

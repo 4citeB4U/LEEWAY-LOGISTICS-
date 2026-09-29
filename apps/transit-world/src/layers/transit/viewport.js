@@ -90,11 +90,7 @@ export function createViewport({ state, services, parts, source }) {
         desired.set(feed.id, feed);
       }
       // Hysteresis: a feed already active stays active a little past its edge.
-      for (const feed of feedsInRange(
-        center.lat,
-        center.lon,
-        RANGE_SLACK_KM,
-      )) {
+      for (const feed of feedsInRange(center.lat, center.lon, RANGE_SLACK_KM)) {
         if (state._activeFeeds.has(feed.id)) desired.set(feed.id, feed);
       }
     }

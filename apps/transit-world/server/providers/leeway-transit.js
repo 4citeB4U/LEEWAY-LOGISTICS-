@@ -51,11 +51,7 @@ function finiteCoordinate(lat, lon) {
     !(Math.abs(lat) < 1e-6 && Math.abs(lon) < 1e-6)
   );
 }
-export function projectLeeWayVehicles(
-  vehicles,
-  telemetry,
-  now = Date.now(),
-) {
+export function projectLeeWayVehicles(vehicles, telemetry, now = Date.now()) {
   const spatialByFleet = new Map(
     (telemetry?.rows || []).map((row) => [String(row.fleetNumber), row]),
   );
@@ -63,30 +59,32 @@ export function projectLeeWayVehicles(
   return (Array.isArray(vehicles) ? vehicles : []).flatMap((vehicle) => {
     const spatial = spatialByFleet.get(String(vehicle?.fleetNumber || ''));
     if (!spatial || !finiteCoordinate(spatial.lat, spatial.lon)) return [];
-    return [{
-      id: String(vehicle.id),
-      lat: Number(spatial.lat),
-      lon: Number(spatial.lon),
-      bearing: Number.isFinite(spatial.bearing) ? spatial.bearing : null,
-      speedMps: Number.isFinite(spatial.speedMps) ? spatial.speedMps : 0,
-      timestamp,
-      timestampSource: 'fetch',
-      routeId: spatial.routeId || 'LEEWAY-TRAINING',
-      tripId: spatial.tripId || null,
-      directionId: null,
-      label: `[DEMO] ${vehicle.fleetNumber}`,
-      stopId: null,
-      status: spatial.status || 'TRAINING_FIXTURE',
-      occupancy: null,
-      leewayVehicle: {
-        fleetNumber: vehicle.fleetNumber,
-        manufacturer: vehicle.manufacturer,
-        model: vehicle.model,
-        modelYear: vehicle.modelYear,
-        operationalStatus: vehicle.status,
-        telemetryMode: telemetry.mode,
+    return [
+      {
+        id: String(vehicle.id),
+        lat: Number(spatial.lat),
+        lon: Number(spatial.lon),
+        bearing: Number.isFinite(spatial.bearing) ? spatial.bearing : null,
+        speedMps: Number.isFinite(spatial.speedMps) ? spatial.speedMps : 0,
+        timestamp,
+        timestampSource: 'fetch',
+        routeId: spatial.routeId || 'LEEWAY-TRAINING',
+        tripId: spatial.tripId || null,
+        directionId: null,
+        label: `[DEMO] ${vehicle.fleetNumber}`,
+        stopId: null,
+        status: spatial.status || 'TRAINING_FIXTURE',
+        occupancy: null,
+        leewayVehicle: {
+          fleetNumber: vehicle.fleetNumber,
+          manufacturer: vehicle.manufacturer,
+          model: vehicle.model,
+          modelYear: vehicle.modelYear,
+          operationalStatus: vehicle.status,
+          telemetryMode: telemetry.mode,
+        },
       },
-    }];
+    ];
   });
 }
 async function buildSnapshot({ fetchImpl = fetch } = {}) {
@@ -134,7 +132,8 @@ function writeJson(res, status, body, headers = {}) {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
     ...headers,
-  })) res.setHeader(key, value);
+  }))
+    res.setHeader(key, value);
   res.end(JSON.stringify(body));
 }
 
@@ -142,7 +141,8 @@ export function leewayTransitProxy(options = {}) {
   const handle = async (req, res, next) => {
     const pathname = String(req.url || '').split('?')[0];
     if (pathname !== '/vehicles' && pathname !== '/vehicles/') return next();
-    if (req.method !== 'GET') return writeJson(res, 405, { error: 'method_not_allowed' });
+    if (req.method !== 'GET')
+      return writeJson(res, 405, { error: 'method_not_allowed' });
     try {
       const snapshot = await buildSnapshot(options);
       return writeJson(res, 200, snapshot, {

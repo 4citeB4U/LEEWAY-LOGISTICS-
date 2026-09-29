@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 
-test('Pages CCTV frame and media URLs point directly at the LeeWay world provider', async () => {
+test('Pages CCTV URLs do not assume a localhost provider exists on the phone', async () => {
   const previousLocation = globalThis.location;
   Object.defineProperty(globalThis, 'location', {
     configurable: true,
@@ -32,14 +33,8 @@ test('Pages CCTV frame and media URLs point directly at the LeeWay world provide
     const frame = source.getFrameUrl(camera, 300000);
     const media = source.getMediaUrl(camera);
 
-    assert.match(
-      frame,
-      /^http:\/\/127\.0\.0\.1:4176\/api\/cctv\/frame\/il-gateway-test\?/,
-    );
-    assert.match(
-      media,
-      /^http:\/\/127\.0\.0\.1:4176\/api\/cctv\/media\/il-gateway-test\?/,
-    );
+    assert.match(frame, /^\/api\/cctv\/frame\/il-gateway-test\?/);
+    assert.match(media, /^\/api\/cctv\/media\/il-gateway-test\?/);
   } finally {
     if (previousLocation === undefined) delete globalThis.location;
     else {
@@ -49,4 +44,30 @@ test('Pages CCTV frame and media URLs point directly at the LeeWay world provide
       });
     }
   }
+});
+
+test('an explicitly configured world provider remains available', async () => {
+  // Vite supplies this compile-time value. Exercise the production resolver with
+  // that single binding substituted, without needing a running Vite server.
+  const source = await readFile(
+    new URL('../../leeway/worldApiBridge.js', import.meta.url),
+    'utf8',
+  );
+  assert.ok(source.includes('import.meta.env?.VITE_LEEWAY_WORLD_API_URL'));
+  const configured = source.replace(
+    'import.meta.env?.VITE_LEEWAY_WORLD_API_URL',
+    JSON.stringify('https://world.example.test/'),
+  );
+  const { worldApiBase, resolveWorldApiUrl } = await import(
+    `data:text/javascript;base64,${Buffer.from(configured).toString('base64')}`
+  );
+  assert.equal(worldApiBase(), 'https://world.example.test');
+  assert.equal(
+    resolveWorldApiUrl('/api/cctv/frame/test?ts=1'),
+    'https://world.example.test/api/cctv/frame/test?ts=1',
+  );
+  assert.equal(
+    resolveWorldApiUrl('https://other.example.test/api/test'),
+    'https://other.example.test/api/test',
+  );
 });

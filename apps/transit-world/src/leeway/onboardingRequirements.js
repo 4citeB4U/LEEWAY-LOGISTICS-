@@ -18,8 +18,7 @@ export const EMPLOYEE_ONBOARDING_PROFILES = Object.freeze({
       'Medical qualification evidence where applicable',
       'Safety / policy acknowledgements',
     ],
-    note:
-      'Driver qualification requirements vary by operation, jurisdiction, vehicle, and exemption status. Configure the production checklist against current FMCSA/state/company requirements.',
+    note: 'Driver qualification requirements vary by operation, jurisdiction, vehicle, and exemption status. Configure the production checklist against current FMCSA/state/company requirements.',
   }),
   Dispatcher: Object.freeze({
     sections: [
@@ -137,5 +136,8 @@ export const ORGANIZATION_ONBOARDING_STEPS = Object.freeze([
 ]);
 
 export function onboardingProfile(role = 'Driver') {
-  return EMPLOYEE_ONBOARDING_PROFILES[role] || EMPLOYEE_ONBOARDING_PROFILES.Operations;
+  return (
+    EMPLOYEE_ONBOARDING_PROFILES[role] ||
+    EMPLOYEE_ONBOARDING_PROFILES.Operations
+  );
 }

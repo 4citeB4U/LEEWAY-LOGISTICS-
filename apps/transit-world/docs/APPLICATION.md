@@ -1,4 +1,26 @@
-﻿# Application construction
+# Application construction
+
+## Product entries and installation scopes
+
+The deployment publishes two separate installable products from the same spatial
+runtime. They share map, traffic, weather, CCTV and aircraft infrastructure, but
+their product shells and saved app identities are distinct:
+
+| Product          | Entry        | Install scope | Product-only surface                                                     |
+| ---------------- | ------------ | ------------- | ------------------------------------------------------------------------ |
+| LeeWay Logistics | `/`          | `/`           | Fleet, drivers, dispatch loads, equipment and transportation Sales CRM   |
+| LeeWay Maps      | `/personal/` | `/personal/`  | Personal trips, traffic, weather, cameras and privacy-gated peer contact |
+
+`/compare.html` is the live verification surface. It embeds both running entries
+side by side on the same origin so product separation, common map behavior and
+responsive card styling can be reviewed together. Each frame also has an
+**Open full** link. The comparison page is diagnostic UI; it is not either
+product's PWA start URL.
+
+The Business manifest uses `manifest.webmanifest` and the root service worker.
+The Personal manifest uses `manifest-personal.webmanifest` and the
+`/personal/` service-worker scope. This prevents installation of one product
+from replacing the other on Android or desktop PWA launchers.
 
 `@leeway/logistics-transit-world/application` exports `createApplication`. Importing it does not
 create a viewer, discover configuration, start requests, or attach browser
@@ -203,4 +225,3 @@ shared chrome owns the welcome/loading transition; standalone composition adds
 Provider Settings. `build/html` expands an allowlist of component markers from
 `src/ui/templates`; unknown names cannot read arbitrary filesystem paths. The
 standalone document expands to the same markup as before this extraction.
-

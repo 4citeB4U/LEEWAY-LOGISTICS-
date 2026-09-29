@@ -28,10 +28,14 @@ import { firePerimetersProxy } from './firePerimeters.js';
 import { cycloneProxy } from './cyclones.js';
 import { windProxy } from './wind.js';
 import { agentLeeVoiceProxy } from './agent-lee-voice.js';
+import { hazardReportsPlugin } from './hazardReports.js';
+import { peerSignalingPlugin } from './peerSignaling.js';
 
 /** Construct the local provider plugins in their established order. */
 function localProviderPlugins() {
   return [
+    hazardReportsPlugin(),
+    peerSignalingPlugin(),
     openSkyProxy(),
     celestrakProxy(),
     tomtomProxy(),
