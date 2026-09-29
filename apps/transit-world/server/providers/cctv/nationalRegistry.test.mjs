@@ -20,13 +20,29 @@ test('national registry covers 50 states, DC, and five inhabited territories', (
 
 test('seeded sources preserve verified authority and integration state', () => {
   const wisconsin = nationalTrafficCameraJurisdiction('WI');
+  const georgia = nationalTrafficCameraJurisdiction('GA');
   const newYork = nationalTrafficCameraJurisdiction('NY');
   const oregon = nationalTrafficCameraJurisdiction('OR');
   assert.equal(wisconsin.name, 'Wisconsin');
   assert.equal(wisconsin.sources[0].integrationStatus, 'key-required');
   assert.equal(wisconsin.sources[0].evidenceState, 'VERIFIED');
-  assert.ok(newYork.sources.some((source) => source.system === '511NY'));
-  assert.ok(newYork.sources.some((source) => source.integrationStatus === 'integrated'));
+
+  const georgia511 = georgia.sources.find(
+    (source) => source.system === '511GA',
+  );
+  assert.equal(georgia511.integrationStatus, 'integrated');
+  assert.equal(georgia511.authRequired, true);
+  assert.equal(georgia511.evidenceState, 'VERIFIED');
+
+  const newYork511 = newYork.sources.find(
+    (source) => source.system === '511NY',
+  );
+  assert.equal(newYork511.integrationStatus, 'integrated');
+  assert.equal(newYork511.authRequired, true);
+  assert.ok(
+    newYork.sources.some((source) => source.integrationStatus === 'integrated'),
+  );
+
   assert.equal(oregon.sources[0].system, 'TripCheck');
   assert.equal(oregon.sources[0].accessMethod, 'documented_api');
 });

@@ -23,6 +23,7 @@ import {
   loadCalgarySourcesFromOpenData,
   loadDelDOTSourcesFromOpenData,
 } from './sources.js';
+import { loadGeorgia511Sources, loadNewYork511Sources } from './iteris511.js';
 
 /** Env kill switch: unset or anything but "0" means enabled. */
 const envEnabled = (name) => String(process.env[name] || '1').trim() !== '0';
@@ -55,6 +56,16 @@ const LIVE_PACKS = [
     name: 'wisconsin-511',
     enabled: () => envEnabled('CCTV_WISCONSIN_511_ENABLED'),
     load: loadWisconsin511SourcesFromOpenData,
+  },
+  {
+    name: 'new-york-511',
+    enabled: () => envEnabled('CCTV_NEWYORK_511_ENABLED'),
+    load: loadNewYork511Sources,
+  },
+  {
+    name: 'georgia-511',
+    enabled: () => envEnabled('CCTV_GEORGIA_511_ENABLED'),
+    load: loadGeorgia511Sources,
   },
   {
     name: 'nyc-dot',
