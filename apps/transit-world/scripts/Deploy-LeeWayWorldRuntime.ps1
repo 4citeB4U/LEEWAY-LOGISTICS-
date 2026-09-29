@@ -28,6 +28,10 @@ function Convert-DotEnvValue([string]$Value) {
         $inner = $value.Substring(1, $value.Length - 2)
         return $inner.Replace('\"', '"').Replace('\\', '\')
     }
+    $comment = $value.IndexOf('#')
+    if ($comment -ge 0) {
+        return $value.Substring(0, $comment).TrimEnd()
+    }
     return $value
 }
 
@@ -193,6 +197,29 @@ if ($null -eq $project) {
     }
 }
 if (-not $project.id) { throw 'Vercel project ID was not returned.' }
+
+$existingResponse = Invoke-VercelJson GET "/v10/projects/$($project.id)/env" $query
+$envsProperty = $existingResponse.PSObject.Properties['envs']
+$existingEnvs = if ($null -ne $envsProperty) { @($envsProperty.Value) } else { @() }
+$removeIds = @()
+foreach ($row in $existingEnvs) {
+    $key = Get-PropertyValue $row 'key'
+    if ($serverKeys -notcontains $key) { continue }
+    $targetsProperty = $row.PSObject.Properties['target']
+    $targets = if ($null -ne $targetsProperty) { @($targetsProperty.Value) } else { @() }
+    $managedTarget = $targets -contains 'production' -or $targets -contains 'preview'
+    if (-not $managedTarget) { continue }
+    $hasPreview = $targets -contains 'preview'
+    $isConfigured = $configured -contains $key
+    if ($hasPreview -or -not $isConfigured) {
+        $id = Get-PropertyValue $row 'id'
+        if ($id) { $removeIds += $id }
+    }
+}
+if ($removeIds.Count -gt 0) {
+    Write-Host ('Removing {0} stale/preview managed environment rows...' -f $removeIds.Count)
+    [void](Invoke-VercelJson DELETE "/v1/projects/$($project.id)/env" $query @{ ids = $removeIds })
+}
 
 $envRows = @()
 foreach ($key in $configured) {
