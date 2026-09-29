@@ -1,6 +1,6 @@
 /* Cache the installed application's static shell after an online visit. Never
    intercept live APIs, tiles, locations, model files, TTS, or route responses. */
-const CACHE = 'leeway-logistics-offline-v5';
+const CACHE = 'leeway-logistics-offline-v6';
 const base = self.registration.scope;
 const offline = new URL('offline.html', base).href;
 const offlineAssets = [

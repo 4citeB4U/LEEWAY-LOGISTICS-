@@ -1,5 +1,6 @@
 import { PeerMediaSession } from './peerCommsCore.js';
 import './peerComms.css';
+import { mapIcon } from './mapIcons.js';
 
 export function mountPeerComms({
   viewer = null,
@@ -10,14 +11,14 @@ export function mountPeerComms({
   root.className = 'lw-peers';
   root.hidden = true;
   root.dataset.layout = 'full';
-  root.innerHTML = `<header><div><h2>Peer channel</h2><p>Text, push-to-talk and video with accepted peers</p></div><button data-peer="layout" type="button">Split with map</button><button data-peer="close" type="button" aria-label="Close peer channel">×</button></header>
+  root.innerHTML = `<header><div><h2>Driver radio</h2><p>Private CB voice · video by invitation</p></div><button data-peer="layout" type="button">Split with map</button><button data-peer="close" type="button" aria-label="Close peer channel">×</button></header>
   <p class="lp-status" role="status" data-status>Sign in required. Use your provisioned account to connect with peers.</p>
-  <details open data-auth><summary>Sign in to your channel</summary><label>Username<input autocomplete="username" data-username aria-label="Channel username"></label><label>Password<input type="password" autocomplete="current-password" data-password aria-label="Channel password"></label><button data-peer="login" type="button">Sign in</button><button data-peer="disconnect" type="button">Sign out</button><p>Use your operator-provisioned account. Identity and organization are verified by the server; your short-lived session stays in this tab.</p><details><summary>Operator access ticket</summary><label>Signed ticket<input type="password" autocomplete="off" data-ticket aria-label="Operator-issued access ticket"></label><button data-peer="connect" type="button">Connect ticket</button></details></details>
-  <div class="lp-directory"><label><input type="checkbox" data-discoverable> Let authorized peers find me</label><button data-peer="refresh" type="button">Refresh peers</button><select data-directory aria-label="Available peer"><option value="">Connect to see peers</option></select><label>Channel<select data-media><option value="text">Text</option><option value="audio">Text + push-to-talk audio</option><option value="video">Text + push-to-talk + video</option></select></label><button data-peer="invite" type="button">Invite peer</button><p>Both people must accept. Your selected microphone/camera starts only after acceptance. No recording is provided.</p></div>
+  <div class="lp-radio"><span class="lp-radio-label">PRIVATE CB</span><strong data-peer-name>No channel selected</strong><div class="lp-radio-meter" aria-hidden="true">${'<i></i>'.repeat(12)}</div><div class="lp-call"><button data-peer="talk" type="button" disabled aria-pressed="false" aria-label="Hold to talk">${mapIcon('mic')}<span>Hold to talk</span></button><button data-peer="hangup" type="button" disabled>End channel</button></div><p>Hold the microphone to transmit. Release to listen.</p><button data-peer="block-active" type="button" disabled>Block this contact</button></div>
+  <details data-auth><summary>Sign in to your channel</summary><label>Username<input autocomplete="username" data-username aria-label="Channel username"></label><label>Password<input type="password" autocomplete="current-password" data-password aria-label="Channel password"></label><button data-peer="login" type="button">Sign in</button><button data-peer="disconnect" type="button">Sign out</button><p>Use your operator-provisioned account. Identity and organization are verified by the server; your short-lived session stays in this tab.</p><details><summary>Operator access ticket</summary><label>Signed ticket<input type="password" autocomplete="off" data-ticket aria-label="Operator-issued access ticket"></label><button data-peer="connect" type="button">Connect ticket</button></details></details>
+  <div class="lp-directory"><label><input type="checkbox" data-discoverable> Let authorized peers find me</label><p data-directory-policy></p><button data-peer="refresh" type="button">Refresh peers</button><select data-directory aria-label="Available peer"><option value="">Connect to see peers</option></select><input type="hidden" data-media value="audio"><div class="lp-invite-actions"><button data-peer="invite" type="button">Invite to CB voice</button><button data-peer="video" type="button">Video call</button></div><p>Both people must accept. Your selected microphone/camera starts only after acceptance. No recording is provided.</p></div>
+  <section class="lp-contacts"><h3>Contacts billboard</h3><p>Choose an available driver or dispatcher, then invite them to CB. Only people who choose to be discoverable appear here. This list does not indicate who is physically ahead of you.</p><div data-contact-cards></div><details><summary>Blocked contacts</summary><div data-blocked-cards></div></details></section>
   <div data-invitations></div><p class="lp-infrastructure" data-infrastructure></p>
-  <div class="lp-video-grid"><video data-remote playsinline autoplay aria-label="Peer video and audio"></video><video data-local muted playsinline autoplay aria-label="Your camera preview"></video></div><button data-peer="play" type="button" hidden>Play peer audio/video</button>
-  <div class="lp-call"><button data-peer="talk" type="button" disabled aria-pressed="false">Hold to talk</button><button data-peer="hangup" type="button" disabled>End channel</button></div>
-  <div class="lp-messages" role="log" aria-live="polite" data-messages></div><form data-compose><input maxlength="4000" data-text aria-label="Message to peer" placeholder="Message your connected peer" autocomplete="off"><button type="submit">Send</button></form>`;
+  <div class="lp-video-grid" hidden><video data-remote playsinline autoplay aria-label="Peer video and audio"></video><video data-local muted playsinline autoplay aria-label="Your camera preview"></video></div><button data-peer="play" type="button" hidden>Play peer audio/video</button>`;
   document.body.append(root);
   const q = (selector) => root.querySelector(selector);
   let token = '',
@@ -31,6 +32,7 @@ export function mountPeerComms({
     sessionId = null,
     sessionMedia = null,
     peerName = '',
+    activePeerId = '',
     iceServers = [];
   const consent = new Map();
   const status = (text) => {
@@ -58,15 +60,17 @@ export function mountPeerComms({
         );
     }, 30000);
   }
-  function message(author, value) {
-    const row = document.createElement('p');
-    const label = document.createElement('strong');
-    label.textContent = `${author}: `;
-    row.append(label, document.createTextNode(value));
-    q('[data-messages]').append(row);
-    while (q('[data-messages]').children.length > 100)
-      q('[data-messages]').firstElementChild.remove();
-    q('[data-messages]').scrollTop = q('[data-messages]').scrollHeight;
+  async function applyDirectoryPolicy() {
+    const discoverable = q('[data-discoverable]');
+    const policy = q('[data-directory-policy]');
+    const companyDirectory = identity?.directoryPolicy !== 'opt-in';
+    discoverable.disabled = companyDirectory;
+    discoverable.checked = companyDirectory;
+    policy.textContent = companyDirectory
+      ? 'Company directory is active while you are signed in. Fleet coworkers can see that you are available. Every CB or video call still requires acceptance, and you can block a contact.'
+      : 'Personal directory visibility is optional. Turn it on only when you want nearby app users to find you.';
+    if (companyDirectory)
+      await request('/presence', 'POST', { discoverable: true });
   }
   const media = new PeerMediaSession({
     sendSignal: (payload) => {
@@ -88,7 +92,7 @@ export function mountPeerComms({
         );
       }
     },
-    onMessage: (text) => message(peerName, text),
+    onMessage: () => {}, // Driver radio has no text channel UI.
     onLocalStream: (stream) => {
       q('[data-local]').srcObject = stream;
       q('[data-local]').hidden = !stream.getVideoTracks().length;
@@ -103,6 +107,8 @@ export function mountPeerComms({
     },
   });
   function endLocal() {
+    activePeerId = '';
+    q('[data-peer="block-active"]').disabled = true;
     media.stop();
     sessionId = null;
     sessionMedia = null;
@@ -112,6 +118,9 @@ export function mountPeerComms({
     q('[data-peer="talk"]').setAttribute('aria-pressed', 'false');
     q('[data-peer="hangup"]').disabled = true;
     q('[data-peer="play"]').hidden = true;
+    q('.lp-video-grid').hidden = true;
+    q('[data-peer-name]').textContent = 'No channel selected';
+    root.dataset.transmitting = 'false';
   }
   async function request(path, method = 'GET', body) {
     if (!token) throw new Error('Connect your signed user identity first.');
@@ -139,20 +148,105 @@ export function mountPeerComms({
     return data;
   }
   async function refresh() {
+    const own = epoch;
     const data = await request('/directory');
+    const blocked = await request('/blocked');
+    if (own !== epoch) return;
     const selected = q('[data-directory]').value;
     q('[data-directory]').replaceChildren(new Option('Choose a peer', ''));
+    q('[data-contact-cards]').replaceChildren();
+    q('[data-blocked-cards]').replaceChildren();
     for (const peer of data.peers || []) {
-      if (peer.id !== identity?.id)
+      if (peer.id !== identity?.id) {
         q('[data-directory]').append(
           new Option(`${peer.displayName} (${peer.id})`, peer.id),
         );
+        const card = document.createElement('article');
+        card.className = 'lp-contact';
+        const name = document.createElement('strong');
+        name.textContent = peer.displayName;
+        name.translate = false;
+        const info = document.createElement('p');
+        info.textContent = `${peer.role} · ${peer.id}${peer.area ? ` · ${peer.area}` : ''}`;
+        card.append(name, info);
+        for (const [label, action] of [
+          [
+            'CB microphone',
+            () => {
+              q('[data-directory]').value = peer.id;
+              void invite('audio');
+            },
+          ],
+          [
+            'Video call',
+            () => {
+              q('[data-directory]').value = peer.id;
+              void invite('video');
+            },
+          ],
+          ['Block contact', () => void protectContact(peer.id, 'block')],
+          [
+            'Report harassment and block',
+            () => void protectContact(peer.id, 'report'),
+          ],
+        ]) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = label;
+          button.onclick = action;
+          card.append(button);
+        }
+        q('[data-contact-cards]').append(card);
+      }
+    }
+    if (!q('[data-contact-cards]').childElementCount)
+      q('[data-contact-cards]').textContent =
+        'No available contacts. Refresh after another driver signs in and enables discovery.';
+    for (const peer of blocked.peers || []) {
+      const row = document.createElement('div'),
+        label = document.createElement('span'),
+        button = document.createElement('button');
+      label.textContent = peer.displayName;
+      button.textContent = 'Unblock';
+      button.type = 'button';
+      button.onclick = () => void protectContact(peer.id, 'unblock');
+      row.append(label, button);
+      q('[data-blocked-cards]').append(row);
     }
     q('[data-directory]').value = selected;
+  }
+  async function protectContact(to, action) {
+    try {
+      // Cut local capture immediately, even if the server is temporarily unreachable.
+      if (action !== 'unblock') {
+        consent.clear();
+        consentEpoch++;
+        endLocal();
+      }
+      const result = await request(`/${action}`, 'POST', { to });
+      await refresh();
+      status(
+        action === 'report'
+          ? `Harassment report saved: ${result.reportId}. Contact blocked. This report has not been reviewed; police were not contacted. For immediate danger, use your phone's emergency calling function.`
+          : action === 'unblock'
+            ? 'Contact unblocked. A new invitation and acceptance are still required.'
+            : 'Contact blocked. They cannot invite you or continue this channel.',
+      );
+    } catch (error) {
+      status(`Contact safety change was not confirmed: ${error.message}`);
+    }
   }
   function showInvite(event) {
     if (!event.inviteId || !['text', 'audio', 'video'].includes(event.media))
       return;
+    if (event.media === 'text') {
+      void request('/respond', 'POST', {
+        inviteId: event.inviteId,
+        accept: false,
+      }).catch(() => {});
+      status('This driver radio accepts voice or video invitations.');
+      return;
+    }
     if (
       event.media === 'video' &&
       document.body.classList.contains('leeway-drive-mode')
@@ -195,12 +289,24 @@ export function mountPeerComms({
     };
     accept.onclick = () => void respond(true);
     decline.onclick = () => void respond(false);
-    card.append(label, accept, decline);
+    const block = document.createElement('button');
+    block.type = 'button';
+    block.textContent = 'Block contact';
+    block.onclick = () => {
+      void protectContact(event.from.id, 'block');
+      card.remove();
+    };
+    card.append(label, accept, decline, block);
     q('[data-invitations]').append(card);
     if (root.hidden) open();
     status(`Invitation from ${event.from?.displayName || 'peer'}`);
   }
   async function eventReceived(event) {
+    if (event.type === 'withdrawn') {
+      for (const card of q('[data-invitations]').children)
+        if (card.dataset.invite === event.inviteId) card.remove();
+      consent.delete(event.inviteId);
+    }
     if (event.type === 'invite') showInvite(event);
     if (event.type === 'accepted') {
       if (
@@ -220,9 +326,12 @@ export function mountPeerComms({
       endLocal();
       sessionId = event.sessionId;
       sessionMedia = event.media;
+      activePeerId = event.peer?.id || '';
+      q('[data-peer="block-active"]').disabled = !activePeerId;
       peerName = event.peer?.displayName || event.peer?.id || 'Peer';
       q('[data-peer="hangup"]').disabled = false;
-      q('[data-messages]').replaceChildren();
+      q('[data-peer-name]').textContent = peerName;
+      q('.lp-video-grid').hidden = event.media !== 'video';
       status(`Accepted ${event.media} channel. Preparing connection…`);
       try {
         const activeId = sessionId;
@@ -288,7 +397,11 @@ export function mountPeerComms({
     endLocal();
     q('[data-ticket]').value = '';
     q('[data-discoverable]').checked = false;
+    q('[data-discoverable]').disabled = false;
+    q('[data-directory-policy]').textContent = '';
     q('[data-invitations]').replaceChildren();
+    q('[data-contact-cards]').replaceChildren();
+    q('[data-blocked-cards]').replaceChildren();
     q('[data-directory]').replaceChildren(
       new Option('Connect to see peers', ''),
     );
@@ -330,6 +443,7 @@ export function mountPeerComms({
       iceServers = Array.isArray(me.iceServers) ? me.iceServers : [];
       if (!identity?.id)
         throw new Error('Server did not return an authenticated identity.');
+      await applyDirectoryPolicy();
       status(`Signed in as ${identity.displayName} (${identity.id})`);
       q('[data-auth]').open = false;
       q('[data-infrastructure]').textContent = me.turnConfigured
@@ -376,6 +490,7 @@ export function mountPeerComms({
       iceServers = Array.isArray(me.iceServers) ? me.iceServers : [];
       if (!identity?.id)
         throw new Error('Server did not return an authenticated identity.');
+      await applyDirectoryPolicy();
       status(`Signed in as ${identity.displayName} (${identity.id})`);
       q('[data-auth]').open = false;
       q('[data-infrastructure]').textContent = me.turnConfigured
@@ -405,7 +520,7 @@ export function mountPeerComms({
   };
   q('[data-peer="refresh"]').onclick = () =>
     void refresh().catch((error) => status(error.message));
-  q('[data-peer="invite"]').onclick = async () => {
+  async function invite(type) {
     const ownConsent = consentEpoch;
     try {
       if (sessionId)
@@ -414,7 +529,6 @@ export function mountPeerComms({
         );
       const to = q('[data-directory]').value;
       if (!to) throw new Error('Choose a peer first.');
-      const type = q('[data-media]').value;
       if (
         type === 'video' &&
         document.body.classList.contains('leeway-drive-mode')
@@ -429,7 +543,12 @@ export function mountPeerComms({
     } catch (error) {
       status(error.message);
     }
+  }
+  q('[data-peer="block-active"]').onclick = () => {
+    if (activePeerId) void protectContact(activePeerId, 'block');
   };
+  q('[data-peer="invite"]').onclick = () => void invite('audio');
+  q('[data-peer="video"]').onclick = () => void invite('video');
   q('[data-peer="hangup"]').onclick = () => {
     const ended = sessionId;
     endLocal();
@@ -443,20 +562,11 @@ export function mountPeerComms({
     disconnect();
     status('Disconnected; access ticket cleared.');
   };
-  q('[data-compose]').onsubmit = (event) => {
-    event.preventDefault();
-    try {
-      const text = media.sendText(q('[data-text]').value);
-      message('You', text);
-      q('[data-text]').value = '';
-    } catch (error) {
-      status(error.message);
-    }
-  };
   const talk = q('[data-peer="talk"]');
   const talking = (enabled) => {
     media.setTalking(enabled);
     talk.setAttribute('aria-pressed', String(enabled));
+    root.dataset.transmitting = String(enabled);
   };
   talk.onpointerdown = (event) => {
     if (talk.disabled) return;

@@ -38,7 +38,9 @@ export function createNavigation({
   }
 
   function scopeRadiusKm() {
-    const height = Number(layerState._viewer?.camera?.positionCartographic?.height);
+    const height = Number(
+      layerState._viewer?.camera?.positionCartographic?.height,
+    );
     if (!Number.isFinite(height)) return Number.POSITIVE_INFINITY;
     if (height <= 120_000) return 60;
     if (height <= 350_000) return 100;

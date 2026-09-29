@@ -46,7 +46,7 @@
   gap: 12px;
 }
 .lw-drive-eyebrow {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.12em;
 }
@@ -57,7 +57,7 @@
   gap: 8px;
 }
 .lw-drive-header p {
-  font-size: 12px;
+  font-size: 16px;
   margin: 5px 0 0;
   color: #d2ece0;
 }
@@ -87,7 +87,7 @@
   line-height: 1.15;
 }
 .lw-drive [data-drive-status] {
-  font-size: 14px;
+  font-size: 18px;
   margin: 8px 0 0;
   line-height: 1.4;
 }
@@ -113,7 +113,7 @@
   font-size: clamp(26px, 5vw, 40px);
 }
 .lw-drive-bottom span {
-  font-size: 12px;
+  font-size: 14px;
   color: #d2e9e1;
   margin-top: 6px;
 }
@@ -152,6 +152,10 @@ body.leeway-drive-mode #leeway-agent-lee .lal-quick,
 body.leeway-drive-mode #leeway-agent-lee .lal-body > details {
   display: none;
 }
+body.leeway-drive-mode #leeway-agent-lee .lal-log {
+  font-size: 20px;
+  line-height: 1.5;
+}
 @media (max-width: 950px) and (min-height: 600px) {
   body.leeway-enterprise-shell.leeway-drive-mode #leeway-agent-lee.leeway-open {
     max-height: max(0px, calc(100dvh - var(--leeway-drive-guidance-bottom, 340px) - 134px - env(safe-area-inset-bottom, 0px)));
@@ -177,7 +181,7 @@ body.leeway-drive-mode #leeway-agent-lee .lal-body > details {
   }
   .lw-drive-bottom button {
     padding: 10px;
-    font-size: 13px;
+    font-size: 16px;
   }
   .lw-drive-header p {
     max-width: 220px;
@@ -185,6 +189,10 @@ body.leeway-drive-mode #leeway-agent-lee .lal-body > details {
   .lw-drive-header button {
     padding: 10px 12px;
   }
+  .lw-drive-header { flex-wrap:wrap; }
+  .lw-drive-header p { max-width:none; }
+  .lw-drive-actions { width:100%; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .lw-drive-actions button { min-width:0; padding:8px; white-space:normal; }
 }
 @media (max-height: 500px) {
   .lw-drive-header {

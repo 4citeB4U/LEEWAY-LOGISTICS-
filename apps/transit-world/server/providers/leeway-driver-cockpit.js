@@ -45,7 +45,8 @@ export function cockpitRouteContract(config) {
     destination: { lat: delivery.lat, lon: delivery.lon, label: delivery.name },
     visualProfile: 'car',
     visualAuthority: 'OSRM_CAR_BASE_ONLY',
-    truckSafetyStatus: config.routeIntelligence?.truckSafetyStatus || 'UNVERIFIED',
+    truckSafetyStatus:
+      config.routeIntelligence?.truckSafetyStatus || 'UNVERIFIED',
   };
 }
 
@@ -65,9 +66,10 @@ export async function buildDriverCockpit({
     if (!response.ok) throw new Error(`Transit Hub HTTP ${response.status}`);
     const vehicles = await response.json();
     const fleetNumber = config?.driver?.vehicleFleetNumber;
-    const vehicle = (Array.isArray(vehicles) ? vehicles : []).find(
-      (row) => row?.fleetNumber === fleetNumber,
-    ) || null;
+    const vehicle =
+      (Array.isArray(vehicles) ? vehicles : []).find(
+        (row) => row?.fleetNumber === fleetNumber,
+      ) || null;
     return {
       mode: config.mode || 'UNVERIFIED',
       generatedAt: new Date().toISOString(),
@@ -101,8 +103,10 @@ function writeJson(res, status, body) {
 export function leewayDriverCockpitProxy(options = {}) {
   const handle = async (req, res, next) => {
     const pathname = String(req.url || '').split('?')[0];
-    if (pathname !== '/driver-cockpit' && pathname !== '/driver-cockpit/') return next();
-    if (req.method !== 'GET') return writeJson(res, 405, { error: 'method_not_allowed' });
+    if (pathname !== '/driver-cockpit' && pathname !== '/driver-cockpit/')
+      return next();
+    if (req.method !== 'GET')
+      return writeJson(res, 405, { error: 'method_not_allowed' });
     try {
       return writeJson(res, 200, await buildDriverCockpit(options));
     } catch (error) {

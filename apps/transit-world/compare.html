@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LeeWay Business + Personal — Live Comparison</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; background:#020a10; color:#effcff; }
+      * { box-sizing:border-box; }
+      body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% -20%,#173b48,#020a10 52%); }
+      header { min-height:72px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:12px 18px; border-bottom:1px solid #3b6878; background:#04131de8; }
+      header strong { display:block; font-size:21px; letter-spacing:.04em; }
+      header span { color:#a7cbd3; font-size:14px; }
+      main { height:calc(100vh - 72px); display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:10px; }
+      section { min-width:0; display:grid; grid-template-rows:auto 1fr; overflow:hidden; border:1px solid #416f82; border-radius:22px; background:#061621; box-shadow:0 12px 32px #0008; }
+      .label { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:52px; padding:9px 14px; background:linear-gradient(145deg,#244453,#0b202b); border-bottom:1px solid #416f82; }
+      .label b { font-size:17px; }
+      .label small { color:#9be9f1; font-size:13px; }
+      .label a { color:#fff; border:1px solid #5a8798; border-radius:14px; padding:8px 11px; text-decoration:none; background:#0b2b38; }
+      iframe { width:100%; height:100%; border:0; background:#07121b; }
+      @media (max-width:900px) { header { align-items:flex-start; flex-direction:column; } main { height:auto; grid-template-columns:1fr; } section { height:80vh; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div><strong>LeeWay — Two Live Applications</strong><span>Same spatial foundation. Separate business and personal products.</span></div>
+      <span>Both frames below are running applications, not screenshots.</span>
+    </header>
+    <main>
+      <section aria-label="LeeWay Logistics Business">
+        <div class="label"><div><b>LeeWay Logistics</b><br /><small>Business · fleet · dispatch · sales CRM</small></div><a href="./" target="_blank">Open full</a></div>
+        <iframe title="LeeWay Logistics Business application" src="./?comparison=business"></iframe>
+      </section>
+      <section aria-label="LeeWay Maps Personal">
+        <div class="label"><div><b>LeeWay Maps</b><br /><small>Personal · trips · traffic · weather</small></div><a href="./personal/" target="_blank">Open full</a></div>
+        <iframe title="LeeWay Maps Personal application" src="./personal/?comparison=personal"></iframe>
+      </section>
+    </main>
+  </body>
+</html>

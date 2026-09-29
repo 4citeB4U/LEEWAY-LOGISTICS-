@@ -260,7 +260,8 @@ async function fetchAdsbLolPointFallback(req) {
           {
             headers: {
               Accept: 'application/json',
-              'User-Agent': 'leeway-logistics-transit-world-adsblol-regional-fallback/1.0',
+              'User-Agent':
+                'leeway-logistics-transit-world-adsblol-regional-fallback/1.0',
             },
             signal: controller.signal,
           },

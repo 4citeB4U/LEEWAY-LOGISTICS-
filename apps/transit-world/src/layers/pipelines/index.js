@@ -4,7 +4,9 @@ const LAYER_ID = 'osm-pipelines';
 const REQUEST_DEBOUNCE_MS = 500;
 
 function viewportBox(viewer) {
-  const rect = viewer?.camera?.computeViewRectangle?.(viewer.scene.globe.ellipsoid);
+  const rect = viewer?.camera?.computeViewRectangle?.(
+    viewer.scene.globe.ellipsoid,
+  );
   if (!rect) return null;
   const south = Cesium.Math.toDegrees(rect.south);
   const west = Cesium.Math.toDegrees(rect.west);
@@ -16,14 +18,18 @@ function viewportBox(viewer) {
 
 function colorFor(record) {
   const substance = String(record.substance || '').toLowerCase();
-  if (substance.includes('gas')) return Cesium.Color.fromCssColorString('#f2c94c');
-  if (substance.includes('oil')) return Cesium.Color.fromCssColorString('#ff8b4c');
-  if (substance.includes('water')) return Cesium.Color.fromCssColorString('#4db7ff');
+  if (substance.includes('gas'))
+    return Cesium.Color.fromCssColorString('#f2c94c');
+  if (substance.includes('oil'))
+    return Cesium.Color.fromCssColorString('#ff8b4c');
+  if (substance.includes('water'))
+    return Cesium.Color.fromCssColorString('#4db7ff');
   return Cesium.Color.fromCssColorString('#b88cff');
 }
 
 export function createPipelinesLayer({ source }) {
-  if (typeof source?.fetch !== 'function') throw new TypeError('Pipeline source required');
+  if (typeof source?.fetch !== 'function')
+    throw new TypeError('Pipeline source required');
   const state = {
     viewer: null,
     dataSource: null,
@@ -85,7 +91,8 @@ export function createPipelinesLayer({ source }) {
     state.error = null;
     try {
       const snapshot = await source.fetch(box, abort.signal);
-      if (abort.signal.aborted || state.abort !== abort || !state.enabled) return;
+      if (abort.signal.aborted || state.abort !== abort || !state.enabled)
+        return;
       state.records = snapshot.records || [];
       state.status = snapshot.status || 'ready';
       state.stale = Boolean(snapshot.stale);
@@ -142,7 +149,8 @@ export function createPipelinesLayer({ source }) {
       this.disable();
       state.moveEndRemove?.();
       state.moveEndRemove = null;
-      if (state.dataSource && viewer) viewer.dataSources.remove(state.dataSource, true);
+      if (state.dataSource && viewer)
+        viewer.dataSources.remove(state.dataSource, true);
       state.dataSource = null;
       state.viewer = null;
     },

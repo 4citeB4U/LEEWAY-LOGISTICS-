@@ -95,7 +95,9 @@ export function adsbLolProxy() {
           return;
         }
         const upstream = await fetch('https://api.adsb.lol/v2/mil', {
-          headers: { 'User-Agent': 'leeway-logistics-transit-world-adsblol-proxy/1.0' },
+          headers: {
+            'User-Agent': 'leeway-logistics-transit-world-adsblol-proxy/1.0',
+          },
         });
         if (upstream.ok) {
           const body = await upstream.text();

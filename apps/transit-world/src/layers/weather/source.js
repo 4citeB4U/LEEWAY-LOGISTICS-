@@ -1,5 +1,9 @@
 import { readResponseJsonCapped } from '../../sources/httpBody.js';
-import { usePublicWeather, readPublicWeather, publicWeatherUrl } from './publicWms.js';
+import {
+  usePublicWeather,
+  readPublicWeather,
+  publicWeatherUrl,
+} from './publicWms.js';
 
 export const WEATHER_PRODUCTS = Object.freeze([
   'radar',
@@ -89,9 +93,12 @@ export function weatherImageUrl(
     // The largest size is the proxy default: one frame has one URL.
     if (width !== largest.width) size = `&size=${width}x${height}`;
   }
-  if (usePublicWeather()) return publicWeatherUrl(product, time, {
-    width: width ?? largest.width, height: height ?? largest.height, bbox,
-  });
+  if (usePublicWeather())
+    return publicWeatherUrl(product, time, {
+      width: width ?? largest.width,
+      height: height ?? largest.height,
+      bbox,
+    });
   return `/api/weather/image?product=${product}&time=${encodeURIComponent(time)}${box}${size}`;
 }
 
@@ -100,9 +107,12 @@ export function weatherTileUrl(product, time, { size } = {}) {
     throw new Error('Invalid weather frame');
   if (size !== undefined && ![256, 512, 1024].includes(size))
     throw new Error('Invalid weather tile size');
-  if (usePublicWeather()) return publicWeatherUrl(product, time, {
-    width: size ?? 256, height: size ?? 256, tile: true,
-  });
+  if (usePublicWeather())
+    return publicWeatherUrl(product, time, {
+      width: size ?? 256,
+      height: size ?? 256,
+      tile: true,
+    });
   // Construct locally; never accept a manifest-provided host or template.
   return `/api/weather/tile?product=${product}&time=${encodeURIComponent(time)}&z={z}&x={x}&y={y}${size === undefined ? '' : `&size=${size}`}`;
 }
@@ -126,9 +136,11 @@ export function createWeatherSource({
       );
       try {
         signal?.throwIfAborted();
-        if (publicWms) return validateWeatherSnapshot(
-          await readPublicWeather(product, fetchImpl, controller.signal), product,
-        );
+        if (publicWms)
+          return validateWeatherSnapshot(
+            await readPublicWeather(product, fetchImpl, controller.signal),
+            product,
+          );
         const response = await fetchImpl(
           `/api/weather/manifest?product=${product}`,
           { signal: controller.signal, cache: 'no-store', redirect: 'error' },

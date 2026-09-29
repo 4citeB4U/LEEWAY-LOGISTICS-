@@ -29,10 +29,14 @@ function frameUrlFor(camera, refreshMs = ACTIVE_FRAME_REFRESH_MS) {
     pitch: String(Math.round(camera.pitchDeg || -10)),
     ts: String(tick),
   });
-  return apiUrl(`${FRAME_ENDPOINT}/${encodeURIComponent(camera.id)}?${params.toString()}`);
+  return apiUrl(
+    `${FRAME_ENDPOINT}/${encodeURIComponent(camera.id)}?${params.toString()}`,
+  );
 }
 function mediaUrlFor(camera) {
-  return apiUrl(`${MEDIA_ENDPOINT}/${encodeURIComponent(camera.id)}?ts=${Math.floor(Date.now() / 15000)}`);
+  return apiUrl(
+    `${MEDIA_ENDPOINT}/${encodeURIComponent(camera.id)}?ts=${Math.floor(Date.now() / 15000)}`,
+  );
 }
 /** Supply catalog/health records and the existing registered camera URL families. */
 export function createCctvSource({

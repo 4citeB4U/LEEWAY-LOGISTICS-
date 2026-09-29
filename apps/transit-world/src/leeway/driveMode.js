@@ -17,13 +17,14 @@ export function mountDriveMode({
   geolocation = navigator.geolocation,
   onCopilot = () => {},
   onCloseCopilot = () => {},
+  onRadio = () => {},
 } = {}) {
   if (!planner?.root) throw new Error('Drive Mode needs a route planner.');
   const root = documentRef.createElement('section');
   root.className = 'lw-drive';
   root.hidden = true;
   root.setAttribute('aria-label', 'Drive Mode');
-  root.innerHTML = `<div class="lw-drive-header"><div><span class="lw-drive-eyebrow">DRIVE MODE</span><p data-drive-authority></p></div><div class="lw-drive-actions"><button type="button" data-drive-copilot>Agent Lee</button><button type="button" data-drive-exit>Exit Drive</button></div></div>
+  root.innerHTML = `<div class="lw-drive-header"><div><span class="lw-drive-eyebrow">DRIVE MODE</span><p data-drive-authority></p></div><div class="lw-drive-actions"><button type="button" data-drive-copilot>Agent Lee</button><button type="button" data-drive-radio>Driver radio</button><button type="button" data-drive-exit>Exit Drive</button></div></div>
     <div class="lw-drive-instruction" role="status" aria-live="polite"><div data-drive-distance>Waiting for GPS</div><h1 data-drive-maneuver>Allow location access</h1><p data-drive-status></p></div>
     <div class="lw-drive-bottom"><div class="lw-drive-speed"><strong data-drive-speed>—</strong><span>MPH · GPS</span></div><div class="lw-drive-remaining"><strong data-drive-remaining>—</strong><span>remaining · estimate</span></div><button type="button" data-drive-follow aria-pressed="true">Follow on</button></div>`;
   documentRef.body.append(root);
@@ -43,11 +44,17 @@ export function mountDriveMode({
   // differently on phones. Keep the copilot below that protected region.
   function measureGuidance() {
     if (!active) return;
-    const bottom = query('.lw-drive-instruction').getBoundingClientRect().bottom;
-    documentRef.body.style.setProperty('--leeway-drive-guidance-bottom', `${Math.ceil(bottom + 12)}px`);
+    const bottom = query('.lw-drive-instruction').getBoundingClientRect()
+      .bottom;
+    documentRef.body.style.setProperty(
+      '--leeway-drive-guidance-bottom',
+      `${Math.ceil(bottom + 12)}px`,
+    );
   }
   const ResizeObserverClass = documentRef.defaultView?.ResizeObserver;
-  const layoutObserver = ResizeObserverClass ? new ResizeObserverClass(measureGuidance) : null;
+  const layoutObserver = ResizeObserverClass
+    ? new ResizeObserverClass(measureGuidance)
+    : null;
   layoutObserver?.observe(query('.lw-drive-header'));
   layoutObserver?.observe(query('.lw-drive-instruction'));
   function removeMarker() {
@@ -153,6 +160,7 @@ export function mountDriveMode({
   }
   go.addEventListener('click', () => start());
   query('[data-drive-copilot]').addEventListener('click', onCopilot);
+  query('[data-drive-radio]').addEventListener('click', onRadio);
   query('[data-drive-exit]').addEventListener('click', () => {
     stop();
     planner.open?.();

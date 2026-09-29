@@ -64,6 +64,9 @@ jobs:
           ./src/leeway/driveMode.test.mjs
           ./src/leeway/fuelAdvisor.test.mjs
           ./src/leeway/peerComms.test.mjs
+          ./src/leeway/cloneVoice.test.mjs
+          ./src/leeway/experienceLocale.test.mjs
+          ./server/providers/agent-lee-voice.test.mjs
           ./src/leeway/hazardReportsClient.test.mjs
           ./server/providers/peerSignaling.test.mjs
           ./server/providers/hazardReports.test.mjs

@@ -22,10 +22,10 @@ test('explicit build inputs preserve browser-only defines, plugin order and loop
   ]);
   assert.ok(config.server.fs.deny.includes('**/ENVIRONMENT'));
   assert.ok(config.server.fs.deny.includes('.env.*'));
-  assert.equal(config.server.headers['X-Frame-Options'], 'DENY');
+  assert.equal(config.server.headers['X-Frame-Options'], 'SAMEORIGIN');
   assert.equal(
     config.server.headers['Content-Security-Policy'],
-    "frame-ancestors 'none'",
+    "frame-ancestors 'self'",
   );
   assert.deepEqual(config.define, {
     'import.meta.env.GOOGLE_MAPS_API_KEY': '"browser-fixture"',

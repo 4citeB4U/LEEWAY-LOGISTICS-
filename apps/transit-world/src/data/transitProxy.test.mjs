@@ -36,7 +36,10 @@ test('route resolution admits only the catalog and registered feed ids', () => {
 
 test('upstream headers identify the proxy and carry feed-specific identification', () => {
   const plain = transitUpstreamHeaders(getTransitFeed('mbta'));
-  assert.match(plain['User-Agent'], /leeway-logistics-transit-world-transit-proxy/);
+  assert.match(
+    plain['User-Agent'],
+    /leeway-logistics-transit-world-transit-proxy/,
+  );
   assert.match(plain.Accept, /x-protobuf/);
   const entur = transitUpstreamHeaders(getTransitFeed('entur-norway'));
   assert.equal(entur['ET-Client-Name'], 'leeway-logistics-transit');

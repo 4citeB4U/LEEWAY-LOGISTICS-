@@ -89,8 +89,10 @@ test('CCTV instances resolve their own application source root and isolate catal
   assert.equal(stream.mediaUrl, '/api/cctv/media/first');
   assert.equal((await first('/media/first')).status, 404);
   const frame = await first('/frame/first');
-  assert.equal(frame.headers['X-CCTV-Source'], 'synthetic');
-  assert.match(frame.body, /&lt;Camera &amp; test&gt;/);
+  assert.equal(frame.status, 503);
+  const frameError = JSON.parse(frame.body);
+  assert.equal(frameError.error, 'Camera source is in bounded backoff');
+  assert.ok(frameError.retryAfterSeconds > 0);
   assert.equal(JSON.parse((await first('/health')).body).cameras.length, 1);
   assert.deepEqual(JSON.parse((await second('/health')).body).cameras, []);
 });

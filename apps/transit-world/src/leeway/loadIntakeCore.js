@@ -1,7 +1,9 @@
 const MAX_CANDIDATES = 3;
 
 function clean(value) {
-  return String(value ?? '').replace(/\s+/g, ' ').trim();
+  return String(value ?? '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function match(text, expressions) {
@@ -13,13 +15,22 @@ function match(text, expressions) {
 }
 
 function addressBlock(text, labels, stops) {
-  const lines = String(text || '').replace(/\r/g, '').split('\n');
+  const lines = String(text || '')
+    .replace(/\r/g, '')
+    .split('\n');
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
     if (!labels.some((label) => label.test(line))) continue;
-    const inline = line.replace(/^\s*(?:pickup|pick\s*up|origin|delivery|drop\s*off|destination)\s*(?:address|location)?\s*[:#-]?\s*/i, '');
+    const inline = line.replace(
+      /^\s*(?:pickup|pick\s*up|origin|delivery|drop\s*off|destination)\s*(?:address|location)?\s*[:#-]?\s*/i,
+      '',
+    );
     const values = [inline];
-    for (let cursor = index + 1; cursor < Math.min(lines.length, index + 5); cursor += 1) {
+    for (
+      let cursor = index + 1;
+      cursor < Math.min(lines.length, index + 5);
+      cursor += 1
+    ) {
       if (stops.some((stop) => stop.test(lines[cursor]))) break;
       if (!clean(lines[cursor])) break;
       values.push(lines[cursor]);
@@ -35,16 +46,32 @@ export function parseLoadIntake(text) {
   const sourceText = String(text || '').replace(/\r/g, '');
   const pickupLabels = [/^\s*(?:pickup|pick\s*up|origin)\b/i];
   const deliveryLabels = [/^\s*(?:delivery|drop\s*off|destination)\b/i];
-  const allStops = [...pickupLabels, ...deliveryLabels, /^\s*(?:rate|broker|reference|load\s*(?:id|number)?|equipment|commodity|weight)\b/i];
-  const pickup = addressBlock(sourceText, pickupLabels, allStops)
-    || match(sourceText, [/(?:pickup|pick\s*up|origin)\s*(?:address|location)?\s*[:#-]\s*([^\n]+)/i]);
-  const delivery = addressBlock(sourceText, deliveryLabels, allStops)
-    || match(sourceText, [/(?:delivery|drop\s*off|destination)\s*(?:address|location)?\s*[:#-]\s*([^\n]+)/i]);
-  const rateText = match(sourceText, [/(?:rate|pay|offer(?:ed)?)\s*[:#-]?\s*\$?([\d,]+(?:\.\d{1,2})?)/i]);
+  const allStops = [
+    ...pickupLabels,
+    ...deliveryLabels,
+    /^\s*(?:rate|broker|reference|load\s*(?:id|number)?|equipment|commodity|weight)\b/i,
+  ];
+  const pickup =
+    addressBlock(sourceText, pickupLabels, allStops) ||
+    match(sourceText, [
+      /(?:pickup|pick\s*up|origin)\s*(?:address|location)?\s*[:#-]\s*([^\n]+)/i,
+    ]);
+  const delivery =
+    addressBlock(sourceText, deliveryLabels, allStops) ||
+    match(sourceText, [
+      /(?:delivery|drop\s*off|destination)\s*(?:address|location)?\s*[:#-]\s*([^\n]+)/i,
+    ]);
+  const rateText = match(sourceText, [
+    /(?:rate|pay|offer(?:ed)?)\s*[:#-]?\s*\$?([\d,]+(?:\.\d{1,2})?)/i,
+  ]);
   const rate = Number(rateText.replace(/,/g, ''));
   return {
-    broker: match(sourceText, [/(?:broker|carrier contact)\s*[:#-]\s*([^\n]+)/i]),
-    reference: match(sourceText, [/(?:load\s*(?:id|number)|reference|ref)\s*[:#-]\s*([^\n]+)/i]),
+    broker: match(sourceText, [
+      /(?:broker|carrier contact)\s*[:#-]\s*([^\n]+)/i,
+    ]),
+    reference: match(sourceText, [
+      /(?:load\s*(?:id|number)|reference|ref)\s*[:#-]\s*([^\n]+)/i,
+    ]),
     equipment: match(sourceText, [/(?:equipment|trailer)\s*[:#-]\s*([^\n]+)/i]),
     commodity: match(sourceText, [/(?:commodity|freight)\s*[:#-]\s*([^\n]+)/i]),
     pickup,
@@ -53,7 +80,9 @@ export function parseLoadIntake(text) {
     sourceText,
     extraction: {
       pickup: pickup ? 'EXTRACTED_REQUIRES_ADDRESS_CONFIRMATION' : 'MISSING',
-      delivery: delivery ? 'EXTRACTED_REQUIRES_ADDRESS_CONFIRMATION' : 'MISSING',
+      delivery: delivery
+        ? 'EXTRACTED_REQUIRES_ADDRESS_CONFIRMATION'
+        : 'MISSING',
       rate: Number.isFinite(rate) && rate > 0 ? 'EXTRACTED' : 'MISSING',
     },
   };
@@ -72,8 +101,10 @@ export function validateLoadCandidate(value) {
     sourceText: String(value?.sourceText || ''),
   };
   if (!candidate.id) throw new Error('Load candidate needs an internal ID.');
-  if (!candidate.pickup) throw new Error('Confirm the pickup street address first.');
-  if (!candidate.delivery) throw new Error('Confirm the delivery street address first.');
+  if (!candidate.pickup)
+    throw new Error('Confirm the pickup street address first.');
+  if (!candidate.delivery)
+    throw new Error('Confirm the delivery street address first.');
   if (candidate.pickup.toLowerCase() === candidate.delivery.toLowerCase())
     throw new Error('Pickup and delivery need different addresses.');
   return candidate;
@@ -82,7 +113,9 @@ export function validateLoadCandidate(value) {
 export function addLoadCandidate(rows, candidate) {
   const next = [...(Array.isArray(rows) ? rows : [])];
   if (next.length >= MAX_CANDIDATES)
-    throw new Error('Compare up to three offers at one time. Remove an offer first.');
+    throw new Error(
+      'Compare up to three offers at one time. Remove an offer first.',
+    );
   const checked = validateLoadCandidate(candidate);
   if (next.some((row) => row.id === checked.id))
     throw new Error('That load candidate is already in the comparison.');
@@ -90,7 +123,12 @@ export function addLoadCandidate(rows, candidate) {
   return next;
 }
 
-export function choiceEvent({ candidate, choice, reason = '', actor = 'Driver' }) {
+export function choiceEvent({
+  candidate,
+  choice,
+  reason = '',
+  actor = 'Driver',
+}) {
   const allowed = new Set(['PREFER', 'ASK_DISPATCH', 'CANNOT_TAKE']);
   if (!allowed.has(choice)) throw new Error('Unsupported driver choice.');
   const checked = validateLoadCandidate(candidate);

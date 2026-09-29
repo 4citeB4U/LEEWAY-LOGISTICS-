@@ -5,7 +5,10 @@ import { addressText } from './addressStore.js';
  * URL stays a URL until we can extract a human-readable address query; bare
  * coordinates are refused by the same address policy as the planner.
  */
-export function readIncomingSharedAddress(search, base = 'https://leeway.invalid/') {
+export function readIncomingSharedAddress(
+  search,
+  base = 'https://leeway.invalid/',
+) {
   const params = new URLSearchParams(String(search || '').replace(/^\?/, ''));
   const direct = [params.get('sharedText'), params.get('sharedTitle')]
     .filter(Boolean)
@@ -33,7 +36,10 @@ export function readIncomingSharedAddress(search, base = 'https://leeway.invalid
   return null;
 }
 
-export function clearIncomingSharedAddress(locationRef = globalThis.location, historyRef = globalThis.history) {
+export function clearIncomingSharedAddress(
+  locationRef = globalThis.location,
+  historyRef = globalThis.history,
+) {
   const url = new URL(locationRef.href);
   let changed = false;
   for (const key of ['sharedText', 'sharedTitle', 'sharedUrl']) {

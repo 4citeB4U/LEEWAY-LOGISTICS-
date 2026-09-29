@@ -40,7 +40,8 @@ export function createApplicationControls({
 
   // A demo city must never be presented as the driver's current location.
   if (!styleManager.hasShareState) {
-    loaderStatus.textContent = 'Opening map. Choose My Location to set your starting point.';
+    loaderStatus.textContent =
+      'Opening map. Choose My Location to set your starting point.';
   } else {
     loaderStatus.textContent = 'Restoring shared view...';
   }

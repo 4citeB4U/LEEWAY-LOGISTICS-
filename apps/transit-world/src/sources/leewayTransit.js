@@ -26,10 +26,7 @@ export function createLeeWayTransitSource({
   const upstream = createTransitSource({ fetchImpl });
   return {
     feedsInRange(lat, lon, slackKm = 0) {
-      return [
-        LEEWAY_TRANSIT_FEED,
-        ...transitFeedsInRange(lat, lon, slackKm),
-      ];
+      return [LEEWAY_TRANSIT_FEED, ...transitFeedsInRange(lat, lon, slackKm)];
     },
     getHistory(feedId, vehicleId, options) {
       return upstream.getHistory(feedId, vehicleId, options);

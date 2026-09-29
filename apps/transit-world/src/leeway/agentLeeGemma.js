@@ -5,6 +5,9 @@ import { loadBrowserVoiceLibrary, voiceStorageStatus } from './browserVoice.js';
 import { createAgentLeeToolRuntime } from './agentLeeTools.js';
 import { BrowserCopilotMedia } from './browserCopilotMedia.js';
 import { executeCopilotCommand } from './copilotCommands.js';
+import { requestCloneSpeech } from './cloneVoice.js';
+import { mapIcon } from './mapIcons.js';
+import { getLanguage, translate } from './experienceLocale.js';
 
 const DEFAULT_MODEL = 'gemma4:e4b';
 const DEFAULT_ENDPOINT = '';
@@ -43,8 +46,10 @@ function sceneContext(application) {
 }
 
 function systemPrompt(context) {
+  const isPersonal = document.body?.dataset?.leewayEdition === 'personal';
   return [
-    'You are Agent Lee, the explicit copilot inside LeeWay Logistics — Transit World.',
+    `You are Agent Lee, the explicit copilot inside ${isPersonal ? 'LeeWay Maps' : 'LeeWay Logistics — Transit World'}.`,
+    `Reply in the user's selected language: ${getLanguage().name} (${getLanguage().code}). Preserve addresses, proper names, source timestamps and numerical facts.`,
     'You work beside the driver, dispatcher, fleet manager and traveler. The deterministic LeeWay map and operations system owns route geometry, records, source timestamps and hard restrictions. You translate intent, request approved capabilities, explain evidence, and never pretend to replace human dispatch authority.',
     'LeeWay principle: AI should increase human capability, not replace human responsibility.',
     'LeeWay context funnel: HUMAN, DEVICE/SYSTEM, AGENT, INTENT, ENVIRONMENT, PLATFORM, CAPABILITY, AUTHORITY, PERMISSION, STATE, HISTORY, RISK, CONNECTIVITY, EVIDENCE, RECOVERY, ADAPTATION.',
@@ -54,8 +59,12 @@ function systemPrompt(context) {
     'For action requests, use the available LeeWay tools before answering. Never claim a map, layer, CRM workspace, onboarding flow, tracking action, camera movement, route, or record opened unless the tool result says ok=true.',
     'For questions about what the operator is looking at, use get_entity_context or get_current_view_state before explaining the scene. For analytical counts or nearest/fastest/highest questions over loaded world data, use analyst_query.',
     'For domain-specific logistics, HR/onboarding, fleet, routing, municipal transit, rail, marine/intermodal, facilities, CRM, or evidence questions, call get_logistics_knowledge for the relevant topic before giving detailed operational guidance.',
-    'Use open_enterprise_workspace and start_onboarding for CRM, HR, employee, equipment, document, integration, and company onboarding requests. Use locate_enterprise_record when the operator names an employee, unit, customer, broker, terminal, or facility.',
-    'Use open_dispatch_load_planning when a dispatcher needs to compare loads or build a home-base triangle. Use set_map_audience when the operator explicitly asks to switch between personal travel and business logistics views.',
+    isPersonal
+      ? 'This is the separate personal mapping product. Help with routes, trip planning, weather, cameras, traffic, roadside places and travel context. Do not expose or claim access to business CRM, employee, fleet, load-board, onboarding or dispatch records.'
+      : 'Use open_enterprise_workspace and start_onboarding for CRM, HR, employee, equipment, document, integration, and company onboarding requests. Use locate_enterprise_record when the operator names an employee, unit, customer, broker, terminal, or facility.',
+    isPersonal
+      ? ''
+      : 'Use open_dispatch_load_planning when a dispatcher needs to compare loads or build a home-base triangle. This product is the business logistics application; do not claim that its former personal map mode still exists.',
     'Preserve source/provenance state when discussing live layers. Never turn stale, fallback, training, or unavailable data into a live-data claim.',
     'Never claim a route is truck-safe unless verified truck restriction evidence is present.',
     'Treat OSRM car routes as visual/base routes only.',
@@ -86,6 +95,7 @@ function phonePrompt(content, shell, history) {
     : null;
   return [
     'You are Agent Lee in LeeWay Logistics. Be clear, calm and concise. Give advice only; you cannot execute map tools through this phone adapter.',
+    `Reply in ${getLanguage().name} (${getLanguage().code}); preserve route addresses and numbers.`,
     'Never claim truck clearance, current hazards, minimum fuel cost, Chatterbox speech or Formula execution without verified evidence. Passenger road routes are previews. The Optimize stops button uses road distance, not truck restrictions or live traffic.',
     `Current route summary: ${JSON.stringify(summary)}`,
     ...history
@@ -183,7 +193,7 @@ function ensureStyles(documentRef) {
       position: fixed;
       left: 18px;
       bottom: 18px;
-      z-index: 9600;
+      z-index: 10030;
       width: min(420px, calc(100vw - 36px));
       max-height: calc(100dvh - 130px);
       overflow-y: auto;
@@ -192,40 +202,60 @@ function ensureStyles(documentRef) {
       box-shadow: 0 18px 70px rgba(0,0,0,.52);
       backdrop-filter: blur(14px);
       color: #edffff;
-      font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font: 18px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+      border-radius: 16px;
     }
     #leeway-agent-lee * { box-sizing: border-box; }
-    .lal-head { padding: 12px 14px; border-bottom: 1px solid rgba(98,231,255,.18); }
-    .lal-kicker { font-size: 9px; letter-spacing: .16em; opacity: .62; }
-    .lal-title { font-size: 15px; font-weight: 800; margin-top: 3px; }
-    .lal-status { margin-top: 6px; font-size: 10px; }
+    #leeway-agent-lee:not(.lal-expanded) .lal-body,
+    #leeway-agent-lee:not(.lal-expanded) .lal-status,
+    #leeway-agent-lee:not(.lal-expanded) .lal-kicker { display:none; }
+    .lal-voice-surface { padding:16px; text-align:center; }
+    .lal-voice-mic { display:inline-grid; place-items:center; width:72px; height:72px; border-radius:50%; border:2px solid #8ef9e4; color:#fff; background:linear-gradient(145deg,#35c9bc,#12556b); box-shadow:inset 0 2px 1px #d2fff550,0 5px 16px #0008; cursor:pointer; }
+    .lal-voice-mic svg { width:32px; height:32px; }
+    .lal-wave { display:flex; align-items:center; justify-content:center; gap:5px; height:38px; margin:10px 0; }
+    .lal-wave span { width:5px; height:8px; border-radius:5px; background:#79e9db; }
+    #leeway-agent-lee[data-phase="listening"] .lal-wave span,
+    #leeway-agent-lee[data-phase="speaking"] .lal-wave span { animation:lal-voice-pulse .8s ease-in-out infinite alternate; }
+    .lal-wave span:nth-child(2n) { animation-delay:-.3s !important; }
+    .lal-wave span:nth-child(3n) { animation-delay:-.6s !important; }
+    @keyframes lal-voice-pulse { to { height:30px; } }
+    @media (prefers-reduced-motion:reduce) { .lal-wave span { animation:none !important; } }
+    .lal-conversation-status { font:600 18px/1.45 system-ui,sans-serif; margin:4px 0; overflow-wrap:anywhere; }
+    .lal-head-actions { display:flex; gap:6px; align-items:center; }
+    #leeway-agent-lee.lal-expanded .lal-voice-surface { display:none; }
+    .lal-head { padding: 12px 14px; border-bottom: 1px solid rgba(98,231,255,.18); display:grid; grid-template-columns:1fr auto; gap:4px 12px; position:sticky; top:0; z-index:1; background:#06131d; }
+    .lal-kicker { font-size: 13px; letter-spacing: .06em; color:#c6e1e8; grid-column:1/-1; }
+    .lal-title { font-size: 22px; font-weight: 750; align-self:center; }
+    .lal-status { margin-top: 6px; font-size: 14px; line-height:1.45; grid-column:1/-1; }
     .lal-status[data-state="connected"] { color: #86ffa8; }
     .lal-status[data-state="disconnected"] { color: #ffd877; }
     .lal-body { padding: 12px 14px; }
     .lal-log {
-      max-height: 210px;
+      position: relative;
+      max-height: 300px;
       overflow: auto;
-      padding: 8px;
+      padding: 12px;
       background: rgba(255,255,255,.025);
       border: 1px solid rgba(255,255,255,.07);
-      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
-    .lal-entry { margin: 0 0 9px; }
+    .lal-entry { margin: 0 0 16px; white-space:pre-wrap; }
     .lal-entry strong { color: #91edff; }
-    .lal-row { display:flex; gap:7px; margin-top:8px; }
+    .lal-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .lal-row > .lal-input { flex-basis:100%; }
     .lal-quick { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-    .lal-quick button { padding:6px 8px; font-size:10px; }
+    .lal-quick button { padding:10px 12px; font-size:16px; }
     .lal-input {
-      flex:1; min-width:0; padding:9px;
+      flex:1; min-width:0; padding:10px; min-height:48px; border-radius:10px;
       background:#07121b; color:#efffff;
       border:1px solid rgba(98,231,255,.28);
       font:inherit;
     }
     .lal-btn {
-      padding:9px 10px; cursor:pointer;
+      padding:10px 14px; min-height:48px; border-radius:10px; cursor:pointer;
       background:rgba(98,231,255,.08); color:#efffff;
       border:1px solid rgba(98,231,255,.28);
-      font:inherit;
+      font:600 16px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
     }
     .lal-btn[data-action="voice"][aria-pressed="true"] {
       color:#86ffa8;
@@ -239,10 +269,14 @@ function ensureStyles(documentRef) {
     }
     .lal-settings { margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:6px; }
     .lal-settings input { width:100%; padding:7px; background:#07121b; color:#efffff; border:1px solid rgba(255,255,255,.12); font:inherit; }
-    .lal-note { margin-top:7px; opacity:.58; font-size:9px; }
+    .lal-note { margin-top:10px; color:#d0e2e8; font-size:14px; line-height:1.5; }
+    #leeway-agent-lee summary { min-height:44px; padding:8px 0; font-size:16px; cursor:pointer; }
+    #leeway-agent-lee a { color:#91edff; text-decoration:underline; }
+    #leeway-agent-lee :focus-visible { outline:3px solid #91edff; outline-offset:2px; }
     @media (max-width:720px) {
       #leeway-agent-lee { left:12px; bottom:calc(48vh + 24px); width:calc(100vw - 24px); }
-      .lal-log { max-height:120px; }
+      .lal-log { max-height:240px; }
+      .lal-settings { grid-template-columns:1fr; }
     }
   `;
   documentRef.head.appendChild(style);
@@ -257,7 +291,8 @@ function appendEntry(log, role, content) {
   entry.appendChild(text);
   log.appendChild(entry);
   while (log.children.length > 30) log.firstElementChild.remove();
-  log.scrollTop = log.scrollHeight;
+  // Start at the answer's beginning, not its final disclaimer or last line.
+  log.scrollTop = entry.offsetTop;
 }
 
 export function mountAgentLeeGemma(application, shell = null) {
@@ -273,8 +308,13 @@ export function mountAgentLeeGemma(application, shell = null) {
     <div class="lal-head">
       <div class="lal-kicker">LEEWAY LOGISTICS · COPILOT</div>
       <div class="lal-title">Agent Lee · Copilot</div>
-      <button class="lal-btn" type="button" data-action="close" aria-label="Close Agent Lee">Close</button>
+      <div class="lal-head-actions"><button class="lal-btn" type="button" data-action="conversation-menu" aria-label="Conversation and settings" aria-expanded="false">☰</button><button class="lal-btn" type="button" data-action="close" aria-label="Close Agent Lee">×</button></div>
       <div class="lal-status" data-state="disconnected">LOCAL RUNTIME: DISCONNECTED</div>
+    </div>
+    <div class="lal-voice-surface">
+      <button class="lal-voice-mic" type="button" data-action="voice-talk" aria-label="Talk to Agent Lee" aria-pressed="false">${mapIcon('mic')}</button>
+      <div class="lal-wave" aria-hidden="true">${'<span></span>'.repeat(11)}</div>
+      <p class="lal-conversation-status" role="status" aria-live="polite">Tap the microphone to talk.</p>
     </div>
     <div class="lal-body">
       <div class="lal-log">
@@ -287,7 +327,7 @@ export function mountAgentLeeGemma(application, shell = null) {
         <button class="lal-btn" type="button" data-action="voice" aria-pressed="true">VOICE ON</button>
       </div>
       <div class="lal-row"><button class="lal-btn" data-action="route-review">Review route</button><button class="lal-btn" data-action="route-optimize">Optimize stops</button></div>
-      <div class="lal-quick" aria-label="System copilot controls"><button class="lal-btn" data-command="Open directions">Directions</button><button class="lal-btn" data-command="Use personal map">Personal map</button><button class="lal-btn" data-command="Open dispatch load planning">Load triangle</button><button class="lal-btn" data-command="Show weather radar">Weather</button><button class="lal-btn" data-command="Show CCTV cameras">CCTV</button></div>
+      <div class="lal-quick" aria-label="System copilot controls"><button class="lal-btn" data-command="Open directions">Directions</button><button class="lal-btn" data-command="Open dispatch load planning">Load triangle</button><button class="lal-btn" data-command="Show weather radar">Weather</button><button class="lal-btn" data-command="Show CCTV cameras">CCTV</button></div>
       <button class="lal-btn" type="button" data-action="stop">Stop reply</button><details><summary>Model and voice setup</summary>
       <label>Reasoning connection <select class="lal-input" data-setting="provider"><option value="phone">LeeWay Device Bridge phone</option><option value="ollama">Ollama runtime</option></select></label>
       <p class="lal-note">Reuse the model already verified inside your LeeWay Android runtime. Pairing permits requests through the LeeWay relay; credentials stay in this tab.</p>
@@ -303,10 +343,11 @@ export function mountAgentLeeGemma(application, shell = null) {
       <datalist id="lal-models"></datalist>
       <div class="lal-row"><button class="lal-btn" data-action="discover">Check models</button><button class="lal-btn" data-action="download">Download selected model</button><button class="lal-btn" data-action="cancel-download" hidden>Cancel download</button></div>
       <p class="lal-note" data-runtime-note>Only models exposed by your configured runtime can be detected and reused. This website cannot scan models in other phone apps. Download uses storage on that runtime. Browser-local Gemma is not configured.</p>
-      <label>Voice provider<select class="lal-input" data-setting="voice-provider"><option value="browser">Chatterbox · on this device</option><option value="http">External audio adapter</option></select></label>
+      <label>Voice provider<select class="lal-input" data-setting="voice-provider"><option value="browser">Chatterbox · on this device</option><option value="kernel">LeeWay verified clone service</option><option value="http">External audio adapter</option></select></label>
+      <button class="lal-btn" type="button" data-action="voice-test">Play voice sample</button>
       <div class="lal-row"><button class="lal-btn" data-action="voice-check">Check voice storage</button><button class="lal-btn" data-action="voice-load">Prepare Chatterbox (~1.5 GB)</button><button class="lal-btn" data-action="voice-unload">Unload / cancel</button></div>
       <p class="lal-note">Optional Chatterbox download uses this browser's storage and network. Complete cached model files are reused. Voice One · calm delivery · 1.1× pace. Phone speed and voice quality require an audition. Mapping never requires this download.</p>
-      <details><summary>External voice adapter</summary><label>Audio endpoint<input class="lal-input" data-setting="tts" aria-label="External speech adapter URL" placeholder="https://your-adapter.example/api/agent-lee/tts" /></label><p class="lal-note">POST {text} must return audio. The existing desktop LeeWay voice kernel is XTTS-v2, not Chatterbox. Selecting an endpoint does not verify its engine or voice identity.</p></details>
+      <details><summary>Voice service address</summary><label>Audio endpoint<input class="lal-input" data-setting="tts" aria-label="External speech adapter URL" placeholder="https://your-voice-service.example/tts" /></label><p class="lal-note">LeeWay clone mode verifies the service's voice identity, then loads its returned audio file. The generic external adapter must return audio directly. Configure an address reachable from this device; localhost on a phone means that phone. No different voice is substituted when a service fails.</p></details>
       </details><div class="lal-note" data-voice-status>Browser Chatterbox is available to prepare. No voice model has been downloaded by this page.</div>
       <p class="lal-note" data-talk-status>Talk is push-to-talk. It requests this browser’s microphone only when pressed, puts the transcript in the text field, and then asks Agent Lee. Recognition availability depends on the browser and its permission.</p>
     </div>
@@ -346,10 +387,28 @@ export function mountAgentLeeGemma(application, shell = null) {
   );
   let talking = false;
   let talkEpoch = 0;
+  const conversationStatus = root.querySelector('.lal-conversation-status');
+  function conversationState(phase, message) {
+    root.dataset.phase = phase;
+    if (message) conversationStatus.textContent = translate(message);
+  }
+  // The wave is a conversation-state animation, not a measured audio waveform.
+  const statusObserver = new MutationObserver(() => {
+    if (!talking && voiceStatus.textContent)
+      conversationStatus.textContent = voiceStatus.textContent;
+  });
+  statusObserver.observe(voiceStatus, {
+    childList: true,
+    characterData: true,
+    subtree: true,
+  });
 
   function syncTalkButton(state = '') {
     talkButton.setAttribute('aria-pressed', String(talking));
     talkButton.textContent = state || (talking ? 'LISTENING…' : 'TALK');
+    root
+      .querySelector('[data-action="voice-talk"]')
+      .setAttribute('aria-pressed', String(talking));
   }
 
   function syncVoiceButton(state = '') {
@@ -359,6 +418,7 @@ export function mountAgentLeeGemma(application, shell = null) {
   }
 
   function stopVoicePlayback() {
+    conversationState('idle');
     browserVoice?.stop();
     voiceController?.abort();
     voiceController = null;
@@ -381,7 +441,14 @@ export function mountAgentLeeGemma(application, shell = null) {
       .trim()
       .slice(0, MAX_SPOKEN_RESPONSE_CHARS);
     if (!text) return false;
+    conversationState('thinking', 'Preparing your voice reply…');
     if (voiceProvider.value === 'browser') {
+      if (getLanguage().code !== 'en') {
+        voiceStatus.textContent =
+          'This Chatterbox adapter is qualified for English only. Choose a voice service that supports your selected language. No substitute was used.';
+        conversationState('idle');
+        return false;
+      }
       if (!browserVoice?.ready) {
         voiceStatus.textContent =
           'Prepare Chatterbox in Model and voice setup to speak locally. Your text reply is ready.';
@@ -399,6 +466,7 @@ export function mountAgentLeeGemma(application, shell = null) {
               voiceStatus.textContent = message;
           },
         });
+        conversationState('idle');
         if (epoch === generation) syncVoiceButton();
         return true;
       } catch (error) {
@@ -407,7 +475,11 @@ export function mountAgentLeeGemma(application, shell = null) {
         return false;
       }
     }
-    if (provider.value === 'phone' && !ttsInput.value.trim()) {
+    if (
+      voiceProvider.value === 'http' &&
+      provider.value === 'phone' &&
+      !ttsInput.value.trim()
+    ) {
       voiceStatus.textContent = 'Checking native phone speech capability…';
       try {
         const sensory = await phone.command('sensory.status');
@@ -419,7 +491,7 @@ export function mountAgentLeeGemma(application, shell = null) {
     }
     if (!ttsInput.value.trim()) {
       voiceStatus.textContent =
-        'Chatterbox is not configured; reply is available as text.';
+        'Set your voice service address in Model and voice setup. Your text reply is ready.';
       return false;
     }
     stopVoicePlayback();
@@ -428,21 +500,37 @@ export function mountAgentLeeGemma(application, shell = null) {
     voiceController = controller;
     syncVoiceButton('VOICE …');
     try {
-      const response = await fetch(runtimeBase(ttsInput.value.trim()), {
-        signal: AbortSignal.any([
-          controller.signal,
-          AbortSignal.timeout(120000),
-        ]),
-        method: 'POST',
-        headers: {
-          Accept: 'audio/wav,audio/*;q=0.9,*/*;q=0.1',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text }),
-      });
-      if (!response.ok)
-        throw new Error(`Agent Lee voice HTTP ${response.status}`);
-      const blob = await response.blob();
+      const signal = AbortSignal.any([
+        controller.signal,
+        AbortSignal.timeout(120000),
+      ]);
+      let blob;
+      let verifiedVoice = false;
+      if (voiceProvider.value === 'kernel') {
+        voiceStatus.textContent =
+          'Verifying LeeWay clone and preparing speech…';
+        const speech = await requestCloneSpeech({
+          endpoint: ttsInput.value.trim(),
+          text,
+          language: getLanguage().voice,
+          signal,
+        });
+        blob = speech.blob;
+        verifiedVoice = true;
+      } else {
+        const response = await fetch(runtimeBase(ttsInput.value.trim()), {
+          signal,
+          method: 'POST',
+          headers: {
+            Accept: 'audio/wav,audio/*;q=0.9,*/*;q=0.1',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text, language: getLanguage().voice }),
+        });
+        if (!response.ok)
+          throw new Error(`Agent Lee voice HTTP ${response.status}`);
+        blob = await response.blob();
+      }
       if (controller.signal.aborted || epoch !== generation || !voiceEnabled)
         return false;
       if (!blob.type.startsWith('audio/'))
@@ -462,9 +550,14 @@ export function mountAgentLeeGemma(application, shell = null) {
       );
       try {
         await activeAudio.play();
+        conversationState(
+          'speaking',
+          'Agent Lee is speaking. Tap the microphone to interrupt.',
+        );
         syncVoiceButton('SPEAKING');
-        voiceStatus.textContent =
-          'Adapter audio playing. Voice identity and acoustic quality require device testing.';
+        voiceStatus.textContent = verifiedVoice
+          ? 'Verified LeeWay clone audio playing. Audibility and microphone interruption still require device testing.'
+          : 'Adapter audio playing. Voice identity and acoustic quality require device testing.';
       } catch (error) {
         queuedAudio = activeAudio;
         syncVoiceButton('PLAY VOICE');
@@ -558,6 +651,7 @@ export function mountAgentLeeGemma(application, shell = null) {
     sendButton.disabled = true;
     status.dataset.state = 'disconnected';
     status.textContent = 'CONNECTING TO SELECTED MODEL…';
+    conversationState('thinking', 'Working on your request…');
 
     const model = modelInput.value.trim() || DEFAULT_MODEL;
     const endpoint = endpointInput.value.trim() || DEFAULT_ENDPOINT;
@@ -573,8 +667,12 @@ export function mountAgentLeeGemma(application, shell = null) {
         );
         if (history.length > 24) history.splice(0, history.length - 24);
         appendEntry(log, 'assistant', systemAction.message);
-        status.dataset.state = systemAction.ok === false ? 'disconnected' : 'connected';
-        status.textContent = systemAction.ok === false ? 'SYSTEM COPILOT · ACTION INCOMPLETE' : 'SYSTEM COPILOT · RESPONSE READY';
+        status.dataset.state =
+          systemAction.ok === false ? 'disconnected' : 'connected';
+        status.textContent =
+          systemAction.ok === false
+            ? 'SYSTEM COPILOT · ACTION INCOMPLETE'
+            : 'SYSTEM COPILOT · RESPONSE READY';
         void speakAgentLee(systemAction.message);
         return;
       }
@@ -611,11 +709,19 @@ export function mountAgentLeeGemma(application, shell = null) {
       appendEntry(log, 'assistant', message);
       status.dataset.state = 'disconnected';
       status.textContent = 'LOCAL RUNTIME: DISCONNECTED';
+      conversationState(
+        'error',
+        'The selected model is unavailable. Open the menu to connect it; your map still works.',
+      );
       console.warn('Agent Lee local Gemma connection failed:', error);
     } finally {
       if (epoch === generation) {
         sendButton.disabled = false;
-        if (!document.body.classList.contains('leeway-drive-mode')) input.focus();
+        if (
+          root.classList.contains('lal-expanded') &&
+          !document.body.classList.contains('leeway-drive-mode')
+        )
+          input.focus();
       }
     }
   }
@@ -625,6 +731,7 @@ export function mountAgentLeeGemma(application, shell = null) {
     talking = false;
     copilotMedia.stopRecognition();
     syncTalkButton();
+    conversationState('idle', message || 'Tap the microphone to talk.');
     if (message) talkStatus.textContent = message;
   }
 
@@ -638,12 +745,15 @@ export function mountAgentLeeGemma(application, shell = null) {
     talking = true;
     syncTalkButton();
     talkStatus.textContent = 'Listening… Speak your logistics request.';
+    conversationState('listening', 'Listening…');
     try {
       copilotMedia.startRecognition({
+        language: getLanguage().speech,
         onInterim: (transcript) => {
           if (epoch !== talkEpoch) return;
           input.value = transcript;
           talkStatus.textContent = `Listening: ${transcript}`;
+          conversationStatus.textContent = transcript;
         },
         onFinal: (transcript) => {
           if (epoch !== talkEpoch || !transcript) return;
@@ -653,12 +763,15 @@ export function mountAgentLeeGemma(application, shell = null) {
         },
         onError: (error) => {
           if (epoch === talkEpoch)
-            stopTalking(`Microphone transcription: ${error.message}. Type your request instead.`);
+            stopTalking(
+              `Microphone transcription: ${error.message}. Type your request instead.`,
+            );
         },
         onEnd: () => {
           if (epoch !== talkEpoch || !talking) return;
           talking = false;
           syncTalkButton();
+          conversationState('idle', 'Tap the microphone to talk again.');
           talkStatus.textContent = input.value.trim()
             ? 'Transcript ready. Press ASK to send.'
             : 'No speech captured. Type your request or try TALK again.';
@@ -801,8 +914,35 @@ export function mountAgentLeeGemma(application, shell = null) {
       voiceStatus.textContent =
         'Chatterbox unloaded. Complete cached model files remain reusable; partial downloads are not promised resumable.';
     });
+  const savedVoiceProvider = loadSetting(
+    'leeway.agentLee.voiceProvider',
+    'browser',
+  );
+  voiceProvider.value = ['browser', 'kernel', 'http'].includes(
+    savedVoiceProvider,
+  )
+    ? savedVoiceProvider
+    : 'browser';
+  root
+    .querySelector('[data-action="voice-test"]')
+    .addEventListener('click', () => {
+      if (!voiceEnabled) {
+        voiceStatus.textContent = 'Turn Voice on to play the selected sample.';
+        return;
+      }
+      const samples = {
+        en: 'I am Agent Lee, your LeeWay copilot. Your map remains available.',
+        es: 'Soy Agent Lee, tu copiloto de LeeWay. Tu mapa sigue disponible.',
+        fr: 'Je suis Agent Lee, votre copilote LeeWay. Votre carte reste disponible.',
+        zh: '我是 LeeWay 的副驾驶 Agent Lee。您的地图仍然可用。',
+        ru: 'Я Agent Lee, ваш помощник LeeWay. Карта остаётся доступной.',
+        mn: 'Би таны LeeWay туслах Agent Lee. Газрын зураг нээлттэй хэвээр байна.',
+      };
+      void speakAgentLee(samples[getLanguage().code] || samples.en);
+    });
   voiceProvider.addEventListener('change', () => {
     stopVoicePlayback();
+    saveSetting('leeway.agentLee.voiceProvider', voiceProvider.value);
     syncVoiceButton();
   });
   root
@@ -852,6 +992,26 @@ export function mountAgentLeeGemma(application, shell = null) {
     });
   });
   talkButton.addEventListener('click', beginTalking);
+  root
+    .querySelector('[data-action="voice-talk"]')
+    .addEventListener('click', beginTalking);
+  root
+    .querySelector('[data-action="conversation-menu"]')
+    .addEventListener('click', (event) => {
+      const expanded = root.classList.toggle('lal-expanded');
+      event.currentTarget.setAttribute('aria-expanded', String(expanded));
+    });
+  root.addEventListener('leeway:agent-open', () => {
+    root.classList.remove('lal-expanded');
+    root
+      .querySelector('[data-action="conversation-menu"]')
+      .setAttribute('aria-expanded', 'false');
+    if (!talking) beginTalking();
+  });
+  root.addEventListener('leeway:agent-close', () => {
+    stopTalking();
+    stopVoicePlayback();
+  });
   root.querySelector('[data-action="close"]').addEventListener('click', () => {
     stopTalking();
     if (shell?.closeAgent) shell.closeAgent();
@@ -910,6 +1070,7 @@ export function mountAgentLeeGemma(application, shell = null) {
       stopVoicePlayback();
       voicePreparationEpoch++;
       void browserVoice?.dispose();
+      statusObserver.disconnect();
       root.remove();
     },
   };

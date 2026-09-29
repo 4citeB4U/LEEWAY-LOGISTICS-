@@ -23,7 +23,10 @@ import {
   importAddresses,
   exportAddresses,
 } from './addressStore.js';
-import { readIncomingSharedAddress, clearIncomingSharedAddress } from './incomingAddress.js';
+import {
+  readIncomingSharedAddress,
+  clearIncomingSharedAddress,
+} from './incomingAddress.js';
 
 /** A standalone planner; container controls whether it is visible. No business login required. */
 export function mountRoutePlanner({
@@ -857,7 +860,9 @@ export function mountRoutePlanner({
     stops[stops.length - 1] = { text: sharedAddress };
     renderStops();
     clearIncomingSharedAddress();
-    status('Shared address added as destination. Select the matching address, then get a road route.');
+    status(
+      'Shared address added as destination. Select the matching address, then get a road route.',
+    );
   }
   close();
   if (sharedAddress) open();

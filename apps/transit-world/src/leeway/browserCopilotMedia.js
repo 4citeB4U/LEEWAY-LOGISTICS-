@@ -7,23 +7,32 @@ export class BrowserCopilotMedia {
   }
 
   supportsRecognition() {
-    return Boolean(globalThis.SpeechRecognition || globalThis.webkitSpeechRecognition);
+    return Boolean(
+      globalThis.SpeechRecognition || globalThis.webkitSpeechRecognition,
+    );
   }
 
-  startRecognition({ onInterim, onFinal, onError, onEnd } = {}) {
-    const Recognition = globalThis.SpeechRecognition || globalThis.webkitSpeechRecognition;
+  startRecognition({ onInterim, onFinal, onError, onEnd, language } = {}) {
+    const Recognition =
+      globalThis.SpeechRecognition || globalThis.webkitSpeechRecognition;
     if (!Recognition)
-      throw new Error('Browser speech recognition is unavailable. Type your request instead.');
+      throw new Error(
+        'Browser speech recognition is unavailable. Type your request instead.',
+      );
     this.stopRecognition();
     const recognition = new Recognition();
     this.recognition = recognition;
     recognition.continuous = false;
     recognition.interimResults = true;
-    recognition.lang = navigator.language || 'en-US';
+    recognition.lang = language || navigator.language || 'en-US';
     recognition.onresult = (event) => {
       let interim = '';
       let final = '';
-      for (let index = event.resultIndex; index < event.results.length; index += 1) {
+      for (
+        let index = event.resultIndex;
+        index < event.results.length;
+        index += 1
+      ) {
         const transcript = String(event.results[index][0]?.transcript || '');
         if (event.results[index].isFinal) final += transcript;
         else interim += transcript;

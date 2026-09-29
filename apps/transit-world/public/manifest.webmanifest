@@ -9,21 +9,38 @@
   "background_color": "#07121b",
   "theme_color": "#07121b",
   "share_target": {
-    "action": "./?sharedTitle={title}&sharedText={text}&sharedUrl={url}",
-    "method": "GET"
+    "action": "./",
+    "method": "GET",
+    "params": {
+      "title": "sharedTitle",
+      "text": "sharedText",
+      "url": "sharedUrl"
+    }
   },
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

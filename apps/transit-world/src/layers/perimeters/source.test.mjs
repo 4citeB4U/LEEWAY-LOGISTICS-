@@ -118,22 +118,38 @@ test('response-body completion honors cancellation without replacing records', a
 
 test('Pages WFIGS pages directly, preserves observation time and normalizes only a complete snapshot', async () => {
   const calls = [];
-  const source = createWfigsPerimeterSource({ publicWfigs: true, fetchImpl: async (url, options) => {
-    calls.push(new URL(url));
-    assert.equal(options.redirect, 'error');
-    const n = calls.length;
-    return Response.json({
-      features: [{ ...validPayload.features[0], id: n, properties: {
-        attr_UniqueFireIdentifier: `fire-${n}`, poly_DateCurrent: 1234567890000,
-      } }],
-      properties: { exceededTransferLimit: n < 2 },
-    });
-  } });
+  const source = createWfigsPerimeterSource({
+    publicWfigs: true,
+    fetchImpl: async (url, options) => {
+      calls.push(new URL(url));
+      assert.equal(options.redirect, 'error');
+      const n = calls.length;
+      return Response.json({
+        features: [
+          {
+            ...validPayload.features[0],
+            id: n,
+            properties: {
+              attr_UniqueFireIdentifier: `fire-${n}`,
+              poly_DateCurrent: 1234567890000,
+            },
+          },
+        ],
+        properties: { exceededTransferLimit: n < 2 },
+      });
+    },
+  });
   const rows = await source.getSnapshot();
-  assert.deepEqual(rows.map(row => row.stableId), ['fire-1', 'fire-2']);
+  assert.deepEqual(
+    rows.map((row) => row.stableId),
+    ['fire-1', 'fire-2'],
+  );
   assert.equal(rows[0].updatedTime, 1234567890000);
   assert.equal(calls[0].hostname, 'services3.arcgis.com');
-  assert.deepEqual(calls.map(url => url.searchParams.get('resultOffset')), ['0', '1']);
+  assert.deepEqual(
+    calls.map((url) => url.searchParams.get('resultOffset')),
+    ['0', '1'],
+  );
   assert.equal(calls[0].searchParams.get('orderByFields'), 'OBJECTID ASC');
   assert.equal(calls[0].searchParams.get('resultRecordCount'), '2000');
 });
@@ -141,10 +157,16 @@ test('Pages WFIGS pages directly, preserves observation time and normalizes only
 test('Pages never promotes a truncated or stalled feed into a fresh complete snapshot', async () => {
   for (const empty of [false, true]) {
     let count = 0;
-    const source = createWfigsPerimeterSource({ publicWfigs: true, fetchImpl: async () => {
-      count++;
-      return Response.json({ features: empty ? [] : validPayload.features, exceededTransferLimit: true });
-    } });
+    const source = createWfigsPerimeterSource({
+      publicWfigs: true,
+      fetchImpl: async () => {
+        count++;
+        return Response.json({
+          features: empty ? [] : validPayload.features,
+          exceededTransferLimit: true,
+        });
+      },
+    });
     await assert.rejects(source.getSnapshot(), /Incomplete WFIGS/);
     assert.equal(count, empty ? 1 : 5);
   }
@@ -154,17 +176,33 @@ test('Pages bounds metadata bytes, reports provider errors and honors abort dead
   for (const response of [
     () => new Response('unavailable', { status: 503 }),
     () => Response.json({ error: { message: 'Service unavailable' } }),
-    () => new Response('{}', { headers: { 'content-length': String(16 * 1024 * 1024 + 1) } }),
+    () =>
+      new Response('{}', {
+        headers: { 'content-length': String(16 * 1024 * 1024 + 1) },
+      }),
   ]) {
-    const source = createWfigsPerimeterSource({ publicWfigs: true, fetchImpl: async () => response() });
+    const source = createWfigsPerimeterSource({
+      publicWfigs: true,
+      fetchImpl: async () => response(),
+    });
     await assert.rejects(source.getSnapshot());
   }
   let requests = 0;
-  const source = createWfigsPerimeterSource({ publicWfigs: true, timeoutMs: 10, fetchImpl: async (_url, { signal }) => {
-    requests++;
-    return new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(signal.reason), { once: true }));
-  } });
-  await assert.rejects(source.getSnapshot({ signal: AbortSignal.abort() }), { name: 'AbortError' });
+  const source = createWfigsPerimeterSource({
+    publicWfigs: true,
+    timeoutMs: 10,
+    fetchImpl: async (_url, { signal }) => {
+      requests++;
+      return new Promise((_resolve, reject) =>
+        signal.addEventListener('abort', () => reject(signal.reason), {
+          once: true,
+        }),
+      );
+    },
+  });
+  await assert.rejects(source.getSnapshot({ signal: AbortSignal.abort() }), {
+    name: 'AbortError',
+  });
   assert.equal(requests, 0);
   await assert.rejects(source.getSnapshot(), /timed out/);
   assert.equal(requests, 1);

@@ -1,4 +1,5 @@
-export const WEATHER_WMS_BASE = 'https://nowcoast.noaa.gov/geoserver/observations/';
+export const WEATHER_WMS_BASE =
+  'https://nowcoast.noaa.gov/geoserver/observations/';
 const HOUR = 3600_000;
 export const WEATHER_WMS_PRODUCTS = Object.freeze({
   lightning: Object.freeze({
@@ -49,7 +50,9 @@ export const WEATHER_WMS_PRODUCTS = Object.freeze({
   }),
 });
 
-function failure(code, status = 503) { return Object.assign(new Error(code), { code, status }); }
+function failure(code, status = 503) {
+  return Object.assign(new Error(code), { code, status });
+}
 
 /** Canonicalize only explicit UTC observations; never expand time intervals. */
 export function observationTime(value) {

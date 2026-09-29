@@ -1,7 +1,12 @@
 import { readResponseTextCapped } from './common/http.js';
 import { readWindBody as readBytesCapped } from '../../src/sources/windBody.js';
 
-import { WEATHER_WMS_BASE as BASE, WEATHER_WMS_PRODUCTS as PRODUCTS, parseWeatherCapabilities, observationTime } from '../../src/layers/weather/protocol.js';
+import {
+  WEATHER_WMS_BASE as BASE,
+  WEATHER_WMS_PRODUCTS as PRODUCTS,
+  parseWeatherCapabilities,
+  observationTime,
+} from '../../src/layers/weather/protocol.js';
 export { parseWeatherCapabilities } from '../../src/layers/weather/protocol.js';
 const HOUR = 3600_000;
 

@@ -2,7 +2,7 @@
   pointer-events: auto;
   color: #eef7ff;
   font:
-    14px/1.5 system-ui,
+    16px/1.5 system-ui,
     sans-serif;
   max-width: 100%;
   text-transform: none;
@@ -18,7 +18,7 @@
 .lw-route-planner small {
   display: block;
   color: #b8ccdc;
-  font-size: 12px;
+  font-size: 14px;
 }
 .lw-route-planner input:not([type='checkbox']),
 .lw-route-planner select {

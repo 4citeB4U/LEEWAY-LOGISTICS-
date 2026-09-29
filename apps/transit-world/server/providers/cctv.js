@@ -5,7 +5,6 @@ import {
   toFiniteNumber,
 } from './cctv/normalize.js';
 import {
-  buildSyntheticCctvSvg,
   proxyMediaResponse,
   fetchCctvImageFromUpstream,
   fetchTxdotSnapshot,
@@ -18,7 +17,6 @@ import {
 } from './cctv/constants.js';
 import { sanitizeCctvRangeHeader } from './cctv/range.js';
 import { createHlsPuller } from './cctv/stream.js';
-import { googleServerApiKey } from './places/google-key.js';
 import {
   nationalTrafficCameraJurisdictions,
   nationalTrafficCameraSummary,
@@ -27,14 +25,14 @@ import {
 export { CCTV_FRAME_FETCH_TIMEOUT_MS, fetchCctvImageFromUpstream };
 /**
  * Vite plugin: CCTV camera proxy with source registry, frame/media serving,
- * fallback chain (upstream -> Street View -> synthetic SVG), and health tracking.
+ * verified upstream media, truthful failures, and health tracking.
  *
  * Endpoints:
  *   GET /api/cctv/sources        — list all registered camera sources
  *   GET /api/cctv/health         — per-camera health/status report
  *   GET /api/cctv/stream/:id     — stream info (feedType, URLs) for a camera
  *   GET /api/cctv/media/:id      — proxy live video/image media from upstream
- *   GET /api/cctv/frame/:id      — single frame with fallback chain
+ *   GET /api/cctv/frame/:id      — verified public frame or truthful failure
  *
  * @returns {import('vite').Plugin}
  */
@@ -49,22 +47,14 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
   /** Live HLS strategies (see ./cctv/stream.js). Shared across dev and preview. */
   const puller = createHlsPuller();
 
-  /** Update the health entry for a camera, evicting the oldest entry if at capacity. */
+  /** Update health and a bounded asymmetric circuit breaker per camera. */
   const setHealth = (cameraId, patch) => {
     // Evict oldest entries if the health map grows beyond the cap
     if (!health.has(cameraId) && health.size >= HEALTH_MAX_ENTRIES) {
       const oldest = health.keys().next().value;
       health.delete(oldest);
     }
-    const prev = health.get(cameraId) || {};
-    health.set(cameraId, {
-      id: cameraId,
-      status: patch.status || prev.status || 'unknown',
-      sourceKind: patch.sourceKind || prev.sourceKind || 'unknown',
-      label: patch.label || prev.label || '',
-      message: patch.message || prev.message || '',
-      updatedAt: Date.now(),
-    });
+    health.set(cameraId, nextCctvHealth(cameraId, health.get(cameraId), patch));
   };
 
   /** Snapshot all camera health entries as an array. */
@@ -84,54 +74,6 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
       sourceKind:
         source?.sourceKind || (source?.url ? 'configured' : 'fallback'),
     };
-  };
-
-  /**
-   * Fetch a Google Street View static image as a fallback frame. Server-side
-   * call, never reaches the browser — prefers GOOGLE_MAPS_SERVER_API_KEY
-   * (#33: a key scoped to Street View Static/Places, restricted by server IP
-   * rather than HTTP referrer) and falls back to the browser-exposed
-   * GOOGLE_MAPS_API_KEY for setups that haven't split the two yet.
-   */
-  const streetViewFallback = async ({ lat, lon, heading, fov, pitch }) => {
-    const streetViewKey = googleServerApiKey();
-    if (!streetViewKey || !Number.isFinite(lat) || !Number.isFinite(lon))
-      return null;
-    try {
-      const sv = new URL('https://maps.googleapis.com/maps/api/streetview');
-      sv.searchParams.set('size', '960x540');
-      sv.searchParams.set('location', `${lat},${lon}`);
-      sv.searchParams.set(
-        'heading',
-        String(Number.isFinite(heading) ? heading : 0),
-      );
-      sv.searchParams.set(
-        'fov',
-        String(Number.isFinite(fov) ? Math.max(20, Math.min(120, fov)) : 80),
-      );
-      sv.searchParams.set(
-        'pitch',
-        String(Number.isFinite(pitch) ? Math.max(-40, Math.min(20, pitch)) : 0),
-      );
-      sv.searchParams.set('source', 'outdoor');
-      sv.searchParams.set('return_error_code', 'true');
-      sv.searchParams.set('key', streetViewKey);
-
-      const svResp = await fetch(sv.toString(), {
-        headers: { 'User-Agent': 'leeway-logistics-transit-world-cctv-proxy/1.0' },
-        signal: AbortSignal.timeout(CCTV_FRAME_FETCH_TIMEOUT_MS),
-      });
-      const svType = svResp.headers.get('content-type') || '';
-      if (!svResp.ok || !svType.startsWith('image/')) return null;
-
-      return {
-        ok: true,
-        body: Buffer.from(await svResp.arrayBuffer()),
-        contentType: svType,
-      };
-    } catch {
-      return null;
-    }
   };
 
   const installMiddleware = (server) => {
@@ -491,16 +433,25 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
           decodeURIComponent(url.pathname.replace('/frame/', '').trim()) ||
           'camera';
         const source = sourceById.get(cameraId);
-        const label = url.searchParams.get('label') || source?.name || cameraId;
-        const city = url.searchParams.get('city') || source?.city || '';
-        const lat = Number(url.searchParams.get('lat') || source?.lat);
-        const lon = Number(url.searchParams.get('lon') || source?.lon);
-        const heading = Number(
-          url.searchParams.get('heading') || source?.headingDeg,
-        );
-        const fov = Number(url.searchParams.get('fov') || source?.fovDeg);
-        const pitch = Number(url.searchParams.get('pitch') || source?.pitchDeg);
-
+        const priorHealth = health.get(cameraId);
+        if (priorHealth?.retryAt > Date.now()) {
+          const seconds = Math.max(
+            1,
+            Math.ceil((priorHealth.retryAt - Date.now()) / 1000),
+          );
+          res.writeHead(503, {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+            'Retry-After': String(seconds),
+          });
+          res.end(
+            JSON.stringify({
+              error: 'Camera source is in bounded backoff',
+              retryAfterSeconds: seconds,
+            }),
+          );
+          return;
+        }
         // Only use server-registered upstream URLs — never accept client-supplied URLs
         // (prevents SSRF via ?upstream= query parameter)
         const upstreamCandidate =
@@ -529,53 +480,29 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
           return;
         }
 
-        const sv = await streetViewFallback({
-          lat,
-          lon,
-          heading,
-          fov,
-          pitch,
-        });
-        if (sv?.ok) {
-          setHealth(cameraId, {
-            status: 'degraded',
-            sourceKind: 'streetview',
-            label: 'Google Street View',
-            message: 'Fallback Street View frame',
-          });
-          res.writeHead(200, {
-            'Content-Type': sv.contentType,
-            'Cache-Control': 'no-store',
-            'X-CCTV-Source': 'streetview',
-          });
-          res.end(sv.body);
-          return;
-        }
-
-        const svg = buildSyntheticCctvSvg({
-          cameraId,
-          label,
-          city,
-          status: source?.url
-            ? 'UPSTREAM UNAVAILABLE'
-            : 'NO UPSTREAM CONFIGURED',
-        });
-
         setHealth(cameraId, {
-          status: 'degraded',
-          sourceKind: 'synthetic',
-          label: source?.provider || 'Synthetic fallback',
+          status: 'unavailable',
+          sourceKind: source?.sourceKind || 'upstream',
+          label: source?.provider || 'Public camera source',
           message: source?.url
             ? 'Upstream unavailable'
             : 'No source configured',
         });
-
-        res.writeHead(200, {
-          'Content-Type': 'image/svg+xml',
+        const currentHealth = health.get(cameraId);
+        res.writeHead(503, {
+          'Content-Type': 'application/json',
           'Cache-Control': 'no-store',
-          'X-CCTV-Source': 'synthetic',
+          'Retry-After': String(
+            Math.max(1, Math.ceil((currentHealth.retryAt - Date.now()) / 1000)),
+          ),
         });
-        res.end(svg);
+        res.end(
+          JSON.stringify({
+            error: source?.url
+              ? 'Public camera frame unavailable'
+              : 'Camera location has no verified public media feed',
+          }),
+        );
       } catch (error) {
         console.error('[CCTV Proxy]', error?.message || String(error));
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -587,5 +514,33 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
     name: 'cctv-proxy',
     configureServer: installMiddleware,
     configurePreviewServer: installMiddleware,
+  };
+}
+
+export function nextCctvHealth(
+  cameraId,
+  previous = {},
+  patch = {},
+  now = Date.now(),
+) {
+  const success = patch.status === 'ok';
+  const failureCount = success ? 0 : (Number(previous?.failureCount) || 0) + 1;
+  const delayMs = success
+    ? 0
+    : Math.min(30 * 60_000, 300_000 * 2 ** Math.min(failureCount - 1, 3));
+  return {
+    id: cameraId,
+    status: patch.status || previous?.status || 'unknown',
+    sourceKind: patch.sourceKind || previous?.sourceKind || 'unknown',
+    label: patch.label || previous?.label || '',
+    message: patch.message || previous?.message || '',
+    updatedAt: now,
+    failureCount,
+    circuitState: success
+      ? 'closed'
+      : failureCount >= 3
+        ? 'quarantined'
+        : 'backoff',
+    retryAt: success ? 0 : now + delayMs,
   };
 }

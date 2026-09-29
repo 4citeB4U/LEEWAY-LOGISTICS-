@@ -13,6 +13,8 @@ import { mountNationalCameraCatalog } from './nationalCameraCatalog.js';
 import { mountOfflineTrip } from './offlineTrip.js';
 import { mountFuelLedger } from './fuelLedger.js';
 import { mountLoadComparison } from './loadComparison.js';
+import { mapIcon } from './mapIcons.js';
+import { mountExperiencePreferences } from './experiencePreferences.js';
 
 function ensureStyles(documentRef) {
   if (documentRef.getElementById('leeway-enterprise-shell-styles')) return;
@@ -35,15 +37,6 @@ function ensureStyles(documentRef) {
     body.leeway-enterprise-shell .celestial-ring-overlay { display:none !important; }
     body.leeway-enterprise-shell #cesiumContainer { inset:0 !important; width:100vw !important; height:100vh !important; clip-path:none !important; border-radius:0 !important; }
     body.leeway-enterprise-shell #leeway-agent-lee.leeway-open { display:block; left:98px; bottom:92px; width:min(430px,calc(100vw - 120px)); }
-    body.leeway-personal-mode .lws-rail,
-    body.leeway-personal-mode .business-only,
-    body.leeway-personal-mode .lws-live { display:none !important; }
-    body.leeway-personal-mode #leeway-agent-lee.leeway-open { left:18px; }
-    body.leeway-personal-mode .lws-top-actions [data-action="workspace"],
-    body.leeway-personal-mode .lws-top-actions [data-action="workspace-menu"] { display:none; }
-    body.leeway-personal-mode .lws-top { grid-template-columns:minmax(180px,300px) minmax(220px,650px) 1fr; }
-    .lws-mode { min-width:76px; border-color:rgba(126,244,195,.35); color:#a8ffd0; }
-    body.leeway-personal-mode .lws-mode { background:rgba(126,244,195,.12); border-color:#9cffc7; }
     #leeway-world-shell { position:fixed; inset:0; z-index:9700; pointer-events:none; color:#edfaff; font:12px/1.35 Inter,ui-sans-serif,system-ui,sans-serif; }
     #leeway-world-shell * { box-sizing:border-box; }
     .lws-top { pointer-events:auto; position:absolute; top:0; left:0; right:0; height:64px; display:grid; grid-template-columns:390px minmax(280px,650px) 1fr; align-items:center; gap:18px; padding:0 20px; background:rgba(2,12,20,.94); border-bottom:1px solid rgba(62,211,236,.20); backdrop-filter:blur(16px); }
@@ -109,9 +102,9 @@ function ensureStyles(documentRef) {
     .lws-right-tab { width:42px; min-height:78px; padding:7px 4px; border:1px solid rgba(71,225,242,.30); border-right:0; border-radius:11px 0 0 11px; background:rgba(3,15,24,.96); color:#dffcff; cursor:pointer; font:700 8px/1.2 Inter,ui-sans-serif,sans-serif; letter-spacing:.10em; writing-mode:vertical-rl; transform:rotate(180deg); }
     .lws-right-tab.active { color:#07131b; background:#42e5f2; border-color:#70f2ff; }
     .lws-right-tab:hover { box-shadow:0 0 18px rgba(66,229,242,.22); }
-    body.leeway-enterprise-shell #leeway-transit-world .ltw-title { font-size:15px; }
-    body.leeway-enterprise-shell #leeway-transit-world .ltw-section { padding:11px 14px; }
-    body.leeway-enterprise-shell #leeway-transit-world .ltw-section h3 { font-size:9px; }
+    body.leeway-enterprise-shell #leeway-transit-world .ltw-title { font-size:24px; }
+    body.leeway-enterprise-shell #leeway-transit-world .ltw-section { padding:16px; }
+    body.leeway-enterprise-shell #leeway-transit-world .ltw-section h3 { font-size:16px; }
     body.leeway-enterprise-shell #leeway-transit-world [data-action="world-awareness"] { display:none; }
     body.leeway-enterprise-shell.leeway-cctv-inspecting #leeway-transit-world { display:none !important; }
     body.leeway-enterprise-shell:not(.leeway-right-cctv-open) .lws-context-inspector { display:none !important; }
@@ -150,13 +143,37 @@ function ensureStyles(documentRef) {
 }
 
 function icon(name) {
-  return ({map:'▦',loads:'▣',drivers:'♙',fleet:'▰',transit:'▤',rail:'▥',facilities:'⌂',crm:'◇',intel:'▥',ai:'✦',layers:'▱',traffic:'▥',weather:'☁',freight:'▰',three:'◆',locate:'⌾'})[name] || '•';
+  return (
+    {
+      map: '▦',
+      loads: '▣',
+      drivers: '♙',
+      fleet: '▰',
+      transit: '▤',
+      rail: '▥',
+      facilities: '⌂',
+      crm: '◇',
+      intel: '▥',
+      ai: '✦',
+      layers: '▱',
+      traffic: '▥',
+      weather: '☁',
+      freight: '▰',
+      three: '◆',
+      locate: '⌾',
+    }[name] || '•'
+  );
 }
 
-export function mountEnterpriseShell(application) {
+export function mountEnterpriseShell(
+  application,
+  { edition = 'business' } = {},
+) {
   if (document.getElementById('leeway-world-shell')) return null;
+  const isBusiness = edition !== 'personal';
   ensureStyles(document);
   document.body.classList.add('leeway-enterprise-shell');
+  document.body.dataset.leewayEdition = isBusiness ? 'business' : 'personal';
 
   const components = application.getComponents();
   const viewer = components.scene?.viewer;
@@ -165,7 +182,14 @@ export function mountEnterpriseShell(application) {
   const operations = components.scene?.operations;
   let labeledWorldStackRequested = false;
   const agentPanel = () => document.getElementById('leeway-agent-lee');
-  const layerCategoryOrder = ['Transportation', 'World Awareness', 'Infrastructure', 'Weather', 'Media / Context', 'Special'];
+  const layerCategoryOrder = [
+    'Transportation',
+    'World Awareness',
+    'Infrastructure',
+    'Weather',
+    'Media / Context',
+    'Special',
+  ];
   const layerCategories = {
     traffic: 'Transportation',
     transit: 'Transportation',
@@ -203,21 +227,44 @@ export function mountEnterpriseShell(application) {
   shell.id = 'leeway-world-shell';
   shell.innerHTML = `
     <header class="lws-top">
-      <div class="lws-brand"><img class="lws-logo" src="${import.meta.env.BASE_URL}leeway-approved-logo.jpg" alt="LeeWay Logistics — approved blue circular logo" /><div><strong data-brand-name>LEEWAY LOGISTICS</strong><span data-brand-tagline>YOUR ROAD. YOUR ROUTE.</span></div></div>
-      <div class="lws-search"><input aria-label="Global search" placeholder="Search locations, loads, drivers, equipment, facilities..." /><kbd>⌘ K</kbd></div>
+      <div class="lws-brand"><img class="lws-logo" src="${import.meta.env.BASE_URL}leeway-approved-logo.jpg" alt="LeeWay — approved blue circular logo" /><div><strong data-brand-name>${isBusiness ? 'LEEWAY LOGISTICS' : 'LEEWAY MAPS'}</strong><span data-brand-tagline>YOUR ROAD. YOUR ROUTE.</span></div></div>
+      <div class="lws-search"><input aria-label="Global search" placeholder="${isBusiness ? 'Search locations, loads, drivers, equipment, facilities...' : 'Search addresses, places, trips, and roadside stops...'}" /><kbd>⌘ K</kbd></div>
       <div class="lws-top-actions">
         <button class="lws-chip" data-action="map">Map</button>
         <button class="lws-chip" data-action="world">◉ World</button>
         <button class="lws-chip" data-action="route">Directions</button>
-        <button class="lws-chip lws-mode" data-action="personal-mode" aria-pressed="false">Personal map</button>
         <button class="lws-chip hide-sm" data-action="layers">▱ Layers⌄</button>
-        <button class="lws-chip hide-sm" data-action="workspace">CRM</button>
-        <button class="lws-chip" data-action="roadside">Road stops</button><button class="lws-chip" data-action="workspace-menu">Business</button><button class="lws-chip hide-sm" data-action="map-only">Hide controls</button>
+        ${isBusiness ? '<button class="lws-chip hide-sm" data-action="workspace">Sales & CRM</button>' : ''}
+        <button class="lws-chip" data-action="roadside">Road stops</button>${isBusiness ? '<button class="lws-chip" data-action="workspace-menu">Business</button>' : ''}<button class="lws-chip hide-sm" data-action="map-only">Hide controls</button>
         <div class="lws-avatar">AL</div><div class="lws-agent-status">Agent Lee · Copilot<br>Open to connect</div>
       </div>
     </header>
     <nav class="lws-rail" aria-label="Business workspace">
-      ${[['map','Map'],['loads','Loads'],['drivers','Drivers'],['fleet','Fleet'],['transit','Transit'],['rail','Rail'],['facilities','Facilities'],['crm','CRM'],['intel','Intelligence'],['ai','AI']].map(([id,label],i)=>`<button class="lws-nav ${i===0?'active':''}" data-nav="${id}"><span class="i">${icon(id)}</span><span>${label}</span></button>`).join('')}
+      ${(isBusiness
+        ? [
+            ['map', 'Map'],
+            ['loads', 'Loads'],
+            ['drivers', 'Drivers'],
+            ['fleet', 'Fleet'],
+            ['transit', 'Transit'],
+            ['rail', 'Rail'],
+            ['facilities', 'Facilities'],
+            ['crm', 'CRM'],
+            ['intel', 'Intelligence'],
+            ['ai', 'AI'],
+          ]
+        : [
+            ['map', 'Map'],
+            ['transit', 'Transit'],
+            ['intel', 'Intelligence'],
+            ['ai', 'AI'],
+          ]
+      )
+        .map(
+          ([id, label], i) =>
+            `<button class="lws-nav ${i === 0 ? 'active' : ''}" data-nav="${id}"><span class="i">${icon(id)}</span><span>${label}</span></button>`,
+        )
+        .join('')}
       <div class="lws-spacer"></div>
       <button class="lws-nav" data-action="collapse"><span class="i">«</span><span>Collapse</span></button>
     </nav>
@@ -228,13 +275,40 @@ export function mountEnterpriseShell(application) {
     <div data-route-planner></div>
     <button class="lws-live" data-action="connect-world" type="button"><b data-world-led>● CHECK</b><span data-world-status>Connect live world data</span></button>
     <nav class="lws-dock">
-      <button class="lws-dock-btn" data-action="peer-comms"><span class="i">↔</span>Talk</button>
-      ${[['layers','Layers'],['traffic','Traffic'],['weather','Weather']].map(([id,label])=>`<button class="lws-dock-btn" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
-      <button class="lws-dock-btn" data-action="view-map"><span class="i">▤</span>Map</button>
-      <button class="lws-dock-btn" data-action="view-satellite"><span class="i">◫</span>Satellite</button>
-      <button class="lws-dock-btn" data-action="report-hazard"><span class="i">⚠</span>Report</button>
-      <button class="lws-ai" data-action="ai"><strong>Agent Lee · Copilot</strong><span>VOICE + LOGISTICS AI</span></button>
-      ${[['transit','Transit'],['freight','Freight'],['rail','Rail'],['three','3D']].map(([id,label])=>`<button class="lws-dock-btn ${id === 'freight' || id === 'rail' ? 'business-only' : ''}" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`).join('')}
+      <button class="lws-dock-btn" data-action="peer-comms">${mapIcon('mic')}<span>Driver radio</span></button>
+      ${[
+        ['layers', 'Layers'],
+        ['traffic', 'Traffic'],
+        ['flights', 'Flights'],
+        ['weather', 'Weather'],
+      ]
+        .map(
+          ([id, label]) =>
+            `<button class="lws-dock-btn" data-dock="${id}">${mapIcon(id)}<span>${label}</span></button>`,
+        )
+        .join('')}
+      <button class="lws-dock-btn" data-action="view-map">${mapIcon('map')}<span>Map</span></button>
+      <button class="lws-dock-btn" data-action="view-satellite">${mapIcon('satellite')}<span>Satellite</span></button>
+      <button class="lws-dock-btn" data-action="report-hazard">${mapIcon('report')}<span>Report</span></button>
+      <button class="lws-ai" data-action="ai" aria-label="Talk to Agent Lee">${mapIcon('mic')}<strong>Agent Lee</strong></button>
+      <button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Language and music</span></button>
+      ${(isBusiness
+        ? [
+            ['transit', 'Transit'],
+            ['freight', 'Freight'],
+            ['rail', 'Rail'],
+            ['three', '3D'],
+          ]
+        : [
+            ['transit', 'Transit'],
+            ['three', '3D'],
+          ]
+      )
+        .map(
+          ([id, label]) =>
+            `<button class="lws-dock-btn ${id === 'freight' || id === 'rail' ? 'business-only' : ''}" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`,
+        )
+        .join('')}
     </nav>
     <button class="lws-my-location" data-dock="locate" aria-label="My Location">⌾ My Location</button>
     <div class="lws-location-badge" data-location-badge><strong>WORLD</strong><span>Geographic identification loading…</span></div>
@@ -263,57 +337,43 @@ export function mountEnterpriseShell(application) {
   const cctvOriginalParent = cctvPanel?.parentNode || null;
   const cctvOriginalNextSibling = cctvPanel?.nextSibling || null;
   let cctvObserver = null;
+  let weatherObserver = null;
   let toastTimer;
   let activeRightPanel = null;
   let recenteringDistantGlobe = false;
   const rightOpsTab = shell.querySelector('[data-action="right-ops"]');
   const rightCctvTab = shell.querySelector('[data-action="right-cctv"]');
   const rightWeatherTab = shell.querySelector('[data-action="right-weather"]');
-  const rightNationalTab = shell.querySelector('[data-action="right-national"]');
+  const rightNationalTab = shell.querySelector(
+    '[data-action="right-national"]',
+  );
   const weatherPanel = document.getElementById('weather-panel');
   let locationCell = '';
   let locationRequestGeneration = 0;
-  let personalMode = false;
-
-  function setPersonalMode(next = !personalMode) {
-    personalMode = Boolean(next);
-    document.body.classList.toggle('leeway-personal-mode', personalMode);
-    if (personalMode) {
-      workspace.close();
-      loadComparison.close();
-      shell.classList.remove('business-open');
-    }
-    const button = shell.querySelector('[data-action="personal-mode"]');
-    const name = shell.querySelector('[data-brand-name]');
-    const tagline = shell.querySelector('[data-brand-tagline]');
-    const search = shell.querySelector('.lws-search input');
-    if (button) {
-      button.setAttribute('aria-pressed', String(personalMode));
-      button.textContent = personalMode ? 'Business map' : 'Personal map';
-    }
-    if (name) name.textContent = personalMode ? 'LEEWAY MAPS' : 'LEEWAY LOGISTICS';
-    if (tagline) tagline.textContent = personalMode ? 'YOUR TRIP. YOUR VIEW.' : 'YOUR ROAD. YOUR ROUTE.';
-    if (search)
-      search.placeholder = personalMode
-        ? 'Search an address, place, airport, or stop...'
-        : 'Search locations, loads, drivers, equipment, facilities...';
-    say(personalMode
-      ? 'Personal map mode: directions, weather, safety, places, trip planning, and Agent Lee are ready.'
-      : 'Business map mode: dispatch, fleet, CRM, load planning, and operations are ready.');
-  }
-
   function syncRightTabs() {
-    document.body.classList.toggle('leeway-right-ops-open', activeRightPanel === 'ops');
-    document.body.classList.toggle('leeway-right-cctv-open', activeRightPanel === 'cctv');
-    document.body.classList.toggle('leeway-right-weather-open', activeRightPanel === 'weather');
+    document.body.classList.toggle(
+      'leeway-right-ops-open',
+      activeRightPanel === 'ops',
+    );
+    document.body.classList.toggle(
+      'leeway-right-cctv-open',
+      activeRightPanel === 'cctv',
+    );
+    document.body.classList.toggle(
+      'leeway-right-weather-open',
+      activeRightPanel === 'weather',
+    );
     rightOpsTab?.classList.toggle('active', activeRightPanel === 'ops');
     rightCctvTab?.classList.toggle('active', activeRightPanel === 'cctv');
     rightWeatherTab?.classList.toggle('active', activeRightPanel === 'weather');
-    rightNationalTab?.classList.toggle('active', activeRightPanel === 'national');
+    rightNationalTab?.classList.toggle(
+      'active',
+      activeRightPanel === 'national',
+    );
   }
 
-  function setRightPanel(panel = null) {
-    const next = panel === activeRightPanel ? null : panel;
+  function setRightPanel(panel = null, { toggle = true } = {}) {
+    const next = toggle && panel === activeRightPanel ? null : panel;
     activeRightPanel = next;
     if (next === 'cctv') {
       cctvPanel?.classList.remove('collapsed');
@@ -339,6 +399,9 @@ export function mountEnterpriseShell(application) {
     if (open) {
       activeRightPanel = 'cctv';
       syncRightTabs();
+    } else if (activeRightPanel === 'cctv') {
+      activeRightPanel = null;
+      syncRightTabs();
     }
     document.body.classList.toggle(
       'leeway-cctv-inspecting',
@@ -356,6 +419,53 @@ export function mountEnterpriseShell(application) {
     });
     syncCctvInspector();
   }
+  if (weatherPanel) {
+    const syncWeatherPanel = () => {
+      const open =
+        !weatherPanel.hidden && !weatherPanel.classList.contains('collapsed');
+      if (!open && activeRightPanel === 'weather') {
+        activeRightPanel = null;
+        syncRightTabs();
+      }
+    };
+    weatherObserver = new MutationObserver(syncWeatherPanel);
+    weatherObserver.observe(weatherPanel, {
+      attributes: true,
+      attributeFilter: ['class', 'hidden'],
+    });
+  }
+  const closeRightPanel = () => setRightPanel(null, { toggle: false });
+  document.addEventListener('leeway:right-panel-close', closeRightPanel);
+  let cctvRecoveryTimer = null;
+  let cctvRecoveryCount = 0;
+  const recoverFailedCctv = (event) => {
+    if (activeRightPanel !== 'cctv' || cctvRecoveryTimer) return;
+    if (cctvRecoveryCount >= 6) {
+      say(
+        'Several public camera feeds failed. Choose another jurisdiction or camera; no live image is being claimed.',
+      );
+      return;
+    }
+    cctvRecoveryCount += 1;
+    cctvRecoveryTimer = setTimeout(() => {
+      cctvRecoveryTimer = null;
+      const frame = document.getElementById('cctv-frame');
+      if (
+        frame?.dataset.cameraId !== event.detail?.cameraId ||
+        frame?.dataset.error !== 'true'
+      )
+        return;
+      document.getElementById('cctv-next-btn')?.click();
+    }, 1200);
+  };
+  const confirmWorkingCctv = () => {
+    cctvRecoveryCount = 0;
+  };
+  cctvPanel?.addEventListener(
+    'leeway:cctv-frame-unavailable',
+    recoverFailedCctv,
+  );
+  cctvPanel?.addEventListener('leeway:cctv-frame-ready', confirmWorkingCctv);
 
   function renderLayerMenu() {
     const rows = (dataManager?.getAll?.() || []).map((row) => ({
@@ -373,7 +483,9 @@ export function mountEnterpriseShell(application) {
       .filter(([, items]) => items.length)
       .map(([category, items]) => {
         const body = items
-          .sort((a, b) => String(a.name || a.id).localeCompare(String(b.name || b.id)))
+          .sort((a, b) =>
+            String(a.name || a.id).localeCompare(String(b.name || b.id)),
+          )
           .map((row) => {
             const enabled = Boolean(row.enabled);
             return `<button class="lws-layer-row ${enabled ? 'on' : ''}" data-shell-layer="${row.id}">
@@ -423,7 +535,8 @@ export function mountEnterpriseShell(application) {
     const bridge = globalThis.__leewayWorldApiBridge;
     if (!bridge?.installed || typeof bridge.probe !== 'function') {
       setWorldStatus('offline', 'Local live-data bridge not configured');
-      if (explain) say('Live-world provider bridge is not configured in this build');
+      if (explain)
+        say('Live-world provider bridge is not configured in this build');
       return false;
     }
 
@@ -441,39 +554,72 @@ export function mountEnterpriseShell(application) {
     if (permissionLikely) {
       setWorldStatus('permission', 'Click to allow local world data');
       if (explain) {
-        say('Allow this site to access loopback/local network when your browser asks');
+        say(
+          'Allow this site to access loopback/local network when your browser asks',
+        );
       }
     } else {
       setWorldStatus('offline', 'Start LeeWay World Providers');
-      if (explain) say('Start the LeeWay World Provider runtime on this device');
+      if (explain)
+        say('Start the LeeWay World Provider runtime on this device');
     }
     return false;
   }
 
   const routing = mountRoutePlanner({ viewer, container: routePlanner });
   const offlineTrip = mountOfflineTrip({ planner: routing });
+  const preferences = mountExperiencePreferences();
   const driveMode = mountDriveMode({
     planner: routing,
     viewer,
     onCopilot: () => toggleAgent(),
     onCloseCopilot: () => toggleAgent(false),
+    onRadio: () => peerComms.open(),
   });
   const fuelAdvisor = mountFuelAdvisor({ planner: routing });
   const fuelLedger = mountFuelLedger({ planner: routing });
-  const loadComparison = mountLoadComparison({ viewer, onStatus: say });
+  const loadComparison = isBusiness
+    ? mountLoadComparison({ viewer, onStatus: say })
+    : {
+        open() {},
+        destroy() {},
+      };
   const peerComms = mountPeerComms({ viewer });
   let hazardEntities = [];
-  const hazardReports = mountHazardReports({ container: document.body, getMapPoint: viewCenterPoint, onReports: (rows) => {
-    for (const entity of hazardEntities) viewer.entities.remove(entity);
-    hazardEntities = rows.map(row => viewer.entities.add({
-      name: `${row.kind} · community report · unverified`,
-      position: Cesium.Cartesian3.fromDegrees(row.lon, row.lat),
-      point: { pixelSize: 14, color: Cesium.Color.ORANGE, outlineColor: Cesium.Color.BLACK, outlineWidth: 2, heightReference: Cesium.HeightReference.CLAMP_TO_GROUND },
-    }));
-    viewer.scene.requestRender?.();
-  } });
+  const hazardReports = mountHazardReports({
+    container: document.body,
+    getMapPoint: viewCenterPoint,
+    onReports: (rows) => {
+      for (const entity of hazardEntities) viewer.entities.remove(entity);
+      hazardEntities = rows.map((row) =>
+        viewer.entities.add({
+          name: `${row.kind} · community report · unverified`,
+          position: Cesium.Cartesian3.fromDegrees(row.lon, row.lat),
+          point: {
+            pixelSize: 14,
+            color: Cesium.Color.ORANGE,
+            outlineColor: Cesium.Color.BLACK,
+            outlineWidth: 2,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+          },
+        }),
+      );
+      viewer.scene.requestRender?.();
+    },
+  });
   hazardReports.root.hidden = true;
-  const roadside = mountRoadsidePlaces({ viewer, getCenter: viewCenterPoint, onAdd: (point) => { routing.addMapStop(point); routing.open(); }, onFuel:(price,source)=>{routing.setFuelPrice(price,source);routing.open();} });
+  const roadside = mountRoadsidePlaces({
+    viewer,
+    getCenter: viewCenterPoint,
+    onAdd: (point) => {
+      routing.addMapStop(point);
+      routing.open();
+    },
+    onFuel: (price, source) => {
+      routing.setFuelPrice(price, source);
+      routing.open();
+    },
+  });
   function toggleRoutePlanner(open = null) {
     if (open === false) routing.close();
     else if (open === true) routing.open();
@@ -525,14 +671,19 @@ export function mountEnterpriseShell(application) {
       const place = payload?.place;
       const strong = locationBadge.querySelector('strong');
       const detail = locationBadge.querySelector('span');
-      strong.textContent = place?.locality || place?.region || place?.country || 'WORLD';
-      detail.textContent = [place?.region, place?.country]
-        .filter((value, index, values) => value && values.indexOf(value) === index)
-        .join(' · ') || 'Geographic context';
+      strong.textContent =
+        place?.locality || place?.region || place?.country || 'WORLD';
+      detail.textContent =
+        [place?.region, place?.country]
+          .filter(
+            (value, index, values) => value && values.indexOf(value) === index,
+          )
+          .join(' · ') || 'Geographic context';
     } catch {
       if (generation !== locationRequestGeneration) return;
       locationBadge.querySelector('strong').textContent = 'MAP';
-      locationBadge.querySelector('span').textContent = 'Geographic context unavailable';
+      locationBadge.querySelector('span').textContent =
+        'Geographic context unavailable';
     }
   }
 
@@ -630,7 +781,8 @@ export function mountEnterpriseShell(application) {
     const activeStack = mapStackController?.getActiveId?.();
     if (activeStack === 'photoreal') return;
     const carto = viewer.camera.positionCartographic;
-    if (!carto || !Number.isFinite(carto.height) || carto.height < 9_000_000) return;
+    if (!carto || !Number.isFinite(carto.height) || carto.height < 9_000_000)
+      return;
     const pitchError = Math.abs(viewer.camera.pitch + Cesium.Math.PI_OVER_TWO);
     if (pitchError < Cesium.Math.toRadians(2)) return;
     recenteringDistantGlobe = true;
@@ -656,7 +808,9 @@ export function mountEnterpriseShell(application) {
   const removeWorldCentering =
     viewer?.camera?.moveEnd?.addEventListener?.(recenterDistantGlobe) || null;
   const removeLocationBadgeListener =
-    viewer?.camera?.moveEnd?.addEventListener?.(() => void updateLocationBadge()) || null;
+    viewer?.camera?.moveEnd?.addEventListener?.(
+      () => void updateLocationBadge(),
+    ) || null;
 
   async function locate(query) {
     if (!query || !viewer) return false;
@@ -664,8 +818,13 @@ export function mountEnterpriseShell(application) {
       const matches = await locationSearch.search(query);
       const point = matches[0];
       if (!point) throw new Error('No matching location');
-      await viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(point.lon,point.lat,6000),duration:1.2});
-      say(`Showing ${point.label}${matches.length>1?' · use Directions to select an exact address':''}`);
+      await viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(point.lon, point.lat, 6000),
+        duration: 1.2,
+      });
+      say(
+        `Showing ${point.label}${matches.length > 1 ? ' · use Directions to select an exact address' : ''}`,
+      );
       return true;
     } catch (error) {
       say(`Could not locate ${query}`);
@@ -675,16 +834,29 @@ export function mountEnterpriseShell(application) {
 
   const locationSearch = createRouteClient();
 
-  const workspace = mountEnterpriseWorkspace({
-    onLocate: ({ query, name }) => locate(query || name),
-  });
+  const workspace = isBusiness
+    ? mountEnterpriseWorkspace({
+        onLocate: ({ query, name }) => locate(query || name),
+      })
+    : {
+        open() {},
+        close() {},
+        openPeople() {},
+        openEquipment() {},
+        openCrm() {},
+        destroy() {},
+      };
   const nationalCatalog = mountNationalCameraCatalog({
     host: shell,
     notify: say,
   });
 
   function setNav(id) {
-    shell.querySelectorAll('[data-nav]').forEach((button) => button.classList.toggle('active', button.dataset.nav === id));
+    shell
+      .querySelectorAll('[data-nav]')
+      .forEach((button) =>
+        button.classList.toggle('active', button.dataset.nav === id),
+      );
   }
 
   function toggleAgent(open = null) {
@@ -692,8 +864,9 @@ export function mountEnterpriseShell(application) {
     if (!panel) return;
     const next = open == null ? !panel.classList.contains('leeway-open') : open;
     panel.classList.toggle('leeway-open', next);
-    if (next && !document.body.classList.contains('leeway-drive-mode'))
-      panel.querySelector('.lal-input')?.focus();
+    panel.dispatchEvent(
+      new CustomEvent(next ? 'leeway:agent-open' : 'leeway:agent-close'),
+    );
   }
 
   function openWeather() {
@@ -701,12 +874,18 @@ export function mountEnterpriseShell(application) {
     setRightPanel('weather');
     say('Loading weather observations…');
     // One slow wind feed must never prevent radar, clouds or controls from opening.
-    for (const id of ['weather-radar','weather-satellite','weather-lightning']) {
+    for (const id of [
+      'weather-radar',
+      'weather-satellite',
+      'weather-lightning',
+    ]) {
       if (!dataManager?.layers?.has(id)) continue;
-      void dataManager.setEnabled(id, true, { origin:'user' }).catch((error) => {
-        console.warn('Weather layer unavailable', id, error);
-        say('Some weather data is unavailable; inspect layer status');
-      });
+      void dataManager
+        .setEnabled(id, true, { origin: 'user' })
+        .catch((error) => {
+          console.warn('Weather layer unavailable', id, error);
+          say('Some weather data is unavailable; inspect layer status');
+        });
     }
   }
 
@@ -726,23 +905,47 @@ export function mountEnterpriseShell(application) {
     const q = String(value || '').trim();
     if (!q) return;
     const state = readEnterpriseState();
-    const person = state.people.find((row) => row.name.toLowerCase().includes(q.toLowerCase()));
-    if (person) { workspace.openPeople(); say(`Opened ${person.name} in People`); return; }
-    const equipment = state.equipment.find((row) => row.unit.toLowerCase().includes(q.toLowerCase()));
-    if (equipment) { workspace.openEquipment(); say(`Opened equipment ${equipment.unit}`); return; }
-    const account = state.crm.accounts.find((row) => row.name.toLowerCase().includes(q.toLowerCase()));
-    if (account) { workspace.openCrm(); say(`Opened ${account.name} in CRM`); return; }
+    const person = state.people.find((row) =>
+      row.name.toLowerCase().includes(q.toLowerCase()),
+    );
+    if (person) {
+      workspace.openPeople();
+      say(`Opened ${person.name} in People`);
+      return;
+    }
+    const equipment = state.equipment.find((row) =>
+      row.unit.toLowerCase().includes(q.toLowerCase()),
+    );
+    if (equipment) {
+      workspace.openEquipment();
+      say(`Opened equipment ${equipment.unit}`);
+      return;
+    }
+    const account = state.crm.accounts.find((row) =>
+      row.name.toLowerCase().includes(q.toLowerCase()),
+    );
+    if (account) {
+      workspace.openCrm();
+      say(`Opened ${account.name} in CRM`);
+      return;
+    }
     toggleRoutePlanner(false);
     await locate(q);
   }
 
-  shell.querySelector('.lws-search input').addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') { void handleSearch(event.currentTarget.value); event.currentTarget.select(); }
-  });
+  shell
+    .querySelector('.lws-search input')
+    .addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        void handleSearch(event.currentTarget.value);
+        event.currentTarget.select();
+      }
+    });
 
   document.addEventListener('keydown', (event) => {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-      event.preventDefault(); shell.querySelector('.lws-search input').focus();
+      event.preventDefault();
+      shell.querySelector('.lws-search input').focus();
     }
   });
 
@@ -758,41 +961,137 @@ export function mountEnterpriseShell(application) {
     }
 
     if (nav) {
-      const id = nav.dataset.nav; setNav(id);
-      if (id === 'map') { workspace.close(); toggleAgent(false); return; }
-      if (id === 'drivers') { workspace.openPeople(); return; }
-      if (id === 'fleet') { workspace.openEquipment(); return; }
-      if (id === 'facilities' || id === 'crm') { workspace.openCrm(); return; }
-      if (id === 'loads') { workspace.close(); loadComparison.open(); say('Dispatch load comparison opened. Add up to three offers to map their separate pickup and delivery paths.'); return; }
-      if (id === 'transit') { workspace.close(); await toggleLayer('transit'); return; }
-      if (id === 'rail') { workspace.close(); say('Rail operating view ready for rail provider binding'); return; }
-      if (id === 'intel') { workspace.close(); toggleLayerMenu(true); return; }
-      if (id === 'ai') { workspace.close(); toggleAgent(true); return; }
+      const id = nav.dataset.nav;
+      setNav(id);
+      if (id === 'map') {
+        workspace.close();
+        toggleAgent(false);
+        return;
+      }
+      if (id === 'drivers') {
+        workspace.openPeople();
+        return;
+      }
+      if (id === 'fleet') {
+        workspace.openEquipment();
+        return;
+      }
+      if (id === 'facilities' || id === 'crm') {
+        workspace.openCrm();
+        return;
+      }
+      if (id === 'loads') {
+        workspace.close();
+        loadComparison.open();
+        say(
+          'Dispatch load comparison opened. Add up to three offers to map their separate pickup and delivery paths.',
+        );
+        return;
+      }
+      if (id === 'transit') {
+        workspace.close();
+        await toggleLayer('transit');
+        return;
+      }
+      if (id === 'rail') {
+        workspace.close();
+        say('Rail operating view ready for rail provider binding');
+        return;
+      }
+      if (id === 'intel') {
+        workspace.close();
+        toggleLayerMenu(true);
+        return;
+      }
+      if (id === 'ai') {
+        workspace.close();
+        toggleAgent(true);
+        return;
+      }
     }
 
-    if (action === 'ai') { toggleAgent(); return; }
-    if (action === 'personal-mode') { setPersonalMode(); return; }
-    if (action === 'connect-world') { await probeWorldProvider({ explain: true }); return; }
-    if (action === 'workspace-menu') { setPersonalMode(false); shell.classList.toggle('business-open'); return; }
-    if (action === 'roadside') { roadside.toggle(); return; }
-    if (action === 'peer-comms') { peerComms.toggle(); return; }
-    if (action === 'report-hazard') { hazardReports.root.hidden = !hazardReports.root.hidden; return; }
-    if (action === 'map') { workspace.close(); shell.classList.remove('business-open'); setNav('map'); return; }
-    if (action === 'world') { showWorld(); setNav('map'); return; }
-    if (action === 'route') { toggleRoutePlanner(); return; }
-    if (action === 'view-map') { await switchMapMode('map'); return; }
-    if (action === 'view-satellite') { await switchMapMode('satellite'); return; }
-    if (action === 'labels') { await ensureLabeledWorldStack({ announce: true }); return; }
-    if (action === 'map-only') { document.body.classList.add('leeway-map-only'); return; }
-    if (action === 'restore-ui') { document.body.classList.remove('leeway-map-only'); return; }
-    if (action === 'close-route') { toggleRoutePlanner(false); return; }
-    if (action === 'right-ops') { nationalCatalog.close(); setRightPanel('ops'); return; }
+    if (action === 'ai') {
+      toggleAgent();
+      return;
+    }
+    if (action === 'preferences') {
+      preferences.open();
+      return;
+    }
+    if (action === 'connect-world') {
+      await probeWorldProvider({ explain: true });
+      return;
+    }
+    if (action === 'workspace-menu') {
+      shell.classList.toggle('business-open');
+      return;
+    }
+    if (action === 'roadside') {
+      roadside.toggle();
+      return;
+    }
+    if (action === 'peer-comms') {
+      peerComms.toggle();
+      return;
+    }
+    if (action === 'report-hazard') {
+      hazardReports.root.hidden = !hazardReports.root.hidden;
+      return;
+    }
+    if (action === 'map') {
+      workspace.close();
+      shell.classList.remove('business-open');
+      setNav('map');
+      return;
+    }
+    if (action === 'world') {
+      showWorld();
+      setNav('map');
+      return;
+    }
+    if (action === 'route') {
+      toggleRoutePlanner();
+      return;
+    }
+    if (action === 'view-map') {
+      await switchMapMode('map');
+      return;
+    }
+    if (action === 'view-satellite') {
+      await switchMapMode('satellite');
+      return;
+    }
+    if (action === 'labels') {
+      await ensureLabeledWorldStack({ announce: true });
+      return;
+    }
+    if (action === 'map-only') {
+      document.body.classList.add('leeway-map-only');
+      return;
+    }
+    if (action === 'restore-ui') {
+      document.body.classList.remove('leeway-map-only');
+      return;
+    }
+    if (action === 'close-route') {
+      toggleRoutePlanner(false);
+      return;
+    }
+    if (action === 'right-ops') {
+      nationalCatalog.close();
+      setRightPanel('ops');
+      return;
+    }
     if (action === 'right-cctv') {
       nationalCatalog.close();
-      if (dataManager?.layers?.has('cctv') && !dataManager.isEnabled?.('cctv')) {
+      const wasOpen = activeRightPanel === 'cctv';
+      if (
+        dataManager?.layers?.has('cctv') &&
+        !dataManager.isEnabled?.('cctv')
+      ) {
         await dataManager.setEnabled('cctv', true, { origin: 'user' });
       }
-      setRightPanel('cctv');
+      setRightPanel(wasOpen ? null : 'cctv', { toggle: false });
       return;
     }
     if (action === 'right-national') {
@@ -800,34 +1099,82 @@ export function mountEnterpriseShell(application) {
       activeRightPanel = next;
       if (next === 'national') {
         nationalCatalog.open();
-        if (cctvPanel && !cctvPanel.classList.contains('collapsed')) cctvPanel.classList.add('collapsed');
-        if (weatherPanel && !weatherPanel.classList.contains('collapsed')) weatherPanel.classList.add('collapsed');
+        if (cctvPanel && !cctvPanel.classList.contains('collapsed'))
+          cctvPanel.classList.add('collapsed');
+        if (weatherPanel && !weatherPanel.classList.contains('collapsed'))
+          weatherPanel.classList.add('collapsed');
       } else {
         nationalCatalog.close();
       }
       syncRightTabs();
       return;
     }
-    if (action === 'right-weather') { openWeather(); return; }
+    if (action === 'right-weather') {
+      openWeather();
+      return;
+    }
     if (action === 'collapse-inspector') {
       const minimized = contextInspector.classList.toggle('minimized');
       const button = shell.querySelector('[data-action="collapse-inspector"]');
       if (button) button.textContent = minimized ? '›' : '‹';
       return;
     }
-    if (action === 'workspace') { workspace.open(); return; }
-    if (action === 'layers') { toggleLayerMenu(); return; }
-    if (action === 'close-layers') { toggleLayerMenu(false); return; }
-    if (action === 'collapse') { shell.querySelector('.lws-rail').classList.toggle('compact'); return; }
+    if (action === 'workspace') {
+      workspace.open();
+      return;
+    }
+    if (action === 'layers') {
+      toggleLayerMenu();
+      return;
+    }
+    if (action === 'close-layers') {
+      toggleLayerMenu(false);
+      return;
+    }
+    if (action === 'collapse') {
+      shell.querySelector('.lws-rail').classList.toggle('compact');
+      return;
+    }
 
-    if (dock === 'layers') { toggleLayerMenu(); return; }
-    if (dock === 'traffic') { await toggleLayer('traffic'); return; }
-    if (dock === 'weather') { openWeather(); return; }
-    if (dock === 'transit') { await toggleLayer('transit'); return; }
-    if (dock === 'freight') { workspace.close(); loadComparison.open(); say('Freight load comparison opened'); return; }
-    if (dock === 'rail') { say('Rail provider binding is not yet verified'); return; }
+    if (dock === 'layers') {
+      toggleLayerMenu();
+      return;
+    }
+    if (dock === 'traffic') {
+      await toggleLayer('traffic');
+      return;
+    }
+    if (dock === 'flights') {
+      await toggleLayer('flights');
+      say(
+        'Select an aircraft to view its tail, operator, route, origin and destination',
+      );
+      return;
+    }
+    if (dock === 'weather') {
+      openWeather();
+      return;
+    }
+    if (dock === 'transit') {
+      await toggleLayer('transit');
+      return;
+    }
+    if (dock === 'freight') {
+      workspace.close();
+      loadComparison.open();
+      say('Freight load comparison opened');
+      return;
+    }
+    if (dock === 'rail') {
+      say('Rail provider binding is not yet verified');
+      return;
+    }
     if (dock === 'three') {
-      try { await switchMapMode('3d'); } catch { say('3D map stack unavailable'); }
+      try {
+        await switchMapMode('3d');
+      } catch {
+        say('3D map stack unavailable');
+      }
       return;
     }
     if (dock === 'locate') {
@@ -844,6 +1191,16 @@ export function mountEnterpriseShell(application) {
     void switchMapMode('map');
     recenterDistantGlobe();
     void updateLocationBadge();
+    if (
+      dataManager?.layers?.has('flights') &&
+      !dataManager.isEnabled?.('flights')
+    ) {
+      void dataManager
+        .setEnabled('flights', true, { origin: 'business-default' })
+        .catch((error) => {
+          console.warn('Live aircraft awareness unavailable', error);
+        });
+    }
   });
 
   return {
@@ -851,28 +1208,41 @@ export function mountEnterpriseShell(application) {
     workspace,
     routePlanner: routing,
     locate,
-    openWorkspace: (tab='overview') => workspace.open(tab),
+    openWorkspace: (tab = 'overview') => workspace.open(tab),
     openLoadPlanning: () => {
-      setPersonalMode(false);
       workspace.close();
       loadComparison.open();
       say('Dispatch loads and trip triangle opened.');
     },
-    setPersonalMode,
     openWeather,
     async openCctv() {
       nationalCatalog.close();
-      if (dataManager?.layers?.has('cctv') && !dataManager.isEnabled?.('cctv')) {
+      if (
+        dataManager?.layers?.has('cctv') &&
+        !dataManager.isEnabled?.('cctv')
+      ) {
         await dataManager.setEnabled('cctv', true, { origin: 'tool' });
       }
-      setRightPanel('cctv');
+      setRightPanel('cctv', { toggle: false });
     },
     openAgent: () => toggleAgent(true),
     closeAgent: () => toggleAgent(false),
     notify: say,
     destroy() {
       cctvObserver?.disconnect();
+      weatherObserver?.disconnect();
+      document.removeEventListener('leeway:right-panel-close', closeRightPanel);
+      clearTimeout(cctvRecoveryTimer);
+      cctvPanel?.removeEventListener(
+        'leeway:cctv-frame-unavailable',
+        recoverFailedCctv,
+      );
+      cctvPanel?.removeEventListener(
+        'leeway:cctv-frame-ready',
+        confirmWorkingCctv,
+      );
       cctvObserver = null;
+      weatherObserver = null;
       removeWorldCentering?.();
       removeLocationBadgeListener?.();
       if (cctvPanel && cctvOriginalParent) {
@@ -894,6 +1264,7 @@ export function mountEnterpriseShell(application) {
         'leeway-map-only',
       );
       driveMode.destroy();
+      preferences.destroy();
       offlineTrip.destroy();
       fuelAdvisor.destroy();
       fuelLedger.destroy();

@@ -371,6 +371,7 @@ const schemas = [
             'bing-aerial',
             'bing-labels',
             'esri-imagery',
+            'esri-labeled',
             'osm',
           ],
         },

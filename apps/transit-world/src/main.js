@@ -20,14 +20,23 @@ application
   .then(async () => {
     const enterpriseShell = mountEnterpriseShell(application);
     mountAgentLeeGemma(application, enterpriseShell);
-    void mountLeeWayTransitWorld(application).catch((error) => {
-      console.error('Operations panel unavailable', error);
-      enterpriseShell.notify('Operations data unavailable; map remains usable');
-    });
+    void mountLeeWayTransitWorld(application, { edition: 'business' }).catch(
+      (error) => {
+        console.error('Operations panel unavailable', error);
+        enterpriseShell.notify(
+          'Operations data unavailable; map remains usable',
+        );
+      },
+    );
   })
   .catch((error) => {
-    console.error('LeeWay Logistics Transit World initialization failed:', error);
-    const loaderStatus = document.querySelector('#loading-screen .loader-status');
+    console.error(
+      'LeeWay Logistics Transit World initialization failed:',
+      error,
+    );
+    const loaderStatus = document.querySelector(
+      '#loading-screen .loader-status',
+    );
     if (loaderStatus) {
       loaderStatus.textContent = `Error: ${describeError(error)}`;
       loaderStatus.style.color = '#ff4444';

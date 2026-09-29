@@ -29,7 +29,8 @@ test('the complete Realtime tool payload pins the additive analyst, satellite, L
     digest,
     // Re-derived for the additive `local-adsb` set_layer_visibility value and
     // the Cyber HUD layout; the separate sonar tool is excluded above.
-    '590d537d93e132ac64ac5e211ad5bb9d7d1b1f22e2dd963dda5465fab4510a3b',
+    // Re-derived after the deliberate esri-labeled basemap addition.
+    'ff9818504e331c9ce5b5bb26b0ca46ea9ff00884884795611411bae86511f498',
   );
 });
 
@@ -116,6 +117,11 @@ test('all legacy action arguments are byte-identical after removing the delibera
   const hud = legacy.find((tool) => tool.name === 'set_hud').parameters
     .properties.layout;
   hud.enum = hud.enum.filter((layout) => layout !== 'cyber');
+  // Esri imagery with labels is additive; remove it before checking the
+  // byte-identical legacy action contract.
+  const stacks = legacy.find((tool) => tool.name === 'set_map_stack').parameters
+    .properties.stack;
+  stacks.enum = stacks.enum.filter((stack) => stack !== 'esri-labeled');
   assert.equal(
     createHash('sha256').update(JSON.stringify(legacy)).digest('hex'),
     '820fff21658f6907e1010b2b79c5431a77f4e34afd2277d62d8de46c368b6f8c',
