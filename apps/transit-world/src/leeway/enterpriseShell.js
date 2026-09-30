@@ -18,6 +18,7 @@ import { mountExperiencePreferences } from './experiencePreferences.js';
 import { openNearestCctv } from './cctvExperience.js';
 import { mountFeatureCenter } from './featureCenter.js';
 import { featureCatalogForEdition } from './productFeatureCatalog.js';
+import { mountMunicipalTransitWorkspace, municipalTransitTabForDomain } from './municipalTransitWorkspace.js';
 
 const LOGISTICS_HIDDEN_LAYER_IDS = new Set([
   'flights',
@@ -677,6 +678,18 @@ export function mountEnterpriseShell(
     say('Fuel, range and cost tools opened');
   }
 
+  const municipalTransit = isBusiness
+    ? mountMunicipalTransitWorkspace({
+        dataManager,
+        notify: say,
+      })
+    : {
+        open() {},
+        close() {},
+        refresh() {},
+        destroy() {},
+      };
+
   const featureCenter = mountFeatureCenter({
     catalog: featureCatalogForEdition(isBusiness ? 'business' : 'personal'),
     edition: isBusiness ? 'business' : 'personal',
@@ -714,7 +727,11 @@ export function mountEnterpriseShell(
         return true;
       }
       if (actionName === 'transit') {
-        return enableTransitSuite();
+        const enabled = await enableTransitSuite();
+        if (isBusiness && featureDomain?.state === 'transit-hub') {
+          municipalTransit.open(municipalTransitTabForDomain(featureDomain.id));
+        }
+        return enabled;
       }
       if (actionName === 'cctv') {
         setRightPanel('cctv', { toggle: false });
@@ -1175,7 +1192,8 @@ export function mountEnterpriseShell(
       }
       if (id === 'transit') {
         workspace.close();
-        await toggleLayer('transit');
+        await enableTransitSuite();
+        municipalTransit.open('cadavl');
         return;
       }
       if (id === 'rail') {
@@ -1377,7 +1395,8 @@ export function mountEnterpriseShell(
       return;
     }
     if (dock === 'transit') {
-      await toggleLayer('transit');
+      await enableTransitSuite();
+      municipalTransit.open('cadavl');
       return;
     }
     if (dock === 'freight') {
@@ -1546,6 +1565,7 @@ export function mountEnterpriseShell(
       routing.destroy();
       roadside.destroy();
       featureCenter.destroy();
+      municipalTransit.destroy();
       nationalCatalog.destroy();
       workspace.destroy();
       shell.remove();
