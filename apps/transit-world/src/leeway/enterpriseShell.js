@@ -1,3 +1,6 @@
+import { layerStatusText, escapeLayerText } from './layerStatusText.js';
+import { mountGodsEyeControls } from './godsEyeControls.js';
+import { mountMapReports } from './mapReports.js';
 import * as Cesium from 'cesium';
 import { mountEnterpriseWorkspace } from './enterpriseWorkspace.js';
 import { readEnterpriseState } from './enterpriseStore.js';
@@ -445,6 +448,12 @@ export function mountEnterpriseShell(
   let cctvRecoveryCount = 0;
   const recoverFailedCctv = (event) => {
     if (activeRightPanel !== 'cctv' || cctvRecoveryTimer) return;
+    if (
+      !document
+        .getElementById('cctv-auto-hop-btn')
+        ?.classList.contains('active')
+    )
+      return;
     if (cctvRecoveryCount >= 6) {
       say(
         'Several public camera feeds failed. Choose another jurisdiction or camera; no live image is being claimed.',
@@ -460,7 +469,12 @@ export function mountEnterpriseShell(
         frame?.dataset.error !== 'true'
       )
         return;
-      document.getElementById('cctv-next-btn')?.click();
+      if (
+        document
+          .getElementById('cctv-auto-hop-btn')
+          ?.classList.contains('active')
+      )
+        document.getElementById('cctv-next-btn')?.click();
     }, 1200);
   };
   const confirmWorkingCctv = () => {
@@ -494,7 +508,7 @@ export function mountEnterpriseShell(
           .map((row) => {
             const enabled = Boolean(row.enabled);
             return `<button class="lws-layer-row ${enabled ? 'on' : ''}" data-shell-layer="${row.id}">
-              <span>${row.name || row.id}<small class="lws-layer-id">${row.id}</small></span>
+              <span>${escapeLayerText(row.name || row.id)}<small class="lws-layer-id">${escapeLayerText(layerStatusText(row))}</small></span>
               <span class="lws-layer-state">${enabled ? 'ON' : 'OFF'}</span>
             </button>${enabled && ['weather-alerts', 'traffic-incidents'].includes(row.id) ? `<button class="lws-layer-row" data-alert-list="${row.id}">Read ${row.id === 'weather-alerts' ? 'weather alerts' : 'traffic incidents'}</button>` : ''}`;
           })
@@ -782,6 +796,7 @@ export function mountEnterpriseShell(
   }
 
   function recenterDistantGlobe() {
+    if (document.body.classList.contains('leeway-gods-eye') || document.body.classList.contains('cockpit-mode')) return;
     if (!viewer?.camera || recenteringDistantGlobe) return;
     const activeStack = mapStackController?.getActiveId?.();
     if (activeStack === 'photoreal') return;
@@ -964,7 +979,9 @@ export function mountEnterpriseShell(
 
     const alertButton = event.target.closest('[data-alert-list]');
     if (alertButton) {
-      dataManager.layers.get(alertButton.dataset.alertList)?.module?.setParams?.({ list: true });
+      dataManager.layers
+        .get(alertButton.dataset.alertList)
+        ?.module?.setParams?.({ list: true });
       toggleLayerMenu(false);
       return;
     }
@@ -1192,7 +1209,6 @@ export function mountEnterpriseShell(
       return;
     }
     if (dock === 'locate') {
-      routing.open();
       await routing.useMyLocation();
     }
   });
@@ -1217,15 +1233,24 @@ export function mountEnterpriseShell(
     }
   });
 
+  const mapReports = mountMapReports({
+    shell, viewer, dataManager, getPoint: viewCenterPoint,
+    onWeather: () => setRightPanel('weather', { toggle: false }),
+    onTraffic: async () => {
+      try {
+        await dataManager.setEnabled('traffic-incidents', true, { origin: 'reports' });
+        dataManager.layers.get('traffic-incidents')?.module?.setParams({ list: true });
+      } catch { say('Traffic reports unavailable for this area'); }
+    },
+  });
+
   async function selectCctv(query) {
-    const requested = String(query || '').trim().toLowerCase();
-    if (!requested)
-      return { ok: false, reason: 'camera-query-required' };
+    const requested = String(query || '')
+      .trim()
+      .toLowerCase();
+    if (!requested) return { ok: false, reason: 'camera-query-required' };
     nationalCatalog.close();
-    if (
-      dataManager?.layers?.has('cctv') &&
-      !dataManager.isEnabled?.('cctv')
-    ) {
+    if (dataManager?.layers?.has('cctv') && !dataManager.isEnabled?.('cctv')) {
       await dataManager.setEnabled('cctv', true, { origin: 'copilot' });
     }
     setRightPanel('cctv', { toggle: false });
@@ -1267,6 +1292,15 @@ export function mountEnterpriseShell(
     };
   }
 
+  const godsEyeControls = mountGodsEyeControls({
+    application, shell,
+    onPresentation(original) {
+      if (!cctvPanel) return;
+      const host = original ? cctvOriginalParent : contextInspector;
+      if (host && cctvPanel.parentNode !== host) host.appendChild(cctvPanel);
+    },
+  });
+
   return {
     root: shell,
     workspace,
@@ -1294,6 +1328,7 @@ export function mountEnterpriseShell(
     closeAgent: () => toggleAgent(false),
     notify: say,
     destroy() {
+      godsEyeControls.destroy();
       cctvObserver?.disconnect();
       weatherObserver?.disconnect();
       document.removeEventListener('leeway:right-panel-close', closeRightPanel);
@@ -1336,6 +1371,7 @@ export function mountEnterpriseShell(
       loadComparison.destroy();
       hazardReports.destroy();
       peerComms.destroy();
+      mapReports.destroy();
       routing.destroy();
       roadside.destroy();
       nationalCatalog.destroy();
