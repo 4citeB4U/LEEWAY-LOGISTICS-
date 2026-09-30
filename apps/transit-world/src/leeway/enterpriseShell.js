@@ -16,6 +16,13 @@ import { mountLoadComparison } from './loadComparison.js';
 import { mapIcon } from './mapIcons.js';
 import { mountExperiencePreferences } from './experiencePreferences.js';
 
+const LOGISTICS_HIDDEN_LAYER_IDS = new Set([
+  'flights',
+  'military',
+  'local-adsb',
+  'military-awareness',
+]);
+
 function ensureStyles(documentRef) {
   if (documentRef.getElementById('leeway-enterprise-shell-styles')) return;
   const style = documentRef.createElement('style');
@@ -284,7 +291,7 @@ export function mountEnterpriseShell(
       ${[
         ['layers', 'Layers'],
         ['traffic', 'Traffic'],
-        ['flights', 'Flights'],
+        ...(isBusiness ? [['cctv', 'CCTV']] : [['flights', 'Flights']]),
         ['weather', 'Weather'],
       ]
         .map(
@@ -473,10 +480,14 @@ export function mountEnterpriseShell(
   cctvPanel?.addEventListener('leeway:cctv-frame-ready', confirmWorkingCctv);
 
   function renderLayerMenu() {
-    const rows = (dataManager?.getAll?.() || []).map((row) => ({
-      ...row,
-      category: layerCategories[row.id] || 'Special',
-    }));
+    const rows = (dataManager?.getAll?.() || [])
+      .filter(
+        (row) => !isBusiness || !LOGISTICS_HIDDEN_LAYER_IDS.has(row.id),
+      )
+      .map((row) => ({
+        ...row,
+        category: layerCategories[row.id] || 'Special',
+      }));
 
     const groups = new Map(layerCategoryOrder.map((name) => [name, []]));
     for (const row of rows) {
@@ -817,14 +828,22 @@ export function mountEnterpriseShell(
       () => void updateLocationBadge(),
     ) || null;
 
-  async function locate(query) {
+  async function locate(query, { altitude = 6000 } = {}) {
     if (!query || !viewer) return false;
     try {
       const matches = await locationSearch.search(query);
       const point = matches[0];
       if (!point) throw new Error('No matching location');
+      const requestedAltitude = Number(altitude);
+      const safeAltitude = Number.isFinite(requestedAltitude)
+        ? Math.max(1000, requestedAltitude)
+        : 6000;
       await viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(point.lon, point.lat, 6000),
+        destination: Cesium.Cartesian3.fromDegrees(
+          point.lon,
+          point.lat,
+          safeAltitude,
+        ),
         duration: 1.2,
       });
       say(
@@ -854,6 +873,41 @@ export function mountEnterpriseShell(
   const nationalCatalog = mountNationalCameraCatalog({
     host: shell,
     notify: say,
+    onJurisdictionSelect: async (row, action) => {
+      const name = String(row?.name || '').trim();
+      if (!name) return false;
+      const altitude =
+        row?.type === 'federal-district'
+          ? 85000
+          : row?.type === 'territory'
+            ? 300000
+            : 500000;
+      const found = await locate(
+        `${name}, ${row?.country || 'United States'}`,
+        { altitude },
+      );
+      if (!found) return false;
+
+      nationalCatalog.close();
+      if (!action?.canViewCameras) {
+        setRightPanel(null, { toggle: false });
+        say(
+          `${name} located · this registry does not claim an integrated public camera feed yet`,
+        );
+        return true;
+      }
+
+      if (!dataManager?.layers?.has('cctv')) {
+        say(`${name} located · CCTV layer unavailable in this build`);
+        return true;
+      }
+      if (!dataManager.isEnabled?.('cctv')) {
+        await dataManager.setEnabled('cctv', true, { origin: 'user' });
+      }
+      setRightPanel('cctv', { toggle: false });
+      say(`${name} cameras enabled · select a camera marker to open its feed`);
+      return true;
+    },
   });
 
   function setNav(id) {
@@ -1156,6 +1210,18 @@ export function mountEnterpriseShell(
     }
     if (dock === 'traffic') {
       await toggleLayer('traffic');
+      return;
+    }
+    if (dock === 'cctv') {
+      nationalCatalog.close();
+      if (
+        dataManager?.layers?.has('cctv') &&
+        !dataManager.isEnabled?.('cctv')
+      ) {
+        await dataManager.setEnabled('cctv', true, { origin: 'user' });
+      }
+      setRightPanel('cctv', { toggle: false });
+      say('Public traffic cameras enabled · select a camera marker to inspect');
       return;
     }
     if (dock === 'flights') {
