@@ -15,6 +15,7 @@ import { mountFuelLedger } from './fuelLedger.js';
 import { mountLoadComparison } from './loadComparison.js';
 import { mapIcon } from './mapIcons.js';
 import { mountExperiencePreferences } from './experiencePreferences.js';
+import { openNearestCctv } from './cctvExperience.js';
 
 const LOGISTICS_HIDDEN_LAYER_IDS = new Set([
   'flights',
@@ -306,6 +307,7 @@ export function mountEnterpriseShell(
       <button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Language and music</span></button>
       ${(isBusiness
         ? [
+            ['cockpit', 'Cockpit'],
             ['transit', 'Transit'],
             ['freight', 'Freight'],
             ['rail', 'Rail'],
@@ -326,7 +328,7 @@ export function mountEnterpriseShell(
     <div class="lws-location-badge" data-location-badge><strong>WORLD</strong><span>Geographic identification loading…</span></div>
     <aside class="lws-context-inspector" data-context-inspector></aside>
     <div class="lws-right-tabs" aria-label="Right-side information panels">
-      <button class="lws-right-tab" data-action="right-ops" type="button">OPS</button>
+      <button class="lws-right-tab" data-action="right-ops" type="button">COCKPIT</button>
       <button class="lws-right-tab" data-action="right-cctv" type="button">CCTV</button>
       <button class="lws-right-tab" data-action="right-weather" type="button">WEATHER</button>
       <button class="lws-right-tab" data-action="right-national" type="button">NATION</button>
@@ -891,21 +893,30 @@ export function mountEnterpriseShell(
       nationalCatalog.close();
       if (!action?.canViewCameras) {
         setRightPanel(null, { toggle: false });
-        say(
-          `${name} located · this registry does not claim an integrated public camera feed yet`,
-        );
+        if (action?.requiredCredential) {
+          say(
+            `${name} camera connector is ready · add ${action.requiredCredential} to activate it`,
+          );
+        } else {
+          say(
+            `${name} located · no verified integrated camera feed is registered yet`,
+          );
+        }
         return true;
       }
 
-      if (!dataManager?.layers?.has('cctv')) {
-        say(`${name} located · CCTV layer unavailable in this build`);
+      setRightPanel('cctv', { toggle: false });
+      const opened = await openNearestCctv(dataManager, {
+        origin: 'user',
+        durationSec: 1.4,
+      });
+      if (!opened.ok) {
+        say(`${name} camera catalog opened · ${opened.reason}`);
         return true;
       }
-      if (!dataManager.isEnabled?.('cctv')) {
-        await dataManager.setEnabled('cctv', true, { origin: 'user' });
-      }
-      setRightPanel('cctv', { toggle: false });
-      say(`${name} cameras enabled · select a camera marker to open its feed`);
+      say(
+        `${name} CCTV · ${opened.camera?.name || opened.cameraId} · ${opened.camera?.provider || 'official provider'}`,
+      );
       return true;
     },
   });
@@ -1214,14 +1225,19 @@ export function mountEnterpriseShell(
     }
     if (dock === 'cctv') {
       nationalCatalog.close();
-      if (
-        dataManager?.layers?.has('cctv') &&
-        !dataManager.isEnabled?.('cctv')
-      ) {
-        await dataManager.setEnabled('cctv', true, { origin: 'user' });
-      }
       setRightPanel('cctv', { toggle: false });
-      say('Public traffic cameras enabled · select a camera marker to inspect');
+      say('Loading nearest public traffic camera…');
+      const opened = await openNearestCctv(dataManager, {
+        origin: 'user',
+        durationSec: 1.4,
+      });
+      if (opened.ok) {
+        say(
+          `CCTV · ${opened.camera?.name || opened.cameraId} · ${opened.camera?.provider || 'official provider'}`,
+        );
+      } else {
+        say(`CCTV unavailable in this view · ${opened.reason}`);
+      }
       return;
     }
     if (dock === 'flights') {
@@ -1233,6 +1249,16 @@ export function mountEnterpriseShell(
     }
     if (dock === 'weather') {
       openWeather();
+      return;
+    }
+    if (dock === 'cockpit') {
+      nationalCatalog.close();
+      setRightPanel('ops', { toggle: false });
+      document
+        .getElementById('leeway-transit-world')
+        ?.querySelector?.('[data-action="driver-view"]')
+        ?.click?.();
+      say('Driver & Load Cockpit opened');
       return;
     }
     if (dock === 'transit') {
