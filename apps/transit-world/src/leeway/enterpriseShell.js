@@ -1,6 +1,7 @@
 import { mountDeviceLocation } from './deviceLocation.js';
 import { layerStatusText, escapeLayerText } from './layerStatusText.js';
-import { mountGodsEyeControls } from './godsEyeControls.js';
+import { mountMapViewControls } from './mapViewControls.js';
+import { mountMapToolsPanel } from './mapToolsPanel.js';
 import { mountMapReports } from './mapReports.js';
 import * as Cesium from 'cesium';
 import { mountEnterpriseWorkspace } from './enterpriseWorkspace.js';
@@ -766,7 +767,7 @@ export function mountEnterpriseShell(
         return true;
       }
       if (actionName === 'cockpit') {
-        const result = await godsEyeControls.actions.cockpit();
+        const result = await mapViewControls.actions.cockpit();
         if (!result.ok) say(result.error);
         return result.ok;
       }
@@ -937,7 +938,7 @@ export function mountEnterpriseShell(
   }
 
   function recenterDistantGlobe() {
-    if (document.body.classList.contains('leeway-gods-eye') || document.body.classList.contains('cockpit-mode')) return;
+    if (document.body.classList.contains('cockpit-mode')) return;
     if (!viewer?.camera || recenteringDistantGlobe) return;
     const activeStack = mapStackController?.getActiveId?.();
     if (activeStack === 'photoreal') return;
@@ -1524,14 +1525,8 @@ export function mountEnterpriseShell(
     };
   }
 
-  const godsEyeControls = mountGodsEyeControls({
-    application, shell,
-    onPresentation(original) {
-      if (!cctvPanel) return;
-      const host = original ? cctvOriginalParent : contextInspector;
-      if (host && cctvPanel.parentNode !== host) host.appendChild(cctvPanel);
-    },
-  });
+  const mapViewControls = mountMapViewControls({ application, shell });
+  const mapToolsPanel = mountMapToolsPanel({ application, shell });
 
   return {
     root: shell,
@@ -1560,7 +1555,8 @@ export function mountEnterpriseShell(
     closeAgent: () => toggleAgent(false),
     notify: say,
     destroy() {
-      godsEyeControls.destroy();
+      mapToolsPanel.destroy();
+      mapViewControls.destroy();
       cctvObserver?.disconnect();
       weatherObserver?.disconnect();
       document.removeEventListener('leeway:right-panel-close', closeRightPanel);
