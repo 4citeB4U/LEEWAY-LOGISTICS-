@@ -174,11 +174,11 @@ function toOllamaTool(schema) {
   };
 }
 
-export function agentLeeTools() {
+export function agentLeeTools({ edition = globalThis.document?.body?.dataset?.leewayEdition || 'business' } = {}) {
   const spatial = GEV_ACTION_SCHEMAS.filter((schema) =>
     SPATIAL_TOOL_NAMES.includes(schema.name),
   ).map(toOllamaTool);
-  return [...spatial, ...enterpriseSchemas.map(toOllamaTool)];
+  return edition === 'personal' ? spatial : [...spatial, ...enterpriseSchemas.map(toOllamaTool)];
 }
 
 function enterpriseRecords(domain) {
@@ -212,6 +212,9 @@ export function createAgentLeeToolRuntime(application, shell) {
   });
 
   async function runEnterprise(name, args = {}) {
+    if (globalThis.document?.body?.dataset?.leewayEdition === 'personal') {
+      throw new Error('Business records are unavailable in LeeWay Maps');
+    }
     if (name === 'open_enterprise_workspace') {
       const map = {
         command: 'overview',

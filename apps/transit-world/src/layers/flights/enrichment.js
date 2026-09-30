@@ -108,7 +108,40 @@ export function createEnrichment({
     );
   }
 
+  const scheduleRequests = new Map();
+  function _requestScheduleEnrichment(icao24) {
+    const cs = String(flightState.records.data.get(icao24)?.callsign || '')
+      .trim()
+      .toUpperCase();
+    if (!/^[A-Z]{3}\d[A-Z0-9]{0,4}$/.test(cs)) return;
+    if (Date.now() - (scheduleRequests.get(cs) || 0) < 120_000) return;
+    scheduleRequests.set(cs, Date.now());
+    if (scheduleRequests.size > 200)
+      scheduleRequests.delete(scheduleRequests.keys().next().value);
+    const key = `s:${cs}`;
+    flightState._enrichSeen.delete(key);
+    _enqueueEnrich(
+      key,
+      { kind: 'schedule', id: cs },
+      (data) => {
+        const meta = flightState.records.data.get(icao24);
+        if (
+          !meta ||
+          String(meta.callsign || '')
+            .trim()
+            .toUpperCase() !== cs
+        )
+          return;
+        meta.schedule = data.schedule || { status: 'unavailable' };
+        if (icao24 === flightState._trackedIcao && flightState._trackedEntity)
+          parts.tracking._updateTrackedLabelModel(icao24);
+      },
+      true,
+    );
+  }
+
   function _requestRouteEnrichment(icao24) {
+    _requestScheduleEnrichment(icao24);
     const cs = String(flightState.records.data.get(icao24)?.callsign || '')
       .trim()
       .toUpperCase();
@@ -119,6 +152,12 @@ export function createEnrichment({
       (data) => {
         const meta = flightState.records.data.get(icao24);
         if (!meta) return;
+        if (
+          String(meta.callsign || '')
+            .trim()
+            .toUpperCase() !== cs
+        )
+          return;
         meta.airline = data.airline || meta.airline;
         if (data.origin && data.destination)
           meta.route = { origin: data.origin, destination: data.destination };
@@ -233,6 +272,7 @@ export function createEnrichment({
     _drainEnrich,
     _requestTypeEnrichment,
     _requestRouteEnrichment,
+    _requestScheduleEnrichment,
     _ambientBudgetKnobs,
     _refillAmbientBudget,
     _sweepAmbientEnrichment,

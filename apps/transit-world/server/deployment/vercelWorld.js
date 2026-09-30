@@ -6,6 +6,21 @@ import { cctvProxy } from '../providers/cctv.js';
 import { defaultSourceRoot } from '../providers/common/source-root.js';
 import { transitProxy } from '../providers/transit.js';
 import { weatherProxy } from '../providers/weather.js';
+import { celestrakProxy, rocketLaunchesProxy } from '../providers/space.js';
+import { tomtomProxy } from '../providers/traffic.js';
+import { firmsProxy } from '../providers/firms.js';
+import { terrainHeightsProxy } from '../providers/terrain.js';
+import { overpassProxy } from '../providers/overpass.js';
+import { militaryInstallationsProxy } from '../providers/military-installations.js';
+import { regionalBriefProxy } from '../providers/regional/briefing.js';
+import { geocodeProxy } from '../providers/regional/place.js';
+import { weatherEffectsProxy } from '../providers/regional/weather-effects.js';
+import { radioBrowserProxy } from '../providers/radio.js';
+import { gbfsProxy } from '../providers/gbfs.js';
+import { googlePlacesContextProxy } from '../providers/places.js';
+import { windProxy } from '../providers/wind.js';
+import { cycloneProxy } from '../providers/cyclones.js';
+import { firePerimetersProxy } from '../providers/firePerimeters.js';
 import { createVercelSharedHandler } from './vercelShared.js';
 
 const DEFAULT_ALLOWED_ORIGINS = Object.freeze([
@@ -39,7 +54,8 @@ export function createMiddlewareRouter() {
       if (typeof handler !== 'function')
         throw new TypeError('middleware handler required');
       const mount = String(path || '').replace(/\/$/, '');
-      if (!mount.startsWith('/')) throw new TypeError('middleware path required');
+      if (!mount.startsWith('/'))
+        throw new TypeError('middleware path required');
       stack.push({ mount, handler });
     },
   };
@@ -58,6 +74,8 @@ export function createMiddlewareRouter() {
         if (row.mount) req.url = strippedUrl(priorUrl, row.mount);
         let nextPromise = null;
         const next = (nextError) => {
+          // Connect restores the full URL before matching the next mount.
+          req.url = priorUrl;
           nextPromise = dispatch(nextError);
           return nextPromise;
         };
@@ -104,7 +122,7 @@ function applyCors(req, res, env) {
       'Content-Range,Accept-Ranges,X-CCTV-Source,X-OpenSky-Auth,X-OpenSky-Cache,X-Flight-Source',
     );
   }
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS');
   return { origin, allowed: !origin || allowed.has(origin) };
 }
 
@@ -114,21 +132,97 @@ export function createWorldPlugins({ sourceRoot = defaultSourceRoot } = {}) {
     adsbLolProxy(),
     adsbdbProxy(),
     trackBackfillProxies(),
-    cctvProxy({ sourceRoot }),
+    cctvProxy({ sourceRoot, statelessMedia: true }),
     weatherProxy(),
     transitProxy(),
+    celestrakProxy(),
+    rocketLaunchesProxy(),
+    tomtomProxy(),
+    firmsProxy(),
+    terrainHeightsProxy(),
+    overpassProxy(), // Includes bounded, read-only /api/route.
+    militaryInstallationsProxy(),
+    regionalBriefProxy(),
+    geocodeProxy(),
+    weatherEffectsProxy(),
+    radioBrowserProxy(),
+    gbfsProxy(),
+    googlePlacesContextProxy({
+      fetchImpl: (url, options = {}) =>
+        fetch(url, {
+          ...options,
+          signal: options.signal
+            ? AbortSignal.any([options.signal, AbortSignal.timeout(12_000)])
+            : AbortSignal.timeout(12_000),
+        }),
+    }),
+    windProxy({ timeoutMs: 40_000 }),
+    cycloneProxy(),
+    firePerimetersProxy(),
   ];
+}
+
+/** Guard legacy middleware that finishes after the function's response deadline.
+ * Upstream adapters retain their own fetch aborts; this deadline bounds the
+ * response, not a guarantee that all legacy background work was cancelled.
+ */
+async function withinResponseDeadline(run, res, timeoutMs) {
+  let expired = false;
+  let timer;
+  const guarded = new Proxy(res, {
+    get(target, key) {
+      if (['writeHead', 'setHeader', 'end', 'write'].includes(key)) {
+        return (...args) => (expired ? undefined : target[key](...args));
+      }
+      const value = Reflect.get(target, key, target);
+      return typeof value === 'function' ? value.bind(target) : value;
+    },
+    set(target, key, value) {
+      if (!expired) Reflect.set(target, key, value, target);
+      return true;
+    },
+  });
+  try {
+    return await Promise.race([
+      run(guarded),
+      new Promise((resolve) => {
+        timer = setTimeout(() => {
+          if (!res.writableEnded) {
+            if (res.headersSent) res.destroy?.();
+            else
+              json(
+                res,
+                504,
+                { error: 'Provider deadline exceeded; retry shortly.' },
+                { 'Retry-After': '5' },
+              );
+          }
+          expired = true;
+          resolve(true);
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 function installPlugins(router, plugins) {
   const server = { middlewares: router.middlewares, httpServer: null };
   for (const plugin of plugins) {
-    if (typeof plugin?.configureServer === 'function') plugin.configureServer(server);
+    if (typeof plugin?.configureServer === 'function')
+      plugin.configureServer(server);
   }
 }
 
 function json(res, status, body, extra = {}) {
   if (res.writableEnded) return;
+  // Streaming failures cannot replace an already-started media response with
+  // JSON headers. Close that stream so its caller can retry instead.
+  if (res.headersSent) {
+    res.destroy?.();
+    return;
+  }
   res.writeHead(status, {
     'Content-Type': 'application/json',
     'Cache-Control': 'no-store',
@@ -141,6 +235,7 @@ export function createVercelWorldHandler({
   env = process.env,
   plugins = createWorldPlugins(),
   sharedHandler = createVercelSharedHandler({ env }),
+  responseTimeoutMs = 55_000,
 } = {}) {
   const router = createMiddlewareRouter();
   installPlugins(router, plugins);
@@ -155,7 +250,12 @@ export function createVercelWorldHandler({
       return;
     }
 
-    const pathname = pathnameOf(req.url);
+    let pathname;
+    try {
+      pathname = pathnameOf(req.url);
+    } catch {
+      return json(res, 400, { error: 'Invalid request URL.' });
+    }
     if (pathname === '/api/health' || pathname === '/health') {
       return json(res, 200, {
         ok: true,
@@ -173,12 +273,44 @@ export function createVercelWorldHandler({
       return sharedHandler(req, res);
     }
 
+    // Shared write APIs above keep their own authentication and validation.
+    // Public providers expose reads, Overpass read queries, and HLS lease release.
+    const publicMethod =
+      req.method === 'GET' ||
+      (req.method === 'POST' && pathname === '/api/overpass') ||
+      (req.method === 'DELETE' && /^\/api\/cctv\/media\/[^/]+$/.test(pathname));
+    if (!publicMethod) return json(res, 405, { error: 'Method not allowed.' });
+    if (pathname === '/api/ais-live' || pathname.startsWith('/api/ais-live/')) {
+      return json(res, 503, {
+        error:
+          'AIS requires a persistent public collector; this serverless runtime cannot maintain the upstream socket.',
+      });
+    }
+    if (pathname === '/api/terrain/heights') {
+      const count = (
+        new URL(req.url, 'https://leeway.invalid').searchParams.get('points') ||
+        ''
+      )
+        .split(';')
+        .filter(Boolean).length;
+      if (count > 64)
+        return json(res, 413, {
+          error:
+            'Batch terrain requests into at most 64 points on this runtime.',
+          maxPoints: 64,
+        });
+    }
+
     try {
-      const handled = await router.handle(req, res);
+      const handled = await withinResponseDeadline(
+        (guarded) => router.handle(req, guarded),
+        res,
+        Math.max(1, Math.min(55_000, responseTimeoutMs)),
+      );
       if (!handled && !res.writableEnded)
         return json(res, 404, { error: 'Unknown LeeWay World endpoint.' });
     } catch (error) {
-      console.error('[LeeWay World Runtime]', error?.message || String(error));
+      console.error('[LeeWay World Runtime] provider request failed');
       return json(res, 503, { error: 'LeeWay World provider unavailable.' });
     }
   };

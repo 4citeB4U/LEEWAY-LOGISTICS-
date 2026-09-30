@@ -268,6 +268,8 @@ export function createFlightSnapshotRenderer({
     // Ambient type enrichment: give ON-SCREEN planes real types (bounded
     // sweep — see _sweepAmbientEnrichment; internally fail-silent).
     enrichment._sweepAmbientEnrichment();
+    if (flightState._trackedIcao)
+      enrichment._requestScheduleEnrichment(flightState._trackedIcao);
 
     // 2026-08-19: the loop above only ever collects FIX cells, but a grounded
     // contact renders across every cell its dead-reckoned position drifts

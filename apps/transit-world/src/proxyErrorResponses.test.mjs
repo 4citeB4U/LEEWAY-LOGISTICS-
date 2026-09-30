@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { createScheduleLookup } from '../server/providers/aircraft/schedules.js';
 import { readResponseTextCapped, coalesceProxyRequest } from './sources/httpBody.js';
 
 const source = ['local.js', 'common/http.js', 'aircraft/enrichment.js', 'terrain.js', 'space/celestrak.js', 'space/launch-library.js', '../../src/data/spaceProviderRequests.js']
@@ -21,7 +22,7 @@ function extract(name) {
 function fixture(name, overrides = {}, preview = false) {
   const logs = [];
   const deps = {
-    readResponseTextCapped, coalesceProxyRequest,
+    readResponseTextCapped, coalesceProxyRequest, createScheduleLookup,
     path, process: { cwd: () => '/fixture', env: {} },
     fsp: {
       readFile: async () => { throw new Error('cache absent'); },

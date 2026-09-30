@@ -1,4 +1,5 @@
 import * as Cesium from 'cesium';
+import { airlineIdentity, scheduleLabel } from '../../data/airlineIdentity.js';
 import { nextCockpitNearContacts } from '../../data/cockpitAirLod.js';
 import { trackedModelZoomActive } from '../../data/trackedModelRegime.js';
 import {
@@ -757,18 +758,25 @@ export function createTracking({
       flightState.records.missingPolls.get(icao24) || flightState.feed._backoff
         ? 'STALE'
         : '';
-    const lines = [[cs, fl, spd, stale].filter(Boolean).join(' · ')];
+    const lines = [cs, [fl, spd, stale].filter(Boolean).join(' · ')];
     // Converted contacts report their class as TR-3B and nothing else — the
     // operator/type identity is exactly what the Easter egg is replacing.
     const ident = isTr3b(icao24)
       ? tr3bTypeLabel(icao24)
-      : [info.airline, info.typeName || info.typeCode]
+      : [
+          info.airline ||
+            (airlineIdentity(info.callsign)
+              ? `${airlineIdentity(info.callsign).name} (callsign)`
+              : ''),
+          info.typeName || info.typeCode,
+        ]
           .filter(Boolean)
           .join(' · ');
     if (ident) lines.push(ident);
     if (info.route && _routeIsPlausible(icao24, info.route)) {
       lines.push(`${info.route.origin.code} → ${info.route.destination.code}`);
     }
+    if (/^[A-Z]{3}\d/.test(cs)) lines.push(scheduleLabel(info.schedule));
     return lines.join('\n');
   }
 

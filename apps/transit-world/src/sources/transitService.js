@@ -1,4 +1,5 @@
 import { createTransitHistory } from './transitHistoryStore.js';
+import { createTransitNetworkService } from './transitNetworkService.js';
 /**
  * GTFS-Realtime transit proxy for the Transit data layer.
  *
@@ -108,6 +109,7 @@ export async function fetchTransitFeed(
  * @returns {{handle: (request: Request) => Promise<Response>, close: () => void}}
  */
 export function createTransitService({ fetchImpl = fetch } = {}) {
+  const network = createTransitNetworkService({ fetchImpl });
   /** @type {Map<string, {at:number, body:string, host:string}>} feedId → snapshot */
   const cache = new Map();
   const history = createTransitHistory();
@@ -211,6 +213,7 @@ export function createTransitService({ fetchImpl = fetch } = {}) {
 
   async function handle(incoming) {
     const url = new URL(incoming.url);
+    if (url.pathname.startsWith('/api/transit/network/')) return network.handle(incoming);
     if (!url.pathname.startsWith('/api/transit/'))
       return reply(404, JSON.stringify({ error: 'Unknown transit feed' }), {
         'Content-Type': 'application/json',
@@ -395,6 +398,7 @@ export function createTransitService({ fetchImpl = fetch } = {}) {
   }
 
   function close() {
+    network.close();
     closed = true;
     for (const controller of controllers) controller.abort();
     controllers.clear();

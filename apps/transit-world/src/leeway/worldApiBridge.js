@@ -1,10 +1,9 @@
+import { publicWorldApiConfig } from './publicApiConfig.js';
 function configuredBase() {
   const explicit = String(
     import.meta.env?.VITE_LEEWAY_WORLD_API_URL || '',
   ).trim();
-  if (explicit) return explicit.replace(/\/$/, '');
-
-  return '';
+  return publicWorldApiConfig(explicit, globalThis.location?.hostname || '').base;
 }
 
 export function worldApiBase() {
@@ -51,6 +50,14 @@ export function installWorldApiBridge({
 
   const base = configuredBase();
   if (!base) {
+    const state=publicWorldApiConfig(import.meta.env?.VITE_LEEWAY_WORLD_API_URL,globalThis.location?.hostname || '').state;
+    if (['missing','invalid'].includes(state) && globalThis.document?.body && !document.getElementById('leeway-api-unavailable')) {
+      const notice=document.createElement('div');
+      notice.id='leeway-api-unavailable'; notice.setAttribute('role','status');
+      notice.style.cssText='position:fixed;bottom:0;left:0;right:0;padding:10px;background:#452b12;color:white;z-index:20000;font:13px system-ui;text-align:center';
+      notice.textContent='Live cameras, aircraft and transit are unavailable: the public data service is not configured. Base maps remain available.';
+      document.body.appendChild(notice);
+    }
     return { installed: false, base: '' };
   }
 

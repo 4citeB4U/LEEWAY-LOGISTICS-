@@ -132,3 +132,9 @@ The Pages version uses training/demo fallback data when the local Transit Hub ba
 ---
 
 **LeeWay principle:** AI should increase human capability, not replace human responsibility.
+
+## Public browser deployment
+
+The maps run directly in the browser on GitHub Pages and Vercel. No phone packages or local model are required to view or operate the maps. Local Agent Lee model setup above is optional and separate. See [deployment and source boundaries](DEPLOYMENT.md).
+
+The personal edition now lives in the independent [Leeway-Maps repository](https://github.com/4citeB4U/Leeway-Maps).

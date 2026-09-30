@@ -1,4 +1,6 @@
 import { createCctvCatalog } from './cctv/catalog.js';
+import { createCctvFrameCache } from './cctv/frameCache.js';
+import { globalTrafficCameraCoverage } from './cctv/globalRegistry.js';
 import {
   normalizeFeedType,
   isVideoFeedType,
@@ -36,8 +38,9 @@ export { CCTV_FRAME_FETCH_TIMEOUT_MS, fetchCctvImageFromUpstream };
  *
  * @returns {import('vite').Plugin}
  */
-export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
+export function cctvProxy({ sourceRoot = process.cwd(), statelessMedia = false } = {}) {
   const getCctvSources = createCctvCatalog({ sourceRoot });
+  const getFrame = createCctvFrameCache();
   /** @type {Map<string,{id:string,status:string,sourceKind:string,label:string,message:string,updatedAt:number}>} */
   const health = new Map();
   /** Cap on health map entries to prevent unbounded growth. Sized to the
@@ -65,7 +68,8 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
     const feedType = normalizeFeedType(source?.feedType || 'image');
     return {
       id: cameraId,
-      feedType,
+      feedType: statelessMedia && source?.snapshotUrl ? 'image' : feedType,
+      mediaMode: statelessMedia ? 'snapshots' : 'streams-and-snapshots',
       mediaUrl: isVideoFeedType(feedType)
         ? `/api/cctv/media/${encodeURIComponent(cameraId)}`
         : null,
@@ -82,11 +86,20 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
     });
     server.middlewares.use('/api/cctv', async (req, res) => {
       try {
-        const sources = await getCctvSources();
-        const sourceById = new Map(
-          sources.map((source) => [source.id, source]),
-        );
         const url = new URL(req.url || '/', 'http://localhost');
+
+        if (url.pathname === '/coverage') {
+          res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          });
+          res.end(
+            JSON.stringify(
+              globalTrafficCameraCoverage(getCctvSources.status()),
+            ),
+          );
+          return;
+        }
 
         if (url.pathname === '/jurisdictions') {
           const code = String(url.searchParams.get('code') || '').trim();
@@ -104,7 +117,23 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
           return;
         }
 
+        // Status and static coverage remain responsive even when an inventory
+        // provider is slow. They must not launch a worldwide catalog download.
+        if (url.pathname === '/health') {
+          res.writeHead(200, {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+          });
+          res.end(
+            JSON.stringify({
+              cameras: listHealth(),
+              packs: getCctvSources.status(),
+            }),
+          );
+          return;
+        }
         if (url.pathname === '/sources') {
+          const sources = await getCctvSources();
           const body = {
             sources: sources.map((source) => ({
               id: source.id,
@@ -121,7 +150,9 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
               rangeM: source.rangeM,
               mountHeightM: source.mountHeightM,
               groundElevationM: source.groundElevationM,
-              feedType: normalizeFeedType(source.feedType),
+              feedType: statelessMedia && source.snapshotUrl ? 'image' : normalizeFeedType(source.feedType),
+              mediaLimitation: statelessMedia && normalizeFeedType(source.feedType) === 'hls'
+                ? (source.snapshotUrl ? 'Snapshot fallback: streaming requires a persistent media runtime.' : 'This HLS-only camera requires a persistent media runtime.') : '',
               sourceKind:
                 source.sourceKind || (source.url ? 'configured' : 'fallback'),
               poseSource: source.poseSource,
@@ -131,6 +162,8 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
               frameRefreshMs: source.frameRefreshMs,
               ageMinutes: source.ageMinutes,
               warningAge: source.warningAge,
+              catalogStatus: source.catalogStatus || 'configured',
+              catalogUpdatedAt: source.catalogUpdatedAt || null,
               groundHeights: source.groundHeights || null,
             })),
           };
@@ -142,20 +175,11 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
           return;
         }
 
-        if (url.pathname === '/health') {
-          res.writeHead(200, {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-store',
-          });
-          res.end(JSON.stringify({ cameras: listHealth() }));
-          return;
-        }
-
         if (url.pathname.startsWith('/stream/')) {
           const cameraId =
             decodeURIComponent(url.pathname.replace('/stream/', '').trim()) ||
             'camera';
-          const source = sourceById.get(cameraId);
+          const source = await getCctvSources.resolve(cameraId);
           const payload = buildStreamPayload(source, cameraId);
           res.writeHead(200, {
             'Content-Type': 'application/json',
@@ -175,10 +199,15 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
             return;
           }
           const cameraId = decodeURIComponent(match[1]);
-          const source = sourceById.get(cameraId);
+          const source = await getCctvSources.resolve(cameraId);
           const mediaUrl = source?.url || '';
           const feedType = normalizeFeedType(source?.feedType || 'image');
           const leaseId = url.searchParams.get('lease');
+          if (statelessMedia && feedType === 'hls') {
+            res.writeHead(503, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+            res.end(JSON.stringify({ error: 'HLS requires a persistent media runtime; use a camera snapshot when available.' }));
+            return;
+          }
           if (feedType === 'hls' && !/^[a-f0-9-]{36}$/i.test(leaseId || '')) {
             res.writeHead(400);
             res.end();
@@ -432,7 +461,7 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
         const cameraId =
           decodeURIComponent(url.pathname.replace('/frame/', '').trim()) ||
           'camera';
-        const source = sourceById.get(cameraId);
+        const source = await getCctvSources.resolve(cameraId);
         const priorHealth = health.get(cameraId);
         if (priorHealth?.retryAt > Date.now()) {
           const seconds = Math.max(
@@ -460,10 +489,24 @@ export function cctvProxy({ sourceRoot = process.cwd() } = {}) {
             ? source?.url
             : '');
 
-        const upstreamImage =
-          source?.sourceKind === 'txdot-its'
-            ? await fetchTxdotSnapshot(upstreamCandidate)
-            : await fetchCctvImageFromUpstream(upstreamCandidate);
+        const upstreamImage = await getFrame(
+          `${cameraId}:${upstreamCandidate}`,
+          async () =>
+            source?.sourceKind === 'txdot-its'
+              ? await fetchTxdotSnapshot(upstreamCandidate)
+              : await fetchCctvImageFromUpstream(upstreamCandidate),
+        );
+        if (upstreamImage?.busy) {
+          res.writeHead(503, {
+            'Content-Type': 'application/json',
+            'Retry-After': '2',
+            'Cache-Control': 'no-store',
+          });
+          res.end(
+            JSON.stringify({ error: 'Camera proxy busy; retry shortly' }),
+          );
+          return;
+        }
         if (upstreamImage?.ok) {
           setHealth(cameraId, {
             status: 'ok',

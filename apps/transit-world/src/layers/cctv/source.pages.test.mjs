@@ -54,7 +54,7 @@ test('an explicitly configured world provider remains available', async () => {
     'utf8',
   );
   assert.ok(source.includes('import.meta.env?.VITE_LEEWAY_WORLD_API_URL'));
-  const configured = source.replace(
+  const configured = source.replace("'./publicApiConfig.js'", JSON.stringify(new URL('../../leeway/publicApiConfig.js', import.meta.url).href)).replace(
     'import.meta.env?.VITE_LEEWAY_WORLD_API_URL',
     JSON.stringify('https://world.example.test/'),
   );

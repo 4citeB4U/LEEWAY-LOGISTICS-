@@ -44,7 +44,10 @@ export function createCctvSource({
 } = {}) {
   async function read(path, key, { signal } = {}) {
     signal?.throwIfAborted();
-    const response = await fetchImpl(path, { cache: 'no-store', signal });
+    const response = await fetchImpl(apiUrl(path), {
+      cache: 'no-store',
+      signal,
+    });
     if (!response.ok) throw new Error('Camera source HTTP ' + response.status);
     const payload = await response.json();
     signal?.throwIfAborted();

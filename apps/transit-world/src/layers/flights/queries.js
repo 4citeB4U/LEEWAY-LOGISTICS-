@@ -1,6 +1,7 @@
 import { approxDistanceKm as _approxDistanceKm } from './recordPolicy.js';
 import { displayedKinematics } from '../../data/motionModel.js';
 import * as Cesium from 'cesium';
+import { airlineIdentity } from '../../data/airlineIdentity.js';
 import { isExplicitLayerStateOrigin } from '../../data/layerState.js';
 import { modelVisualAnchor } from '../../data/modelVisualAnchor.js';
 import {
@@ -167,7 +168,11 @@ export function createQueries({
         flightState.records.missingPolls.get(icao24) ||
         flightState.feed._backoff,
       ),
-      airline: info?.airline ?? null,
+      airline: info?.airline || airlineIdentity(info?.callsign)?.name || null,
+      airlineIdentityBasis: info?.airline
+        ? 'provider'
+        : airlineIdentity(info?.callsign)?.basis || null,
+      schedule: info?.schedule ?? { status: 'unavailable' },
       // CLASS label follows the TR-3B conversion so every downstream card
       // (cockpit, Contacts, analyst) agrees with the triangle on screen.
       typeName: tr3bTypeLabel(icao24, info?.typeName ?? null),
@@ -667,7 +672,12 @@ export function createQueries({
           latitude: Cesium.Math.toDegrees(carto.latitude),
           longitude: Cesium.Math.toDegrees(carto.longitude),
           altitudeM: carto.height,
-          airline: info?.airline ?? null,
+          airline:
+            info?.airline || airlineIdentity(info?.callsign)?.name || null,
+          airlineIdentityBasis: info?.airline
+            ? 'provider'
+            : airlineIdentity(info?.callsign)?.basis || null,
+          schedule: info?.schedule ?? { status: 'unavailable' },
           typeName: info?.typeName ?? null,
           typeCode: info?.typeCode ?? null,
           registration: info?.registration ?? null,

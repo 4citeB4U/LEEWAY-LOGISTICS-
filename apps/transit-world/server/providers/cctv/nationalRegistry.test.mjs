@@ -25,8 +25,14 @@ test('seeded sources preserve verified authority and integration state', () => {
   assert.equal(wisconsin.name, 'Wisconsin');
   assert.equal(wisconsin.sources[0].integrationStatus, 'key-required');
   assert.equal(wisconsin.sources[0].evidenceState, 'VERIFIED');
+  const georgia = nationalTrafficCameraJurisdiction('GA');
+  assert.equal(georgia.sources[0].integrationStatus, 'key-required');
+  assert.equal(georgia.sources[0].mediaStatus, 'connector-built-key-blocked');
+  assert.equal(newYork.sources[0].mediaStatus, 'connector-built-key-blocked');
   assert.ok(newYork.sources.some((source) => source.system === '511NY'));
-  assert.ok(newYork.sources.some((source) => source.integrationStatus === 'integrated'));
+  assert.ok(
+    newYork.sources.some((source) => source.integrationStatus === 'integrated'),
+  );
   assert.equal(oregon.sources[0].system, 'TripCheck');
   assert.equal(oregon.sources[0].accessMethod, 'documented_api');
 });
