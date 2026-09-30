@@ -56,6 +56,7 @@ jobs:
           ./src/leeway/onboardingRequirements.test.mjs
           ./src/leeway/logisticsKnowledge.test.mjs
           ./src/leeway/worldApiBridge.test.mjs
+          ./src/leeway/nationalCameraCatalog.test.mjs
           ./src/leeway/routePlannerCore.test.mjs
           ./src/leeway/incomingAddress.test.mjs
           ./src/leeway/offlineTrip.test.mjs
