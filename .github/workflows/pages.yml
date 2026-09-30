@@ -100,6 +100,9 @@ jobs:
           ./server/providers/leeway-transit.test.mjs
           ./src/data/transitFeeds.test.mjs
 
+      - name: Verify location, rendering and camera regressions
+        run: node --test src/leeway/deviceLocation.test.mjs src/leeway/locationProvider.test.mjs src/data/restoreQueue.test.mjs src/layers/cctv/originSafety.test.mjs src/layers/cctv/navigation.scope.test.mjs src/data/cctvMediaRange.test.mjs
+
       - name: Refresh dated EIA regional diesel benchmark
         continue-on-error: true
         run: node scripts/refresh-fuel-benchmark.mjs
