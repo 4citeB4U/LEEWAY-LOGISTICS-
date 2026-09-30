@@ -37,6 +37,10 @@ jobs:
         run: >
           node --test
           ./src/leeway/nationalCameraCatalog.test.mjs
+          ./src/leeway/cctvExperience.test.mjs
+          ./server/providers/cctv/iteris511.test.mjs
+          ./server/providers/cctv/nationalRegistry.test.mjs
+          ./server/providers/cctv/globalRegistry.test.mjs
           ./src/leeway/productSplit.test.mjs
           ./src/leeway/publicApiConfig.test.mjs
           ./src/leeway/worldApiBridge.test.mjs
