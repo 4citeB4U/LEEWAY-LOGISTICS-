@@ -34,8 +34,6 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         input: {
           business: path.resolve(root, 'index.html'),
-          personal: path.resolve(root, 'personal/index.html'),
-          compare: path.resolve(root, 'compare.html'),
         },
       },
     },

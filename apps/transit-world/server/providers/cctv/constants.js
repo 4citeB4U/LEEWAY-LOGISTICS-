@@ -141,6 +141,30 @@ export const WISCONSIN_511_ANCHORS = [
   { lat: 42.7261, lon: -87.7829 }, // Racine
 ];
 
+/** New York 511 statewide keyed camera API. */
+export const NEWYORK_511_CAMERAS_URL = 'https://511ny.org/api/v2/get/cameras';
+export const NEWYORK_511_IMAGE_ORIGIN = 'https://511ny.org/map/Cctv/';
+export const DEFAULT_NEWYORK_511_MAX_SOURCES = 1000;
+export const NEWYORK_511_ANCHORS = [
+  { lat: 40.7128, lon: -74.006 }, // New York City
+  { lat: 42.8864, lon: -78.8784 }, // Buffalo
+  { lat: 43.1566, lon: -77.6088 }, // Rochester
+  { lat: 43.0481, lon: -76.1474 }, // Syracuse
+  { lat: 42.6526, lon: -73.7562 }, // Albany
+];
+
+/** Georgia 511 statewide keyed camera API. */
+export const GEORGIA_511_CAMERAS_URL = 'https://511ga.org/api/v2/get/cameras';
+export const GEORGIA_511_IMAGE_ORIGIN = 'https://511ga.org/map/Cctv/';
+export const DEFAULT_GEORGIA_511_MAX_SOURCES = 1000;
+export const GEORGIA_511_ANCHORS = [
+  { lat: 33.749, lon: -84.388 }, // Atlanta
+  { lat: 32.0809, lon: -81.0912 }, // Savannah
+  { lat: 33.4735, lon: -82.0105 }, // Augusta
+  { lat: 32.8407, lon: -83.6324 }, // Macon
+  { lat: 32.4609, lon: -84.9877 }, // Columbus
+];
+
 /** NYC DOT Traffic Management Center: public current-frame cameras across all five boroughs. */
 export const NYC_DOT_CAMERAS_URL = 'https://webcams.nyctmc.org/api/cameras/';
 export const NYC_DOT_IMAGE_ORIGIN = 'https://webcams.nyctmc.org/api/cameras/';

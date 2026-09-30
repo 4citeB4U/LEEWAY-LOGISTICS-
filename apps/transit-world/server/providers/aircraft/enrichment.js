@@ -1,3 +1,4 @@
+import { createScheduleLookup } from './schedules.js';
 import path from 'node:path';
 import { promises as fsp } from 'node:fs';
 /**
@@ -8,6 +9,7 @@ import { promises as fsp } from 'node:fs';
  * (MIT) server/src/enrich/routes.ts.
  */
 export function adsbdbProxy() {
+  const lookupSchedule = createScheduleLookup();
   const TTL_MS = 24 * 3600_000;
   const CACHE_PATH = path.join(process.cwd(), '.gev-cache', 'adsbdb.json');
   let cache = { routes: {}, aircraft: {} };
@@ -118,6 +120,12 @@ export function adsbdbProxy() {
         const [, kind, rawKey] = String(req.url || '')
           .split('?')[0]
           .split('/');
+        if (kind === 'schedule') {
+          const cs = String(rawKey || '').toUpperCase();
+          if (!/^[A-Z]{3}\d[A-Z0-9]{0,4}$/.test(cs))
+            return send(400, { error: 'invalid callsign' });
+          return send(200, { found: true, schedule: await lookupSchedule(cs) });
+        }
         if (kind === 'route') {
           const cs = String(rawKey || '').toUpperCase();
           if (!/^[A-Z0-9]{2,8}$/.test(cs))

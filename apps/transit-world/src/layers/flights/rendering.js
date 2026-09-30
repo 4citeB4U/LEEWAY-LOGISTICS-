@@ -1,4 +1,5 @@
 import * as Cesium from 'cesium';
+import { airlineIdentity } from '../../data/airlineIdentity.js';
 import { cyberSonarBaseAlpha } from '../../cyberSonar.js';
 import { selectModelEligible } from '../../data/modelEligibility.js';
 import { civilAircraftModelSpec } from './modelSpec.js';
@@ -58,7 +59,12 @@ export function createRendering({
    *  Ground traffic gets NO special tint (owner verdict 2026-07-03 field test). */
 
   function _fleetBillboardColor(icao24) {
-    return isMilitaryIcao(icao24) ? MIL_TINT : Cesium.Color.WHITE;
+    return isMilitaryIcao(icao24)
+      ? MIL_TINT
+      : Cesium.Color.fromCssColorString(
+          airlineIdentity(flightState.records.data.get(icao24)?.callsign)
+            ?.color || '#ffffff',
+        );
   }
 
   /** Fleet billboard scale: per-class scale, ×GROUND_SCALE while grounded. */
@@ -162,7 +168,12 @@ export function createRendering({
 
   function _modelColor(icao24) {
     if (icao24 === flightState._trackedIcao) return Cesium.Color.CYAN;
-    return isMilitaryIcao(icao24) ? MIL_TINT : Cesium.Color.WHITE;
+    return isMilitaryIcao(icao24)
+      ? MIL_TINT
+      : Cesium.Color.fromCssColorString(
+          airlineIdentity(flightState.records.data.get(icao24)?.callsign)
+            ?.color || '#ffffff',
+        );
   }
 
   /** The FLEET's 3D-model regime: models3d enabled AND the camera zoomed in past the altitude

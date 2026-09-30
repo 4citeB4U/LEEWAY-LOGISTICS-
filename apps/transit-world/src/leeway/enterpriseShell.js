@@ -192,7 +192,12 @@ export function mountEnterpriseShell(
   ];
   const layerCategories = {
     traffic: 'Transportation',
+    'traffic-incidents': 'Transportation',
+    'weather-alerts': 'Weather',
     transit: 'Transportation',
+    'transit-routes': 'Transportation',
+    'transit-stops': 'Transportation',
+    'transit-vehicles': 'Transportation',
     bikeshare: 'Transportation',
     directions: 'Transportation',
     flights: 'Transportation',
@@ -904,7 +909,9 @@ export function mountEnterpriseShell(
   async function handleSearch(value) {
     const q = String(value || '').trim();
     if (!q) return;
-    const state = readEnterpriseState();
+    const state = isBusiness
+      ? readEnterpriseState()
+      : { people: [], equipment: [], crm: { accounts: [] } };
     const person = state.people.find((row) =>
       row.name.toLowerCase().includes(q.toLowerCase()),
     );

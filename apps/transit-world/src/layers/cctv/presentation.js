@@ -112,6 +112,8 @@ export function createPresentation({
         : null,
       ageMinutes: Number.isFinite(camera.ageMinutes) ? camera.ageMinutes : null,
       warningAge: Boolean(camera.warningAge),
+      catalogStatus: camera.catalogStatus || '',
+      mediaLimitation: camera.mediaLimitation || '',
       calibration: {
         ...parts.calibration.normalizeCalibration(camera.calibration),
       },

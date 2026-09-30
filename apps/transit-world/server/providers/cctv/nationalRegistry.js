@@ -104,6 +104,21 @@ const SEEDED_SOURCES = Object.freeze({
         'Official camera directory exposes snapshots/streaming video; machine-readable reuse path still requires verification.',
     },
   ],
+  GA: [
+    {
+      operator: 'Georgia Department of Transportation',
+      system: '511GA',
+      accessMethod: 'documented_api',
+      integrationStatus: 'key-required',
+      mediaStatus: 'connector-built-key-blocked',
+      authRequired: true,
+      evidenceState: 'VERIFIED',
+      sourceUrl: 'https://511ga.org/developers/doc',
+      documentationUrl: 'https://511ga.org/help/endpoint/cameras',
+      notes:
+        'Statewide adapter implemented; a configured developer key and live verification are required.',
+    },
+  ],
   IA: [
     {
       operator: 'Iowa Department of Transportation',
@@ -138,13 +153,13 @@ const SEEDED_SOURCES = Object.freeze({
       system: '511NY',
       accessMethod: 'documented_api',
       integrationStatus: 'key-required',
-      mediaStatus: 'official-public',
+      mediaStatus: 'connector-built-key-blocked',
       authRequired: true,
       evidenceState: 'VERIFIED',
       sourceUrl: 'https://511ny.org/developers/help',
       documentationUrl: 'https://511ny.org/help/endpoint/cameras',
       notes:
-        'Documented Get Cameras API; developer key required; published throttling applies.',
+        'Statewide adapter implemented; developer key required; published throttling applies. This does not imply statewide live coverage.',
     },
     {
       operator: 'New York City Department of Transportation',

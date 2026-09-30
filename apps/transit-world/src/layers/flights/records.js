@@ -239,8 +239,18 @@ export class FlightRecords {
       typeCode: prevMeta?.typeCode ?? null,
       typeName: prevMeta?.typeName ?? null,
       registration: prevMeta?.registration ?? null,
-      airline: prevMeta?.airline ?? null,
-      route: prevMeta?.route ?? null,
+      airline:
+        prevMeta?.callsign === stickyText(callsign, prevMeta?.callsign)
+          ? (prevMeta?.airline ?? null)
+          : null,
+      schedule:
+        prevMeta?.callsign === String(callsign || '').trim()
+          ? (prevMeta?.schedule ?? null)
+          : null,
+      route:
+        prevMeta?.callsign === stickyText(callsign, prevMeta?.callsign)
+          ? (prevMeta?.route ?? null)
+          : null,
       // The RAW poll fix lat/lon (this tick's OpenSky state-vector
       // coords, pre-dead-reckon) — kept distinct from the continuously
       // dead-reckoned billboard position for any consumer that needs the

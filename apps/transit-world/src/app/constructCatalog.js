@@ -1,3 +1,5 @@
+import { createWeatherAlertsLayer } from '../layers/weather/alerts.js';
+import { createTrafficIncidentsLayer } from '../layers/traffic/incidents.js';
 import { createWeatherClock } from '../layers/weather/clock.js';
 import { createWeatherLayer } from '../layers/weather/index.js';
 import { createCyclonesLayer } from '../layers/cyclones/index.js';
@@ -15,6 +17,8 @@ import { createApplicationBikeshare } from './layers/bikeshare.js';
 import { createApplicationDirections } from './layers/directions.js';
 import { createApplicationRecentImagery } from './layers/recentImagery.js';
 import { createApplicationTransit } from './layers/transit.js';
+import { createTransitNetworkLayer } from '../layers/transit/network.js';
+import * as transitPicking from '../data/pickRegistry.js';
 import { createApplicationInstallations } from './layers/militaryInstallations.js';
 import { createApplicationSatellites } from './layers/satellites.js';
 import { createApplicationLaunches } from './layers/rocketLaunches.js';
@@ -153,9 +157,14 @@ export function createApplicationCatalog({
         satellites,
         createApplicationLaunches({ source: sources.launches, satellites }),
         createApplicationTraffic({ source: sources.traffic }),
+        createTrafficIncidentsLayer(),
+        createWeatherAlertsLayer(),
         createApplicationCctv({ surface, source: sources.cctv }),
         createApplicationRadio({ surface, source: sources.radio }),
         createApplicationTransit({ surface, source: sources.transit }),
+        createTransitNetworkLayer({ kind: 'routes', services: { picking: transitPicking } }),
+        createTransitNetworkLayer({ kind: 'stops', services: { picking: transitPicking } }),
+        createTransitNetworkLayer({ kind: 'vehicles', services: { picking: transitPicking } }),
         createApplicationBikeshare({ source: sources.bikeshare }),
         createApplicationDirections(),
         createApplicationRecentImagery(),
