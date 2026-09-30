@@ -18,6 +18,17 @@ import { mountFuelLedger } from './fuelLedger.js';
 import { mountLoadComparison } from './loadComparison.js';
 import { mapIcon } from './mapIcons.js';
 import { mountExperiencePreferences } from './experiencePreferences.js';
+import { openNearestCctv } from './cctvExperience.js';
+import { mountFeatureCenter } from './featureCenter.js';
+import { featureCatalogForEdition } from './productFeatureCatalog.js';
+import { mountMunicipalTransitWorkspace, municipalTransitTabForDomain } from './municipalTransitWorkspace.js';
+
+const LOGISTICS_HIDDEN_LAYER_IDS = new Set([
+  'flights',
+  'military',
+  'local-adsb',
+  'military-awareness',
+]);
 
 function ensureStyles(documentRef) {
   if (documentRef.getElementById('leeway-enterprise-shell-styles')) return;
@@ -164,6 +175,7 @@ function icon(name) {
       freight: '▰',
       three: '◆',
       locate: '⌾',
+      features: '◎',
     }[name] || '•'
   );
 }
@@ -243,7 +255,7 @@ export function mountEnterpriseShell(
         <button class="lws-chip" data-action="route">Directions</button>
         <button class="lws-chip hide-sm" data-action="layers">▱ Layers⌄</button>
         ${isBusiness ? '<button class="lws-chip hide-sm" data-action="workspace">Sales & CRM</button>' : ''}
-        <button class="lws-chip" data-action="roadside">Road stops</button>${isBusiness ? '<button class="lws-chip" data-action="workspace-menu">Business</button>' : ''}<button class="lws-chip hide-sm" data-action="map-only">Hide controls</button>
+        <button class="lws-chip" data-action="roadside">Road stops</button>${isBusiness ? '<button class="lws-chip" data-action="workspace-menu">Business</button>' : ''}<button class="lws-chip" data-action="capabilities">Capabilities</button><button class="lws-chip hide-sm" data-action="map-only">Hide controls</button>
         <div class="lws-avatar">AL</div><div class="lws-agent-status">Agent Lee · Copilot<br>Open to connect</div>
       </div>
     </header>
@@ -258,6 +270,7 @@ export function mountEnterpriseShell(
             ['rail', 'Rail'],
             ['facilities', 'Facilities'],
             ['crm', 'CRM'],
+            ['features', 'Features'],
             ['intel', 'Intelligence'],
             ['ai', 'AI'],
           ]
@@ -287,7 +300,7 @@ export function mountEnterpriseShell(
       ${[
         ['layers', 'Layers'],
         ['traffic', 'Traffic'],
-        ['flights', 'Flights'],
+        ...(isBusiness ? [['cctv', 'CCTV']] : [['flights', 'Flights']]),
         ['weather', 'Weather'],
       ]
         .map(
@@ -302,6 +315,7 @@ export function mountEnterpriseShell(
       <button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Language and music</span></button>
       ${(isBusiness
         ? [
+            ['cockpit', 'Cockpit'],
             ['transit', 'Transit'],
             ['freight', 'Freight'],
             ['rail', 'Rail'],
@@ -322,7 +336,7 @@ export function mountEnterpriseShell(
     <div class="lws-location-badge" data-location-badge><strong>WORLD</strong><span>Geographic identification loading…</span></div>
     <aside class="lws-context-inspector" data-context-inspector></aside>
     <div class="lws-right-tabs" aria-label="Right-side information panels">
-      <button class="lws-right-tab" data-action="right-ops" type="button">OPS</button>
+      <button class="lws-right-tab" data-action="right-ops" type="button">COCKPIT</button>
       <button class="lws-right-tab" data-action="right-cctv" type="button">CCTV</button>
       <button class="lws-right-tab" data-action="right-weather" type="button">WEATHER</button>
       <button class="lws-right-tab" data-action="right-national" type="button">NATION</button>
@@ -487,10 +501,14 @@ export function mountEnterpriseShell(
   cctvPanel?.addEventListener('leeway:cctv-frame-ready', confirmWorkingCctv);
 
   function renderLayerMenu() {
-    const rows = (dataManager?.getAll?.() || []).map((row) => ({
-      ...row,
-      category: layerCategories[row.id] || 'Special',
-    }));
+    const rows = (dataManager?.getAll?.() || [])
+      .filter(
+        (row) => !isBusiness || !LOGISTICS_HIDDEN_LAYER_IDS.has(row.id),
+      )
+      .map((row) => ({
+        ...row,
+        category: layerCategories[row.id] || 'Special',
+      }));
 
     const groups = new Map(layerCategoryOrder.map((name) => [name, []]));
     for (const row of rows) {
@@ -637,6 +655,124 @@ export function mountEnterpriseShell(
     onFuel: (price, source) => {
       routing.setFuelPrice(price, source);
       routing.open();
+    },
+  });
+
+  async function enableTransitSuite() {
+    const requested = [
+      'transit',
+      'transit-routes',
+      'transit-stops',
+      'transit-vehicles',
+    ];
+    const results = [];
+    for (const id of requested) {
+      if (!dataManager?.layers?.has(id)) continue;
+      try {
+        if (!dataManager.isEnabled?.(id))
+          await dataManager.setEnabled(id, true, { origin: 'user' });
+        results.push(id);
+      } catch {}
+    }
+    say(
+      results.length
+        ? `Transit operations layers enabled · ${results.join(', ')}`
+        : 'Transit layers are unavailable in this build',
+    );
+    return results.length > 0;
+  }
+
+  function openFuelTools() {
+    routing.open();
+    for (const details of document.querySelectorAll(
+      '.lw-fuel-advisor details, .lw-fuel-ledger > details',
+    )) {
+      details.open = true;
+    }
+    say('Fuel, range and cost tools opened');
+  }
+
+  const municipalTransit = isBusiness
+    ? mountMunicipalTransitWorkspace({
+        dataManager,
+        notify: say,
+      })
+    : {
+        open() {},
+        close() {},
+        refresh() {},
+        destroy() {},
+      };
+
+  const featureCenter = mountFeatureCenter({
+    catalog: featureCatalogForEdition(isBusiness ? 'business' : 'personal'),
+    edition: isBusiness ? 'business' : 'personal',
+    onAction: async (actionName, featureDomain) => {
+      featureCenter.close();
+      if (actionName === 'routing') {
+        routing.open();
+        say(`${featureDomain.label} · route tools opened`);
+        return true;
+      }
+      if (actionName === 'layers') {
+        toggleLayerMenu(true);
+        return true;
+      }
+      if (actionName === 'offline') {
+        routing.open();
+        const offlineDetails = [...routing.root.querySelectorAll('details')].find(
+          (details) => /offline/i.test(details.textContent || ''),
+        );
+        if (offlineDetails) offlineDetails.open = true;
+        say('Offline trip controls opened');
+        return true;
+      }
+      if (actionName === 'roadside') {
+        roadside.toggle();
+        return true;
+      }
+      if (actionName === 'fuel') {
+        openFuelTools();
+        return true;
+      }
+      if (actionName === 'community') {
+        hazardReports.root.hidden = false;
+        say('Community hazard and safety reporting opened');
+        return true;
+      }
+      if (actionName === 'transit') {
+        const enabled = await enableTransitSuite();
+        if (isBusiness && featureDomain?.state === 'transit-hub') {
+          municipalTransit.open(municipalTransitTabForDomain(featureDomain.id));
+        }
+        return enabled;
+      }
+      if (actionName === 'cctv') {
+        setRightPanel('cctv', { toggle: false });
+        const opened = await openNearestCctv(dataManager, {
+          origin: 'user',
+          durationSec: 1.4,
+        });
+        say(
+          opened.ok
+            ? `CCTV · ${opened.camera?.name || opened.cameraId}`
+            : `CCTV catalog opened · ${opened.reason}`,
+        );
+        return opened.ok;
+      }
+      if (actionName === 'preferences') {
+        preferences.open();
+        return true;
+      }
+      if (actionName === 'cockpit') {
+        setRightPanel('ops', { toggle: false });
+        return true;
+      }
+      if (actionName === 'workspace') {
+        workspace.open(); return true;
+      }
+      toggleLayerMenu(true);
+      return true;
     },
   });
   function toggleRoutePlanner(open = null) {
@@ -832,14 +968,22 @@ export function mountEnterpriseShell(
       () => void updateLocationBadge(),
     ) || null;
 
-  async function locate(query) {
+  async function locate(query, { altitude = 6000 } = {}) {
     if (!query || !viewer) return false;
     try {
       const matches = await locationSearch.search(query);
       const point = matches[0];
       if (!point) throw new Error('No matching location');
+      const requestedAltitude = Number(altitude);
+      const safeAltitude = Number.isFinite(requestedAltitude)
+        ? Math.max(1000, requestedAltitude)
+        : 6000;
       await viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(point.lon, point.lat, 6000),
+        destination: Cesium.Cartesian3.fromDegrees(
+          point.lon,
+          point.lat,
+          safeAltitude,
+        ),
         duration: 1.2,
       });
       say(
@@ -869,6 +1013,50 @@ export function mountEnterpriseShell(
   const nationalCatalog = mountNationalCameraCatalog({
     host: shell,
     notify: say,
+    onJurisdictionSelect: async (row, action) => {
+      const name = String(row?.name || '').trim();
+      if (!name) return false;
+      const altitude =
+        row?.type === 'federal-district'
+          ? 85000
+          : row?.type === 'territory'
+            ? 300000
+            : 500000;
+      const found = await locate(
+        `${name}, ${row?.country || 'United States'}`,
+        { altitude },
+      );
+      if (!found) return false;
+
+      nationalCatalog.close();
+      if (!action?.canViewCameras) {
+        setRightPanel(null, { toggle: false });
+        if (action?.requiredCredential) {
+          say(
+            `${name} camera connector is ready · add ${action.requiredCredential} to activate it`,
+          );
+        } else {
+          say(
+            `${name} located · no verified integrated camera feed is registered yet`,
+          );
+        }
+        return true;
+      }
+
+      setRightPanel('cctv', { toggle: false });
+      const opened = await openNearestCctv(dataManager, {
+        origin: 'user',
+        durationSec: 1.4,
+      });
+      if (!opened.ok) {
+        say(`${name} camera catalog opened · ${opened.reason}`);
+        return true;
+      }
+      say(
+        `${name} CCTV · ${opened.camera?.name || opened.cameraId} · ${opened.camera?.provider || 'official provider'}`,
+      );
+      return true;
+    },
   });
 
   function setNav(id) {
@@ -1021,12 +1209,18 @@ export function mountEnterpriseShell(
       }
       if (id === 'transit') {
         workspace.close();
-        await toggleLayer('transit');
+        await enableTransitSuite();
+        municipalTransit.open('cadavl');
         return;
       }
       if (id === 'rail') {
         workspace.close();
         say('Rail operating view ready for rail provider binding');
+        return;
+      }
+      if (id === 'features') {
+        workspace.close();
+        featureCenter.open();
         return;
       }
       if (id === 'intel') {
@@ -1059,6 +1253,10 @@ export function mountEnterpriseShell(
     }
     if (action === 'roadside') {
       roadside.toggle();
+      return;
+    }
+    if (action === 'capabilities') {
+      featureCenter.toggle();
       return;
     }
     if (action === 'peer-comms') {
@@ -1175,6 +1373,23 @@ export function mountEnterpriseShell(
       await toggleLayer('traffic');
       return;
     }
+    if (dock === 'cctv') {
+      nationalCatalog.close();
+      setRightPanel('cctv', { toggle: false });
+      say('Loading nearest public traffic camera…');
+      const opened = await openNearestCctv(dataManager, {
+        origin: 'user',
+        durationSec: 1.4,
+      });
+      if (opened.ok) {
+        say(
+          `CCTV · ${opened.camera?.name || opened.cameraId} · ${opened.camera?.provider || 'official provider'}`,
+        );
+      } else {
+        say(`CCTV unavailable in this view · ${opened.reason}`);
+      }
+      return;
+    }
     if (dock === 'flights') {
       await toggleLayer('flights');
       say(
@@ -1186,8 +1401,19 @@ export function mountEnterpriseShell(
       openWeather();
       return;
     }
+    if (dock === 'cockpit') {
+      nationalCatalog.close();
+      setRightPanel('ops', { toggle: false });
+      document
+        .getElementById('leeway-transit-world')
+        ?.querySelector?.('[data-action="driver-view"]')
+        ?.click?.();
+      say('Driver & Load Cockpit opened');
+      return;
+    }
     if (dock === 'transit') {
-      await toggleLayer('transit');
+      await enableTransitSuite();
+      municipalTransit.open('cadavl');
       return;
     }
     if (dock === 'freight') {
@@ -1374,6 +1600,8 @@ export function mountEnterpriseShell(
       mapReports.destroy();
       routing.destroy();
       roadside.destroy();
+      featureCenter.destroy();
+      municipalTransit.destroy();
       nationalCatalog.destroy();
       workspace.destroy();
       shell.remove();
