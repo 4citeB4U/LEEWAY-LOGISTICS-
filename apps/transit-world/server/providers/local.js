@@ -27,6 +27,7 @@ import { weatherProxy } from './weather.js';
 import { firePerimetersProxy } from './firePerimeters.js';
 import { cycloneProxy } from './cyclones.js';
 import { windProxy } from './wind.js';
+import { leewayEcosystemProxy } from './leeway-ecosystem.js';
 import { agentLeeVoiceProxy } from './agent-lee-voice.js';
 import { hazardReportsPlugin } from './hazardReports.js';
 import { peerSignalingPlugin } from './peerSignaling.js';
@@ -62,6 +63,7 @@ function localProviderPlugins() {
     openAiRealtimeProxy(),
     googlePlacesContextProxy(),
     windProxy(),
+    leewayEcosystemProxy(),
     weatherProxy(),
     cycloneProxy(),
     firePerimetersProxy(),

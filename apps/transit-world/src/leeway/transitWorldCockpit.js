@@ -1,15 +1,10 @@
 import * as Cesium from 'cesium';
 import { summarizeTruckRouteSafety } from './truckRoutePolicy.js';
-import {
-  buildStaticCockpit,
-  buildStaticFleet,
-  fetchStaticRoute,
-  isStaticPagesMode,
-} from './pagesFallback.js';
+import { operationalCockpit, operationalFleet } from './operationalData.js';
 
 const WORLD_LAYER_IDS = Object.freeze([
   'transit',
-  'traffic',
+  'traffic-incidents',
   'weather-radar',
   'weather-satellite',
   'weather-lightning',
@@ -17,7 +12,8 @@ const WORLD_LAYER_IDS = Object.freeze([
 ]);
 
 function minutesLabel(value) {
-  const minutes = Math.max(0, Number(value) || 0);
+  if (value == null || !Number.isFinite(Number(value))) return 'UNAVAILABLE';
+  const minutes = Math.max(0, Number(value));
   const hours = Math.floor(minutes / 60);
   const remainder = Math.round(minutes % 60);
   return hours ? `${hours}h ${remainder}m` : `${remainder}m`;
@@ -231,7 +227,7 @@ function buildPanel(documentRef, { edition = 'business' } = {}) {
     <section class="ltw-section">
       <div class="ltw-actions">
         <button type="button" data-action="driver-view">DRIVER VIEW</button>
-        <button type="button" data-action="route-view">SHOW LOAD ROUTE (DEMO)</button>
+        <button type="button" data-action="route-view">SHOW ACTIVE LOAD ROUTE</button>
         <button type="button" data-action="world-awareness">WORLD AWARENESS</button>
         <button type="button" data-action="refresh">REFRESH</button>
       </div>
@@ -244,7 +240,7 @@ function buildPanel(documentRef, { edition = 'business' } = {}) {
       </div><button class="ltw-close" type="button" data-action="close" aria-label="Close trip operations">×</button>
     </div>
     <section class="ltw-section"><h3>ACTIVE TRIP</h3><div class="ltw-route">Enter real street addresses in Directions to begin a trip. Your active route remains visible when the network drops after it has been saved.</div></section>
-    <section class="ltw-section"><h3>ROAD AWARENESS</h3><div class="ltw-grid"><div><div class="ltw-label">Traffic</div><div class="ltw-value">Live when connected</div></div><div><div class="ltw-label">Weather</div><div class="ltw-value">Radar · clouds · lightning</div></div><div><div class="ltw-label">Cameras</div><div class="ltw-value">Public feeds · source labeled</div></div><div><div class="ltw-label">Flights</div><div class="ltw-value">Tail · origin · destination</div></div></div></section>
+    <section class="ltw-section"><h3>ROAD AWARENESS</h3><div class="ltw-grid"><div><div class="ltw-label">Traffic</div><div class="ltw-value">Official incidents · coverage limited</div></div><div><div class="ltw-label">Weather</div><div class="ltw-value">Radar · clouds · lightning</div></div><div><div class="ltw-label">Cameras</div><div class="ltw-value">Public feeds · source labeled</div></div><div><div class="ltw-label">Flights</div><div class="ltw-value">Tail · origin · destination</div></div></div></section>
     <section class="ltw-section"><h3>PRIVACY</h3><div class="ltw-value">Business loads, fleet, employees, CRM, and dispatch records are excluded from LeeWay Maps Personal.</div></section>
     <section class="ltw-section"><div class="ltw-actions"><button type="button" data-action="world-awareness">TURN ON ROAD AWARENESS</button><button type="button" data-action="refresh">REFRESH MAP STATUS</button></div></section>
   `;
@@ -277,41 +273,23 @@ export async function mountLeeWayTransitWorld(
       );
       return { cockpit: null, fleet: null, routePayload: null, safety: null };
     }
-    const staticPagesMode = isStaticPagesMode();
-    let fallbackUsed = staticPagesMode;
-    if (staticPagesMode) {
-      cockpit = buildStaticCockpit();
-      fleet = buildStaticFleet();
-    } else {
-      const [cockpitResult, fleetResult] = await Promise.allSettled([
-        fetchJson('/api/leeway-transit/driver-cockpit'),
-        fetchJson('/api/leeway-transit/vehicles'),
-      ]);
-      cockpit =
-        cockpitResult.status === 'fulfilled'
-          ? cockpitResult.value
-          : buildStaticCockpit();
-      fleet =
-        fleetResult.status === 'fulfilled'
-          ? fleetResult.value
-          : buildStaticFleet();
-      fallbackUsed =
-        cockpitResult.status !== 'fulfilled' ||
-        fleetResult.status !== 'fulfilled';
-    }
+    const [cockpitResult, fleetResult] = await Promise.allSettled([
+      fetchJson('/api/leeway-transit/driver-cockpit'),
+      fetchJson('/api/leeway-transit/vehicles'),
+    ]);
+    cockpit = operationalCockpit(cockpitResult.status === 'fulfilled' ? cockpitResult.value : null);
+    fleet = operationalFleet(fleetResult.status === 'fulfilled' ? fleetResult.value : null);
     const safety = summarizeTruckRouteSafety(cockpit.truckProfile, []);
     const routeUrl = routeRequestUrl(cockpit.route);
     const routePayload = !showRoute
       ? null
-      : staticPagesMode
-        ? await fetchStaticRoute(cockpit.route)
-        : routeUrl
+      : routeUrl
           ? await fetchJson(routeUrl)
           : null;
     if (showRoute) routeEntity = renderRoute(viewer, routePayload, cockpit);
 
     setText(root, 'mode', cockpit.mode);
-    setText(root, 'data-source', fallbackUsed ? 'TRAINING DATA' : 'LIVE HUB');
+    setText(root, 'data-source', cockpit.mode === 'NOT CONNECTED' ? 'OPERATIONS NOT CONNECTED' : 'LIVE HUB');
     setText(
       root,
       'vehicle',
@@ -388,7 +366,7 @@ export async function mountLeeWayTransitWorld(
       setText(
         root,
         'world-status',
-        `Requested: ${results.join(', ') || 'no layers'}${isStaticPagesMode() ? ' · GitHub Pages demo mode' : ''}`,
+        `Requested: ${results.join(', ') || 'no layers'}`,
       );
       return;
     }

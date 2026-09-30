@@ -1,17 +1,15 @@
 import * as Cesium from 'cesium';
 import { discoverModels, prepareModel, runtimeBase } from './agentRuntime.js';
 import { PhoneRelay } from './phoneRelay.js';
-import { loadBrowserVoiceLibrary, voiceStorageStatus } from './browserVoice.js';
+import { createVoiceFabricAdapter } from './voiceFabric.js';
 import { createAgentLeeToolRuntime } from './agentLeeTools.js';
 import { BrowserCopilotMedia } from './browserCopilotMedia.js';
 import { executeCopilotCommand } from './copilotCommands.js';
-import { requestCloneSpeech } from './cloneVoice.js';
 import { mapIcon } from './mapIcons.js';
 import { getLanguage, translate } from './experienceLocale.js';
 
 const DEFAULT_MODEL = 'gemma4:e4b';
 const DEFAULT_ENDPOINT = '';
-const AGENT_LEE_TTS_ENDPOINT = '';
 const MAX_SPOKEN_RESPONSE_CHARS = 1200;
 
 function loadSetting(key, fallback) {
@@ -343,12 +341,9 @@ export function mountAgentLeeGemma(application, shell = null) {
       <datalist id="lal-models"></datalist>
       <div class="lal-row"><button class="lal-btn" data-action="discover">Check models</button><button class="lal-btn" data-action="download">Download selected model</button><button class="lal-btn" data-action="cancel-download" hidden>Cancel download</button></div>
       <p class="lal-note" data-runtime-note>Only models exposed by your configured runtime can be detected and reused. This website cannot scan models in other phone apps. Download uses storage on that runtime. Browser-local Gemma is not configured.</p>
-      <label>Voice provider<select class="lal-input" data-setting="voice-provider"><option value="browser">Chatterbox · on this device</option><option value="kernel">LeeWay verified clone service</option><option value="http">External audio adapter</option></select></label>
-      <button class="lal-btn" type="button" data-action="voice-test">Play voice sample</button>
-      <div class="lal-row"><button class="lal-btn" data-action="voice-check">Check voice storage</button><button class="lal-btn" data-action="voice-load">Prepare Chatterbox (~1.5 GB)</button><button class="lal-btn" data-action="voice-unload">Unload / cancel</button></div>
-      <p class="lal-note">Optional Chatterbox download uses this browser's storage and network. Complete cached model files are reused. Voice One · calm delivery · 1.1× pace. Phone speed and voice quality require an audition. Mapping never requires this download.</p>
-      <details><summary>Voice service address</summary><label>Audio endpoint<input class="lal-input" data-setting="tts" aria-label="External speech adapter URL" placeholder="https://your-voice-service.example/tts" /></label><p class="lal-note">LeeWay clone mode verifies the service's voice identity, then loads its returned audio file. The generic external adapter must return audio directly. Configure an address reachable from this device; localhost on a phone means that phone. No different voice is substituted when a service fails.</p></details>
-      </details><div class="lal-note" data-voice-status>Browser Chatterbox is available to prepare. No voice model has been downloaded by this page.</div>
+      <p class="lal-note">Agent Lee Voice One is provided by the external LeeWay Voice Fabric. Voice preparation is optional; directions and map controls work without it.</p>
+      <div class="lal-row"><button class="lal-btn" data-action="voice-load">Connect Voice Fabric</button><button class="lal-btn" data-action="voice-test">Play voice sample</button><button class="lal-btn" data-action="voice-unload">Disconnect voice</button></div>
+      </details><div class="lal-note" data-voice-status>Voice Fabric is not prepared. No voice engine is embedded in this map.</div>
       <p class="lal-note" data-talk-status>Talk is push-to-talk. It requests this browser’s microphone only when pressed, puts the transcript in the text field, and then asks Agent Lee. Recognition availability depends on the browser and its permission.</p>
     </div>
   `;
@@ -363,25 +358,17 @@ export function mountAgentLeeGemma(application, shell = null) {
   const voiceButton = root.querySelector('[data-action="voice"]');
   const talkButton = root.querySelector('[data-action="talk"]');
   const talkStatus = root.querySelector('[data-talk-status]');
-  const ttsInput = root.querySelector('[data-setting="tts"]');
   const voiceStatus = root.querySelector('[data-voice-status]');
   const runtimeNote = root.querySelector('[data-runtime-note]');
   const provider = root.querySelector('[data-setting="provider"]');
   const phoneStatus = root.querySelector('[data-phone-status]');
-  const voiceProvider = root.querySelector('[data-setting="voice-provider"]');
-  let browserVoice = null;
-  let voicePreparationEpoch = 0;
   const phone = new PhoneRelay();
   const history = [];
   let generation = 0;
   let replyController = null;
-  let voiceController = null;
   let downloadController = null;
   let probeEpoch = 0;
   let voiceEnabled = loadSetting('leeway.agentLee.voice', 'on') !== 'off';
-  let activeAudio = null;
-  let activeAudioUrl = null;
-  let queuedAudio = null;
   const copilotMedia = new BrowserCopilotMedia((event) =>
     console.info('Agent Lee media:', event),
   );
@@ -417,162 +404,36 @@ export function mountAgentLeeGemma(application, shell = null) {
       state || (voiceEnabled ? 'VOICE ON' : 'VOICE OFF');
   }
 
+  const fabricVoice = createVoiceFabricAdapter({ onState(state) {
+    voiceStatus.textContent = state.message || `Voice Fabric: ${state.status}`;
+  } });
+  let voiceReady = false;
+  let speechEpoch = 0;
   function stopVoicePlayback() {
+    speechEpoch++;
     conversationState('idle');
-    browserVoice?.stop();
-    voiceController?.abort();
-    voiceController = null;
-    if (activeAudio) {
-      try {
-        activeAudio.pause();
-      } catch {}
-      activeAudio = null;
-    }
-    if (activeAudioUrl) {
-      URL.revokeObjectURL(activeAudioUrl);
-      activeAudioUrl = null;
-    }
-    queuedAudio = null;
+    void fabricVoice.stop({ mute: !voiceEnabled }).catch(() => {});
   }
-
   async function speakAgentLee(content) {
     if (!voiceEnabled) return false;
-    const text = String(content || '')
-      .trim()
-      .slice(0, MAX_SPOKEN_RESPONSE_CHARS);
-    if (!text) return false;
-    conversationState('thinking', 'Preparing your voice reply…');
-    if (voiceProvider.value === 'browser') {
-      if (getLanguage().code !== 'en') {
-        voiceStatus.textContent =
-          'This Chatterbox adapter is qualified for English only. Choose a voice service that supports your selected language. No substitute was used.';
-        conversationState('idle');
-        return false;
-      }
-      if (!browserVoice?.ready) {
-        voiceStatus.textContent =
-          'Prepare Chatterbox in Model and voice setup to speak locally. Your text reply is ready.';
-        return false;
-      }
-      stopVoicePlayback();
-      const epoch = generation;
-      const controller = new AbortController();
-      voiceController = controller;
-      try {
-        await browserVoice.speak(text, {
-          signal: controller.signal,
-          onState: (message) => {
-            if (epoch === generation && !controller.signal.aborted)
-              voiceStatus.textContent = message;
-          },
-        });
-        conversationState('idle');
-        if (epoch === generation) syncVoiceButton();
-        return true;
-      } catch (error) {
-        if (!controller.signal.aborted && epoch === generation)
-          voiceStatus.textContent = `Browser voice unavailable: ${error.message}. Text remains available.`;
-        return false;
-      }
-    }
-    if (
-      voiceProvider.value === 'http' &&
-      provider.value === 'phone' &&
-      !ttsInput.value.trim()
-    ) {
-      voiceStatus.textContent = 'Checking native phone speech capability…';
-      try {
-        const sensory = await phone.command('sensory.status');
-        voiceStatus.textContent = `Native Android speech status: ${JSON.stringify(sensory).slice(0, 200)}. This is not Chatterbox. Remote playback is off until cancellation is available; configure the Chatterbox audio adapter for browser playback.`;
-      } catch (error) {
-        voiceStatus.textContent = `Phone voice unavailable: ${error.message}`;
-      }
+    if (!voiceReady) {
+      voiceStatus.textContent = 'Connect Voice Fabric to hear Agent Lee. Your text reply is ready.';
       return false;
     }
-    if (!ttsInput.value.trim()) {
-      voiceStatus.textContent =
-        'Set your voice service address in Model and voice setup. Your text reply is ready.';
-      return false;
-    }
+    const text = String(content || '').slice(0, MAX_SPOKEN_RESPONSE_CHARS);
     stopVoicePlayback();
-    const epoch = generation;
-    const controller = new AbortController();
-    voiceController = controller;
-    syncVoiceButton('VOICE …');
+    const epoch = speechEpoch;
     try {
-      const signal = AbortSignal.any([
-        controller.signal,
-        AbortSignal.timeout(120000),
-      ]);
-      let blob;
-      let verifiedVoice = false;
-      if (voiceProvider.value === 'kernel') {
-        voiceStatus.textContent =
-          'Verifying LeeWay clone and preparing speech…';
-        const speech = await requestCloneSpeech({
-          endpoint: ttsInput.value.trim(),
-          text,
-          language: getLanguage().voice,
-          signal,
-        });
-        blob = speech.blob;
-        verifiedVoice = true;
-      } else {
-        const response = await fetch(runtimeBase(ttsInput.value.trim()), {
-          signal,
-          method: 'POST',
-          headers: {
-            Accept: 'audio/wav,audio/*;q=0.9,*/*;q=0.1',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ text, language: getLanguage().voice }),
-        });
-        if (!response.ok)
-          throw new Error(`Agent Lee voice HTTP ${response.status}`);
-        blob = await response.blob();
-      }
-      if (controller.signal.aborted || epoch !== generation || !voiceEnabled)
-        return false;
-      if (!blob.type.startsWith('audio/'))
-        throw new Error('Speech adapter did not return audio');
-      if (!blob.size) throw new Error('Agent Lee voice returned empty audio');
-      voiceController = null;
-      activeAudioUrl = URL.createObjectURL(blob);
-      activeAudio = new Audio(activeAudioUrl);
-      activeAudio.preload = 'auto';
-      activeAudio.addEventListener(
-        'ended',
-        () => {
-          stopVoicePlayback();
-          syncVoiceButton();
-        },
-        { once: true },
-      );
-      try {
-        await activeAudio.play();
-        conversationState(
-          'speaking',
-          'Agent Lee is speaking. Tap the microphone to interrupt.',
-        );
-        syncVoiceButton('SPEAKING');
-        voiceStatus.textContent = verifiedVoice
-          ? 'Verified LeeWay clone audio playing. Audibility and microphone interruption still require device testing.'
-          : 'Adapter audio playing. Voice identity and acoustic quality require device testing.';
-      } catch (error) {
-        queuedAudio = activeAudio;
-        syncVoiceButton('PLAY VOICE');
-        console.warn(
-          'Agent Lee voice is ready but browser playback needs a click:',
-          error,
-        );
-      }
+      fabricVoice.resume();
+      syncVoiceButton('SPEAKING');
+      await fabricVoice.speak(text);
+      if (epoch === speechEpoch) syncVoiceButton();
       return true;
     } catch (error) {
-      if (controller.signal.aborted || epoch !== generation) return false;
-      voiceStatus.textContent = `Speech unavailable: ${error.message}. Text remains available.`;
-      syncVoiceButton('VOICE !');
-      console.warn('Agent Lee local clone voice failed:', error);
-      setTimeout(() => syncVoiceButton(), 1800);
+      if (epoch === speechEpoch) {
+        voiceStatus.textContent = `Voice Fabric unavailable: ${error.message}. Text and map controls remain available.`;
+        syncVoiceButton();
+      }
       return false;
     }
   }
@@ -586,13 +447,6 @@ export function mountAgentLeeGemma(application, shell = null) {
     DEFAULT_ENDPOINT,
   );
 
-  ttsInput.value = loadSetting('leeway.agentLee.tts', AGENT_LEE_TTS_ENDPOINT);
-  ttsInput.addEventListener('change', () => {
-    stopVoicePlayback();
-    saveSetting('leeway.agentLee.tts', ttsInput.value.trim());
-    voiceStatus.textContent =
-      'Speech adapter changed; unverified until a reply plays.';
-  });
   function persist() {
     saveSetting(
       'leeway.agentLee.model',
@@ -860,69 +714,23 @@ export function mountAgentLeeGemma(application, shell = null) {
   root
     .querySelector('[data-action="discover"]')
     .addEventListener('click', probe);
-  const showVoiceStorage = async () => {
-    const storage = await voiceStorageStatus();
-    voiceStatus.textContent = `${storage.cachedFiles} Chatterbox files found in this browser's cache. ${storage.available === null ? 'Storage quota unavailable.' : `${(storage.available / 1e9).toFixed(1)} GB free; approximately ${(storage.required / 1e9).toFixed(1)} GB additional capacity required.`} Cache files are not proof of a loaded runtime.`;
-    return storage;
-  };
-  root
-    .querySelector('[data-action="voice-check"]')
-    .addEventListener('click', () => {
-      void showVoiceStorage().catch((error) => {
-        voiceStatus.textContent = error.message;
-      });
-    });
-  root
-    .querySelector('[data-action="voice-load"]')
-    .addEventListener('click', async (event) => {
-      const button = event.currentTarget;
-      if (button.disabled) return;
-      button.disabled = true;
-      const epoch = ++voicePreparationEpoch;
-      try {
-        const storage = await showVoiceStorage();
-        if (!storage.enough)
-          throw new Error(
-            'Insufficient or unreported browser storage. Free space and retry. No model download started.',
-          );
-        const Voice = await loadBrowserVoiceLibrary();
-        if (epoch !== voicePreparationEpoch) return;
-        browserVoice ||= new Voice();
-        await browserVoice.load((progress) => {
-          if (epoch === voicePreparationEpoch)
-            voiceStatus.textContent =
-              progress.message ||
-              `${progress.status || 'Preparing'} ${progress.file || ''}${Number.isFinite(progress.progress) ? ` ${Math.round(progress.progress)}%` : ''}`;
-        });
-        if (epoch === voicePreparationEpoch)
-          voiceStatus.textContent = `Chatterbox ready on ${browserVoice.device}. Voice One, calm delivery. Ask a short question to audition; phone performance is not yet qualified.`;
-      } catch (error) {
-        if (epoch === voicePreparationEpoch)
-          voiceStatus.textContent = `Chatterbox preparation: ${error.message}`;
-      } finally {
-        button.disabled = false;
-      }
-    });
-  root
-    .querySelector('[data-action="voice-unload"]')
-    .addEventListener('click', async () => {
-      voicePreparationEpoch++;
-      stopVoicePlayback();
-      const voice = browserVoice;
-      browserVoice = null;
-      await voice?.dispose();
-      voiceStatus.textContent =
-        'Chatterbox unloaded. Complete cached model files remain reusable; partial downloads are not promised resumable.';
-    });
-  const savedVoiceProvider = loadSetting(
-    'leeway.agentLee.voiceProvider',
-    'browser',
-  );
-  voiceProvider.value = ['browser', 'kernel', 'http'].includes(
-    savedVoiceProvider,
-  )
-    ? savedVoiceProvider
-    : 'browser';
+  root.querySelector('[data-action="voice-load"]').addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    const epoch = speechEpoch;
+    try {
+      await fabricVoice.prepare();
+      if (epoch === speechEpoch) voiceReady = true;
+    } catch (error) {
+      voiceStatus.textContent = `Voice Fabric unavailable: ${error.message}. Text remains available.`;
+    } finally { button.disabled = false; }
+  });
+  root.querySelector('[data-action="voice-unload"]').addEventListener('click', () => {
+    stopVoicePlayback();
+    fabricVoice.destroy();
+    voiceReady = false;
+    voiceStatus.textContent = 'Voice Fabric disconnected.';
+  });
   root
     .querySelector('[data-action="voice-test"]')
     .addEventListener('click', () => {
@@ -940,11 +748,6 @@ export function mountAgentLeeGemma(application, shell = null) {
       };
       void speakAgentLee(samples[getLanguage().code] || samples.en);
     });
-  voiceProvider.addEventListener('change', () => {
-    stopVoicePlayback();
-    saveSetting('leeway.agentLee.voiceProvider', voiceProvider.value);
-    syncVoiceButton();
-  });
   root
     .querySelector('[data-action="cancel-download"]')
     .addEventListener('click', () => downloadController?.abort());
@@ -1018,15 +821,6 @@ export function mountAgentLeeGemma(application, shell = null) {
     else root.classList.remove('leeway-open');
   });
   voiceButton.addEventListener('click', () => {
-    if (queuedAudio && voiceEnabled) {
-      const audio = queuedAudio;
-      queuedAudio = null;
-      audio
-        .play()
-        .then(() => syncVoiceButton('SPEAKING'))
-        .catch(() => syncVoiceButton('PLAY VOICE'));
-      return;
-    }
     voiceEnabled = !voiceEnabled;
     saveSetting('leeway.agentLee.voice', voiceEnabled ? 'on' : 'off');
     if (!voiceEnabled) stopVoicePlayback();
@@ -1044,7 +838,7 @@ export function mountAgentLeeGemma(application, shell = null) {
     void probe();
   });
 
-  status.textContent = 'PHONE NOT PAIRED · MAP READY WITHOUT AI';
+  status.textContent = 'MAP READY · OPTIONAL ADVANCED MODEL NOT CONNECTED';
   provider.addEventListener('change', () => {
     generation++;
     replyController?.abort();
@@ -1068,8 +862,7 @@ export function mountAgentLeeGemma(application, shell = null) {
       phone.disconnect();
       stopTalking();
       stopVoicePlayback();
-      voicePreparationEpoch++;
-      void browserVoice?.dispose();
+      fabricVoice.destroy();
       statusObserver.disconnect();
       root.remove();
     },

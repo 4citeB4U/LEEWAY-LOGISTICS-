@@ -1,3 +1,4 @@
+import { mountDeviceLocation } from './deviceLocation.js';
 import { layerStatusText, escapeLayerText } from './layerStatusText.js';
 import { mountGodsEyeControls } from './godsEyeControls.js';
 import { mountMapReports } from './mapReports.js';
@@ -315,7 +316,7 @@ export function mountEnterpriseShell(
       <button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Language and music</span></button>
       ${(isBusiness
         ? [
-            ['cockpit', 'Cockpit'],
+            ['operations', 'Driver & loads'],
             ['transit', 'Transit'],
             ['freight', 'Freight'],
             ['rail', 'Rail'],
@@ -336,7 +337,7 @@ export function mountEnterpriseShell(
     <div class="lws-location-badge" data-location-badge><strong>WORLD</strong><span>Geographic identification loading…</span></div>
     <aside class="lws-context-inspector" data-context-inspector></aside>
     <div class="lws-right-tabs" aria-label="Right-side information panels">
-      <button class="lws-right-tab" data-action="right-ops" type="button">COCKPIT</button>
+      <button class="lws-right-tab" data-action="right-ops" type="button">OPERATIONS</button>
       <button class="lws-right-tab" data-action="right-cctv" type="button">CCTV</button>
       <button class="lws-right-tab" data-action="right-weather" type="button">WEATHER</button>
       <button class="lws-right-tab" data-action="right-national" type="button">NATION</button>
@@ -765,8 +766,9 @@ export function mountEnterpriseShell(
         return true;
       }
       if (actionName === 'cockpit') {
-        setRightPanel('ops', { toggle: false });
-        return true;
+        const result = await godsEyeControls.actions.cockpit();
+        if (!result.ok) say(result.error);
+        return result.ok;
       }
       if (actionName === 'workspace') {
         workspace.open(); return true;
@@ -1370,7 +1372,7 @@ export function mountEnterpriseShell(
       return;
     }
     if (dock === 'traffic') {
-      await toggleLayer('traffic');
+      await toggleLayer('traffic-incidents');
       return;
     }
     if (dock === 'cctv') {
@@ -1401,14 +1403,14 @@ export function mountEnterpriseShell(
       openWeather();
       return;
     }
-    if (dock === 'cockpit') {
+    if (dock === 'operations') {
       nationalCatalog.close();
       setRightPanel('ops', { toggle: false });
       document
         .getElementById('leeway-transit-world')
         ?.querySelector?.('[data-action="driver-view"]')
         ?.click?.();
-      say('Driver & Load Cockpit opened');
+      say('Driver & load operations opened');
       return;
     }
     if (dock === 'transit') {
@@ -1435,7 +1437,7 @@ export function mountEnterpriseShell(
       return;
     }
     if (dock === 'locate') {
-      await routing.useMyLocation();
+      await deviceLocation.recenter();
     }
   });
 
@@ -1459,8 +1461,9 @@ export function mountEnterpriseShell(
     }
   });
 
+  const deviceLocation = mountDeviceLocation({viewer,button:shell.querySelector('[data-dock="locate"]'),notify:say,onChange:()=>{queueMicrotask(()=>mapReports.refresh());}});
   const mapReports = mountMapReports({
-    shell, viewer, dataManager, getPoint: viewCenterPoint,
+    shell, viewer, dataManager, getPoint: () => deviceLocation.getPoint() || viewCenterPoint(),
     onWeather: () => setRightPanel('weather', { toggle: false }),
     onTraffic: async () => {
       try {
@@ -1597,6 +1600,7 @@ export function mountEnterpriseShell(
       loadComparison.destroy();
       hazardReports.destroy();
       peerComms.destroy();
+      deviceLocation.destroy();
       mapReports.destroy();
       routing.destroy();
       roadside.destroy();

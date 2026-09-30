@@ -85,7 +85,8 @@ jobs:
           ./src/leeway/stationPrices.test.mjs
           ./src/leeway/fuelBenchmark.test.mjs
           ./src/leeway/agentRuntime.test.mjs
-          ./src/leeway/browserVoiceAdapter.test.mjs
+          ./src/leeway/voiceFabric.test.mjs
+          ./src/leeway/agentLeeVoiceIntegration.test.mjs
           ./src/layers/weather/publicWms.test.mjs
           ./src/layers/perimeters/source.test.mjs
           ./src/layers/pipelines/source.test.mjs
