@@ -845,7 +845,7 @@ export function mountEnterpriseShell(
         ? '3D world view'
         : mode === 'satellite'
           ? 'Satellite + labels view'
-          : '2D road map view',
+          : 'Street map imagery',
     );
     void updateLocationBadge();
     return true;
