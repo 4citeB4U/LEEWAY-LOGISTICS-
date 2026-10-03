@@ -195,6 +195,7 @@ export function mountEnterpriseShell(
   document.body.dataset.leewayEdition = isBusiness ? 'business' : 'personal';
 
   const components = application.getComponents();
+  const styleManager = components.controls?.styleManager;
   const viewer = components.scene?.viewer;
   const dataManager = components.data?.dataManager;
   const mapStackController = components.scene?.mapStackController;
