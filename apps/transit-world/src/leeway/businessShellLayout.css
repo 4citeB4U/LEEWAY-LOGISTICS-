@@ -1,0 +1,33 @@
+/* Business-only navigation; never imported by Personal Maps. */
+body.leeway-enterprise-shell #leeway-world-shell .lws-rail {
+ display:flex;flex-direction:column;left:12px;top:166px;bottom:145px;width:132px;
+ gap:5px;padding:7px;box-sizing:border-box;overflow-y:auto;overflow-x:hidden;
+ border:1px solid #416f82;border-radius:16px;background:rgba(4,18,28,.97);pointer-events:auto;
+}
+body.leeway-enterprise-shell #leeway-world-shell .lws-rail .lws-nav {
+ display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:44px;
+ width:100%;padding:8px;text-align:left;font-size:12px;flex-shrink:0;
+}
+body.leeway-enterprise-shell #leeway-world-shell .lws-rail.compact {width:60px;}
+body.leeway-enterprise-shell #leeway-world-shell .lws-rail.compact .lws-nav {justify-content:center;}
+body.leeway-enterprise-shell #leeway-world-shell .lws-rail .lws-spacer {flex:1;}
+body.leeway-enterprise-shell #leeway-world-shell .lws-top-actions .lws-business-toggle {display:none!important;}
+body.leeway-enterprise-shell #leeway-world-shell.business-open .lws-location-badge {display:flex;}
+body.leeway-enterprise-shell #leeway-world-shell .lws-layer-menu {left:158px;top:166px;max-height:calc(100dvh - 330px);}
+body.leeway-enterprise-shell #leeway-world-shell .lw-route-planner {left:158px;}
+body.leeway-enterprise-shell #leeway-map-tools {left:158px;width:min(470px,calc(100vw - 182px));}
+body.leeway-enterprise-shell .business-map-guide-link {
+ display:block;flex:none;padding:10px 14px;background:#123449;color:#dcf9ff;
+ border-top:1px solid #467787;text-decoration:underline;font:14px/1.4 system-ui;
+}
+@media(max-width:700px) {
+ body.leeway-enterprise-shell #leeway-world-shell .lws-top-actions .lws-business-toggle {display:block!important;}
+ body.leeway-enterprise-shell #leeway-world-shell .lws-rail {display:none;top:245px;bottom:170px;width:190px;z-index:10000;}
+ body.leeway-enterprise-shell #leeway-world-shell.business-open .lws-rail {display:flex;}
+ body.leeway-enterprise-shell #leeway-world-shell .lw-route-planner,
+ body.leeway-enterprise-shell #leeway-world-shell .lws-layer-menu {left:10px;}
+ body.leeway-enterprise-shell #leeway-map-tools {left:8px;right:8px;width:auto;}
+}
+@media(max-height:600px) and (min-width:701px) {
+ body.leeway-enterprise-shell #leeway-world-shell .lws-rail {top:160px;bottom:95px;}
+}

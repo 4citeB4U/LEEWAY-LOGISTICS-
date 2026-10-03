@@ -9,6 +9,8 @@ import { readEnterpriseState } from './enterpriseStore.js';
 import { mountRoutePlanner } from './routePlanner.js';
 import { createRouteClient } from './routePlannerCore.js';
 import './mapFirst.css';
+import './businessShellLayout.css';
+import { mountBusinessMapGuide } from './businessMapGuide.js';
 import { mountRoadsidePlaces } from './roadsidePlaces.js';
 import { mountDriveMode } from './driveMode.js';
 import { mountFuelAdvisor } from './fuelAdvisor.js';
@@ -252,16 +254,13 @@ export function mountEnterpriseShell(
       <div class="lws-brand"><img class="lws-logo" src="${import.meta.env.BASE_URL}leeway-approved-logo.jpg" alt="LeeWay — approved blue circular logo" /><div><strong data-brand-name>${isBusiness ? 'LEEWAY LOGISTICS' : 'LEEWAY MAPS'}</strong><span data-brand-tagline>YOUR ROAD. YOUR ROUTE.</span></div></div>
       <div class="lws-search"><input aria-label="Global search" placeholder="${isBusiness ? 'Search locations, loads, drivers, equipment, facilities...' : 'Search addresses, places, trips, and roadside stops...'}" /><kbd>⌘ K</kbd></div>
       <div class="lws-top-actions">
-        <button class="lws-chip" data-action="map">Map</button>
         <button class="lws-chip" data-action="world">◉ World</button>
         <button class="lws-chip" data-action="route">Directions</button>
-        <button class="lws-chip hide-sm" data-action="layers">▱ Layers⌄</button>
-        ${isBusiness ? '<button class="lws-chip hide-sm" data-action="workspace">Sales & CRM</button>' : ''}
-        <button class="lws-chip" data-action="roadside">Road stops</button>${isBusiness ? '<button class="lws-chip" data-action="workspace-menu">Business</button>' : ''}<button class="lws-chip" data-action="capabilities">Capabilities</button><button class="lws-chip hide-sm" data-action="map-only">Hide controls</button>
+        <button class="lws-chip" data-action="roadside">Road stops</button>${isBusiness ? '<button class="lws-chip lws-business-toggle" data-action="workspace-menu" aria-controls="business-sidebar" aria-expanded="false">Business menu</button>' : ''}<button class="lws-chip hide-sm" data-action="map-only">Hide controls</button>
         <div class="lws-avatar">AL</div><div class="lws-agent-status">Agent Lee · Copilot<br>Open to connect</div>
       </div>
     </header>
-    <nav class="lws-rail" aria-label="Business workspace">
+    <nav id="business-sidebar" class="lws-rail" aria-label="Business workspace">
       ${(isBusiness
         ? [
             ['map', 'Map'],
@@ -269,23 +268,19 @@ export function mountEnterpriseShell(
             ['drivers', 'Drivers'],
             ['fleet', 'Fleet'],
             ['transit', 'Transit'],
-            ['rail', 'Rail'],
-            ['facilities', 'Facilities'],
             ['crm', 'CRM'],
             ['features', 'Features'],
             ['intel', 'Intelligence'],
-            ['ai', 'AI'],
           ]
         : [
             ['map', 'Map'],
             ['transit', 'Transit'],
             ['intel', 'Intelligence'],
-            ['ai', 'AI'],
           ]
       )
         .map(
           ([id, label], i) =>
-            `<button class="lws-nav ${i === 0 ? 'active' : ''}" data-nav="${id}"><span class="i">${icon(id)}</span><span>${label}</span></button>`,
+            `<button class="lws-nav ${i === 0 ? 'active' : ''}" data-nav="${id}" title="${label}" aria-label="${label}"><span class="i">${icon(id)}</span><span>${label}</span></button>`,
         )
         .join('')}
       <div class="lws-spacer"></div>
@@ -300,7 +295,6 @@ export function mountEnterpriseShell(
     <nav class="lws-dock">
       <button class="lws-dock-btn" data-action="peer-comms">${mapIcon('mic')}<span>Driver radio</span></button>
       ${[
-        ['layers', 'Layers'],
         ['traffic', 'Traffic'],
         ...(isBusiness ? [['cctv', 'CCTV']] : [['flights', 'Flights']]),
         ['weather', 'Weather'],
@@ -310,37 +304,18 @@ export function mountEnterpriseShell(
             `<button class="lws-dock-btn" data-dock="${id}">${mapIcon(id)}<span>${label}</span></button>`,
         )
         .join('')}
-      <button class="lws-dock-btn" data-action="view-map">${mapIcon('map')}<span>Map</span></button>
+      <button class="lws-dock-btn" data-action="view-map">${mapIcon('map')}<span>Street map</span></button>
       <button class="lws-dock-btn" data-action="view-satellite">${mapIcon('satellite')}<span>Satellite</span></button>
       <button class="lws-dock-btn" data-action="report-hazard">${mapIcon('report')}<span>Report</span></button>
       <button class="lws-ai" data-action="ai" aria-label="Talk to Agent Lee">${mapIcon('mic')}<strong>Agent Lee</strong></button>
       <button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Language and music</span></button>
-      ${(isBusiness
-        ? [
-            ['operations', 'Driver & loads'],
-            ['transit', 'Transit'],
-            ['freight', 'Freight'],
-            ['rail', 'Rail'],
-            ['three', '3D'],
-          ]
-        : [
-            ['transit', 'Transit'],
-            ['three', '3D'],
-          ]
-      )
-        .map(
-          ([id, label]) =>
-            `<button class="lws-dock-btn ${id === 'freight' || id === 'rail' ? 'business-only' : ''}" data-dock="${id}"><span class="i">${icon(id)}</span>${label}</button>`,
-        )
-        .join('')}
+      <button class="lws-dock-btn" data-dock="three"><span class="i" aria-hidden="true">${icon('three')}</span><span>3D</span></button>
     </nav>
     <button class="lws-my-location" data-dock="locate" aria-label="My Location">⌾ My Location</button>
     <div class="lws-location-badge" data-location-badge><strong>WORLD</strong><span>Geographic identification loading…</span></div>
     <aside class="lws-context-inspector" data-context-inspector></aside>
     <div class="lws-right-tabs" aria-label="Right-side information panels">
       <button class="lws-right-tab" data-action="right-ops" type="button">OPERATIONS</button>
-      <button class="lws-right-tab" data-action="right-cctv" type="button">CCTV</button>
-      <button class="lws-right-tab" data-action="right-weather" type="button">WEATHER</button>
       <button class="lws-right-tab" data-action="right-national" type="button">NATION</button>
     </div>
     <button class="lws-ui-restore" data-action="restore-ui" type="button">SHOW CONTROLS</button>
@@ -605,7 +580,7 @@ export function mountEnterpriseShell(
     return false;
   }
 
-  const routing = mountRoutePlanner({ viewer, container: routePlanner });
+  const routing = mountRoutePlanner({ viewer, container: routePlanner, navigate: navigateToLocation });
   const offlineTrip = mountOfflineTrip({ planner: routing });
   const preferences = mountExperiencePreferences();
   const driveMode = mountDriveMode({
@@ -974,6 +949,14 @@ export function mountEnterpriseShell(
       () => void updateLocationBadge(),
     ) || null;
 
+  function navigateToLocation(navigate) {
+    styleManager?.controlCockpit?.('exit');
+    if (typeof styleManager?.runImmediateLocationNavigation === 'function') {
+      return styleManager.runImmediateLocationNavigation(navigate);
+    }
+    return navigate();
+  }
+
   async function locate(query, { altitude = 6000 } = {}) {
     if (!query || !viewer) return false;
     try {
@@ -984,14 +967,14 @@ export function mountEnterpriseShell(
       const safeAltitude = Number.isFinite(requestedAltitude)
         ? Math.max(1000, requestedAltitude)
         : 6000;
-      await viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(
-          point.lon,
-          point.lat,
-          safeAltitude,
-        ),
-        duration: 1.2,
+      const moved = navigateToLocation(() => {
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(point.lon, point.lat, safeAltitude),
+          duration: 1.2,
+        });
+        return true;
       });
+      if (moved === false) { say('Location navigation is currently unavailable.'); return false; }
       say(
         `Showing ${point.label}${matches.length > 1 ? ' · use Directions to select an exact address' : ''}`,
       );
@@ -1187,6 +1170,8 @@ export function mountEnterpriseShell(
 
     if (nav) {
       const id = nav.dataset.nav;
+      shell.classList.remove('business-open');
+      shell.querySelector('[data-action="workspace-menu"]')?.setAttribute('aria-expanded', 'false');
       setNav(id);
       if (id === 'map') {
         workspace.close();
@@ -1254,7 +1239,8 @@ export function mountEnterpriseShell(
       return;
     }
     if (action === 'workspace-menu') {
-      shell.classList.toggle('business-open');
+      const expanded = shell.classList.toggle('business-open');
+      shell.querySelector('[data-action="workspace-menu"]')?.setAttribute('aria-expanded', String(expanded));
       return;
     }
     if (action === 'roadside') {
@@ -1465,7 +1451,7 @@ export function mountEnterpriseShell(
     }
   });
 
-  const deviceLocation = mountDeviceLocation({viewer,button:shell.querySelector('[data-dock="locate"]'),notify:say,onChange:()=>{queueMicrotask(()=>{mapReports.refresh();void updateLocationBadge();});}});
+  const deviceLocation = mountDeviceLocation({viewer,navigate:navigateToLocation,button:shell.querySelector('[data-dock="locate"]'),notify:say,onChange:()=>{queueMicrotask(()=>{mapReports.refresh();void updateLocationBadge();});}});
   const mapReports = mountMapReports({
     shell, viewer, dataManager, getPoint: () => deviceLocation.getPoint() || viewCenterPoint(),
     onWeather: () => setRightPanel('weather', { toggle: false }),
@@ -1527,6 +1513,7 @@ export function mountEnterpriseShell(
 
   const mapViewControls = mountMapViewControls({ application, shell });
   const mapToolsPanel = mountMapToolsPanel({ application, shell });
+  const businessGuide = mountBusinessMapGuide({ root: mapToolsPanel.root });
 
   return {
     root: shell,
@@ -1555,6 +1542,7 @@ export function mountEnterpriseShell(
     closeAgent: () => toggleAgent(false),
     notify: say,
     destroy() {
+      businessGuide.destroy();
       mapToolsPanel.destroy();
       mapViewControls.destroy();
       cctvObserver?.disconnect();
