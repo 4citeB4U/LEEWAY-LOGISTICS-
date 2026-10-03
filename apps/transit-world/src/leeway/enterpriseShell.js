@@ -28,7 +28,6 @@ import { featureCatalogForEdition } from './productFeatureCatalog.js';
 import { mountMunicipalTransitWorkspace, municipalTransitTabForDomain } from './municipalTransitWorkspace.js';
 
 const LOGISTICS_HIDDEN_LAYER_IDS = new Set([
-  'flights',
   'military',
   'local-adsb',
   'military-awareness',
@@ -171,7 +170,10 @@ function icon(name) {
       rail: '▥',
       facilities: '⌂',
       crm: '◇',
+      air: '✈',
+      marine: '⚓',
       intel: '▥',
+      settings: '⚙',
       ai: '✦',
       layers: '▱',
       traffic: '▥',
@@ -269,9 +271,15 @@ export function mountEnterpriseShell(
             ['drivers', 'Drivers'],
             ['fleet', 'Fleet'],
             ['transit', 'Transit'],
+            ['rail', 'Rail'],
+            ['air', 'Air'],
+            ['marine', 'Marine'],
+            ['facilities', 'Facilities'],
             ['crm', 'CRM'],
             ['features', 'Features'],
             ['intel', 'Intelligence'],
+            ['settings', 'Settings'],
+            ['ai', 'Agent Lee'],
           ]
         : [
             ['map', 'Map'],
@@ -309,7 +317,7 @@ export function mountEnterpriseShell(
       <button class="lws-dock-btn" data-action="view-satellite">${mapIcon('satellite')}<span>Satellite</span></button>
       <button class="lws-dock-btn" data-action="report-hazard">${mapIcon('report')}<span>Report</span></button>
       <button class="lws-ai" data-action="ai" aria-label="Talk to Agent Lee">${mapIcon('mic')}<strong>Agent Lee</strong></button>
-      <button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Language and music</span></button>
+      <button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Settings</span></button>
       <button class="lws-dock-btn" data-dock="three"><span class="i" aria-hidden="true">${icon('three')}</span><span>3D</span></button>
     </nav>
     <button class="lws-my-location" data-dock="locate" aria-label="My Location">⌾ My Location</button>
@@ -1207,7 +1215,23 @@ export function mountEnterpriseShell(
       }
       if (id === 'rail') {
         workspace.close();
-        say('Rail operating view ready for rail provider binding');
+        await enableTransitSuite();
+        municipalTransit.open('cadavl');
+        say('Rail view enabled · published routes, stops and reported vehicles load for the current map area when available');
+        return;
+      }
+      if (id === 'air') {
+        workspace.close();
+        if (dataManager?.layers?.has('flights') && !dataManager.isEnabled?.('flights'))
+          await dataManager.setEnabled('flights', true, { origin: 'user' });
+        say('Air layer enabled · live aircraft data and available public flight enrichment are shown by source');
+        return;
+      }
+      if (id === 'marine') {
+        workspace.close();
+        if (dataManager?.layers?.has('ais-live-vessels') && !dataManager.isEnabled?.('ais-live-vessels'))
+          await dataManager.setEnabled('ais-live-vessels', true, { origin: 'user' });
+        say('Marine layer enabled · reported AIS vessels are shown where the live source has coverage');
         return;
       }
       if (id === 'features') {
@@ -1218,6 +1242,11 @@ export function mountEnterpriseShell(
       if (id === 'intel') {
         workspace.close();
         toggleLayerMenu(true);
+        return;
+      }
+      if (id === 'settings') {
+        workspace.close();
+        preferences.open();
         return;
       }
       if (id === 'ai') {
