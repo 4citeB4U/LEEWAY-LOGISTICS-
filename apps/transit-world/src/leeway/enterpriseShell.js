@@ -27,6 +27,7 @@ import { mountFeatureCenter } from './featureCenter.js';
 import { featureCatalogForEdition } from './productFeatureCatalog.js';
 import { mountMunicipalTransitWorkspace, municipalTransitTabForDomain } from './municipalTransitWorkspace.js';
 import { mountJourneyContinuityMonitor } from './journeyContinuityMonitor.js';
+import { applyMobileRenderPolicy, deviceCapabilityProfile } from './devicePerformanceProfile.js';
 
 const LOGISTICS_HIDDEN_LAYER_IDS = new Set([
   'military',
@@ -1546,6 +1547,9 @@ export function mountEnterpriseShell(
     };
   }
 
+  const deviceProfile = deviceCapabilityProfile();
+  const devicePolicyState = applyMobileRenderPolicy({ viewer, dataManager, profile: deviceProfile });
+  document.body.dataset.leewayDevicePolicy = devicePolicyState.policy.id;
   const mapViewControls = mountMapViewControls({ application, shell });
   const journeyContinuity = mountJourneyContinuityMonitor({
     viewer,
@@ -1582,6 +1586,7 @@ export function mountEnterpriseShell(
       setRightPanel('cctv', { toggle: false });
     },
     selectCctv,
+    getDeviceProfile: () => devicePolicyState,
     openAgent: () => toggleAgent(true),
     closeAgent: () => toggleAgent(false),
     notify: say,
