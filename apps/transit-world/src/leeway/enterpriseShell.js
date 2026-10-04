@@ -10,6 +10,7 @@ import { mountRoutePlanner } from './routePlanner.js';
 import { createRouteClient } from './routePlannerCore.js';
 import './mapFirst.css';
 import './businessShellLayout.css';
+import './mobileReadability.css';
 import { mountBusinessMapGuide } from './businessMapGuide.js';
 import { mountRoadsidePlaces } from './roadsidePlaces.js';
 import { mountDriveMode } from './driveMode.js';
