@@ -109,13 +109,13 @@ const SEEDED_SOURCES = Object.freeze({
       operator: 'Georgia Department of Transportation',
       system: '511GA',
       accessMethod: 'documented_api',
-      integrationStatus: 'integrated',
-      mediaStatus: 'integrated',
+      integrationStatus: 'key-required',
+      mediaStatus: 'official-public',
       authRequired: true,
       evidenceState: 'VERIFIED',
       sourceUrl: 'https://511ga.org/developers/doc',
       notes:
-        'LeeWay contains the keyed statewide 511GA camera adapter; developer key and published throttling apply.',
+        'LeeWay contains the keyed statewide 511GA camera adapter; activation requires the operator-provided developer key and published throttling applies.',
     },
   ],
   IA: [
