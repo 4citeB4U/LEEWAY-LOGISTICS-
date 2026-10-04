@@ -1552,6 +1552,7 @@ export function mountEnterpriseShell(
     dataManager,
     shell,
     mapViewControls,
+    routePlanner: routing,
     openNearestCctv,
     notify: say,
   });
