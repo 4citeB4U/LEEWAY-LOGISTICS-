@@ -26,6 +26,7 @@ import { openNearestCctv } from './cctvExperience.js';
 import { mountFeatureCenter } from './featureCenter.js';
 import { featureCatalogForEdition } from './productFeatureCatalog.js';
 import { mountMunicipalTransitWorkspace, municipalTransitTabForDomain } from './municipalTransitWorkspace.js';
+import { mountJourneyContinuityMonitor } from './journeyContinuityMonitor.js';
 
 const LOGISTICS_HIDDEN_LAYER_IDS = new Set([
   'military',
@@ -1546,6 +1547,14 @@ export function mountEnterpriseShell(
   }
 
   const mapViewControls = mountMapViewControls({ application, shell });
+  const journeyContinuity = mountJourneyContinuityMonitor({
+    viewer,
+    dataManager,
+    shell,
+    mapViewControls,
+    openNearestCctv,
+    notify: say,
+  });
   const mapToolsPanel = mountMapToolsPanel({ application, shell });
   const businessGuide = mountBusinessMapGuide({ root: mapToolsPanel.root });
 
@@ -1577,6 +1586,7 @@ export function mountEnterpriseShell(
     notify: say,
     destroy() {
       businessGuide.destroy();
+      journeyContinuity.destroy();
       mapToolsPanel.destroy();
       mapViewControls.destroy();
       cctvObserver?.disconnect();
