@@ -317,7 +317,7 @@ export function mountEnterpriseShell(
       <button class="lws-dock-btn" data-action="view-satellite">${mapIcon('satellite')}<span>Satellite</span></button>
       <button class="lws-dock-btn" data-action="report-hazard">${mapIcon('report')}<span>Report</span></button>
       <button class="lws-ai" data-action="ai" aria-label="Talk to Agent Lee">${mapIcon('mic')}<strong>Agent Lee</strong></button>
-      <button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Settings</span></button>
+      <button class="lws-dock-btn" data-action="help">${mapIcon('info')}<span>Help / Atlas</span></button><button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Settings</span></button>
       <button class="lws-dock-btn" data-dock="three"><span class="i" aria-hidden="true">${icon('three')}</span><span>3D</span></button>
     </nav>
     <button class="lws-my-location" data-dock="locate" aria-label="My Location">⌾ My Location</button>
@@ -1258,6 +1258,10 @@ export function mountEnterpriseShell(
 
     if (action === 'ai') {
       toggleAgent();
+      return;
+    }
+    if (action === 'help') {
+      preferences.openAtlas?.();
       return;
     }
     if (action === 'preferences') {
