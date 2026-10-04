@@ -10,6 +10,7 @@ import { mountRoutePlanner } from './routePlanner.js';
 import { createRouteClient } from './routePlannerCore.js';
 import './mapFirst.css';
 import './businessShellLayout.css';
+import './mobileReadability.css';
 import { mountBusinessMapGuide } from './businessMapGuide.js';
 import { mountRoadsidePlaces } from './roadsidePlaces.js';
 import { mountDriveMode } from './driveMode.js';
@@ -26,9 +27,11 @@ import { openNearestCctv } from './cctvExperience.js';
 import { mountFeatureCenter } from './featureCenter.js';
 import { featureCatalogForEdition } from './productFeatureCatalog.js';
 import { mountMunicipalTransitWorkspace, municipalTransitTabForDomain } from './municipalTransitWorkspace.js';
+import { mountJourneyContinuityMonitor } from './journeyContinuityMonitor.js';
+import { applyMobileRenderPolicy, deviceCapabilityProfile } from './devicePerformanceProfile.js';
+import { buildWorkloadPlan, discoverRuntimeCapabilities } from './runtimeWorkloadBroker.js';
 
 const LOGISTICS_HIDDEN_LAYER_IDS = new Set([
-  'flights',
   'military',
   'local-adsb',
   'military-awareness',
@@ -171,7 +174,10 @@ function icon(name) {
       rail: '▥',
       facilities: '⌂',
       crm: '◇',
+      air: '✈',
+      marine: '⚓',
       intel: '▥',
+      settings: '⚙',
       ai: '✦',
       layers: '▱',
       traffic: '▥',
@@ -269,9 +275,15 @@ export function mountEnterpriseShell(
             ['drivers', 'Drivers'],
             ['fleet', 'Fleet'],
             ['transit', 'Transit'],
+            ['rail', 'Rail'],
+            ['air', 'Air'],
+            ['marine', 'Marine'],
+            ['facilities', 'Facilities'],
             ['crm', 'CRM'],
             ['features', 'Features'],
             ['intel', 'Intelligence'],
+            ['settings', 'Settings'],
+            ['ai', 'Agent Lee'],
           ]
         : [
             ['map', 'Map'],
@@ -309,7 +321,7 @@ export function mountEnterpriseShell(
       <button class="lws-dock-btn" data-action="view-satellite">${mapIcon('satellite')}<span>Satellite</span></button>
       <button class="lws-dock-btn" data-action="report-hazard">${mapIcon('report')}<span>Report</span></button>
       <button class="lws-ai" data-action="ai" aria-label="Talk to Agent Lee">${mapIcon('mic')}<strong>Agent Lee</strong></button>
-      <button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Language and music</span></button>
+      <button class="lws-dock-btn" data-action="help">${mapIcon('info')}<span>Help / Atlas</span></button><button class="lws-dock-btn" data-action="preferences">${mapIcon('settings')}<span>Settings</span></button>
       <button class="lws-dock-btn" data-dock="three"><span class="i" aria-hidden="true">${icon('three')}</span><span>3D</span></button>
     </nav>
     <button class="lws-my-location" data-dock="locate" aria-label="My Location">⌾ My Location</button>
@@ -1207,7 +1219,23 @@ export function mountEnterpriseShell(
       }
       if (id === 'rail') {
         workspace.close();
-        say('Rail operating view ready for rail provider binding');
+        await enableTransitSuite();
+        municipalTransit.open('cadavl');
+        say('Rail view enabled · published routes, stops and reported vehicles load for the current map area when available');
+        return;
+      }
+      if (id === 'air') {
+        workspace.close();
+        if (dataManager?.layers?.has('flights') && !dataManager.isEnabled?.('flights'))
+          await dataManager.setEnabled('flights', true, { origin: 'user' });
+        say('Air layer enabled · live aircraft data and available public flight enrichment are shown by source');
+        return;
+      }
+      if (id === 'marine') {
+        workspace.close();
+        if (dataManager?.layers?.has('ais-live-vessels') && !dataManager.isEnabled?.('ais-live-vessels'))
+          await dataManager.setEnabled('ais-live-vessels', true, { origin: 'user' });
+        say('Marine layer enabled · reported AIS vessels are shown where the live source has coverage');
         return;
       }
       if (id === 'features') {
@@ -1220,6 +1248,11 @@ export function mountEnterpriseShell(
         toggleLayerMenu(true);
         return;
       }
+      if (id === 'settings') {
+        workspace.close();
+        preferences.open();
+        return;
+      }
       if (id === 'ai') {
         workspace.close();
         toggleAgent(true);
@@ -1229,6 +1262,10 @@ export function mountEnterpriseShell(
 
     if (action === 'ai') {
       toggleAgent();
+      return;
+    }
+    if (action === 'help') {
+      preferences.openAtlas?.();
       return;
     }
     if (action === 'preferences') {
@@ -1512,7 +1549,26 @@ export function mountEnterpriseShell(
     };
   }
 
+  const deviceProfile = deviceCapabilityProfile();
+  const runtimeCapabilities = discoverRuntimeCapabilities();
+  const workloadPlan = buildWorkloadPlan(runtimeCapabilities, [
+    { id: 'map-render', kind: 'map-render', latencyCritical: true },
+    { id: 'visual-inference', kind: 'visual-inference', latencyCritical: true },
+    { id: 'journey-geospatial', kind: 'geospatial-compute', latencyCritical: true },
+    { id: 'background-index', kind: 'background-index', latencyCritical: false },
+  ]);
+  const devicePolicyState = applyMobileRenderPolicy({ viewer, dataManager, profile: deviceProfile });
+  document.body.dataset.leewayDevicePolicy = devicePolicyState.policy.id;
   const mapViewControls = mountMapViewControls({ application, shell });
+  const journeyContinuity = mountJourneyContinuityMonitor({
+    viewer,
+    dataManager,
+    shell,
+    mapViewControls,
+    routePlanner: routing,
+    openNearestCctv,
+    notify: say,
+  });
   const mapToolsPanel = mountMapToolsPanel({ application, shell });
   const businessGuide = mountBusinessMapGuide({ root: mapToolsPanel.root });
 
@@ -1539,11 +1595,14 @@ export function mountEnterpriseShell(
       setRightPanel('cctv', { toggle: false });
     },
     selectCctv,
+    getDeviceProfile: () => devicePolicyState,
+    getRuntimeCapabilities: () => ({ runtimeCapabilities, workloadPlan }),
     openAgent: () => toggleAgent(true),
     closeAgent: () => toggleAgent(false),
     notify: say,
     destroy() {
       businessGuide.destroy();
+      journeyContinuity.destroy();
       mapToolsPanel.destroy();
       mapViewControls.destroy();
       cctvObserver?.disconnect();

@@ -10,15 +10,37 @@ export function mountExperiencePreferences() {
   const root = document.createElement('section');
   root.className = 'lw-preferences';
   root.hidden = true;
-  root.setAttribute('aria-label', 'Language and music');
-  root.innerHTML = `<header><h2>Language and music</h2><button type="button" data-close>Close</button></header>
+  root.setAttribute('aria-label', 'Settings and system atlas');
+  root.innerHTML = `<header><h2>Settings</h2><button type="button" data-close>Close</button></header>
     <h3>Welcome to LeeWay</h3><label>Which language do you prefer?<select aria-label="Preferred language">${languageOptions()}</select></label>
     <button type="button" data-apply>Apply language</button>
     <p data-coverage></p>
     <h3>Music</h3><label>Choose music from this device<input type="file" accept="audio/*" data-music /></label>
     <audio controls preload="metadata" hidden aria-label="Music player"></audio><p data-track translate="no"></p>
     <nav aria-label="Music apps"><a href="https://open.spotify.com/" target="_blank" rel="noopener">Spotify ↗</a><a href="https://music.youtube.com/" target="_blank" rel="noopener">YouTube Music ↗</a><a href="https://music.apple.com/" target="_blank" rel="noopener">Apple Music ↗</a></nav>
-    <p data-music-note></p>`;
+    <p data-music-note></p>
+    <h3>System atlas</h3>
+    <p class="lw-atlas-intro">Use this atlas to learn what every business icon, map layer, status, and multimodal view means before operating it.</p>
+    <div class="lw-atlas-grid">
+      <details><summary>Business navigation</summary><div class="lw-atlas-body">
+        <b>▦ Map</b> live spatial operating surface · <b>▣ Loads</b> dispatch/load comparison · <b>♙ Drivers</b> people and driver profiles · <b>▰ Fleet</b> equipment and assignments · <b>▤ Transit</b> public transit operations · <b>▥ Rail</b> published rail/transit routes and reported vehicles · <b>✈ Air</b> public aircraft layer · <b>⚓ Marine</b> AIS vessel layer · <b>⌂ Facilities</b> customer/facility records · <b>◇ CRM</b> accounts, brokers, lanes and follow-up · <b>◎ Features</b> capability catalog · <b>▥ Intelligence</b> world layers · <b>⚙ Settings</b> preferences and atlas · <b>✦ Agent Lee</b> copilot.
+      </div></details>
+      <details><summary>CRM & business workspace</summary><div class="lw-atlas-body">
+        <b>Command</b> company onboarding and operating summary · <b>People</b> employee/driver onboarding and evidence · <b>Equipment</b> tractors, trailers, buses, vans and assets · <b>Sales & CRM</b> customers, brokers, facilities, lanes, pipeline, activities and follow-up · <b>Documents</b> evidence metadata · <b>Integrations</b> governed system connections.
+      </div></details>
+      <details><summary>Public transit & rail</summary><div class="lw-atlas-body">
+        Transit is split into independent <b>Routes</b>, <b>Stops & departures</b>, and <b>Reported vehicles</b>. Route geometry follows published/mapped networks; stops can show upcoming departures when an authoritative schedule source is available; vehicle dots are reported GPS fixes and are never presented as an ETA by themselves. Zoom into a city for local transit discovery. Rail uses the same published route/stop/vehicle authority until a dedicated rail-provider connector supplies richer operations.
+      </div></details>
+      <details><summary>Air & marine</summary><div class="lw-atlas-body">
+        <b>Air</b> shows reported aircraft positions plus source-authorized enrichment such as registration, aircraft type, airline and origin/destination when available. Scheduled gates, terminals, takeoff/landing times must come from an authorized airport/airline source and are not inferred. <b>Marine</b> shows reported AIS vessels where the live source has coverage; ports and terminals remain separate place/facility context.
+      </div></details>
+      <details><summary>Layer & truth states</summary><div class="lw-atlas-body">
+        <span class="lw-truth live">LIVE</span> source-reported now · <span class="lw-truth scheduled">SCHEDULED</span> published timetable · <span class="lw-truth mapped">MAPPED</span> network geometry without a live feed · <span class="lw-truth simulated">SIMULATED</span> training/replay only · <span class="lw-truth stale">STALE</span> last update is outside freshness policy · <span class="lw-truth unavailable">UNAVAILABLE</span> source/key/coverage missing. The interface must never silently promote mapped or simulated data to live.
+      </div></details>
+      <details><summary>Map interaction states</summary><div class="lw-atlas-body">
+        <b>Default</b> icon or line · <b>Hover</b> quick context · <b>Selected</b> highlighted object · <b>Expanded</b> rich card · <b>Multi-select</b> compare objects · <b>Linked panel</b> full operational details. Colors communicate object type and operational status, not confidence.
+      </div></details>
+    </div>`;
   document.body.append(root);
   const language = root.querySelector('select'),
     audio = root.querySelector('audio');
@@ -75,6 +97,13 @@ export function mountExperiencePreferences() {
       root.hidden = false;
       refresh();
       language.focus();
+    },
+    openAtlas() {
+      root.hidden = false;
+      refresh();
+      const first = root.querySelector('.lw-atlas-grid details');
+      if (first) first.open = true;
+      first?.querySelector('summary')?.focus?.();
     },
     destroy() {
       audio.pause();
