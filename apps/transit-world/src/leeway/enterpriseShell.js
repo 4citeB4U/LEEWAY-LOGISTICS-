@@ -29,6 +29,7 @@ import { featureCatalogForEdition } from './productFeatureCatalog.js';
 import { mountMunicipalTransitWorkspace, municipalTransitTabForDomain } from './municipalTransitWorkspace.js';
 import { mountJourneyContinuityMonitor } from './journeyContinuityMonitor.js';
 import { applyMobileRenderPolicy, deviceCapabilityProfile } from './devicePerformanceProfile.js';
+import { buildWorkloadPlan, discoverRuntimeCapabilities } from './runtimeWorkloadBroker.js';
 
 const LOGISTICS_HIDDEN_LAYER_IDS = new Set([
   'military',
@@ -1549,6 +1550,13 @@ export function mountEnterpriseShell(
   }
 
   const deviceProfile = deviceCapabilityProfile();
+  const runtimeCapabilities = discoverRuntimeCapabilities();
+  const workloadPlan = buildWorkloadPlan(runtimeCapabilities, [
+    { id: 'map-render', kind: 'map-render', latencyCritical: true },
+    { id: 'visual-inference', kind: 'visual-inference', latencyCritical: true },
+    { id: 'journey-geospatial', kind: 'geospatial-compute', latencyCritical: true },
+    { id: 'background-index', kind: 'background-index', latencyCritical: false },
+  ]);
   const devicePolicyState = applyMobileRenderPolicy({ viewer, dataManager, profile: deviceProfile });
   document.body.dataset.leewayDevicePolicy = devicePolicyState.policy.id;
   const mapViewControls = mountMapViewControls({ application, shell });
@@ -1588,6 +1596,7 @@ export function mountEnterpriseShell(
     },
     selectCctv,
     getDeviceProfile: () => devicePolicyState,
+    getRuntimeCapabilities: () => ({ runtimeCapabilities, workloadPlan }),
     openAgent: () => toggleAgent(true),
     closeAgent: () => toggleAgent(false),
     notify: say,
